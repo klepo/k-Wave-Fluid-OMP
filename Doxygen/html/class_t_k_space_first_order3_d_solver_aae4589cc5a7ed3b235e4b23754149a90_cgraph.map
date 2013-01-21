@@ -1,0 +1,27 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_parameters.html#a14b8891f838181a1d3e2af81dd094fed" title="Save scalars into the output HDF5 file." alt="" coords="392,5,624,35"/>
+<area shape="rect" id="node16" href="$class_t_h_d_f5___file_header.html#a7fe4e469abdc1d2832d4ae81a310b42e" title="THDF5_FileHeader::SetCodeName" alt="" coords="400,59,616,88"/>
+<area shape="rect" id="node18" href="$class_t_k_space_first_order3_d_solver.html#aefdb4e41fa9663dcd229b7911a733cd7" title="Get code name." alt="" coords="376,112,640,141"/>
+<area shape="rect" id="node20" href="$class_t_h_d_f5___file_header.html#a1e397c197aea39a0c7cdc303388d4b61" title="Set major file version." alt="" coords="385,165,631,195"/>
+<area shape="rect" id="node22" href="$class_t_h_d_f5___file_header.html#aaec3c09415504e9359f172e4adb9f5d3" title="Set minor file version." alt="" coords="385,219,631,248"/>
+<area shape="rect" id="node24" href="$class_t_h_d_f5___file_header.html#a29263f40d8ce421f554ac5ddb398ce79" title="Set creation time." alt="" coords="377,272,639,301"/>
+<area shape="rect" id="node26" href="$class_t_h_d_f5___file_header.html#a183eacf4af4337ac99c8a976b057bacc" title="Set file type." alt="" coords="408,325,608,355"/>
+<area shape="rect" id="node28" href="$class_t_h_d_f5___file_header.html#a602831716e689286705c2df7fc8fb110" title="Set host name." alt="" coords="403,379,613,408"/>
+<area shape="rect" id="node30" href="$class_t_h_d_f5___file_header.html#ac9a9b6a3e1c9ba2b145c41e0414a13ed" title="Set memory consumption." alt="" coords="373,432,643,461"/>
+<area shape="rect" id="node34" href="$class_t_k_space_first_order3_d_solver.html#a1336ec3fde2534021a7a7fc2ef0e6654" title="Get memory usage in MB." alt="" coords="347,485,669,515"/>
+<area shape="rect" id="node36" href="$class_t_time_messsure.html#a13ba6edba530d724cd75e5801230615d" title="Get stop timestamp." alt="" coords="439,539,577,568"/>
+<area shape="rect" id="node38" href="$class_t_h_d_f5___file_header.html#a0906d952a4eba6161fe8136a8cd30dce" title="Set execution times." alt="" coords="388,592,628,621"/>
+<area shape="rect" id="node40" href="$class_t_k_space_first_order3_d_solver.html#a3a9456b8045d43cc24cccbd252c3fee5" title="Get total simulation time." alt="" coords="380,645,636,675"/>
+<area shape="rect" id="node42" href="$class_t_k_space_first_order3_d_solver.html#a49d61944fd729e450ef3fe122e050ae0" title="Get data load time." alt="" coords="367,699,649,728"/>
+<area shape="rect" id="node44" href="$class_t_k_space_first_order3_d_solver.html#a47050f685b4a917a59f89d89a670ee31" title="Get pre&#45;processing time." alt="" coords="353,752,663,781"/>
+<area shape="rect" id="node46" href="$class_t_k_space_first_order3_d_solver.html#aabda2f770457baedd8b7e6db9617a3ae" title="Get simulation time (time loop)" alt="" coords="365,805,651,835"/>
+<area shape="rect" id="node48" href="$class_t_k_space_first_order3_d_solver.html#ae946c38d46067f9818149b858dd27941" title="Get post&#45;processing time." alt="" coords="351,859,665,888"/>
+<area shape="rect" id="node50" href="$class_t_h_d_f5___file_header.html#a0987efedd81cd5af50564d19164498f3" title="Set number of cores." alt="" coords="387,912,629,941"/>
+<area shape="rect" id="node53" href="$class_t_h_d_f5___file_header.html#ae2fd4606e4e55e6ac3d59d8cc6feaab6" title="Write header to the output file." alt="" coords="717,725,992,755"/>
+<area shape="rect" id="node5" href="$class_t_h_d_f5___file.html#aa8ed0a3af8aab45a8c488e1f174a2561" title="Write the scalar value." alt="" coords="760,580,949,609"/>
+<area shape="rect" id="node7" href="$class_t_h_d_f5___file.html#a14420ea89898a2d1daad0461d3b058d2" title="Write data into a dataset." alt="" coords="1045,537,1261,567"/>
+<area shape="rect" id="node9" href="$class_t_h_d_f5___file.html#a0ea9771b2590d29c2fd9fabfa6b1f6dd" title="Write matrix data type into the dataset." alt="" coords="1049,591,1257,620"/>
+<area shape="rect" id="node13" href="$class_t_h_d_f5___file.html#a00315c77cfd66f664e4abf190d018e61" title="Write matrix domain type into the dataset." alt="" coords="1041,644,1265,673"/>
+<area shape="rect" id="node11" href="$class_t_h_d_f5___file.html#adadf23ca9adcf338391c295e3a755264" title="Write string attribute into the dataset." alt="" coords="1316,644,1513,673"/>
+<area shape="rect" id="node32" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class." alt="" coords="773,647,936,676"/>
+</map>

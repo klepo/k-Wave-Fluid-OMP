@@ -1,0 +1,36 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class." alt="" coords="381,5,544,35"/>
+<area shape="rect" id="node5" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real clases)" alt="" coords="349,59,576,88"/>
+<area shape="rect" id="node7" href="$class_t_parameters.html#a69baec575728cf0d01c079e385f6d209" title="Reduced dimension sizes of the simulation (complex clases)" alt="" coords="335,112,591,141"/>
+<area shape="rect" id="node9" href="$class_t_parameters.html#a3c568d1f6115156dcca03778222178cd" title="Get c0_scalar_flag value." alt="" coords="361,165,564,195"/>
+<area shape="rect" id="node11" href="$class_t_parameters.html#adea93c1a39730803fd81837eb029a8a6" title="Get rho0_scalar_flag value." alt="" coords="355,219,571,248"/>
+<area shape="rect" id="node13" href="$class_t_parameters.html#ab271d90fe6525810959649f75d9bf563" title="Get nonlinear_flag value." alt="" coords="361,272,564,301"/>
+<area shape="rect" id="node15" href="$class_t_parameters.html#a48be28790315f2c406dcf21cce645b60" title="Get BonA_scalar_flag value." alt="" coords="352,325,573,355"/>
+<area shape="rect" id="node17" href="$class_t_parameters.html#ac1ebab673b7d4d5d1568fbc8c971b75a" title="Get absorbing_flag value." alt="" coords="360,379,565,408"/>
+<area shape="rect" id="node19" href="$class_t_parameters.html#a32cc82f1713dbf170aa36036286a584a" title="Get alpha_coeff_scallar_flag value." alt="" coords="333,432,592,461"/>
+<area shape="rect" id="node21" href="$class_t_parameters.html#a30a4d14091f947b37bdc637f93aa66b3" title="Get sensor_mask_index_size value." alt="" coords="332,485,593,515"/>
+<area shape="rect" id="node23" href="$class_t_parameters.html#aa70eee128181a142bcbc189c15914fe2" title="Get p0_source_flag value." alt="" coords="359,539,567,568"/>
+<area shape="rect" id="node25" href="$class_t_parameters.html#a1f03b9fbacdeed302f4aae8a79d3cff1" title="Get transducer_source_flag value." alt="" coords="336,592,589,621"/>
+<area shape="rect" id="node27" href="$class_t_parameters.html#a01fdb42ffc3e8c20d3740865185f1fd3" title="Get ux_source_flag value." alt="" coords="359,645,567,675"/>
+<area shape="rect" id="node29" href="$class_t_parameters.html#a8b6566739f41d080ed60cb2d7349d998" title="Get uy_source_flag value." alt="" coords="359,699,567,728"/>
+<area shape="rect" id="node31" href="$class_t_parameters.html#a48f863cbb28ce1cb40a36fe0a455fd52" title="Get uz_source_flag value." alt="" coords="359,752,567,781"/>
+<area shape="rect" id="node33" href="$class_t_parameters.html#ae69eb34e22e243459d58bb5fcc8d0844" title="Get u_source_index_size value." alt="" coords="343,805,583,835"/>
+<area shape="rect" id="node35" href="$class_t_parameters.html#a2fe8bb59c9207398fd15afa7371d3247" title="Get transducer_source_input_size value." alt="" coords="319,859,607,888"/>
+<area shape="rect" id="node37" href="$class_t_parameters.html#a8900909cbc594871728c6239e329b1e6" title="Get p_source_flag value." alt="" coords="361,912,564,941"/>
+<area shape="rect" id="node39" href="$class_t_parameters.html#acd33d8fba86ea509593870e08a1470be" title="Get p_source_many value." alt="" coords="357,965,568,995"/>
+<area shape="rect" id="node41" href="$class_t_parameters.html#aa05458c2c0e78d3e999cb20f655ee0e4" title="Get p_source_index_size value." alt="" coords="343,1019,583,1048"/>
+<area shape="rect" id="node43" href="$class_t_parameters.html#a7e237df11e39492dba16e4083b703184" title="Get u_source_many value." alt="" coords="357,1072,568,1101"/>
+<area shape="rect" id="node45" href="$class_t_parameters.html#a9bd4e19e37f793e2c40c75a6ceef663d" title="Get nonuniform_grid_flag value." alt="" coords="343,1125,583,1155"/>
+<area shape="rect" id="node47" href="$class_t_parameters.html#aaab3a95e9dc2268c62a37321c7f14a65" title="Is &#45;&#45;p_rms specified at the command line." alt="" coords="375,1179,551,1208"/>
+<area shape="rect" id="node51" href="$class_t_parameters.html#ada682748fb8e9b6d61c13ce6ca47233b" title="Is &#45;&#45;p_max specified at the command line." alt="" coords="373,1232,552,1261"/>
+<area shape="rect" id="node55" href="$class_t_parameters.html#abfe535c0046618a71affad007bea9a4c" title="Is &#45;&#45;u_raw specified at the command line." alt="" coords="375,1285,551,1315"/>
+<area shape="rect" id="node59" href="$class_t_parameters.html#abcf0791462d6593d3f79863b8e87f0e8" title="Is &#45;&#45;u_max specified at the command line." alt="" coords="373,1339,552,1368"/>
+<area shape="rect" id="node63" href="$class_t_parameters.html#a5a7b288eebba55e18d3b055707e9f62d" title="Is &#45;&#45;I_avg specified at the command line." alt="" coords="376,1392,549,1421"/>
+<area shape="rect" id="node67" href="$class_t_parameters.html#a7b93ca9566e1e76062431d18821f79e7" title="Is &#45;&#45;I_max specified at the command line." alt="" coords="375,1445,551,1475"/>
+<area shape="rect" id="node49" href="$class_t_command_line_parameters.html#aa671784989985e5ecf5a0835e8101dab" title="Is &#45;&#45;p_rms set?" alt="" coords="657,1179,916,1208"/>
+<area shape="rect" id="node53" href="$class_t_command_line_parameters.html#a8db4a5a7b30a6b81be67c83905ecae64" title="Is &#45;&#45;p_max set?" alt="" coords="656,1232,917,1261"/>
+<area shape="rect" id="node57" href="$class_t_command_line_parameters.html#aa8b12c40535ec1484bb94366bea427f3" title="Is &#45;&#45;u_rms set?" alt="" coords="657,1285,916,1315"/>
+<area shape="rect" id="node61" href="$class_t_command_line_parameters.html#a6cb839453bdb3c530857d431d47ee5b5" title="Is &#45;&#45;u_max set?" alt="" coords="656,1339,917,1368"/>
+<area shape="rect" id="node65" href="$class_t_command_line_parameters.html#ab4df8d47685af4673f90f169da47833d" title="Is &#45;&#45;I_avg set." alt="" coords="660,1392,913,1421"/>
+<area shape="rect" id="node69" href="$class_t_command_line_parameters.html#a13a4eaa62eb0601a2b996cc57a3dbbfc" title="Is &#45;&#45;I_max set." alt="" coords="659,1445,915,1475"/>
+</map>

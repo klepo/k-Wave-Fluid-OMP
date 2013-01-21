@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_real_matrix.html#a8b2df77f1669c331d2a5eb1606f32712" title="Init dimension." alt="" coords="232,5,405,35"/>
+<area shape="rect" id="node5" href="$class_t_base_float_matrix.html#ace873006962b353a092d966587f5762c" title="Memory allocation." alt="" coords="213,59,424,88"/>
+<area shape="rect" id="node7" href="$class_t_base_float_matrix.html#a64df114982d08357c2c6d70c4475b5ad" title="Zero all elements of the matrix (NUMA first touch)." alt="" coords="472,59,653,88"/>
+</map>

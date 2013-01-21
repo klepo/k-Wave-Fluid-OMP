@@ -1,0 +1,15 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a5f470d96be02edd35667a9d6dbc7e0d1" title="Compute new values of for duxdx, duydy, dzdz." alt="" coords="867,161,1139,191"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a0d967415e111376e1a2e5eccbe6c0f2d" title="Calculate new p, non&#45;linear case." alt="" coords="835,215,1171,244"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#abdeb70ec2795fec7c2cdf24f61ff962a" title="Calculate new p linear&#45;case, absorbing." alt="" coords="845,268,1160,297"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a196ebd95f9c91f815c3c15d3e4736416" title="compute new values of for ux_sgx, uy_sgy, uz_sgz" alt="" coords="871,321,1135,351"/>
+<area shape="rect" id="node23" href="$class_tuxyz__sgxyz_matrix.html#a22aece0d9acdec5ffbd6d5afb68e84cc" title="compute this formula dt./rho0_sgx .* ifft (FFT)" alt="" coords="400,112,725,141"/>
+<area shape="rect" id="node28" href="$class_tuxyz__sgxyz_matrix.html#af9fdd52af17a4978a307caa2dcf72d3d" title="compute this formula dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid..." alt="" coords="339,5,787,35"/>
+<area shape="rect" id="node31" href="$class_tuxyz__sgxyz_matrix.html#a54eb5a302dcf9d4921de0f75d2131737" title="compute this formula dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid..." alt="" coords="339,317,787,347"/>
+<area shape="rect" id="node33" href="$class_tuxyz__sgxyz_matrix.html#a20f1af3d83ea8cbacbf37a4d61811124" title="compute this formula dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid..." alt="" coords="339,59,787,88"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D." alt="" coords="1220,241,1513,271"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation." alt="" coords="1564,268,1796,297"/>
+<area shape="rect" id="node9" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1847,268,1895,297"/>
+<area shape="rect" id="node20" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams." alt="" coords="1233,295,1500,324"/>
+<area shape="rect" id="node25" href="$class_t_k_space_first_order3_d_solver.html#aa5597bf6aeed1124ef9f16ae3971a69b" title="Calculate p0_source." alt="" coords="853,84,1152,113"/>
+</map>

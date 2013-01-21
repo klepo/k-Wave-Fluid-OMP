@@ -1,0 +1,19 @@
+<map id="G" name="G">
+<area shape="rect" id="node11" href="$_k_space_first_order3_d_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="1172,83,1433,112"/>
+<area shape="rect" id="node15" href="$_parameters_8h.html" title="The header file containing the parameters of the simulation." alt="" coords="180,701,340,731"/>
+<area shape="rect" id="node39" href="$_matrix_container_8h.html" title="The header file containing the matrix container." alt="" coords="927,160,1124,189"/>
+<area shape="rect" id="node52" href="$_real_matrix_8h.html" title="The header file containing the class for real matrices." alt="" coords="1115,469,1285,499"/>
+<area shape="rect" id="node55" href="$_long_matrix_8h.html" title="The header file containing the class for 64b integer matrices." alt="" coords="691,547,864,576"/>
+<area shape="rect" id="node63" href="$_complex_matrix_8h.html" title="The header file with the class for complex matrices." alt="" coords="1315,392,1509,421"/>
+<area shape="rect" id="node68" href="$_f_f_t_w_complex_matrix_8h.html" title="The header file containing the class that implements 3D FFT using the FFTW interface." alt="" coords="1315,315,1541,344"/>
+<area shape="rect" id="node72" href="$_u_x_y_z___s_g_x_y_z_matrix_8h.html" title="The header file containing the particle velocity matrix." alt="" coords="1291,237,1515,267"/>
+<area shape="rect" id="node83" href="$_output_h_d_f5_stream_8h.html" title="The header file of the class saving RealMatrix data into the output HDF5 file." alt="" coords="308,392,527,421"/>
+<area shape="rect" id="node91" href="$_time_measure_8h.html" title="The header file containing the class measuring elapsed time." alt="" coords="1691,160,1824,189"/>
+<area shape="rect" id="node19" href="$_command_line_parameters_8h.html" title="The header file containing the command line parameters." alt="" coords="43,779,285,808"/>
+<area shape="rect" id="node23" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes." alt="" coords="803,856,949,885"/>
+<area shape="rect" id="node29" href="$_h_d_f5___file_8h.html" title="The header file containing the HDF5 related classes." alt="" coords="411,779,536,808"/>
+<area shape="rect" id="node44" href="$_base_matrix_8h.html" title="The header file of the common ancestor of all matrix classes. A pure abstract class." alt="" coords="789,701,963,731"/>
+<area shape="rect" id="node48" href="$_base_float_matrix_8h.html" title="The header file containing the base class for single precisions floating point numbers (floats)..." alt="" coords="1037,547,1237,576"/>
+<area shape="rect" id="node77" href="$_matrix_names_8h.html" title="The header file storing names of all variables." alt="" coords="645,237,776,267"/>
+<area shape="rect" id="node57" href="$_base_long_matrix_8h.html" title="The header file containing the base class for 64b&#45;wide integers (long for Linux/ size_t for Windows)..." alt="" coords="712,624,912,653"/>
+</map>

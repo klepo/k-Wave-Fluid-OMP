@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a9ce3804af97f2dd448423fdfa24d323f" title="Compute part of the new velocity &#45; gradient in p." alt="" coords="339,59,669,88"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#a5f470d96be02edd35667a9d6dbc7e0d1" title="Compute new values of for duxdx, duydy, dzdz." alt="" coords="735,112,1007,141"/>
+<area shape="rect" id="node22" href="$class_t_k_space_first_order3_d_solver.html#a0d967415e111376e1a2e5eccbe6c0f2d" title="Calculate new p, non&#45;linear case." alt="" coords="336,163,672,192"/>
+<area shape="rect" id="node25" href="$class_t_k_space_first_order3_d_solver.html#abdeb70ec2795fec7c2cdf24f61ff962a" title="Calculate new p linear&#45;case, absorbing." alt="" coords="347,216,661,245"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#aa5597bf6aeed1124ef9f16ae3971a69b" title="Calculate p0_source." alt="" coords="721,59,1020,88"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a196ebd95f9c91f815c3c15d3e4736416" title="compute new values of for ux_sgx, uy_sgy, uz_sgz" alt="" coords="739,5,1003,35"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D." alt="" coords="1071,99,1364,128"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation." alt="" coords="1415,59,1647,88"/>
+<area shape="rect" id="node11" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1697,59,1745,88"/>
+<area shape="rect" id="node16" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams." alt="" coords="1084,19,1351,48"/>
+</map>

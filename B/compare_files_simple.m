@@ -1,0 +1,11 @@
+x1 = h5read('kwave_cpp.h5','/p');
+x2 = h5read('kwave_gpu.h5','/p');
+y1 = reshape(x1, 3, []);
+y2 = reshape(x2, 3, []);
+y2 = y2./max(y1(:));
+y1 = y1./max(y1(:));
+figure; 
+subplot(2, 1, 1), plot(y1.', 'k-');
+hold on;
+plot(y2.', 'r-');
+subplot(2, 1, 2), plot((y1 - y2).');

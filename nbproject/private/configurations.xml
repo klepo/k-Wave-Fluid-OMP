@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data.mat -o Data/simulation</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data.h5 -o Data/simulation</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -p 20 -iData/kwave_input_data.h5 -o Data/simulation</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -p 20 -iData/kwave_input_data.h5 -o Data/simulation.h5</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data.h5 -o Data/simulation.h5</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/simulation.h5</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}" -t 1 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommand>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 4 -p 5 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 --benchmark 1</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 4 -p 5 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 --benchmark 2 -u -p</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 --benchmark 2 -u -p</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_input_data.h5 --benchmark 2 -u -p</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_insput_data.h5 -o Data/kwave_output_data.h5 --benchmark 2 -u -p</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_input_data.h5 -o Data/kwave_output_data.h5 --benchmark 2 -u -p</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_input_data_linux.h5 -o Data/kwave_output_data.h5 </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5 -xx</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5 -xx</runcommand>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="Debug_L2" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"</runcommand>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="Release_No_OMP" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 4</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 2</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 1</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -t 1</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"  -t 1</runcommand>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="PAPI_R" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 4</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 2</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 1</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -t 1</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"  -t 1</runcommand>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="Release_dynamic" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_data.h5 -o Data/simulation.h5 -u -m -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -t 1 -p 5 -i Data/kwave_input_data.h5 -o Data/simulation.h5 -u -m -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -t 4 -p 5 -i Data/kwave_input_data.h5 -o Data/simulation.h5 -u -m -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -t 4 -p 5 -i Data/kwave_input_data.h5 -o Data/simulation.h5  -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -t 4 -p 5 -i Data/kwave_input_data.h5 -o Data/simulation.h5  -u -m -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/Brad.h5 -o Data/simulation.h5  -u -m -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -t 4 -p 5 -i Data/Brad.h5 -o Data/simulation.h5  -u -m -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -t 2 -p 5 -i Data/Brad.h5 -o Data/simulation.h5  -u -m -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -p 5 -i Data/Brad.h5 -o Data/simulation.h5  -u -m -c 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 4 -p 5 -i Data/Brad.h5 -o Data/simulation.h5  -u -m -c 3</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"   -t 4 -p 5 -i Data/Brad.h5 -o Data/simulation.h5  -u -m -c 3</runcommand>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+  </confs>
+</configurationDescriptor>

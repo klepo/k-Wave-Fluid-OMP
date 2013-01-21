@@ -1,0 +1,25 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_time_messsure.html#afa5f8eb788891fa81a44864dbfc748e1" title="Get start timestamp." alt="" coords="401,5,540,35"/>
+<area shape="rect" id="node5" href="$class_t_matrix_container.html#ac75739088d28ff86ca79455cb6c1ff68" title="Load all matrices from the HDF5 file." alt="" coords="333,59,608,88"/>
+<area shape="rect" id="node7" href="$class_t_h_d_f5___file.html#a9a10b5f6d9763abeeee9eb24ef0cfd9d" title="Close file." alt="" coords="408,112,533,141"/>
+<area shape="rect" id="node9" href="$class_t_h_d_f5___file.html#af646f24b063693b29795c529e9e51218" title="Create the file." alt="" coords="405,165,536,195"/>
+<area shape="rect" id="node13" href="$class_t_parameters.html#a52a30e17c908b0167bd1e9142730abd1" title="Get output file name." alt="" coords="368,219,573,248"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a121e9eb5ea8bbff0ed8b0d019050523e" title="Get the sensor_mask_ind matrix from the container." alt="" coords="317,272,624,301"/>
+<area shape="rect" id="node19" href="$class_t_parameters.html#a1baa12f2da59d58f2ab415b547881028" title="Get Nt value." alt="" coords="403,325,539,355"/>
+<area shape="rect" id="node21" href="$class_t_parameters.html#a6ae576164bde07f876438eec13373c2f" title="Get start time index for sensor recording." alt="" coords="372,379,569,408"/>
+<area shape="rect" id="node25" href="$class_t_parameters.html#a15c6fb5c824d4e1e6da8b979fa655062" title="Is &#45;p or &#45;&#45;p_raw specified at the command line." alt="" coords="383,432,559,461"/>
+<area shape="rect" id="node29" href="$class_t_output_h_d_f5_stream.html#aa20c0c5be83e6f18b8185b03479973d2" title="Create stream." alt="" coords="361,485,580,515"/>
+<area shape="rect" id="node40" href="$class_t_parameters.html#af66f3b68a92ed86dcd7cc271c4bcb6ce" title="Get compression level." alt="" coords="361,539,580,568"/>
+<area shape="rect" id="node44" href="$class_t_parameters.html#a617cf5ba858ec2627f1f5ea1eb1c506a" title="Is &#45;u or &#45;&#45;u_raw specified at the command line." alt="" coords="383,592,559,621"/>
+<area shape="rect" id="node48" href="$class_t_time_messsure.html#a13ba6edba530d724cd75e5801230615d" title="Get stop timestamp." alt="" coords="401,645,540,675"/>
+<area shape="rect" id="node11" href="$class_t_h_d_f5___file.html#a1c9891e822fb40070ac8502fcab08625" title="THDF5_File::IsOpened" alt="" coords="749,165,896,195"/>
+<area shape="rect" id="node15" href="$class_t_command_line_parameters.html#a25740983e96740c3aaf338fc375b5c61" title="Get output file name." alt="" coords="680,219,965,248"/>
+<area shape="rect" id="node23" href="$class_t_command_line_parameters.html#a595ca0f1bb3eff74beb4a48702257672" title="Get start time index when sensor data collection begins." alt="" coords="683,325,963,355"/>
+<area shape="rect" id="node27" href="$class_t_command_line_parameters.html#a9c49f5e608ee842671191ae7e9d62dba" title="Is &#45;&#45;p_raw set?" alt="" coords="693,379,952,408"/>
+<area shape="rect" id="node31" href="$class_t_h_d_f5___file.html#a2c592b35d53e8f2739e90b3edcb62121" title="Create the HDF5 dataset." alt="" coords="723,432,923,461"/>
+<area shape="rect" id="node33" href="$class_t_h_d_f5___file.html#a00315c77cfd66f664e4abf190d018e61" title="Write matrix domain type into the dataset." alt="" coords="711,485,935,515"/>
+<area shape="rect" id="node37" href="$class_t_h_d_f5___file.html#a0ea9771b2590d29c2fd9fabfa6b1f6dd" title="Write matrix data type into the dataset." alt="" coords="719,539,927,568"/>
+<area shape="rect" id="node35" href="$class_t_h_d_f5___file.html#adadf23ca9adcf338391c295e3a755264" title="Write string attribute into the dataset." alt="" coords="1023,512,1220,541"/>
+<area shape="rect" id="node42" href="$class_t_command_line_parameters.html#ab653ee7a5309d7739809f618e69ed70e" title="Get compression level." alt="" coords="672,592,973,621"/>
+<area shape="rect" id="node46" href="$class_t_command_line_parameters.html#a9fbe6693a5732ef7adbb5dc0cf17e316" title="Is &#45;&#45;u_raw set?" alt="" coords="693,645,952,675"/>
+</map>

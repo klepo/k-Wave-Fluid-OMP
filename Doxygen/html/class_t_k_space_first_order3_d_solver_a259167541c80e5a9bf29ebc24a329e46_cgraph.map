@@ -1,0 +1,15 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_parameters.html#a32cc82f1713dbf170aa36036286a584a" title="Get alpha_coeff_scallar_flag value." alt="" coords="485,5,744,35"/>
+<area shape="rect" id="node5" href="$class_t_parameters.html#a3c568d1f6115156dcca03778222178cd" title="Get c0_scalar_flag value." alt="" coords="513,59,716,88"/>
+<area shape="rect" id="node7" href="$class_t_parameters.html#a32818cdb7aa3929d2c32cdbdbcd46cee" title="Get alpha_power value." alt="" coords="517,112,712,141"/>
+<area shape="rect" id="node9" href="$class_t_parameters.html#a0c27e5b5876b71ba8a8ca7cfa5c870f9" title="Get alpha_coeff_scallar value." alt="" coords="500,165,729,195"/>
+<area shape="rect" id="node11" href="$class_t_parameters.html#a25497cd8634328e0e3ef806d7bff543a" title="Get absorb_tau_scalar value." alt="" coords="501,219,728,248"/>
+<area shape="rect" id="node13" href="$class_t_parameters.html#a58435ff22b40d83e593828b3831d406e" title="Get c0_scalar value." alt="" coords="527,272,703,301"/>
+<area shape="rect" id="node15" href="$class_t_parameters.html#ac5966db731c8ddaa4a2fc441d9208f7d" title="Get absorb_eta_scalar value." alt="" coords="501,325,728,355"/>
+<area shape="rect" id="node17" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real clases)" alt="" coords="501,379,728,408"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#ac0e7e10741c8daec01ab2528e5b28ac7" title="Get the absorb_tau matrix from the container." alt="" coords="480,432,749,461"/>
+<area shape="rect" id="node21" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="519,485,711,515"/>
+<area shape="rect" id="node23" href="$class_t_k_space_first_order3_d_solver.html#aa7bb20d4135cde18b681062703ebfeb2" title="Get the absorb_eta matrix from the container." alt="" coords="480,539,749,568"/>
+<area shape="rect" id="node25" href="$class_t_k_space_first_order3_d_solver.html#a091ae6e2f6719e954a5f966f8a596f88" title="Get the Temp_1_RS3D matrix from the container." alt="" coords="468,592,761,621"/>
+<area shape="rect" id="node27" href="$class_t_k_space_first_order3_d_solver.html#a4074057aa8f95571285ce185a96918af" title="Get the c^2 matrix from the container." alt="" coords="504,645,725,675"/>
+</map>

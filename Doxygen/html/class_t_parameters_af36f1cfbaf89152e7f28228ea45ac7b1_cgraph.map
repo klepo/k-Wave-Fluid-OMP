@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file.html#a1c9891e822fb40070ac8502fcab08625" title="THDF5_File::IsOpened" alt="" coords="663,7,809,36"/>
+<area shape="rect" id="node5" href="$class_t_h_d_f5___file.html#abf7d7675f00f5cb6c4734b8f7c7c1caf" title="Open the file." alt="" coords="387,33,509,63"/>
+<area shape="rect" id="node8" href="$class_t_h_d_f5___file.html#a899361597ee7dde095008c5aff70cdbc" title="Read data from the dataset." alt="" coords="339,137,557,167"/>
+<area shape="rect" id="node10" href="$class_t_h_d_f5___file.html#a388c5f1d4446e22206a48b02364d1cbd" title="Check dataset dimension sizes." alt="" coords="615,85,857,115"/>
+<area shape="rect" id="node14" href="$class_t_h_d_f5___file.html#a64f339fa364e1bbbd1f20fa37e1b3d24" title="Get dataset element count." alt="" coords="332,191,564,220"/>
+<area shape="rect" id="node12" href="$struct_t_dimension_sizes.html#a6b893b8f9e5b4535de4df86e9cd5a85f" title="Get element count." alt="" coords="625,139,847,168"/>
+</map>

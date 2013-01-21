@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_parameters.html#a6fd4a538674b37821378b8ba64f81802" title="Get number of threads." alt="" coords="375,5,593,35"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a9114f72450c5e5f307a9a6b5bd332200" title="Get the FFT_X_temp from the container." alt="" coords="345,59,623,88"/>
+<area shape="rect" id="node9" href="$class_t_f_f_t_w_complex_matrix.html#a86cb5ee5dc0afe109d8b9c57018bf9c2" title="Create FFTW plan for Real&#45;to&#45;Complex." alt="" coords="344,165,624,195"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#a42ccdc05ba68365b687d3c4a358fdcca" title="Get the p matrix from the container." alt="" coords="376,219,592,248"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#aef8925544ee69b5c53b1cc03377eb207" title="Get the FFT_Y_temp from the container." alt="" coords="345,272,623,301"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#a6a15acf2e312fbfb9fcbd1dbc9c9c96d" title="Get the FFT_Z_temp from the container." alt="" coords="345,325,623,355"/>
+<area shape="rect" id="node21" href="$class_t_f_f_t_w_complex_matrix.html#acefb6f369cfb341fb13ef8cc6d0b697e" title="Create FFTW plan for Complex&#45;to&#45;Real." alt="" coords="344,112,624,141"/>
+<area shape="rect" id="node5" href="$class_t_command_line_parameters.html#a82525d1f1fcbecd9723e0ac3faae2d14" title="Get number of threads." alt="" coords="672,5,971,35"/>
+<area shape="rect" id="node11" href="$class_t_base_float_matrix.html#a789f3476db3b94f488642f524859c4f7" title="Get dimension sizes of the matrix." alt="" coords="707,165,936,195"/>
+<area shape="rect" id="node13" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="725,112,917,141"/>
+</map>

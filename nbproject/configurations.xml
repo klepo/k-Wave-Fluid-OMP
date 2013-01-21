@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1" displayName="HDF5" projectFiles="true">
+      <itemPath>HDF5/HDF5_File.cpp</itemPath>
+      <itemPath>HDF5/HDF5_File.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="f4" displayName="KSpaceSolver" projectFiles="true">
+      <itemPath>KSpaceSolver/KSpaceFirstOrder3DSolver.cpp</itemPath>
+      <itemPath>KSpaceSolver/KSpaceFirstOrder3DSolver.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="MatrixData" displayName="MatrixClases" projectFiles="true">
+      <itemPath>MatrixClasses/BaseFloatMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/BaseFloatMatrix.h</itemPath>
+      <itemPath>MatrixClasses/BaseLongMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/BaseLongMatrix.h</itemPath>
+      <itemPath>MatrixClasses/BaseMatrix.h</itemPath>
+      <itemPath>MatrixClasses/ComplexMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/ComplexMatrix.h</itemPath>
+      <itemPath>MatrixClasses/FFTWComplexMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/FFTWComplexMatrix.h</itemPath>
+      <itemPath>MatrixClasses/LongMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/LongMatrix.h</itemPath>
+      <itemPath>MatrixClasses/MatrixContainer.cpp</itemPath>
+      <itemPath>MatrixClasses/MatrixContainer.h</itemPath>
+      <itemPath>MatrixClasses/OutputHDF5Stream.cpp</itemPath>
+      <itemPath>MatrixClasses/OutputHDF5Stream.h</itemPath>
+      <itemPath>MatrixClasses/RealMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/RealMatrix.h</itemPath>
+      <itemPath>MatrixClasses/UXYZ_SGXYZMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/UXYZ_SGXYZMatrix.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="f3" displayName="Parameters" projectFiles="true">
+      <itemPath>Parameters/CommandLineParameters.cpp</itemPath>
+      <itemPath>Parameters/CommandLineParameters.h</itemPath>
+      <itemPath>Parameters/Parameters.cpp</itemPath>
+      <itemPath>Parameters/Parameters.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>main.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="f2" displayName="Utils" projectFiles="true">
+      <itemPath>Utils/DimensionSizes.h</itemPath>
+      <itemPath>Utils/ErrorMessages.h</itemPath>
+      <itemPath>Utils/MatrixNames.h</itemPath>
+      <itemPath>Utils/TimeMeasure.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+      <itemPath>Parameter_definition.txt</itemPath>
+      <itemPath>change.log</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>/usr/local/hdf5-1.8.9-sequential/include</pElem>
+          </incDir>
+          <commandLine>-fopenmp -msse4.2</commandLine>
+          <useLinkerLibraries>false</useLinkerLibraries>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>/usr/local/hdf5-1.8.9-sequential/lib</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>/usr/local/hdf5-1.8.9-sequential/lib</pElem>
+          </linkerDynSerch>
+          <linkerLibItems>
+            <linkerLibFileItem>/usr/local/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibFileItem>/usr/local/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibLibItem>hdf5</linkerLibLibItem>
+            <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-fopenmp -fftw3f -lm</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>6</developmentMode>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>6</developmentMode>
+          <architecture>2</architecture>
+          <incDir>
+            <pElem>/usr/local/hdf5-1.8.9-sequential/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
+          <commandLine>-Wall -fopenmp -msse4.2 -ffast-math -fassociative-math -ftree-vectorizer-verbose=0</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>2</warningLevel>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>/usr/local/hdf5-1.8.9-sequential/lib</pElem>
+          </linkerAddLib>
+          <commandlineTool>g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibFileItem>/usr/local/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibFileItem>/usr/local/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibFileItem>/usr/local/hdf5-1.8.9-sequential/lib/libhdf5_hl.a</linkerLibFileItem>
+            <linkerLibFileItem>/usr/local/hdf5-1.8.9-sequential/lib/libhdf5.a</linkerLibFileItem>
+            <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
+          </linkerLibItems>
+          <commandLine>-fopenmp -fftw3f -lm</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Debug_L2" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <commandLine>-fopenmp -D__PRINT_OUT_L2__</commandLine>
+          <useLinkerLibraries>false</useLinkerLibraries>
+        </ccTool>
+        <linkerTool>
+          <commandLine>-fopenmp</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release_No_OMP" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>6</developmentMode>
+          <commandLine>-pg -D__NO_OMP__</commandLine>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibLibItem>fftw3f</linkerLibLibItem>
+            <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-fopenmp -lm</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="PAPI_R" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>6</developmentMode>
+          <commandLine>-D__NO_OMP__</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibLibItem>fftw3f</linkerLibLibItem>
+            <linkerLibLibItem>papi</linkerLibLibItem>
+            <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-fopenmp -lm -g</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release_dynamic" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>6</developmentMode>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>6</developmentMode>
+          <architecture>2</architecture>
+          <incDir>
+            <pElem>/usr/local/hdf5-1.8.9-sequential/include</pElem>
+          </incDir>
+          <commandLine>-fopenmp -msse4.2 -ffast-math -fassociative-math -ftree-vectorizer-verbose=0</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>/usr/local/hdf5-1.8.9-sequential/lib</pElem>
+          </linkerAddLib>
+          <commandlineTool>g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibFileItem>/usr/local/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibFileItem>/usr/local/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibLibItem>hdf5</linkerLibLibItem>
+            <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-fopenmp -fftw3f -lm</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

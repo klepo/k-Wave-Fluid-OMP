@@ -1,0 +1,28 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a121e9eb5ea8bbff0ed8b0d019050523e" title="Get the sensor_mask_ind matrix from the container." alt="" coords="348,5,655,35"/>
+<area shape="rect" id="node5" href="$class_t_base_long_matrix.html#ac1721f6d48e4fd69a73643a35a9d17c7" title="Get total element count of the matrix." alt="" coords="377,59,625,88"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a7cf912613ab225e7248891d34b4456ec" title="Get the ux_sgx matrix from the container." alt="" coords="377,112,625,141"/>
+<area shape="rect" id="node9" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="405,165,597,195"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a68975a172579fb20115b5e671251b964" title="Get the uy_sgy matrix from the container." alt="" coords="377,219,625,248"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a159852c13711b796b583b40478285b46" title="Get the uz_sgz matrix from the container." alt="" coords="377,272,625,301"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#a42ccdc05ba68365b687d3c4a358fdcca" title="Get the p matrix from the container." alt="" coords="393,325,609,355"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#ad67bf0c533fca61ed054009fd6f34cb3" title="Get the ux_sensor_i_1_agr_2 (the i&#45;1 step, and average over points in staggered grid) from the contai..." alt="" coords="337,379,665,408"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#a8f03ab6b68104163d94fae0297167a5f" title="Get the uy_sensor_i_1_agr_2 (the i&#45;1 step, and average over points in staggered grid) from the contai..." alt="" coords="337,432,665,461"/>
+<area shape="rect" id="node21" href="$class_t_k_space_first_order3_d_solver.html#a8e8029377b2183a3a287f4d8123b354c" title="Get the uz_sensor_i_1_agr_2 (the i&#45;1 step, and average over 2 points in staggered grid) from the cont..." alt="" coords="337,485,665,515"/>
+<area shape="rect" id="node23" href="$class_t_k_space_first_order3_d_solver.html#aa2dd3bf02e68f731073e55634361cb1b" title="Get the p_sensor_i_1_raw (the i&#45;1 step) from the container." alt="" coords="347,539,656,568"/>
+<area shape="rect" id="node25" href="$class_t_parameters.html#a5a7b288eebba55e18d3b055707e9f62d" title="Is &#45;&#45;I_avg specified at the command line." alt="" coords="415,592,588,621"/>
+<area shape="rect" id="node29" href="$class_t_k_space_first_order3_d_solver.html#a623b5b6c9197e9f0c358e4848163dba8" title="Get the Ix_sensor_avg from the container." alt="" coords="357,645,645,675"/>
+<area shape="rect" id="node31" href="$class_t_k_space_first_order3_d_solver.html#a36850ca00133c29e33fcdfe98ddea636" title="Get the Iy_sensor_avg from the container." alt="" coords="357,699,645,728"/>
+<area shape="rect" id="node33" href="$class_t_k_space_first_order3_d_solver.html#a1057fe5977bcb9aa46a77f8fdc20d78b" title="Get the Iz_sensor_avg from the container." alt="" coords="357,752,645,781"/>
+<area shape="rect" id="node35" href="$class_t_parameters.html#a7b93ca9566e1e76062431d18821f79e7" title="Is &#45;&#45;I_max specified at the command line." alt="" coords="413,805,589,835"/>
+<area shape="rect" id="node39" href="$class_t_k_space_first_order3_d_solver.html#a2bc593191a24cb3a8e7852adf7c3b0e8" title="Get the Ix_sensor_max from the container." alt="" coords="356,859,647,888"/>
+<area shape="rect" id="node41" href="$class_t_k_space_first_order3_d_solver.html#ab7d4c8abb7959cc35df1e9623fa135cf" title="Get the Iy_sensor_max from the container." alt="" coords="356,912,647,941"/>
+<area shape="rect" id="node43" href="$class_t_k_space_first_order3_d_solver.html#abc15be2c955ccfdfa434842f518a9b5c" title="Get the Iz_sensor_max from the container." alt="" coords="356,965,647,995"/>
+<area shape="rect" id="node45" href="$class_t_base_long_matrix.html#a025461b0f94d1d572476324b279fb1d3" title="Get raw data out of the class (for direct kernel access)." alt="" coords="404,1019,599,1048"/>
+<area shape="rect" id="node47" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real clases)" alt="" coords="388,1072,615,1101"/>
+<area shape="rect" id="node49" href="$class_t_parameters.html#a6ae576164bde07f876438eec13373c2f" title="Get start time index for sensor recording." alt="" coords="403,1125,600,1155"/>
+<area shape="rect" id="node53" href="$class_t_parameters.html#a1baa12f2da59d58f2ab415b547881028" title="Get Nt value." alt="" coords="433,1179,569,1208"/>
+<area shape="rect" id="node27" href="$class_t_command_line_parameters.html#ab4df8d47685af4673f90f169da47833d" title="Is &#45;&#45;I_avg set." alt="" coords="728,592,981,621"/>
+<area shape="rect" id="node37" href="$class_t_command_line_parameters.html#a13a4eaa62eb0601a2b996cc57a3dbbfc" title="Is &#45;&#45;I_max set." alt="" coords="727,805,983,835"/>
+<area shape="rect" id="node51" href="$class_t_command_line_parameters.html#a595ca0f1bb3eff74beb4a48702257672" title="Get start time index when sensor data collection begins." alt="" coords="715,1125,995,1155"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file_header.html#ac9a9b6a3e1c9ba2b145c41e0414a13ed" title="Set memory consumption." alt="" coords="251,5,520,35"/>
+<area shape="rect" id="node9" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1265,111,1313,140"/>
+<area shape="rect" id="node11" href="$class_t_h_d_f5___file_header.html#a0987efedd81cd5af50564d19164498f3" title="Set number of cores." alt="" coords="264,59,507,88"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#ac722ef9133730f662e054ff8b30496a5" title="Constructor." alt="" coords="216,163,555,192"/>
+<area shape="rect" id="node17" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container." alt="" coords="617,188,881,217"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file." alt="" coords="603,59,896,88"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation." alt="" coords="964,59,1196,88"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation." alt="" coords="945,175,1215,204"/>
+</map>

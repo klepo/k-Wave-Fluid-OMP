@@ -1,0 +1,11 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a8b9f651852c4ad55740192cfeb3c6df4" title="Get the dt.*rho0_sgx matrix from the container." alt="" coords="421,5,699,35"/>
+<area shape="rect" id="node5" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="464,59,656,88"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a9887a350e439828c55a9dc7e01b22134" title="Get the dt.*rho0_sgy matrix from the container." alt="" coords="421,112,699,141"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a833ed823e608875855724a05eab4d139" title="Get the dt.*rho0_sgz matrix from the container." alt="" coords="421,165,699,195"/>
+<area shape="rect" id="node11" href="$class_t_parameters.html#a2e022544f8b2654b428f22d0b0b4c67f" title="Get dt value." alt="" coords="493,219,627,248"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a848704374ac75d492077e45238a40358" title="Get the dxudxn_sgx matrix from the container." alt="" coords="423,272,697,301"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#a7ab37988c03ee1dda5598706e51e6588" title="Get the dyudyn_sgy matrix from the container." alt="" coords="423,325,697,355"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a487d70ef0b124d73d80a41e0f6e25b0f" title="Get the dzudzn_sgz matrix from the container." alt="" coords="423,379,697,408"/>
+<area shape="rect" id="node19" href="$class_t_base_float_matrix.html#a789f3476db3b94f488642f524859c4f7" title="Get dimension sizes of the matrix." alt="" coords="445,432,675,461"/>
+</map>

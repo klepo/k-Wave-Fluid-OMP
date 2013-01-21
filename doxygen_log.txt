@@ -1,0 +1,785 @@
+Searching for include files...
+Searching for example files...
+Searching for images...
+Searching for dot files...
+Searching for msc files...
+Searching for files to exclude
+Searching for files to process...
+Searching for files in directory /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5
+Searching for files in directory /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver
+Searching for files in directory /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses
+Searching for files in directory /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters
+Searching for files in directory /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils
+Reading and parsing tag files
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommandLineParameters.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommandLineParameters.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.cpp...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.cpp...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/ErrorMessages.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/ErrorMessages.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/MatrixNames.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/MatrixNames.h...
+Preprocessing /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h...
+Parsing file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h...
+Building group list...
+Building directory list...
+Building namespace list...
+Building file list...
+Building class list...
+Associating documentation with classes...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:50: warning: the name `-Space' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:45: warning: the name `class' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:44: warning: the name `class' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:40: warning: the name `base' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:46: warning: the name `mantain' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:56: warning: the name `a' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:40: warning: the name `with' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:40: warning: the name `Matrix' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:104: warning: the name `record' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.h:45: warning: the name `stream' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.h:43: warning: the name `matrix' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:38: warning: the name `and' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:42: warning: the name `of' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:44: warning: the name `with' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:38: warning: the name `Messsure' supplied as the argument of the \class, \struct, \union, or \include command is not an input file
+Computing nesting relations for classes...
+Building example list...
+Searching for enumerations...
+Searching for documented typedefs...
+Searching for members imported via using declarations...
+Searching for included using directives...
+Searching for documented variables...
+Building member list...
+Searching for friends...
+Searching for documented defines...
+Computing class inheritance relations...
+Computing class usage relations...
+Flushing cached template relations that have become invalid...
+Creating members for template instances...
+Computing class relations...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:43: warning: Compound TFFTWComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.h:45: warning: Compound TRealMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:162: warning: Compound THDF5_FileHeader is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:40: warning: Compound TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:58: warning: Compound TComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:46: warning: Compound TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:42: warning: Compound TLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:52: warning: Compound KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:48: warning: Compound float_complex is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:46: warning: Compound TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:46: warning: Compound TDimensionSizes is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.h:47: warning: Compound TOutputHDF5Stream is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:43: warning: Compound TBaseMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:68: warning: Compound THDF5_File is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:106: warning: Compound TMatrixRecord is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:47: warning: Compound TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:40: warning: Compound TTimeMesssure is not documented.
+Add enum values to enums...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:45: warning: Documentation for undefined enum `Matrix' found.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:50: warning: Documentation for undefined enum `Matrix' found.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:55: warning: Documentation for undefined enum `HDF5' found.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:97: warning: Documentation for undefined enum `Matrix' found.
+Searching for member function documentation...
+Building page list...
+Search for main page...
+Computing page relations...
+Determining the scope of groups...
+Sorting lists...
+Freeing entry tree
+Determining which enums are documented
+Computing member relations...
+Building full member lists recursively...
+Adding members to member groups.
+Computing member references...
+Inheriting documentation...
+Generating disk names...
+Adding source references...
+Adding xrefitems...
+Sorting member lists...
+Counting data structures...
+Resolving user defined references...
+Finding anchors and sections in the documentation...
+Combining using relations...
+Adding members to index pages...
+Generating style sheet...
+Generating search indices...
+Generating index page...
+Generating page index...
+Generating example documentation...
+Generating file sources...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/ErrorMessages.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/MatrixNames.h...
+Generating code for file /home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h...
+Generating file documentation...
+Generating page documentation...
+Generating group documentation...
+Generating group index...
+Generating class documentation...
+Generating annotated compound index...
+Generating alphabetical compound index...
+Generating hierarchical class index...
+Generating member index...
+Generating docs for compound Base...
+Generating docs for compound class...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:39: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:40: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:41: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:42: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:44: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:46: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:47: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:48: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:50: warning: Found unknown command `\License'
+Generating docs for compound float_complex...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:49: warning: Member real (variable) of class float_complex is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:50: warning: Member imag (variable) of class float_complex is not documented.
+Generating docs for compound HDF5...
+Generating docs for compound HDF5_File...
+Generating docs for compound K...
+Generating docs for compound KSpaceFirstOrder3DSolver...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:75: warning: Member GetCodeName() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:79: warning: Member GetTotalTime() const  (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:80: warning: Member GetPreProcessingTime() const  (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:81: warning: Member GetDataLoadTime() const  (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:82: warning: Member GetSimulationTime() const  (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:83: warning: Member GetPostProcessingTime() const  (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:89: warning: Member KSpaceFirstOrder3DSolver(const KSpaceFirstOrder3DSolver &orig) (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:90: warning: Member operator=(const KSpaceFirstOrder3DSolver &orig) (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:108: warning: Member Compute_uxyz() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:111: warning: Member Compute_duxyz() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:115: warning: Member Compute_rhoxyz_linear() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:116: warning: Member Compute_rhoxyz_nonlinear() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:142: warning: Member Compute_new_p_nonlinear() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:143: warning: Member Compute_new_p_linear() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:159: warning: Member Caclucalte_dt_rho0_non_uniform() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:165: warning: Member PrintOtputHeader() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:167: warning: Member ComputeC2() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:173: warning: Member Get_kappa() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:176: warning: Member Get_c2() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:179: warning: Member Get_p() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:183: warning: Member Get_ux_sgx() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:185: warning: Member Get_uy_sgy() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:187: warning: Member Get_uz_sgz() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:190: warning: Member Get_duxdx() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:192: warning: Member Get_duydy() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:194: warning: Member Get_duzdz() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:198: warning: Member Get_dt_rho0_sgx() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:200: warning: Member Get_dt_rho0_sgy() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:202: warning: Member Get_dt_rho0_sgz() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:207: warning: Member Get_rhox() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:209: warning: Member Get_rhoy() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:211: warning: Member Get_rhoz() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:213: warning: Member Get_rho0() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:217: warning: Member Get_ddx_k_shift_pos() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:219: warning: Member Get_ddy_k_shift_pos() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:221: warning: Member Get_ddz_k_shift_pos() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:224: warning: Member Get_ddx_k_shift_neg() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:226: warning: Member Get_ddy_k_shift_neg() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:228: warning: Member Get_ddz_k_shift_neg() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:233: warning: Member Get_pml_x_sgx() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:235: warning: Member Get_pml_y_sgy() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:237: warning: Member Get_pml_z_sgz() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:240: warning: Member Get_pml_x() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:242: warning: Member Get_pml_y() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:244: warning: Member Get_pml_z() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:249: warning: Member Get_dxudxn() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:251: warning: Member Get_dyudyn() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:253: warning: Member Get_dzudzn() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:256: warning: Member Get_dxudxn_sgx() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:258: warning: Member Get_dyudyn_sgy() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:260: warning: Member Get_dzudzn_sgz() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:266: warning: Member Get_BonA() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:269: warning: Member Get_absorb_tau() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:272: warning: Member Get_absorb_eta() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:276: warning: Member Get_absorb_nabla1() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:278: warning: Member Get_absorb_nabla2() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:284: warning: Member Get_sensor_mask_ind() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:287: warning: Member Get_us_index() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:290: warning: Member Get_ps_index() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:293: warning: Member Get_delay_mask() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:300: warning: Member Get_transducer_source_input() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:304: warning: Member Get_p_source_input() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:308: warning: Member Get_ux_source_input() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:311: warning: Member Get_uy_source_input() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:314: warning: Member Get_uz_source_input() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:322: warning: Member Get_Temp_1_RS3D() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:324: warning: Member Get_Temp_2_RS3D() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:326: warning: Member Get_Temp_3_RS3D() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:330: warning: Member Get_p_sensor_rms() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:333: warning: Member Get_p_senosr_max() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:336: warning: Member Get_ux_sensor_rms() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:338: warning: Member Get_uy_sensor_rms() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:340: warning: Member Get_uz_sensor_rms() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:343: warning: Member Get_ux_senosr_max() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:345: warning: Member Get_uy_senosr_max() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:347: warning: Member Get_uz_senosr_max() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:351: warning: Member Get_Ix_senosr_avg() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:353: warning: Member Get_Iy_senosr_avg() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:355: warning: Member Get_Iz_senosr_avg() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:358: warning: Member Get_Ix_senosr_max() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:360: warning: Member Get_Iy_senosr_max() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:362: warning: Member Get_Iz_senosr_max() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:366: warning: Member Get_p_sensor_i_1_raw() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:368: warning: Member Get_ux_sensor_i_1_agr_2() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:370: warning: Member Get_uy_sensor_i_1_agr_2() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:372: warning: Member Get_uz_sensor_i_1_agr_2() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:376: warning: Member Get_FFT_X_temp() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:378: warning: Member Get_FFT_Y_temp() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:380: warning: Member Get_FFT_Z_temp() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:386: warning: Member Get_p0_source_input() (function) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:391: warning: Member p_sensor_raw_OutputStream (variable) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:393: warning: Member ux_sensor_raw_OutputStream (variable) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:394: warning: Member uy_sensor_raw_OutputStream (variable) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.h:395: warning: Member uz_sensor_raw_OutputStream (variable) of class KSpaceFirstOrder3DSolver is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:1687: warning: argument 'RHO_Temp' of command @param is not found in the argument list of KSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix &Sum_rhoxyz, TRealMatrix &Sum_rho0_du)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:1687: warning: The following parameters of KSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix &Sum_rhoxyz, TRealMatrix &Sum_rho0_du) are not documented:
+  parameter 'Sum_rhoxyz'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:886: warning: Found unknown command `\times'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:885: warning: argument 'p_Matrix' of command @param is not found in the argument list of KSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(TRealMatrix &X_Matrix, TFFTWComplexMatrix &FFT_X, TFFTWComplexMatrix &FFT_Y, TFFTWComplexMatrix &FFT_Z, TRealMatrix &kappa, TComplexMatrix &ddx, TComplexMatrix &ddy, TComplexMatrix &ddz)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:889: warning: Found unknown command `\parmas'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:890: warning: Found unknown command `\parmas'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:891: warning: Found unknown command `\parmas'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:893: warning: Found unknown command `\parmas'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:895: warning: Found unknown command `\parmas'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:896: warning: Found unknown command `\parmas'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:897: warning: Found unknown command `\parmas'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:885: warning: The following parameters of KSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(TRealMatrix &X_Matrix, TFFTWComplexMatrix &FFT_X, TFFTWComplexMatrix &FFT_Y, TFFTWComplexMatrix &FFT_Z, TRealMatrix &kappa, TComplexMatrix &ddx, TComplexMatrix &ddy, TComplexMatrix &ddz) are not documented:
+  parameter 'X_Matrix'
+  parameter 'FFT_X'
+  parameter 'FFT_Y'
+  parameter 'FFT_Z'
+  parameter 'kappa'
+  parameter 'ddx'
+  parameter 'ddy'
+  parameter 'ddz'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:273: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/KSpaceSolver/KSpaceFirstOrder3DSolver.cpp:2396: warning: Found unknown command `\params'
+Generating docs for compound Long...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:39: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:40: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:41: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:42: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:44: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:46: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:47: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:48: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:50: warning: Found unknown command `\License'
+Generating docs for compound maintaining...
+Generating docs for compound Matrix...
+Generating docs for compound Output...
+Generating docs for compound Parameters...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:41: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:42: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:43: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:44: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:45: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:47: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:48: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:49: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:51: warning: Found unknown command `\License'
+Generating docs for compound Parse...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:37: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:38: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:39: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:40: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:41: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:43: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:44: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:46: warning: Found unknown command `\License'
+Generating docs for compound Real...
+Generating docs for compound Structure...
+Generating docs for compound TBaseFloatMatrix...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:57: warning: Member GetDimensionSizes() const  (function) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:62: warning: Member GetTotalElementCount() const  (function) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:66: warning: Member GetTotalAllocatedElementCount() const  (function) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:82: warning: Member ZeroMatrix() (function) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:85: warning: Member ScalarDividedBy(const float scalar) (function) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:89: warning: Member GetRawData() (function) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:114: warning: Member TBaseFloatMatrix(const TBaseFloatMatrix &orig) (function) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:116: warning: Member operator=(const TBaseFloatMatrix &) (function) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:95: warning: Member pTotalElementCount (variable) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:96: warning: Member pTotalAllocatedElementCount (variable) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:98: warning: Member pDimensionSizes (variable) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:100: warning: Member pDataRowSize (variable) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:101: warning: Member p2DDataSliceSize (variable) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.h:103: warning: Member pMatrixData (variable) of class TBaseFloatMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:63: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:64: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:65: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:66: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:68: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:70: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:71: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:72: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:74: warning: Found unknown command `\License'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseFloatMatrix.cpp:107: warning: Found unknown command `\params'
+Generating docs for compound TBaseLongMatrix...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:55: warning: Member GetDimensionSizes() const  (function) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:60: warning: Member GetTotalElementCount() const  (function) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:65: warning: Member GetTotalAllocatedElementCount() const  (function) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:75: warning: Member GetRawData() (function) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:90: warning: Member TBaseLongMatrix(const TBaseLongMatrix &orig) (function) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:92: warning: Member operator=(const TBaseLongMatrix &) (function) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:79: warning: Member pTotalElementCount (variable) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:80: warning: Member pTotalAllocatedElementCount (variable) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:82: warning: Member pDimensionSizes (variable) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:84: warning: Member pDataRowSize (variable) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:85: warning: Member p2DDataSliceSize (variable) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.h:87: warning: Member pMatrixData (variable) of class TBaseLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:58: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:59: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:60: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:61: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:63: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:65: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:66: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:67: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseLongMatrix.cpp:69: warning: Found unknown command `\License'
+Generating docs for compound TBaseMatrix...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:49: warning: Member GetDimensionSizes() const =0 (function) of class TBaseMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:52: warning: Member GetTotalElementCount() const =0 (function) of class TBaseMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:55: warning: Member GetTotalAllocatedElementCount() const =0 (function) of class TBaseMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:58: warning: Member LoadDataFromHDF5File(THDF5_File &HDF5_File, const char *MatrixName) (function) of class TBaseMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:61: warning: Member WriteDataToHDF5File(THDF5_File &HDF5_File, const char *MatrixName, const int CompressionLevel) (function) of class TBaseMatrix is not documented.
+Generating docs for compound TCommandLineParameters...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:46: warning: Member GetInputFileName() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:47: warning: Member GetOutputFileName() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:49: warning: Member IsBenchmarkFlag() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:50: warning: Member IsVersion() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:51: warning: Member GetBenchmarkTimeStepsCount() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:53: warning: Member GetCompressionLevel() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:54: warning: Member GetNumberOfThreads() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:55: warning: Member GetVerboseInterval() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:57: warning: Member GetStartTimeIndex() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:60: warning: Member IsStore_p_raw() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:61: warning: Member IsStore_p_rms() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:62: warning: Member IsStore_p_max() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:63: warning: Member IsStore_p_final() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:65: warning: Member IsStore_u_raw() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:66: warning: Member IsStore_u_rms() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:67: warning: Member IsStore_u_max() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:68: warning: Member IsStore_u_final() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:70: warning: Member IsStore_I_avg() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:71: warning: Member IsStore_I_max() const  (function) of class TCommandLineParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/CommnadLineParameters.h:80: warning: Member TCommandLineParameters(const TCommandLineParameters &orig) (function) of class TCommandLineParameters is not documented.
+Generating docs for compound TComplexMatrix...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:69: warning: Member operator[](const size_t &index) (function) of class TComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:75: warning: Member GetElementFrom3D(const size_t X, const size_t Y, const size_t Z) (function) of class TComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:85: warning: Member WriteDataToHDF5File(THDF5_File &HDF5_File, const char *MatrixName, const int CompressionLevel) (function) of class TComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.h:96: warning: Member TComplexMatrix(const TComplexMatrix &orig) (function) of class TComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:51: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:52: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:53: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:54: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:56: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:58: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:59: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:60: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:62: warning: Found unknown command `\License'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/ComplexMatrix.cpp:79: warning: Found unknown command `\params'
+Generating docs for compound TDimensionSizes...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:51: warning: Member TDimensionSizes(size_t x, size_t y, size_t z) (function) of class TDimensionSizes is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:53: warning: Member TDimensionSizes(const TDimensionSizes &second) (function) of class TDimensionSizes is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:58: warning: Member GetElementCount() const  (function) of class TDimensionSizes is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:61: warning: Member operator==(const TDimensionSizes &other) const  (function) of class TDimensionSizes is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:67: warning: Member operator!=(const TDimensionSizes &other) const  (function) of class TDimensionSizes is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:47: warning: Member X (variable) of class TDimensionSizes is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:48: warning: Member Y (variable) of class TDimensionSizes is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/DimensionSizes.h:49: warning: Member Z (variable) of class TDimensionSizes is not documented.
+Generating docs for compound TFFTWComplexMatrix...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:66: warning: Member TFFTWComplexMatrix(const TFFTWComplexMatrix &orig) (function) of class TFFTWComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:68: warning: Member fftw_plan_RealToComplex (variable) of class TFFTWComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:69: warning: Member fftw_plan_ComplexToReal (variable) of class TFFTWComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:71: warning: Member fftw_plan_RealToComplex_Created (variable) of class TFFTWComplexMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/FFTWComplexMatrix.h:72: warning: Member fftw_plan_ComplexToReal_Created (variable) of class TFFTWComplexMatrix is not documented.
+Generating docs for compound THDF5_File...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:76: warning: Member IsOpened() const  (function) of class THDF5_File is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:123: warning: Member THDF5_File(const THDF5_File &orig) (function) of class THDF5_File is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:266: warning: argument 'Dataset' of command @param is not found in the argument list of THDF5_File::CloseDataset(const hid_t &HDF5_Dataset_id)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:266: warning: The following parameters of THDF5_File::CloseDataset(const hid_t &HDF5_Dataset_id) are not documented:
+  parameter 'HDF5_Dataset_id'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:81: warning: argument 'Mode' of command @param is not found in the argument list of THDF5_File::Create(const char *FileName, unsigned int Flags=H5F_ACC_TRUNC)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:81: warning: The following parameters of THDF5_File::Create(const char *FileName, unsigned int Flags=H5F_ACC_TRUNC) are not documented:
+  parameter 'Flags'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:205: warning: argument 'Dimension' of command @param is not found in the argument list of THDF5_File::CreateFloatDataset(const char *DatasetName, const TDimensionSizes &DatasetDims, const TDimensionSizes &ChunkSizes, const int CompressionLevel)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:205: warning: argument 'Chunk' of command @param is not found in the argument list of THDF5_File::CreateFloatDataset(const char *DatasetName, const TDimensionSizes &DatasetDims, const TDimensionSizes &ChunkSizes, const int CompressionLevel)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:205: warning: argument 'Compression' of command @param is not found in the argument list of THDF5_File::CreateFloatDataset(const char *DatasetName, const TDimensionSizes &DatasetDims, const TDimensionSizes &ChunkSizes, const int CompressionLevel)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:205: warning: The following parameters of THDF5_File::CreateFloatDataset(const char *DatasetName, const TDimensionSizes &DatasetDims, const TDimensionSizes &ChunkSizes, const int CompressionLevel) are not documented:
+  parameter 'DatasetDims'
+  parameter 'ChunkSizes'
+  parameter 'CompressionLevel'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:113: warning: argument 'Mode' of command @param is not found in the argument list of THDF5_File::Open(const char *FileName, unsigned int Flags=H5F_ACC_RDONLY)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:113: warning: The following parameters of THDF5_File::Open(const char *FileName, unsigned int Flags=H5F_ACC_RDONLY) are not documented:
+  parameter 'Flags'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:476: warning: argument 'DataSetname' of command @param is not found in the argument list of THDF5_File::ReadCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, float *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:476: warning: argument 'DimenisonSizes' of command @param is not found in the argument list of THDF5_File::ReadCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, float *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:480: warning: Found unknown command `\parma'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:476: warning: The following parameters of THDF5_File::ReadCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, float *Data) are not documented:
+  parameter 'DatasetName'
+  parameter 'DimensionSizes'
+  parameter 'Data'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:504: warning: argument 'DataSetname' of command @param is not found in the argument list of THDF5_File::ReadCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, long *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:504: warning: argument 'DimenisonSizes' of command @param is not found in the argument list of THDF5_File::ReadCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, long *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:508: warning: Found unknown command `\parma'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:504: warning: The following parameters of THDF5_File::ReadCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, long *Data) are not documented:
+  parameter 'DatasetName'
+  parameter 'DimensionSizes'
+  parameter 'Data'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:281: warning: argument 'DataSetname' of command @param is not found in the argument list of THDF5_File::WriteCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, const float *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:281: warning: argument 'DimenisonSizes' of command @param is not found in the argument list of THDF5_File::WriteCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, const float *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:281: warning: The following parameters of THDF5_File::WriteCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, const float *Data) are not documented:
+  parameter 'DatasetName'
+  parameter 'DimensionSizes'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:307: warning: argument 'DataSetname' of command @param is not found in the argument list of THDF5_File::WriteCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, const long *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:307: warning: argument 'DimenisonSizes' of command @param is not found in the argument list of THDF5_File::WriteCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, const long *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:307: warning: The following parameters of THDF5_File::WriteCompleteDataset(const char *DatasetName, const TDimensionSizes &DimensionSizes, const long *Data) are not documented:
+  parameter 'DatasetName'
+  parameter 'DimensionSizes'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:333: warning: argument 'Dataset' of command @param is not found in the argument list of THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSizes &Position, const TDimensionSizes &Size, const float *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:333: warning: The following parameters of THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSizes &Position, const TDimensionSizes &Size, const float *Data) are not documented:
+  parameter 'HDF5_Dataset_id'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:387: warning: argument 'Dataset' of command @param is not found in the argument list of THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSizes &Position, const TDimensionSizes &Size, const long *Data)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:387: warning: The following parameters of THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSizes &Position, const TDimensionSizes &Size, const long *Data) are not documented:
+  parameter 'HDF5_Dataset_id'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:458: warning: argument 'Datasetname' of command @param is not found in the argument list of THDF5_File::WriteScalarValue(const char *DatasetName, const long Value)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:458: warning: The following parameters of THDF5_File::WriteScalarValue(const char *DatasetName, const long Value) are not documented:
+  parameter 'DatasetName'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:442: warning: argument 'Datasetname' of command @param is not found in the argument list of THDF5_File::WriteScalarValue(const char *DatasetName, const float Value)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:442: warning: The following parameters of THDF5_File::WriteScalarValue(const char *DatasetName, const float Value) are not documented:
+  parameter 'DatasetName'
+Generating docs for compound THDF5_FileHeader...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:174: warning: Member SetCodeName(string CodeName) (function) of class THDF5_FileHeader is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:177: warning: Member GetSupportedHDF5_MajorVersion() (function) of class THDF5_FileHeader is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:178: warning: Member GetSupportedHDF5_MinorVersion() (function) of class THDF5_FileHeader is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:180: warning: Member SetMajorFileVersion() (function) of class THDF5_FileHeader is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:181: warning: Member SetMinorFileVersion() (function) of class THDF5_FileHeader is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:183: warning: Member CheckMajorFileVersion() (function) of class THDF5_FileHeader is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.h:184: warning: Member CheckMinorFileVersion() (function) of class THDF5_FileHeader is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:887: warning: argument 'PreparationTime' of command @param is not found in the argument list of THDF5_FileHeader::SetExecutionTimes(const double TotalTime, const double LoadTime, const double PreProcessingTime, const double SimulationTime, const double PostprocessingTime)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/HDF5/HDF5_File.cpp:887: warning: The following parameters of THDF5_FileHeader::SetExecutionTimes(const double TotalTime, const double LoadTime, const double PreProcessingTime, const double SimulationTime, const double PostprocessingTime) are not documented:
+  parameter 'PreProcessingTime'
+Generating docs for compound Time...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:37: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:38: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:39: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:40: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:42: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:44: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:45: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:46: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:48: warning: Found unknown command `\License'
+Generating docs for compound TLongMatrix...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:57: warning: Member operator[](const size_t &index) (function) of class TLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:63: warning: Member GetElementFrom3D(const size_t X, const size_t Y, const size_t Z) (function) of class TLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.h:79: warning: Member TLongMatrix(const TLongMatrix &orig) (function) of class TLongMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:55: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:56: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:57: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:58: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:60: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:62: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:63: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:64: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:66: warning: Found unknown command `\License'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:83: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/LongMatrix.cpp:129: warning: The following parameters of TLongMatrix::WriteDataToHDF5File(THDF5_File &HDF5_File, const char *MatrixName, const int CompressionLevel) are not documented:
+  parameter 'CompressionLevel'
+Generating docs for compound TMatrixContainer...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:146: warning: Member size() (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:147: warning: Member empty() (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:162: warning: Member GetMatrixRecord(const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:166: warning: Member operator[](const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:172: warning: Member GetBaseMatrix(const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:176: warning: Member GetBaseFloatMatrix(const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:180: warning: Member GetRealMatrix(const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:184: warning: Member GetUxyz_sgxyzMatrix(const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:188: warning: Member GetComplexMatrix(const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:192: warning: Member GetFFTWComplexMatrix(const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:196: warning: Member GetLongMatrix(const TMatrixName MatrixName) (function) of class TMatrixContainer is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:137: warning: Found unknown command `\calss'
+Generating docs for compound TMatrixRecord...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:107: warning: Member MatrixReference (variable) of class TMatrixRecord is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:108: warning: Member MatrixDataType (variable) of class TMatrixRecord is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:109: warning: Member DimensionSizes (variable) of class TMatrixRecord is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:110: warning: Member LoadData (variable) of class TMatrixRecord is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.h:111: warning: Member MatlabMatrixName (variable) of class TMatrixRecord is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:53: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:54: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:55: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:56: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:58: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:60: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:61: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:62: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/MatrixContainer.cpp:64: warning: Found unknown command `\License'
+Generating docs for compound to...
+Generating docs for compound TOutputHDF5Stream...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.cpp:95: warning: argument 'Real' of command @param is not found in the argument list of TOutputHDF5Stream::AddData(TRealMatrix &Src_1D, TLongMatrix &Indices, float *TempBuffer)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.cpp:95: warning: argument 'Index' of command @param is not found in the argument list of TOutputHDF5Stream::AddData(TRealMatrix &Src_1D, TLongMatrix &Indices, float *TempBuffer)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.cpp:95: warning: argument 'in' of command @param is not found in the argument list of TOutputHDF5Stream::AddData(TRealMatrix &Src_1D, TLongMatrix &Indices, float *TempBuffer)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.cpp:95: warning: argument 'out' of command @param is not found in the argument list of TOutputHDF5Stream::AddData(TRealMatrix &Src_1D, TLongMatrix &Indices, float *TempBuffer)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.cpp:95: warning: argument 'Temp' of command @param is not found in the argument list of TOutputHDF5Stream::AddData(TRealMatrix &Src_1D, TLongMatrix &Indices, float *TempBuffer)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/OutputHDF5Stream.cpp:95: warning: The following parameters of TOutputHDF5Stream::AddData(TRealMatrix &Src_1D, TLongMatrix &Indices, float *TempBuffer) are not documented:
+  parameter 'Src_1D'
+  parameter 'Indices'
+  parameter 'TempBuffer'
+Generating docs for compound TParameters...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:58: warning: Member ParseCommandLine(int argc, char **argv) (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:63: warning: Member GetFullDimensionSizes() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:64: warning: Member GetReducedDimensionSizes() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:67: warning: Member Get_Nt() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:69: warning: Member Get_dt() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:70: warning: Member Get_dx() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:71: warning: Member Get_dy() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:72: warning: Member Get_dz() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:74: warning: Member Get_c_ref() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:75: warning: Member Get_alpha_power() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:77: warning: Member Get_pml_x_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:78: warning: Member Get_pml_y_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:79: warning: Member Get_pml_z_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:81: warning: Member Get_pml_x_alpha_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:82: warning: Member Get_pml_y_alpha_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:83: warning: Member Get_pml_z_alpha_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:86: warning: Member Get_ux_source_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:87: warning: Member Get_uy_source_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:88: warning: Member Get_uz_source_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:89: warning: Member Get_u_source_many() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:90: warning: Member Get_u_source_mode() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:92: warning: Member Get_p_source_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:93: warning: Member Get_p0_source_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:95: warning: Member Get_p_source_many() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:96: warning: Member Get_p_source_mode() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:98: warning: Member Get_nonuniform_grid_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:99: warning: Member Get_absorbing_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:100: warning: Member Get_nonlinear_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:102: warning: Member Get_transducer_source_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:104: warning: Member Get_sensor_mask_index_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:105: warning: Member Get_u_source_index_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:106: warning: Member Get_p_source_index_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:107: warning: Member Get_transducer_source_input_size() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:109: warning: Member Get_alpha_coeff_scallar_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:110: warning: Member Get_alpha_coeff_scallar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:112: warning: Member Get_c0_scalar_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:113: warning: Member Get_c0_scalar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:115: warning: Member Get_absorb_eta_scalar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:116: warning: Member Get_absorb_tau_scalar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:118: warning: Member Get_BonA_scalar_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:119: warning: Member Get_BonA_scalar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:121: warning: Member Get_rho0_scalar_flag() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:122: warning: Member Get_rho0_scalar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:123: warning: Member Get_rho0_sgx_scalar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:124: warning: Member Get_rho0_sgy_scalar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:125: warning: Member Get_rho0_sgz_scalar() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:127: warning: Member GetInputFileName() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:128: warning: Member GetOutputFileName() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:130: warning: Member GetCompressionLevel() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:131: warning: Member GetNumberOfThreads() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:132: warning: Member GetVerboseInterval() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:134: warning: Member GetStartTimeIndex() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:136: warning: Member IsVersion() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:137: warning: Member IsStore_p_raw() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:138: warning: Member IsStore_p_rms() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:139: warning: Member IsStore_p_max() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:140: warning: Member IsStore_p_final() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:142: warning: Member IsStore_u_raw() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:143: warning: Member IsStore_u_rms() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:144: warning: Member IsStore_u_max() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:145: warning: Member IsStore_u_final() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:147: warning: Member IsStore_I_avg() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:148: warning: Member IsStore_I_max() const  (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:50: warning: Member GetInstance() (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:153: warning: Member HDF5_InputFile (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:154: warning: Member HDF5_OutputFile (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:155: warning: Member HDF5_FileHeader (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:160: warning: Member TParameters(const TParameters &orig) (function) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:162: warning: Member CommandLinesParameters (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:164: warning: Member Nt (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:166: warning: Member dt (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:167: warning: Member dx (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:168: warning: Member dy (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:169: warning: Member dz (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:171: warning: Member c_ref (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:172: warning: Member alpha_power (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:174: warning: Member FullDimensionSizes (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:175: warning: Member ReducedDimensionSizes (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:177: warning: Member sensor_mask_ind_size (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:178: warning: Member u_source_index_size (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:179: warning: Member p_source_index_size (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:180: warning: Member transducer_source_input_size (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:184: warning: Member ux_source_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:185: warning: Member uy_source_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:186: warning: Member uz_source_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:188: warning: Member p_source_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:189: warning: Member p0_source_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:190: warning: Member transducer_source_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:192: warning: Member u_source_many (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:193: warning: Member u_source_mode (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:195: warning: Member p_source_mode (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:196: warning: Member p_source_many (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:198: warning: Member nonuniform_grid_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:199: warning: Member absorbing_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:200: warning: Member nonlinear_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:202: warning: Member pml_x_size (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:203: warning: Member pml_y_size (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:204: warning: Member pml_z_size (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:206: warning: Member pml_x_alpha (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:207: warning: Member pml_y_alpha (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:208: warning: Member pml_z_alpha (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:211: warning: Member alpha_coeff_scallar_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:212: warning: Member alpha_coeff_scallar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:214: warning: Member c0_scalar_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:215: warning: Member c0_scalar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:217: warning: Member absorb_eta_scalar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:218: warning: Member absorb_tau_scalar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:220: warning: Member BonA_scalar_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:221: warning: Member BonA_scalar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:223: warning: Member rho0_scalar_flag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:224: warning: Member rho0_scalar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:225: warning: Member rho0_sgx_scalar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:226: warning: Member rho0_sgy_scalar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:227: warning: Member rho0_sgz_scalar (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:232: warning: Member ParametersInstanceFlag (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.h:233: warning: Member ParametersSingle (variable) of class TParameters is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.cpp:283: warning: argument 'OutputFile' of command @param is not found in the argument list of TParameters::SaveScalarsToHDF5File(THDF5_File &HDF5_OutputFile)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Parameters/Parameters.cpp:283: warning: The following parameters of TParameters::SaveScalarsToHDF5File(THDF5_File &HDF5_OutputFile) are not documented:
+  parameter 'HDF5_OutputFile'
+Generating docs for compound TRealMatrix...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.h:60: warning: Member operator[](const size_t &index) (function) of class TRealMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.h:65: warning: Member GetElementFrom3D(const size_t X, const size_t Y, const size_t Z) (function) of class TRealMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.h:79: warning: Member TRealMatrix(const TRealMatrix &orig) (function) of class TRealMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.cpp:59: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/RealMatrix.cpp:104: warning: The following parameters of TRealMatrix::WriteDataToHDF5File(THDF5_File &HDF5_File, const char *MatrixName, const int CompressionLevel) are not documented:
+  parameter 'CompressionLevel'
+Generating docs for compound TTimeMesssure...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:46: warning: Member TTimeMesssure(const TTimeMesssure &orig) (function) of class TTimeMesssure is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:51: warning: Member operator=(const TTimeMesssure &orig) (function) of class TTimeMesssure is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:61: warning: Member Start() (function) of class TTimeMesssure is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:62: warning: Member Stop() (function) of class TTimeMesssure is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:64: warning: Member GetElapsedTime() const  (function) of class TTimeMesssure is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:42: warning: Member StartTime (variable) of class TTimeMesssure is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/Utils/TimeMeasure.h:43: warning: Member StopTime (variable) of class TTimeMesssure is not documented.
+Generating docs for compound Tuxyz_sgxyzMatrix...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:46: warning: Member Tuxyz_sgxyzMatrix(struct TDimensionSizes DimensionSizes) (function) of class Tuxyz_sgxyzMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:87: warning: Member Tuxyz_sgxyzMatrix(const Tuxyz_sgxyzMatrix &orig) (function) of class Tuxyz_sgxyzMatrix is not documented.
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:38: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:39: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:40: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:41: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:42: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:44: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:45: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:46: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:48: warning: Found unknown command `\License'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.h:64: warning: Found unknown command `\calss'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:647: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:648: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:649: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:650: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:651: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:622: warning: Found unknown command `\parma'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:621: warning: argument 'transducer_source' of command @param is not found in the argument list of Tuxyz_sgxyzMatrix::AddTransducerSource(TLongMatrix &us_index, TLongMatrix &delay_mask, TRealMatrix &transducer_signal)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:621: warning: The following parameters of Tuxyz_sgxyzMatrix::AddTransducerSource(TLongMatrix &us_index, TLongMatrix &delay_mask, TRealMatrix &transducer_signal) are not documented:
+  parameter 'us_index'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:137: warning: argument 'dxudxn_sgy' of command @param is not found in the argument list of Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(float dt_rho_0_sgy, TRealMatrix &dyudyn_sgy, TFFTWComplexMatrix &FFT)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:137: warning: The following parameters of Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(float dt_rho_0_sgy, TRealMatrix &dyudyn_sgy, TFFTWComplexMatrix &FFT) are not documented:
+  parameter 'dyudyn_sgy'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:175: warning: The following parameters of Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z(float dt_rho_0_sgz, TRealMatrix &dzudzn_sgz, TFFTWComplexMatrix &FFT) are not documented:
+  parameter 'dzudzn_sgz'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:215: warning: argument 'dt_rho' of command @param is not found in the argument list of Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize(TRealMatrix &FFT_p, TRealMatrix &dt_rho0, TRealMatrix &pml)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:215: warning: argument 'abc' of command @param is not found in the argument list of Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize(TRealMatrix &FFT_p, TRealMatrix &dt_rho0, TRealMatrix &pml)
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:215: warning: The following parameters of Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize(TRealMatrix &FFT_p, TRealMatrix &dt_rho0, TRealMatrix &pml) are not documented:
+  parameter 'dt_rho0'
+  parameter 'pml'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:346: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:347: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:348: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:483: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:484: warning: Found unknown command `\params'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/UXYZ_SGXYZMatrix.cpp:485: warning: Found unknown command `\params'
+Generating docs for compound virtual...
+Generating docs for compound Virtual...
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:39: warning: Found unknown command `\File'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:40: warning: Found unknown command `\Author'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:41: warning: Found unknown command `\Affiliation'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:42: warning: Found unknown command `\Email'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:44: warning: Found unknown command `\Comments'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:46: warning: Found unknown command `\Tool'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:47: warning: Found unknown command `\Created'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:48: warning: Found unknown command `\LastModif'
+/home/jaros/RSISE/K-Wave++/KSpaceFirstOrder3D_2.13/MatrixClasses/BaseMatrix.h:50: warning: Found unknown command `\License'
+Generating namespace index...
+Generating namespace member index...
+Generating graph info page...
+Generating file index...
+Generating example index...
+Generating file member index...
+finalizing index lists...
+finished...
+*** Doxygen has finished

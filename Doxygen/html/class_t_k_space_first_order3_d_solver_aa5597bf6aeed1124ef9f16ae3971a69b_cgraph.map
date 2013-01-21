@@ -1,0 +1,41 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a42ccdc05ba68365b687d3c4a358fdcca" title="Get the p matrix from the container." alt="" coords="471,5,687,35"/>
+<area shape="rect" id="node5" href="$class_t_base_float_matrix.html#af7a6d16eb50d4870fb216e8ec7a4c784" title="Copy data from other matrix with the same size." alt="" coords="489,59,668,88"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a2e0818a57853751e69ca7a3657a97cef" title="Get the p0_source_input from the container." alt="" coords="428,112,729,141"/>
+<area shape="rect" id="node9" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="1185,564,1377,593"/>
+<area shape="rect" id="node11" href="$class_t_parameters.html#a3c568d1f6115156dcca03778222178cd" title="Get c0_scalar_flag value." alt="" coords="477,216,680,245"/>
+<area shape="rect" id="node13" href="$class_t_parameters.html#a58435ff22b40d83e593828b3831d406e" title="Get c0_scalar value." alt="" coords="491,269,667,299"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#a4074057aa8f95571285ce185a96918af" title="Get the c^2 matrix from the container." alt="" coords="468,323,689,352"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a38d7abff79efba7963add8380f2bd3b3" title="Get the rhox matrix from the container." alt="" coords="463,376,695,405"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#ad249e0d3ce1828223a3b9a0fef70ca85" title="Get the rhoy matrix from the container." alt="" coords="463,429,695,459"/>
+<area shape="rect" id="node21" href="$class_t_k_space_first_order3_d_solver.html#a7a64676c2eb11fcee354ba85075557aa" title="Get the rhoz matrix from the container." alt="" coords="463,483,695,512"/>
+<area shape="rect" id="node23" href="$class_t_base_float_matrix.html#ab3907d95cf9560d68dbdb1f3bdecc643" title="Get element count of the matrix." alt="" coords="456,536,701,565"/>
+<area shape="rect" id="node25" href="$class_t_k_space_first_order3_d_solver.html#a9ce3804af97f2dd448423fdfa24d323f" title="Compute part of the new velocity &#45; gradient in p." alt="" coords="413,589,744,619"/>
+<area shape="rect" id="node33" href="$class_t_k_space_first_order3_d_solver.html#a9114f72450c5e5f307a9a6b5bd332200" title="Get the FFT_X_temp from the container." alt="" coords="440,643,717,672"/>
+<area shape="rect" id="node35" href="$class_t_k_space_first_order3_d_solver.html#aef8925544ee69b5c53b1cc03377eb207" title="Get the FFT_Y_temp from the container." alt="" coords="440,696,717,725"/>
+<area shape="rect" id="node37" href="$class_t_k_space_first_order3_d_solver.html#a6a15acf2e312fbfb9fcbd1dbc9c9c96d" title="Get the FFT_Z_temp from the container." alt="" coords="440,749,717,779"/>
+<area shape="rect" id="node39" href="$class_t_k_space_first_order3_d_solver.html#a6b7cd21433d5e6996d405da3ed42cffb" title="Get the kappa matrix from the container." alt="" coords="457,803,700,832"/>
+<area shape="rect" id="node41" href="$class_t_k_space_first_order3_d_solver.html#abe24c6db0214d9a4ffcc32d01b6cc345" title="Get the ddx_k_shift_pos matrix from the container." alt="" coords="429,856,728,885"/>
+<area shape="rect" id="node43" href="$class_t_k_space_first_order3_d_solver.html#a87a1bb52d107ee96f797c758db5dc29d" title="Get the ddy_k_shift_pos matrix from the container." alt="" coords="429,909,728,939"/>
+<area shape="rect" id="node45" href="$class_t_k_space_first_order3_d_solver.html#aa090249ed27367af0071b09530217f06" title="Get the ddz_k_shift_pos matrix from the container." alt="" coords="429,963,728,992"/>
+<area shape="rect" id="node47" href="$class_t_parameters.html#adea93c1a39730803fd81837eb029a8a6" title="Get rho0_scalar_flag value." alt="" coords="471,1016,687,1045"/>
+<area shape="rect" id="node49" href="$class_t_parameters.html#a9bd4e19e37f793e2c40c75a6ceef663d" title="Get nonuniform_grid_flag value." alt="" coords="459,1069,699,1099"/>
+<area shape="rect" id="node51" href="$class_t_k_space_first_order3_d_solver.html#a7cf912613ab225e7248891d34b4456ec" title="Get the ux_sgx matrix from the container." alt="" coords="455,1123,703,1152"/>
+<area shape="rect" id="node53" href="$class_tuxyz__sgxyz_matrix.html#af9fdd52af17a4978a307caa2dcf72d3d" title="compute this formula dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid..." alt="" coords="355,1176,803,1205"/>
+<area shape="rect" id="node58" href="$class_t_parameters.html#a0b47233c0f42c77754280695fd64ea9d" title="Get rho0_sgx_scalar value." alt="" coords="472,1229,685,1259"/>
+<area shape="rect" id="node60" href="$class_t_k_space_first_order3_d_solver.html#a848704374ac75d492077e45238a40358" title="Get the dxudxn_sgx matrix from the container." alt="" coords="441,1283,716,1312"/>
+<area shape="rect" id="node62" href="$class_t_k_space_first_order3_d_solver.html#a68975a172579fb20115b5e671251b964" title="Get the uy_sgy matrix from the container." alt="" coords="455,1336,703,1365"/>
+<area shape="rect" id="node64" href="$class_t_parameters.html#a542674a9017c622d455deb99d98a82db" title="Get rho0_sgy_scalar value." alt="" coords="472,1389,685,1419"/>
+<area shape="rect" id="node66" href="$class_t_k_space_first_order3_d_solver.html#a7ab37988c03ee1dda5598706e51e6588" title="Get the dyudyn_sgy matrix from the container." alt="" coords="441,1443,716,1472"/>
+<area shape="rect" id="node68" href="$class_t_k_space_first_order3_d_solver.html#a159852c13711b796b583b40478285b46" title="Get the uz_sgz matrix from the container." alt="" coords="455,1496,703,1525"/>
+<area shape="rect" id="node70" href="$class_tuxyz__sgxyz_matrix.html#a20f1af3d83ea8cbacbf37a4d61811124" title="compute this formula dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid..." alt="" coords="355,1549,803,1579"/>
+<area shape="rect" id="node73" href="$class_t_parameters.html#a123685fc015f419ec6a66ad8ea89210c" title="Get rho0_sgz_scalar value." alt="" coords="472,1603,685,1632"/>
+<area shape="rect" id="node75" href="$class_t_k_space_first_order3_d_solver.html#a487d70ef0b124d73d80a41e0f6e25b0f" title="Get the dzudzn_sgz matrix from the container." alt="" coords="441,1656,716,1685"/>
+<area shape="rect" id="node77" href="$class_tuxyz__sgxyz_matrix.html#a22aece0d9acdec5ffbd6d5afb68e84cc" title="compute this formula dt./rho0_sgx .* ifft (FFT)" alt="" coords="416,1709,741,1739"/>
+<area shape="rect" id="node80" href="$class_t_k_space_first_order3_d_solver.html#a8b9f651852c4ad55740192cfeb3c6df4" title="Get the dt.*rho0_sgx matrix from the container." alt="" coords="440,1763,717,1792"/>
+<area shape="rect" id="node82" href="$class_t_k_space_first_order3_d_solver.html#a9887a350e439828c55a9dc7e01b22134" title="Get the dt.*rho0_sgy matrix from the container." alt="" coords="440,1816,717,1845"/>
+<area shape="rect" id="node84" href="$class_t_k_space_first_order3_d_solver.html#a833ed823e608875855724a05eab4d139" title="Get the dt.*rho0_sgz matrix from the container." alt="" coords="440,1869,717,1899"/>
+<area shape="rect" id="node27" href="$class_t_f_f_t_w_complex_matrix.html#acb9c96e1c666e4ed3bed9f9b0cb13bc7" title="Compute 3D FFT Real&#45;to&#45;Complex." alt="" coords="852,589,1135,619"/>
+<area shape="rect" id="node31" href="$class_t_base_float_matrix.html#a789f3476db3b94f488642f524859c4f7" title="Get dimension sizes of the matrix." alt="" coords="879,643,1108,672"/>
+<area shape="rect" id="node55" href="$class_t_f_f_t_w_complex_matrix.html#aca5fb97a3f98188b12b006225b5e1a78" title="Compute 3D FFT Complex&#45;to&#45;Real." alt="" coords="851,1363,1136,1392"/>
+</map>

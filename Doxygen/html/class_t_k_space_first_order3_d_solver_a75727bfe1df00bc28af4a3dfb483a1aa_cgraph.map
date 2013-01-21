@@ -1,0 +1,51 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a121e9eb5ea8bbff0ed8b0d019050523e" title="Get the sensor_mask_ind matrix from the container." alt="" coords="427,5,733,35"/>
+<area shape="rect" id="node5" href="$class_t_long_matrix.html#a7f9ae690e7a57186353958d13f570a66" title="Recompute indices MATALAB&#45;&gt;C++." alt="" coords="481,59,679,88"/>
+<area shape="rect" id="node7" href="$class_t_parameters.html#a1f03b9fbacdeed302f4aae8a79d3cff1" title="Get transducer_source_flag value." alt="" coords="453,112,707,141"/>
+<area shape="rect" id="node9" href="$class_t_parameters.html#a01fdb42ffc3e8c20d3740865185f1fd3" title="Get ux_source_flag value." alt="" coords="476,165,684,195"/>
+<area shape="rect" id="node11" href="$class_t_parameters.html#a8b6566739f41d080ed60cb2d7349d998" title="Get uy_source_flag value." alt="" coords="476,219,684,248"/>
+<area shape="rect" id="node13" href="$class_t_parameters.html#a48f863cbb28ce1cb40a36fe0a455fd52" title="Get uz_source_flag value." alt="" coords="476,272,684,301"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#ae1d782a3d851dc46b8d96a3b24ef7fc6" title="Get the u_source_index matrix from the container." alt="" coords="432,325,728,355"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a61290eb657b5bd70432c44a62325e464" title="Get the delay_mask matrix from the container." alt="" coords="443,379,717,408"/>
+<area shape="rect" id="node19" href="$class_t_parameters.html#a8900909cbc594871728c6239e329b1e6" title="Get p_source_flag value." alt="" coords="479,432,681,461"/>
+<area shape="rect" id="node21" href="$class_t_k_space_first_order3_d_solver.html#a3664cdd2bfe3670518a4c18658a7885f" title="Get the p_source_index matrix from the container." alt="" coords="432,485,728,515"/>
+<area shape="rect" id="node23" href="$class_t_parameters.html#adea93c1a39730803fd81837eb029a8a6" title="Get rho0_scalar_flag value." alt="" coords="472,539,688,568"/>
+<area shape="rect" id="node25" href="$class_t_parameters.html#a0b47233c0f42c77754280695fd64ea9d" title="Get rho0_sgx_scalar value." alt="" coords="473,592,687,621"/>
+<area shape="rect" id="node27" href="$class_t_parameters.html#a2e022544f8b2654b428f22d0b0b4c67f" title="Get dt value." alt="" coords="936,1009,1069,1039"/>
+<area shape="rect" id="node29" href="$class_t_parameters.html#a542674a9017c622d455deb99d98a82db" title="Get rho0_sgy_scalar value." alt="" coords="473,696,687,725"/>
+<area shape="rect" id="node31" href="$class_t_parameters.html#a123685fc015f419ec6a66ad8ea89210c" title="Get rho0_sgz_scalar value." alt="" coords="473,749,687,779"/>
+<area shape="rect" id="node33" href="$class_t_parameters.html#a9bd4e19e37f793e2c40c75a6ceef663d" title="Get nonuniform_grid_flag value." alt="" coords="460,803,700,832"/>
+<area shape="rect" id="node35" href="$class_t_k_space_first_order3_d_solver.html#ac06817190bf0ce339ea1506d070c1acc" title="Calculate dt ./ rho0 for non&#45;uniform grids." alt="" coords="397,856,763,885"/>
+<area shape="rect" id="node37" href="$class_t_k_space_first_order3_d_solver.html#a8b9f651852c4ad55740192cfeb3c6df4" title="Get the dt.*rho0_sgx matrix from the container." alt="" coords="864,636,1141,665"/>
+<area shape="rect" id="node41" href="$class_t_k_space_first_order3_d_solver.html#a9887a350e439828c55a9dc7e01b22134" title="Get the dt.*rho0_sgy matrix from the container." alt="" coords="864,903,1141,932"/>
+<area shape="rect" id="node43" href="$class_t_k_space_first_order3_d_solver.html#a833ed823e608875855724a05eab4d139" title="Get the dt.*rho0_sgz matrix from the container." alt="" coords="864,956,1141,985"/>
+<area shape="rect" id="node55" href="$class_t_base_float_matrix.html#a3df29a54e64068450058360c25eb3631" title="divide scalar/ matrix_element[i]" alt="" coords="473,1061,687,1091"/>
+<area shape="rect" id="node59" href="$class_t_parameters.html#ac1ebab673b7d4d5d1568fbc8c971b75a" title="Get absorbing_flag value." alt="" coords="477,1115,683,1144"/>
+<area shape="rect" id="node61" href="$class_t_k_space_first_order3_d_solver.html#acf40f82dab3d9d6d5b285d9d612ef602" title="Generate kappa matrix, absorb_nabla1, absorb_nabla2 for absorbing media." alt="" coords="353,1276,807,1305"/>
+<area shape="rect" id="node85" href="$class_t_k_space_first_order3_d_solver.html#a259167541c80e5a9bf29ebc24a329e46" title="Generate absorb_tau, absorb_eta for heterogenous media." alt="" coords="375,1729,785,1759"/>
+<area shape="rect" id="node106" href="$class_t_k_space_first_order3_d_solver.html#a5d71b23c9eb8bc6a68e4d07a4a727ce7" title="Generate kappa matrix for non&#45;absorbing media." alt="" coords="443,1196,717,1225"/>
+<area shape="rect" id="node117" href="$class_t_k_space_first_order3_d_solver.html#a48f3f37994e1f75f12926a9d1cd62576" title="Calculate c^2." alt="" coords="453,1516,707,1545"/>
+<area shape="rect" id="node39" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="907,1383,1099,1412"/>
+<area shape="rect" id="node46" href="$class_t_k_space_first_order3_d_solver.html#a848704374ac75d492077e45238a40358" title="Get the dxudxn_sgx matrix from the container." alt="" coords="865,743,1140,772"/>
+<area shape="rect" id="node48" href="$class_t_k_space_first_order3_d_solver.html#a7ab37988c03ee1dda5598706e51e6588" title="Get the dyudyn_sgy matrix from the container." alt="" coords="865,796,1140,825"/>
+<area shape="rect" id="node50" href="$class_t_k_space_first_order3_d_solver.html#a487d70ef0b124d73d80a41e0f6e25b0f" title="Get the dzudzn_sgz matrix from the container." alt="" coords="865,849,1140,879"/>
+<area shape="rect" id="node52" href="$class_t_base_float_matrix.html#a789f3476db3b94f488642f524859c4f7" title="Get dimension sizes of the matrix." alt="" coords="888,689,1117,719"/>
+<area shape="rect" id="node63" href="$class_t_parameters.html#a536bc4d6b6dfb81c2bcb5ae64b064595" title="Get dx value." alt="" coords="935,1276,1071,1305"/>
+<area shape="rect" id="node65" href="$class_t_parameters.html#aee8d6b17ed93ee23c34c52556b894bf4" title="Get dy value." alt="" coords="935,1329,1071,1359"/>
+<area shape="rect" id="node67" href="$class_t_parameters.html#ae80e463d5bf7ffd506f935d9aee08f5e" title="Get dz value." alt="" coords="935,1063,1071,1092"/>
+<area shape="rect" id="node69" href="$class_t_parameters.html#aba98612535cb8e05bffdb652ddd2027c" title="Get c_ref value." alt="" coords="928,1116,1077,1145"/>
+<area shape="rect" id="node72" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real clases)" alt="" coords="889,1436,1116,1465"/>
+<area shape="rect" id="node74" href="$class_t_parameters.html#a69baec575728cf0d01c079e385f6d209" title="Reduced dimension sizes of the simulation (complex clases)" alt="" coords="875,1169,1131,1199"/>
+<area shape="rect" id="node76" href="$class_t_k_space_first_order3_d_solver.html#a6b7cd21433d5e6996d405da3ed42cffb" title="Get the kappa matrix from the container." alt="" coords="881,1223,1124,1252"/>
+<area shape="rect" id="node79" href="$class_t_k_space_first_order3_d_solver.html#aa18cd21bdcff3a3fcbe8430369952d62" title="Get the absorb_nabla1 matrix from the container." alt="" coords="857,1543,1148,1572"/>
+<area shape="rect" id="node81" href="$class_t_k_space_first_order3_d_solver.html#adf81b7def5cacdeb39dcbaacd1a1b0fe" title="Get the absorb_nabla2 matrix from the container." alt="" coords="857,1489,1148,1519"/>
+<area shape="rect" id="node83" href="$class_t_parameters.html#a32818cdb7aa3929d2c32cdbdbcd46cee" title="Get alpha_power value." alt="" coords="905,1596,1100,1625"/>
+<area shape="rect" id="node87" href="$class_t_parameters.html#a32cc82f1713dbf170aa36036286a584a" title="Get alpha_coeff_scallar_flag value." alt="" coords="873,1916,1132,1945"/>
+<area shape="rect" id="node89" href="$class_t_parameters.html#a3c568d1f6115156dcca03778222178cd" title="Get c0_scalar_flag value." alt="" coords="901,1649,1104,1679"/>
+<area shape="rect" id="node92" href="$class_t_parameters.html#a0c27e5b5876b71ba8a8ca7cfa5c870f9" title="Get alpha_coeff_scallar value." alt="" coords="888,1969,1117,1999"/>
+<area shape="rect" id="node94" href="$class_t_parameters.html#a25497cd8634328e0e3ef806d7bff543a" title="Get absorb_tau_scalar value." alt="" coords="889,2023,1116,2052"/>
+<area shape="rect" id="node96" href="$class_t_parameters.html#a58435ff22b40d83e593828b3831d406e" title="Get c0_scalar value." alt="" coords="915,1703,1091,1732"/>
+<area shape="rect" id="node98" href="$class_t_parameters.html#ac5966db731c8ddaa4a2fc441d9208f7d" title="Get absorb_eta_scalar value." alt="" coords="889,1756,1116,1785"/>
+<area shape="rect" id="node101" href="$class_t_k_space_first_order3_d_solver.html#ac0e7e10741c8daec01ab2528e5b28ac7" title="Get the absorb_tau matrix from the container." alt="" coords="868,1809,1137,1839"/>
+<area shape="rect" id="node104" href="$class_t_k_space_first_order3_d_solver.html#aa7bb20d4135cde18b681062703ebfeb2" title="Get the absorb_eta matrix from the container." alt="" coords="868,1863,1137,1892"/>
+</map>

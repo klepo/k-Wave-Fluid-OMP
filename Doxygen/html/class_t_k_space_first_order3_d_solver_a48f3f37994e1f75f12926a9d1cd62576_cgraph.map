@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$class_t_parameters.html#a3c568d1f6115156dcca03778222178cd" title="Get c0_scalar_flag value." alt="" coords="329,5,532,35"/>
+<area shape="rect" id="node5" href="$class_t_parameters.html#a58435ff22b40d83e593828b3831d406e" title="Get c0_scalar value." alt="" coords="343,59,519,88"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a4074057aa8f95571285ce185a96918af" title="Get the c^2 matrix from the container." alt="" coords="320,112,541,141"/>
+<area shape="rect" id="node9" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="335,165,527,195"/>
+<area shape="rect" id="node11" href="$class_t_base_float_matrix.html#ab3907d95cf9560d68dbdb1f3bdecc643" title="Get element count of the matrix." alt="" coords="308,219,553,248"/>
+</map>

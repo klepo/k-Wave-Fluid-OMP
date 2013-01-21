@@ -1,0 +1,77 @@
+/**
+ * @File        Parameter_definition.txt
+ * @Author      Jiri Jaros
+ * @Affiliation CECS,ANU, Australia
+ * @Email       jiri.jaros@anu.edu.au
+ * 
+ * @Comments    Parameter definition 
+ * 
+ * @Tool        kspaceFirstOrder3D 2.13
+ * @Created     29 August 2012
+ * @LastModif   17 September 2012, 15:35PM
+ * 
+ * @License: 
+ *
+ *
+ * @License: 
+ * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org)
+ * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * 
+ * This file is part of the k-Wave. k-Wave is free software: you can redistribute it 
+ * and/or modify it under the terms of the GNU Lesser General Public License as 
+ * published by the Free Software Foundation, either version 3 of the License, 
+ * or (at your option) any later version.
+ * 
+ * k-Wave is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * See the GNU Lesser General Public License for more details. 
+ * 
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+ 
+ 
+ Mandatory parameters:
+   -i Input_file_name              : HDF5 input file 
+   -o Output_file_name             : HDF5 output file
+ 
+ Optional parameters: 
+   -t Number_of_CPU_threads        : Number of CPU threads
+                                       (default = %d)\n",12);
+   -r Progress_report_interval_in_%%: Progress print interval
+                                       (default = %d%%)\n",5);
+   -c Output file compression level: Deflate compression level <0,9>
+                                       (default = %d)\n",3 );
+ 
+   --benchmark Time_steps          : Run only #time steps
+  
+   -h                              : Print help
+   --help                          : Print help
+   --version                       : Print version
+ 
+Output flags:
+
+   -p                              : Store pressure 
+                                       (default if nothing else this is on)
+                                       (the same as --p_raw)
+   --p_raw                         : Store raw data series for p (default)
+   --p_rms                         : Store rms of p
+   --p_max                         : Store max of p
+   --p_final                       : Store p in final iteration 
+
+   -u                              : Store ux, uy, uz
+                                       (the same as --u_raw)
+   --u_raw                         : Store raw data series for ux, uy, uz (default)
+   --u_rms                         : store rms of ux, uy, uz
+   --u_max                         : store max ux, uy, uz
+
+
+   -I                              : Store intensity
+                                       (the same as --I_avg) 
+   --I_avg                         : store avg intensity (default)
+   --I_max                         : store max intensity
+
+   -s Start_time_step              : Start time step when data collection begins
+                                       (default = 0)

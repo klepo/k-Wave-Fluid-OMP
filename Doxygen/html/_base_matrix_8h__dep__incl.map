@@ -1,0 +1,23 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$_matrix_container_8h.html" title="The header file containing the matrix container." alt="" coords="127,547,324,576"/>
+<area shape="rect" id="node14" href="$_base_float_matrix_8h.html" title="The header file containing the base class for single precisions floating point numbers (floats)..." alt="" coords="219,160,419,189"/>
+<area shape="rect" id="node54" href="$_base_long_matrix_8h.html" title="The header file containing the base class for 64b&#45;wide integers (long for Linux/ size_t for Windows)..." alt="" coords="764,83,964,112"/>
+<area shape="rect" id="node5" href="$_k_space_first_order3_d_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="649,624,911,653"/>
+<area shape="rect" id="node9" href="$_k_space_first_order3_d_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="300,701,575,731"/>
+<area shape="rect" id="node12" href="$_matrix_container_8cpp.html" title="The implementation file containing the matrix container." alt="" coords="189,624,400,653"/>
+<area shape="rect" id="node7" href="$main_8cpp.html" title="The main file." alt="" coords="744,701,816,731"/>
+<area shape="rect" id="node17" href="$_real_matrix_8h.html" title="The header file containing the class for real matrices." alt="" coords="677,237,848,267"/>
+<area shape="rect" id="node20" href="$_complex_matrix_8h.html" title="The header file with the class for complex matrices." alt="" coords="340,315,535,344"/>
+<area shape="rect" id="node52" href="$_base_float_matrix_8cpp.html" title="The implementation file containing the base class for single precisions floating point numbers (float..." alt="" coords="93,237,307,267"/>
+<area shape="rect" id="node26" href="$_u_x_y_z___s_g_x_y_z_matrix_8h.html" title="The header file containing the particle velocity matrix." alt="" coords="888,469,1112,499"/>
+<area shape="rect" id="node34" href="$_f_f_t_w_complex_matrix_8cpp.html" title="The implementation file containing the class that implements 3D FFT using the FFTW interface..." alt="" coords="627,469,864,499"/>
+<area shape="rect" id="node40" href="$_real_matrix_8cpp.html" title="The implementation file containing the class for real matrices." alt="" coords="475,392,659,421"/>
+<area shape="rect" id="node44" href="$_output_h_d_f5_stream_8h.html" title="The header file of the class saving RealMatrix data into the output HDF5 file." alt="" coords="1187,315,1405,344"/>
+<area shape="rect" id="node23" href="$_f_f_t_w_complex_matrix_8h.html" title="The header file containing the class that implements 3D FFT using the FFTW interface." alt="" coords="733,392,960,421"/>
+<area shape="rect" id="node38" href="$_complex_matrix_8cpp.html" title="The implementation file with the class for complex matrices." alt="" coords="195,392,400,421"/>
+<area shape="rect" id="node30" href="$_u_x_y_z___s_g_x_y_z_matrix_8cpp.html" title="The implementation file containing the particle velocity matrix." alt="" coords="613,547,851,576"/>
+<area shape="rect" id="node47" href="$_output_h_d_f5_stream_8cpp.html" title="The implementation file of the class saving RealMatrix data into the output HDF5 file." alt="" coords="1237,392,1469,421"/>
+<area shape="rect" id="node56" href="$_long_matrix_8h.html" title="The header file containing the class for 64b integer matrices." alt="" coords="777,160,951,189"/>
+<area shape="rect" id="node64" href="$_base_long_matrix_8cpp.html" title="The implementation file containing the base class for 64b&#45;wide integers (long for Linux/ size_t for W..." alt="" coords="975,160,1188,189"/>
+<area shape="rect" id="node62" href="$_long_matrix_8cpp.html" title="The implementation file containing the class for 64b integer matrices." alt="" coords="872,237,1059,267"/>
+</map>
