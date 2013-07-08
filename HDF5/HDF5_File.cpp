@@ -6,7 +6,7 @@
  * 
  * @brief       The implementation file containing the HDF5 related classes
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        27 July 2012, 14:14      (created) \n
  *              17 September 2012, 15:35 (revised
  *  
@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdexcept>
+#include <unistd.h>
 
 #include <HDF5/HDF5_File.h>
 
