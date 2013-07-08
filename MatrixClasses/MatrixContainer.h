@@ -6,9 +6,9 @@
  * 
  * @brief       The header file containing the matrix container
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        14 September 2012, 14:33 (created) \n
- *              14 September 2012, 14:20 (revised)
+ *              43 June      2013, 14:05 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -77,15 +77,19 @@ enum TMatrixID     {kappa, c2, p,
                       delay_mask,
     
                         //---------------- output matrices -------------//
-                      p_sensor_raw,  p_sensor_rms, p_sensor_max, p_sensor_i_1_raw,
-                      ux_sensor_raw, uy_sensor_raw, uz_sensor_raw,
+                      p_sensor_raw,  p_sensor_rms, p_sensor_max, p_sensor_min,
+                      p_sensor_max_all, p_sensor_min_all, p_sensor_i_1_raw,
+                      ux_sensor_raw, uy_sensor_raw, uz_sensor_raw,                      
                       ux_sensor_i_1_agr_2, uy_sensor_i_1_agr_2, uz_sensor_i_1_agr_2,// aggregated values form two points
                       
                       ux_sensor_rms, uy_sensor_rms, uz_sensor_rms,
                       ux_sensor_max, uy_sensor_max, uz_sensor_max,
+                      ux_sensor_min, uy_sensor_min, uz_sensor_min,
+                      ux_sensor_max_all, uy_sensor_max_all, uz_sensor_max_all,
+                      ux_sensor_min_all, uy_sensor_min_all, uz_sensor_min_all,
                                       
                       Ix_sensor_avg, Iy_sensor_avg, Iz_sensor_avg,
-                      Ix_sensor_max, Iy_sensor_max, Iz_sensor_max,
+                      Ix_sensor_max, Iy_sensor_max, Iz_sensor_max,                      
     
     
                        //--------------Temporary matrices -------------//    

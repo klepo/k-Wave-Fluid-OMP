@@ -24,14 +24,14 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=KSpaceFirstOrder3D_2.14
+PROJECTNAME=Code
 
 # Active Configuration
 DEFAULTCONF=Debug
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Debug Release Debug_L2 Release_No_OMP PAPI_R Release_dynamic 
+ALLCONFS=Debug Release 
 
 
 # build

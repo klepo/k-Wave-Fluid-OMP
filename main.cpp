@@ -5,9 +5,9 @@
  *              jiri.jaros@anu.edu.au
  * @brief       The main file
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        11 July 2012, 10:57             (created) \n
- *              14 September 2012, 12:30        (revised)
+ *              04 June 2013, 13:45             (revised)
  * 
  * 
  * 
@@ -234,6 +234,9 @@ Output flags:
   --p_raw                         : Store raw time series of p (default)
   --p_rms                         : Store rms of p
   --p_max                         : Store max of p
+  --p_min                         : Store min of p
+  --p_max_all                     : Store max of p (whole domain)
+  --p_min_all                     : Store min of p (whole domain)
   --p_final                       : Store final pressure field 
    
   -u                              : Store ux, uy, uz
@@ -241,12 +244,16 @@ Output flags:
   --u_raw                         : Store raw time series of ux, uy, uz
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
+  --u_min                         : Store min of ux, uy, uz
+  --u_max_all                     : Store max of ux ,uy, yz (whole domain)
+  --u_min_all                     : Store max of ux ,uy, yz (whole domain)
   --u_final                       : Store final acoustic velocity
+
    
   -I                              : Store intensity
                                       (the same as --I_avg) 
   --I_avg                         : Store avg of intensity
-  --I_max                         : Store max of intensity
+  --I_max                         : Store max of intensity  
    
   -s <timestep>                   : Time step when data collection begins
                                       (default = 1)
@@ -529,8 +536,12 @@ Name                            Size           Data type        Domain Type     
   p                             (Nsens, Nt - s, 1) float      real              -p or --p_raw
   p_rms                         (Nsens, 1, 1)      float      real              --p_rms
   p_max                         (Nsens, 1, 1)      float      real              --p_max
+  p_min                         (Nsens, 1, 1)      float      real              --p_min
+  p_max_all                     (Nx, Ny, Nz)       float      real              --p_max_all
+  p_min_all                     (Nx, Ny, Nz)       float      real              --p_min_all
   p_final                       (Nx, Ny, Nz)       float      real              --p_final
-
+ 
+  
   ux                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
   uy                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
   uz                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
@@ -542,6 +553,18 @@ Name                            Size           Data type        Domain Type     
   ux_max                        (Nsens, 1, 1)      float      real              --u_max
   uy_max                        (Nsens, 1, 1)      float      real              --u_max
   uz_max                        (Nsens, 1, 1)      float      real              --u_max
+  
+  ux_min                        (Nsens, 1, 1)      float      real              --u_min
+  uy_min                        (Nsens, 1, 1)      float      real              --u_min
+  uz_min                        (Nsens, 1, 1)      float      real              --u_min
+ 
+  ux_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  uy_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  uz_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  
+  ux_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+  uy_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+  uz_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
 
   ux_final                      (Nx, Ny, Nz)       float      real              --u_final
   uy_final                      (Nx, Ny, Nz)       float      real              --u_final

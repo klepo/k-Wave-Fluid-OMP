@@ -5,9 +5,9 @@
  *              jiri.jaros@anu.edu.au
  * @brief       The implementation file containing the command line parameters
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        29 August 2012, 11:25 (created) \n        
- *              11 October 2012, 17:05 (revised) 
+ *              04 June   2013, 13:55 (revised) 
  * 
  *
  * 
@@ -56,9 +56,11 @@ TCommandLineParameters::TCommandLineParameters() :
         VerboseInterval(DefaultVerboseInterval), CompressionLevel (DefaultCompressionLevel),
         BenchmarkFlag (false), BenchmarkTimeStepsCount(0),      
         PrintVersion (false),
-        Store_p_raw(false), Store_p_rms(false), Store_p_max(false), Store_p_final(false),
-        Store_u_raw(false), Store_u_rms(false), Store_u_max(false), Store_u_final(false),
-        Store_I_avg(false), Store_I_max(false),
+        Store_p_raw(false), Store_p_rms(false), Store_p_max(false), Store_p_min(false), 
+        Store_p_max_all(false), Store_p_min_all(false), Store_p_final(false),
+        Store_u_raw(false), Store_u_rms(false), Store_u_max(false), Store_u_min(false),
+        Store_u_max_all(false), Store_u_min_all(false), Store_u_final(false),
+        Store_I_avg(false), Store_I_max(false), 
         StartTimeStep(0)
 {
     
@@ -94,15 +96,21 @@ void TCommandLineParameters::PrintUsageAndExit(){
  printf("                                      (default if nothing else is on)\n");
  printf("                                      (the same as --p_raw)\n");
  printf("  --p_raw                         : Store raw time series of p (default)\n");
- printf("  --p_rms                         : Store rms of p\n");
+ printf("  --p_rms                         : Store rms of p\n"); 
  printf("  --p_max                         : Store max of p\n");
+ printf("  --p_min                         : Store min of p\n");
+ printf("  --p_max_all                     : Store max of p (whole domain)\n");
+ printf("  --p_min_all                     : Store min of p (whole domain)\n");  
  printf("  --p_final                       : Store final pressure field \n");
  printf("\n");   
  printf("  -u                              : Store ux, uy, uz\n");
  printf("                                      (the same as --u_raw)\n");
  printf("  --u_raw                         : Store raw time series of ux, uy, uz\n");
  printf("  --u_rms                         : Store rms of ux, uy, uz\n");
- printf("  --u_max                         : Store max of ux, uy, uz\n");
+ printf("  --u_max                         : Store max of ux, uy, uz\n");  
+ printf("  --u_min                         : Store min of ux, uy, uz\n");  
+ printf("  --u_max_all                     : Store max of ux, uy, uz (whole domain)\n"); 
+ printf("  --u_min_all                     : Store min of ux, uy, uz (whole domain)\n");   
  printf("  --u_final                       : Store final acoustic velocity\n");
  printf("\n");   
  printf("  -I                              : Store intensity\n");
@@ -141,15 +149,21 @@ void TCommandLineParameters::PrintSetup(){
     printf("  Store p_raw           %d\n", Store_p_raw);
     printf("  Store p_rms           %d\n", Store_p_rms);
     printf("  Store p_max           %d\n", Store_p_max);
+    printf("  Store p_min           %d\n", Store_p_min);
+    printf("  Store p_max_all       %d\n", Store_p_max_all);
+    printf("  Store p_min_all       %d\n", Store_p_min_all);
     printf("  Store p_final         %d\n", Store_p_final);
     printf("\n");
     printf("  Store u_raw           %d\n", Store_u_raw);
     printf("  Store u_rms           %d\n", Store_u_rms);
     printf("  Store u_max           %d\n", Store_u_max);
-    printf("  Store u_max           %d\n", Store_u_final);
+    printf("  Store u_min           %d\n", Store_u_min);
+    printf("  Store u_max_all       %d\n", Store_u_max_all);
+    printf("  Store u_min_all       %d\n", Store_u_min_all);
+    printf("  Store u_final         %d\n", Store_u_final);
     printf("\n");    
     printf("  Store I_avg           %d\n", Store_I_avg);
-    printf("  Store I_max           %d\n", Store_I_max);
+    printf("  Store I_max           %d\n", Store_I_max);    
     printf("\n");    
     printf("  Collection begins at  %d\n", StartTimeStep+1);
     
@@ -166,7 +180,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv){
     
    char c;
    int longIndex;
-   const char * shortOpts = "i:o:v:c:t:puIhs:";
+   const char * shortOpts = "i:o:r:c:t:puIhs:";
     
    const struct option longOpts[] = {
         { "benchmark", required_argument , NULL, 0},
@@ -176,15 +190,21 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv){
         { "p_raw", no_argument, NULL, 'p' },
         { "p_rms", no_argument, NULL, 0 },
         { "p_max", no_argument, NULL, 0 },
+        { "p_min", no_argument, NULL, 0 },
+        { "p_max_all", no_argument, NULL, 0 },
+        { "p_min_all", no_argument, NULL, 0 },
         { "p_final", no_argument, NULL, 0 },
         
         { "u_raw", no_argument, NULL, 'u' },
         { "u_rms", no_argument, NULL, 0 },
         { "u_max", no_argument, NULL, 0 },        
+        { "u_min", no_argument, NULL, 0 },
+        { "u_max_all", no_argument, NULL, 0 },        
+        { "u_min_all", no_argument, NULL, 0 },
         { "u_final", no_argument, NULL, 0 },
         
         { "I_avg", no_argument, NULL, 'I' },
-        { "I_max", no_argument, NULL, 0 },                
+        { "I_max", no_argument, NULL, 0 },                        
         { NULL, no_argument, NULL, 0 }
     };
     
@@ -202,7 +222,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv){
              break;        
           }          
 
-          case 'v': {
+          case 'r': {
               if ((optarg == NULL) || (atoi(optarg) <= 0)) {
                   fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoVerboseIntreval);
                   PrintUsageAndExit();
@@ -290,6 +310,15 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv){
                 if( strcmp( "p_max", longOpts[longIndex].name ) == 0 ) {
                     Store_p_max = true;                    
                 } else
+                if( strcmp( "p_min", longOpts[longIndex].name ) == 0 ) {
+                    Store_p_min = true;                    
+                } else
+                if( strcmp( "p_max_all", longOpts[longIndex].name ) == 0 ) {
+                    Store_p_max_all = true;                    
+                } else
+                if( strcmp( "p_min_all", longOpts[longIndex].name ) == 0 ) {
+                    Store_p_min_all = true;                    
+                } else
                 if( strcmp( "p_final", longOpts[longIndex].name ) == 0 ) {
                     Store_p_final = true;                    
                 } else
@@ -300,13 +329,22 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv){
                 if( strcmp( "u_max", longOpts[longIndex].name ) == 0 ) {
                     Store_u_max = true;                    
                 } else
+                if( strcmp( "u_min", longOpts[longIndex].name ) == 0 ) {
+                    Store_u_min = true;                    
+                } else
+                if( strcmp( "u_max_all", longOpts[longIndex].name ) == 0 ) {
+                    Store_u_max_all = true;                    
+                } else
+                if( strcmp( "u_min_all", longOpts[longIndex].name ) == 0 ) {
+                    Store_u_min_all = true;                    
+                } else
                 if( strcmp( "u_final", longOpts[longIndex].name ) == 0 ) {
                     Store_u_final = true;                    
                 } else
                 
                 if( strcmp( "I_max", longOpts[longIndex].name ) == 0 ) {
                     Store_I_max = true;                    
-                } else {
+                } else{
                     PrintUsageAndExit();
                 }
                     
@@ -335,12 +373,15 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv){
    }
        
    
-   if (!(Store_p_raw || Store_p_rms || Store_p_max || Store_p_final ||
-         Store_u_raw || Store_u_rms || Store_u_max || Store_u_final ||
+   if (!(Store_p_raw || Store_p_rms || Store_p_max || Store_p_min || 
+         Store_p_max_all || Store_p_min_all ||Store_p_final ||
+         Store_u_raw || Store_u_rms || Store_u_max || Store_u_min || 
+         Store_u_max_all || Store_u_min_all ||Store_u_final ||
          Store_I_avg || Store_I_max )){
             Store_p_raw = true;
    }
       
+   //PrintSetup();
     
 }// end of ParseCommandLine
 //------------------------------------------------------------------------------

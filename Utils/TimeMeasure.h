@@ -6,7 +6,7 @@
  * 
  * @brief       The header file containing the class measuring elapsed time
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        15 August 2012, 9:35          (created) \n
  *              17 September 2012, 15:35      (revised)
  * 

@@ -5,9 +5,9 @@
  *              jiri.jaros@anu.edu.au
  * @brief       The header file containing the main class of the project
  *              responsible for the entire simulation. 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        12 July 2012, 10:27        (created)\n
- *              14 September 2012, 14:20   (revised)
+ *              04 June 2013, 14:19   (revised)
  *  
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -80,7 +80,7 @@ public:
     virtual size_t ShowMemoryUsageInMB();
         
     /// Get code name 
-    string GetCodeName() {return "kspaceFirstOrder3D-OMP v1.01"; }; 
+    string GetCodeName() {return "kspaceFirstOrder3D-OMP v1.1"; }; 
     
     /// Print the code name and license 
     void   PrintFullNameCodeAndLicense(FILE * file);               
@@ -406,6 +406,15 @@ protected:
     /// Get the p_sensor_max from the container                                                    
     TRealMatrix         & Get_p_sensor_max() 
                 {return MatrixContainer.GetRealMatrix(p_sensor_max);};
+    /// Get the p_sensor_min from the container                                                    
+    TRealMatrix         & Get_p_sensor_min() 
+                {return MatrixContainer.GetRealMatrix(p_sensor_min);};
+    /// Get the p_sensor_max_all from the container                                                    
+    TRealMatrix         & Get_p_sensor_max_all() 
+                {return MatrixContainer.GetRealMatrix(p_sensor_max_all);};
+    /// Get the p_sensor_min_all from the container                                                    
+    TRealMatrix         & Get_p_sensor_min_all() 
+                {return MatrixContainer.GetRealMatrix(p_sensor_min_all);};
 
                 /// Get the ux_sensor_rms from the container 
     TRealMatrix         & Get_ux_sensor_rms() 
@@ -426,6 +435,36 @@ protected:
     /// Get the uz_sensor_max from the container                                
     TRealMatrix         & Get_uz_sensor_max() 
                 {return MatrixContainer.GetRealMatrix(uz_sensor_max);};
+    /// Get the ux_sensor_min from the container                                 
+    TRealMatrix         & Get_ux_sensor_min() 
+                {return MatrixContainer.GetRealMatrix(ux_sensor_min);};
+    /// Get the uy_sensor_min from the container                
+    TRealMatrix         & Get_uy_sensor_min() 
+                {return MatrixContainer.GetRealMatrix(uy_sensor_min);};
+    /// Get the uz_sensor_min from the container                                
+    TRealMatrix         & Get_uz_sensor_min() 
+                {return MatrixContainer.GetRealMatrix(uz_sensor_min);};
+                
+    /// Get the ux_sensor_max_all from the container                                 
+    TRealMatrix         & Get_ux_sensor_max_all() 
+                {return MatrixContainer.GetRealMatrix(ux_sensor_max_all);};
+    /// Get the uy_sensor_max_all from the container                
+    TRealMatrix         & Get_uy_sensor_max_all() 
+                {return MatrixContainer.GetRealMatrix(uy_sensor_max_all);};
+    /// Get the uz_sensor_max_all from the container                                
+    TRealMatrix         & Get_uz_sensor_max_all() 
+                {return MatrixContainer.GetRealMatrix(uz_sensor_max_all);};
+    /// Get the ux_sensor_min_all from the container                                 
+    TRealMatrix         & Get_ux_sensor_min_all() 
+                {return MatrixContainer.GetRealMatrix(ux_sensor_min_all);};
+    /// Get the uy_sensor_min_all from the container                
+    TRealMatrix         & Get_uy_sensor_min_all() 
+                {return MatrixContainer.GetRealMatrix(uy_sensor_min_all);};
+    /// Get the uz_sensor_min_all from the container                                
+    TRealMatrix         & Get_uz_sensor_min_all() 
+                {return MatrixContainer.GetRealMatrix(uz_sensor_min_all);};            
+                
+                
                 
     /// Get the Ix_sensor_avg from the container
     TRealMatrix         & Get_Ix_sensor_avg() 

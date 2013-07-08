@@ -1,8 +1,8 @@
 <map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container." alt="" coords="325,752,589,781"/>
-<area shape="rect" id="node73" href="$class_t_matrix_container.html#ad41d1f094ffd4299275847d00fd3f303" title="Create instances of all objects in the container." alt="" coords="351,1499,564,1528"/>
-<area shape="rect" id="node77" href="$class_t_parameters.html#a15c6fb5c824d4e1e6da8b979fa655062" title="Is &#45;p or &#45;&#45;p_raw specified at the command line." alt="" coords="369,1552,545,1581"/>
-<area shape="rect" id="node81" href="$class_t_parameters.html#a617cf5ba858ec2627f1f5ea1eb1c506a" title="Is &#45;u or &#45;&#45;u_raw specified at the command line." alt="" coords="369,1605,545,1635"/>
+<area shape="rect" id="node3" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container." alt="" coords="325,912,589,941"/>
+<area shape="rect" id="node89" href="$class_t_matrix_container.html#ad41d1f094ffd4299275847d00fd3f303" title="Create instances of all objects in the container." alt="" coords="351,1819,564,1848"/>
+<area shape="rect" id="node93" href="$class_t_parameters.html#a15c6fb5c824d4e1e6da8b979fa655062" title="Is &#45;p or &#45;&#45;p_raw specified at the command line." alt="" coords="369,1872,545,1901"/>
+<area shape="rect" id="node97" href="$class_t_parameters.html#a617cf5ba858ec2627f1f5ea1eb1c506a" title="Is &#45;u or &#45;&#45;u_raw specified at the command line." alt="" coords="369,1925,545,1955"/>
 <area shape="rect" id="node5" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class." alt="" coords="701,5,864,35"/>
 <area shape="rect" id="node7" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real clases)" alt="" coords="669,59,896,88"/>
 <area shape="rect" id="node9" href="$class_t_parameters.html#a69baec575728cf0d01c079e385f6d209" title="Reduced dimension sizes of the simulation (complex clases)" alt="" coords="655,112,911,141"/>
@@ -27,17 +27,25 @@
 <area shape="rect" id="node47" href="$class_t_parameters.html#a9bd4e19e37f793e2c40c75a6ceef663d" title="Get nonuniform_grid_flag value." alt="" coords="663,1125,903,1155"/>
 <area shape="rect" id="node49" href="$class_t_parameters.html#aaab3a95e9dc2268c62a37321c7f14a65" title="Is &#45;&#45;p_rms specified at the command line." alt="" coords="695,1179,871,1208"/>
 <area shape="rect" id="node53" href="$class_t_parameters.html#ada682748fb8e9b6d61c13ce6ca47233b" title="Is &#45;&#45;p_max specified at the command line." alt="" coords="693,1232,872,1261"/>
-<area shape="rect" id="node57" href="$class_t_parameters.html#abfe535c0046618a71affad007bea9a4c" title="Is &#45;&#45;u_raw specified at the command line." alt="" coords="695,1285,871,1315"/>
-<area shape="rect" id="node61" href="$class_t_parameters.html#abcf0791462d6593d3f79863b8e87f0e8" title="Is &#45;&#45;u_max specified at the command line." alt="" coords="693,1339,872,1368"/>
-<area shape="rect" id="node65" href="$class_t_parameters.html#a5a7b288eebba55e18d3b055707e9f62d" title="Is &#45;&#45;I_avg specified at the command line." alt="" coords="696,1392,869,1421"/>
-<area shape="rect" id="node69" href="$class_t_parameters.html#a7b93ca9566e1e76062431d18821f79e7" title="Is &#45;&#45;I_max specified at the command line." alt="" coords="695,1445,871,1475"/>
-<area shape="rect" id="node51" href="$class_t_command_line_parameters.html#aa671784989985e5ecf5a0835e8101dab" title="Is &#45;&#45;p_rms set?" alt="" coords="977,1179,1236,1208"/>
-<area shape="rect" id="node55" href="$class_t_command_line_parameters.html#a8db4a5a7b30a6b81be67c83905ecae64" title="Is &#45;&#45;p_max set?" alt="" coords="976,1232,1237,1261"/>
-<area shape="rect" id="node59" href="$class_t_command_line_parameters.html#aa8b12c40535ec1484bb94366bea427f3" title="Is &#45;&#45;u_rms set?" alt="" coords="977,1285,1236,1315"/>
-<area shape="rect" id="node63" href="$class_t_command_line_parameters.html#a6cb839453bdb3c530857d431d47ee5b5" title="Is &#45;&#45;u_max set?" alt="" coords="976,1339,1237,1368"/>
-<area shape="rect" id="node67" href="$class_t_command_line_parameters.html#ab4df8d47685af4673f90f169da47833d" title="Is &#45;&#45;I_avg set." alt="" coords="980,1392,1233,1421"/>
-<area shape="rect" id="node71" href="$class_t_command_line_parameters.html#a13a4eaa62eb0601a2b996cc57a3dbbfc" title="Is &#45;&#45;I_max set." alt="" coords="979,1445,1235,1475"/>
-<area shape="rect" id="node75" href="$class_t_matrix_container.html#a233fe6a830799d98ece2aaa928c8b656" title="Print error and throw an exception." alt="" coords="641,1499,924,1528"/>
-<area shape="rect" id="node79" href="$class_t_command_line_parameters.html#a9c49f5e608ee842671191ae7e9d62dba" title="Is &#45;&#45;p_raw set?" alt="" coords="653,1552,912,1581"/>
-<area shape="rect" id="node83" href="$class_t_command_line_parameters.html#a9fbe6693a5732ef7adbb5dc0cf17e316" title="Is &#45;&#45;u_raw set?" alt="" coords="653,1605,912,1635"/>
+<area shape="rect" id="node57" href="$class_t_parameters.html#a50bbed7a8f587dd54e18243b18a0a856" title="Is &#45;&#45;p_min specified at the command line." alt="" coords="695,1285,871,1315"/>
+<area shape="rect" id="node61" href="$class_t_parameters.html#a343b4fa746decea0a493d47fa51c4f53" title="Is &#45;&#45;p_max_all specified at the command line." alt="" coords="683,1339,883,1368"/>
+<area shape="rect" id="node65" href="$class_t_parameters.html#a02505a11974fb3028a496500295a918b" title="Is &#45;&#45;p_min_all specified at the command line." alt="" coords="684,1392,881,1421"/>
+<area shape="rect" id="node69" href="$class_t_parameters.html#abfe535c0046618a71affad007bea9a4c" title="Is &#45;&#45;u_raw specified at the command line." alt="" coords="695,1445,871,1475"/>
+<area shape="rect" id="node73" href="$class_t_parameters.html#abcf0791462d6593d3f79863b8e87f0e8" title="Is &#45;&#45;u_max specified at the command line." alt="" coords="693,1499,872,1528"/>
+<area shape="rect" id="node77" href="$class_t_parameters.html#ad51dce5f908a3bdc01cfe3c486f1490f" title="Is &#45;&#45;u_min specified at the command line." alt="" coords="695,1552,871,1581"/>
+<area shape="rect" id="node81" href="$class_t_parameters.html#a68cebe0f5344af3b534aeb1b07ee31ef" title="Is &#45;&#45;u_max_all specified at the command line." alt="" coords="683,1605,883,1635"/>
+<area shape="rect" id="node83" href="$class_t_parameters.html#a86e44199765586c48cb22009caaaa7f8" title="Is &#45;&#45;u_min_all specified at the command line." alt="" coords="684,1659,881,1688"/>
+<area shape="rect" id="node85" href="$class_t_parameters.html#a5a7b288eebba55e18d3b055707e9f62d" title="Is &#45;&#45;I_avg specified at the command line." alt="" coords="696,1712,869,1741"/>
+<area shape="rect" id="node87" href="$class_t_parameters.html#a7b93ca9566e1e76062431d18821f79e7" title="Is &#45;&#45;I_max specified at the command line." alt="" coords="695,1765,871,1795"/>
+<area shape="rect" id="node51" href="$class_t_command_line_parameters.html#aa671784989985e5ecf5a0835e8101dab" title="Is &#45;&#45;p_rms set?" alt="" coords="988,1179,1247,1208"/>
+<area shape="rect" id="node55" href="$class_t_command_line_parameters.html#a8db4a5a7b30a6b81be67c83905ecae64" title="Is &#45;&#45;p_max set?" alt="" coords="987,1232,1248,1261"/>
+<area shape="rect" id="node59" href="$class_t_command_line_parameters.html#abf73694730f6a352b8d696ea74ba52fc" title="Is &#45;&#45;p_min set?" alt="" coords="988,1285,1247,1315"/>
+<area shape="rect" id="node63" href="$class_t_command_line_parameters.html#ac575930805f6855a259b084eec18e304" title="Is &#45;&#45;p_max_all set?" alt="" coords="977,1339,1257,1368"/>
+<area shape="rect" id="node67" href="$class_t_command_line_parameters.html#abac5005af41deb8adec2cce4958c26b6" title="Is &#45;&#45;p_min_all set?" alt="" coords="979,1392,1256,1421"/>
+<area shape="rect" id="node71" href="$class_t_command_line_parameters.html#aa8b12c40535ec1484bb94366bea427f3" title="Is &#45;&#45;u_rms set?" alt="" coords="988,1445,1247,1475"/>
+<area shape="rect" id="node75" href="$class_t_command_line_parameters.html#a6cb839453bdb3c530857d431d47ee5b5" title="Is &#45;&#45;u_max set?" alt="" coords="987,1499,1248,1528"/>
+<area shape="rect" id="node79" href="$class_t_command_line_parameters.html#aa2cf69e27d52b7986739f5e263b060d6" title="Is &#45;&#45;u_min_all set?" alt="" coords="988,1552,1247,1581"/>
+<area shape="rect" id="node91" href="$class_t_matrix_container.html#a233fe6a830799d98ece2aaa928c8b656" title="Print error and throw an exception." alt="" coords="641,1819,924,1848"/>
+<area shape="rect" id="node95" href="$class_t_command_line_parameters.html#a9c49f5e608ee842671191ae7e9d62dba" title="Is &#45;&#45;p_raw set?" alt="" coords="653,1872,912,1901"/>
+<area shape="rect" id="node99" href="$class_t_command_line_parameters.html#a9fbe6693a5732ef7adbb5dc0cf17e316" title="Is &#45;&#45;u_raw set?" alt="" coords="653,1925,912,1955"/>
 </map>

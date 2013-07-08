@@ -6,7 +6,7 @@
  * 
  * @brief       The implementation file containing the particle velocity matrix
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        28 July 2011, 11:37             (created) \n
  *              17 September 2012, 15:25        (revised)
  * 

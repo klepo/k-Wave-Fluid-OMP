@@ -6,9 +6,9 @@
  * 
  * @brief       The implementation file containing the matrix container
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        12 July 2012, 10:27  (created) \n
- *              14 September 2012, 14:20(revised)
+ *              04 June 2013, 14:16  (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -412,8 +412,9 @@ void TMatrixContainer::AddMatricesIntoContainer(){
         
     }
 
-    
-    //--Temporary matrices --//        
+    //------------------------------------------------------------------------//
+    //--------------------- Temporary matrices -------------------------------//        
+    //------------------------------------------------------------------------//
     // this matrix used to load alpha_coeff for absorb_tau pre-calculation    
     
     if ((Params->Get_absorbing_flag() != 0) && (!Params->Get_alpha_coeff_scallar_flag())){                
@@ -430,8 +431,11 @@ void TMatrixContainer::AddMatricesIntoContainer(){
     MatrixContainer[FFT_Y_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ReducedDim, false, "");                                
     MatrixContainer[FFT_Z_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ReducedDim, false, "");                                
     
-    //--- output buffers --//
     
+    
+    //------------------------------------------------------------------------//
+    //----------------------- output buffers ---------------------------------//
+    //------------------------------------------------------------------------//
     
     TDimensionSizes SensorDims(Params->Get_sensor_mask_index_size(), 1, 1);
             
@@ -443,7 +447,18 @@ void TMatrixContainer::AddMatricesIntoContainer(){
     if (Params->IsStore_p_max()){
        MatrixContainer[p_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, p_max_Name);                                
     }
+    
+    if (Params->IsStore_p_min()){
+       MatrixContainer[p_sensor_min].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, p_min_Name);                                
+    }
                 
+    if (Params->IsStore_p_max_all()){
+       MatrixContainer[p_sensor_max_all].SetAllValues(NULL,TMatrixRecord::mdtReal,FullDim , false, p_max_all_Name);                                
+    }
+    
+    if (Params->IsStore_p_min_all()){
+       MatrixContainer[p_sensor_min_all].SetAllValues(NULL,TMatrixRecord::mdtReal,FullDim, false, p_min_all_Name);                                
+    }
     
     if (Params->IsStore_u_rms()){
        MatrixContainer[ux_sensor_rms].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, ux_rms_Name);
@@ -455,6 +470,24 @@ void TMatrixContainer::AddMatricesIntoContainer(){
        MatrixContainer[ux_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, ux_max_Name);
        MatrixContainer[uy_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uy_max_Name);                                
        MatrixContainer[uz_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uz_max_Name);                                       
+    }
+    
+    if (Params->IsStore_u_min()){
+       MatrixContainer[ux_sensor_min].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, ux_min_Name);
+       MatrixContainer[uy_sensor_min].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uy_min_Name);                                
+       MatrixContainer[uz_sensor_min].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uz_min_Name);                                       
+    }
+    
+    if (Params->IsStore_u_max_all()){
+       MatrixContainer[ux_sensor_max_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, ux_max_all_Name);
+       MatrixContainer[uy_sensor_max_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, uy_max_all_Name);                                
+       MatrixContainer[uz_sensor_max_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, uz_max_all_Name);                                       
+    }
+    
+    if (Params->IsStore_u_min_all()){
+       MatrixContainer[ux_sensor_min_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, ux_min_all_Name);
+       MatrixContainer[uy_sensor_min_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, uy_min_all_Name);                                
+       MatrixContainer[uz_sensor_min_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, uz_min_all_Name);                                       
     }
             
     if (Params->IsStore_I_avg()){
@@ -469,10 +502,10 @@ void TMatrixContainer::AddMatricesIntoContainer(){
        MatrixContainer[Iy_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, Iy_max_Name);
        MatrixContainer[Iz_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, Iz_max_Name);
     }
-    
-    
+        
+        
     // in case of intensity create buffer for time staggered values
-    if ((Params->IsStore_I_avg()) || (Params->IsStore_I_max())){        
+    if ((Params->IsStore_I_avg()) || (Params->IsStore_I_max()) ){        
        MatrixContainer[p_sensor_i_1_raw] .SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, "");
        MatrixContainer[ux_sensor_i_1_agr_2].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, "");
        MatrixContainer[uy_sensor_i_1_agr_2].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, "");

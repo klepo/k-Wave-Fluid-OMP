@@ -5,9 +5,9 @@
  *              jiri.jaros@anu.edu.au
  * @brief       The header file containing the command line parameters
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        29 August 2012, 11:25 (created) \n        
- *              11 October 2012, 17:05 (revised) 
+ *              04 June   2013, 13:45 (revised) 
  * 
  * @section Params Command Line Parameters
  * 
@@ -83,6 +83,9 @@ Output flags:
   --p_raw                         : Store raw time series of p (default)
   --p_rms                         : Store rms of p
   --p_max                         : Store max of p
+  --p_min                         : Store min of p
+  --p_max_all                     : Store max of p (whole domain)
+  --p_min_all                     : Store min of p (whole domain)
   --p_final                       : Store final pressure field 
    
   -u                              : Store ux, uy, uz
@@ -90,12 +93,15 @@ Output flags:
   --u_raw                         : Store raw time series of ux, uy, uz
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
+  --u_min                         : Store min of ux, uy, uz
+  --u_max_all                     : Store max of ux ,uy, yz (whole domain)
+  --u_min_all                     : Store max of ux ,uy, yz (whole domain)
   --u_final                       : Store final acoustic velocity
    
   -I                              : Store intensity
                                       (the same as --I_avg) 
   --I_avg                         : Store avg of intensity
-  --I_max                         : Store max of intensity
+  --I_max                         : Store max of intensity  
    
   -s <timestep>                   : Time step when data collection begins
                                       (default = 1)
@@ -170,7 +176,14 @@ public:
     bool IsStore_p_rms()                const {return Store_p_rms;};
     /// Is --p_max set?
     bool IsStore_p_max()                const {return Store_p_max;};
-    /// Is --p_final set?
+    /// Is --p_min set?
+    bool IsStore_p_min()                const {return Store_p_min;};
+    /// Is --p_max_all set?
+    bool IsStore_p_max_all()            const {return Store_p_max_all;};
+    /// Is --p_min_all set?
+    bool IsStore_p_min_all()            const {return Store_p_min_all;};
+    
+    /// Is --p_final set?    
     bool IsStore_p_final()              const {return Store_p_final;};
     
     /// Is --u_raw set?
@@ -179,13 +192,19 @@ public:
     bool IsStore_u_rms()                const {return Store_u_rms;};
     /// Is --u_max set?
     bool IsStore_u_max()                const {return Store_u_max;};    
+    /// Is --u_min_all set?
+    bool IsStore_u_min()                const {return Store_u_min;};    
+    /// Is --u_max_all set?
+    bool IsStore_u_max_all()            const {return Store_u_max_all;};    
+    /// Is --u_min set?
+    bool IsStore_u_min_all()            const {return Store_u_min_all;};    
     /// Is --u_final set?
     bool IsStore_u_final()              const {return Store_u_final;};
     
     /// Is --I_avg set
     bool IsStore_I_avg()                const {return Store_I_avg;};
     /// Is --I_max set
-    bool IsStore_I_max()                const {return Store_I_max;};
+    bool IsStore_I_max()                const {return Store_I_max;};    
 
     /// Print usage and exit
     void PrintUsageAndExit();   
@@ -228,6 +247,12 @@ private:
     bool        Store_p_rms;
     /// Store_p_max value
     bool        Store_p_max;
+    /// Store_p_min value
+    bool        Store_p_min;
+    /// Store_p_max_all value
+    bool        Store_p_max_all;
+    /// Store_p_min_all value
+    bool        Store_p_min_all;
     /// Store_p_final value
     bool        Store_p_final;
     
@@ -237,13 +262,19 @@ private:
     bool        Store_u_rms;
     /// Store_u_max value
     bool        Store_u_max;
+    /// Store_u_min value
+    bool        Store_u_min;
+    /// Store_u_max_all value
+    bool        Store_u_max_all;
+    /// Store_u_min_all value
+    bool        Store_u_min_all;
     /// Store_u_final value
     bool        Store_u_final;
     
     /// Store_I_avg value
     bool        Store_I_avg;
     /// Store_I_max value
-    bool        Store_I_max;
+    bool        Store_I_max;    
     /// StartTimeStep value
     int         StartTimeStep;
     

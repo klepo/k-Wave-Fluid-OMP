@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="84">
+<configurationDescriptor version="89">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="f1" displayName="HDF5" projectFiles="true">
       <itemPath>HDF5/HDF5_File.cpp</itemPath>
@@ -75,40 +75,127 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
+          <incDir>
+            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/include</pElem>
+            <pElem>/home/jiri/Software/fftw3/include</pElem>
+            <pElem>.</pElem>
+          </incDir>
           <warningLevel>2</warningLevel>
         </cTool>
         <ccTool>
           <incDir>
-            <pElem>/usr/local/hdf5-1.8.9-sequential/include</pElem>
+            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/include</pElem>
+            <pElem>/home/jiri/Software/fftw3/include</pElem>
+            <pElem>.</pElem>
           </incDir>
           <commandLine>-fopenmp -msse4.2</commandLine>
-          <useLinkerLibraries>false</useLinkerLibraries>
           <warningLevel>2</warningLevel>
         </ccTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>/usr/local/hdf5-1.8.9-sequential/lib</pElem>
+            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/lib</pElem>
           </linkerAddLib>
           <linkerDynSerch>
-            <pElem>/usr/local/hdf5-1.8.9-sequential/lib</pElem>
+            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/lib</pElem>
           </linkerDynSerch>
           <linkerLibItems>
-            <linkerLibFileItem>/usr/local/lib/libfftw3f.a</linkerLibFileItem>
-            <linkerLibFileItem>/usr/local/lib/libfftw3f_omp.a</linkerLibFileItem>
-            <linkerLibLibItem>hdf5</linkerLibLibItem>
-            <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
+            <linkerLibFileItem>/home/jiri/Software/fftw3/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibFileItem>/home/jiri/Software/fftw3/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibFileItem>/home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5_hl.a</linkerLibFileItem>
+            <linkerLibFileItem>/home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5.a</linkerLibFileItem>
+            <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
           </linkerLibItems>
           <commandLine>-fopenmp -fftw3f -lm</commandLine>
         </linkerTool>
       </compileType>
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseLongMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseLongMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/LongMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/LongMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/DimensionSizes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/MatrixNames.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -119,7 +206,8 @@
           <developmentMode>6</developmentMode>
           <architecture>2</architecture>
           <incDir>
-            <pElem>/usr/local/hdf5-1.8.9-sequential/include</pElem>
+            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/include</pElem>
+            <pElem>/home/jiri/Software/fftw3/include</pElem>
             <pElem>.</pElem>
           </incDir>
           <commandLine>-Wall -fopenmp -msse4.2 -ffast-math -fassociative-math -ftree-vectorizer-verbose=0</commandLine>
@@ -134,132 +222,95 @@
         </asmTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>/usr/local/hdf5-1.8.9-sequential/lib</pElem>
+            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/lib</pElem>
           </linkerAddLib>
           <commandlineTool>g++</commandlineTool>
           <linkerLibItems>
-            <linkerLibFileItem>/usr/local/lib/libfftw3f_omp.a</linkerLibFileItem>
-            <linkerLibFileItem>/usr/local/lib/libfftw3f.a</linkerLibFileItem>
-            <linkerLibFileItem>/usr/local/hdf5-1.8.9-sequential/lib/libhdf5_hl.a</linkerLibFileItem>
-            <linkerLibFileItem>/usr/local/hdf5-1.8.9-sequential/lib/libhdf5.a</linkerLibFileItem>
+            <linkerLibFileItem>/home/jiri/Software/fftw3/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibFileItem>/home/jiri/Software/fftw3/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibFileItem>/home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5_hl.a</linkerLibFileItem>
+            <linkerLibFileItem>/home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5.a</linkerLibFileItem>
             <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
           </linkerLibItems>
           <commandLine>-fopenmp -fftw3f -lm</commandLine>
         </linkerTool>
       </compileType>
-    </conf>
-    <conf name="Debug_L2" type="1">
-      <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>GNU|GNU</compilerSet>
-      </toolsSet>
-      <compileType>
-        <ccTool>
-          <commandLine>-fopenmp -D__PRINT_OUT_L2__</commandLine>
-          <useLinkerLibraries>false</useLinkerLibraries>
-        </ccTool>
-        <linkerTool>
-          <commandLine>-fopenmp</commandLine>
-        </linkerTool>
-      </compileType>
-    </conf>
-    <conf name="Release_No_OMP" type="1">
-      <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>GNU|GNU</compilerSet>
-      </toolsSet>
-      <compileType>
-        <cTool>
-          <developmentMode>5</developmentMode>
-        </cTool>
-        <ccTool>
-          <developmentMode>6</developmentMode>
-          <commandLine>-pg -D__NO_OMP__</commandLine>
-        </ccTool>
-        <fortranCompilerTool>
-          <developmentMode>5</developmentMode>
-        </fortranCompilerTool>
-        <asmTool>
-          <developmentMode>5</developmentMode>
-        </asmTool>
-        <linkerTool>
-          <linkerLibItems>
-            <linkerLibLibItem>fftw3f</linkerLibLibItem>
-            <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
-          </linkerLibItems>
-          <commandLine>-fopenmp -lm</commandLine>
-        </linkerTool>
-      </compileType>
-    </conf>
-    <conf name="PAPI_R" type="1">
-      <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>GNU|GNU</compilerSet>
-      </toolsSet>
-      <compileType>
-        <cTool>
-          <developmentMode>5</developmentMode>
-        </cTool>
-        <ccTool>
-          <developmentMode>6</developmentMode>
-          <commandLine>-D__NO_OMP__</commandLine>
-          <warningLevel>2</warningLevel>
-        </ccTool>
-        <fortranCompilerTool>
-          <developmentMode>5</developmentMode>
-        </fortranCompilerTool>
-        <asmTool>
-          <developmentMode>5</developmentMode>
-        </asmTool>
-        <linkerTool>
-          <linkerLibItems>
-            <linkerLibLibItem>fftw3f</linkerLibLibItem>
-            <linkerLibLibItem>papi</linkerLibLibItem>
-            <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
-          </linkerLibItems>
-          <commandLine>-fopenmp -lm -g</commandLine>
-        </linkerTool>
-      </compileType>
-    </conf>
-    <conf name="Release_dynamic" type="1">
-      <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>GNU|GNU</compilerSet>
-      </toolsSet>
-      <compileType>
-        <cTool>
-          <developmentMode>6</developmentMode>
-          <warningLevel>2</warningLevel>
-        </cTool>
-        <ccTool>
-          <developmentMode>6</developmentMode>
-          <architecture>2</architecture>
-          <incDir>
-            <pElem>/usr/local/hdf5-1.8.9-sequential/include</pElem>
-          </incDir>
-          <commandLine>-fopenmp -msse4.2 -ffast-math -fassociative-math -ftree-vectorizer-verbose=0</commandLine>
-          <warningLevel>2</warningLevel>
-        </ccTool>
-        <fortranCompilerTool>
-          <developmentMode>5</developmentMode>
-        </fortranCompilerTool>
-        <asmTool>
-          <developmentMode>5</developmentMode>
-        </asmTool>
-        <linkerTool>
-          <linkerAddLib>
-            <pElem>/usr/local/hdf5-1.8.9-sequential/lib</pElem>
-          </linkerAddLib>
-          <commandlineTool>g++</commandlineTool>
-          <linkerLibItems>
-            <linkerLibFileItem>/usr/local/lib/libfftw3f_omp.a</linkerLibFileItem>
-            <linkerLibFileItem>/usr/local/lib/libfftw3f.a</linkerLibFileItem>
-            <linkerLibLibItem>hdf5</linkerLibLibItem>
-            <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
-          </linkerLibItems>
-          <commandLine>-fopenmp -fftw3f -lm</commandLine>
-        </linkerTool>
-      </compileType>
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseLongMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseLongMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/LongMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/LongMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/DimensionSizes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/MatrixNames.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>

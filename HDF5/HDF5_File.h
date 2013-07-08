@@ -6,7 +6,7 @@
  * 
  * @brief       The header file containing the HDF5 related classes
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        27 July 2012, 14:14      (created) \n
  *              17 September 2012, 15:35 (revised)
  * 
@@ -283,8 +283,12 @@ Name                            Size           Data type        Domain Type     
   p                             (Nsens, Nt - s, 1) float      real              -p or --p_raw
   p_rms                         (Nsens, 1, 1)      float      real              --p_rms
   p_max                         (Nsens, 1, 1)      float      real              --p_max
+  p_min                         (Nsens, 1, 1)      float      real              --p_min
+  p_max_all                     (Nx, Ny, Nz)       float      real              --p_max_all
+  p_min_all                     (Nx, Ny, Nz)       float      real              --p_min_all
   p_final                       (Nx, Ny, Nz)       float      real              --p_final
-
+ 
+  
   ux                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
   uy                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
   uz                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
@@ -296,6 +300,18 @@ Name                            Size           Data type        Domain Type     
   ux_max                        (Nsens, 1, 1)      float      real              --u_max
   uy_max                        (Nsens, 1, 1)      float      real              --u_max
   uz_max                        (Nsens, 1, 1)      float      real              --u_max
+  
+  ux_min                        (Nsens, 1, 1)      float      real              --u_min
+  uy_min                        (Nsens, 1, 1)      float      real              --u_min
+  uz_min                        (Nsens, 1, 1)      float      real              --u_min
+ 
+  ux_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  uy_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  uz_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  
+  ux_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+  uy_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+  uz_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
 
   ux_final                      (Nx, Ny, Nz)       float      real              --u_final
   uy_final                      (Nx, Ny, Nz)       float      real              --u_final

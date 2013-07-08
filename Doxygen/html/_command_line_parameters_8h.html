@@ -112,9 +112,9 @@ Classes</h2></td></tr>
 <div class="textblock"><dl class="author"><dt><b>Author:</b></dt><dd>Jiri Jaros <br/>
  CECS, ANU, Australia <br/>
  <a href="mailto:jiri.jaros@anu.edu.au">jiri.jaros@anu.edu.au</a> </dd></dl>
-<dl class="version"><dt><b>Version:</b></dt><dd>kspaceFirstOrder3D 2.13 </dd></dl>
+<dl class="version"><dt><b>Version:</b></dt><dd>kspaceFirstOrder3D 2.14 </dd></dl>
 <dl class="date"><dt><b>Date:</b></dt><dd>29 August 2012, 11:25 (created) <br/>
- 11 October 2012, 17:05 (revised)</dd></dl>
+ 04 June 2013, 13:45 (revised)</dd></dl>
 <h2><a class="anchor" id="Params"></a>
 Command Line Parameters</h2>
 <p>The C++ code requires two mandatory parameters and accepts a few optional parameters and flags. The mandatory parameters <code>-i</code> and <code>-o</code> specify the input and output file. The file names respect the path conventions for particular operating system. If any of the files is not specified, cannot be found or created, an error message is shown.</p>
@@ -150,6 +150,9 @@ Output flags:
   --p_raw                         : Store raw time series of p (default)
   --p_rms                         : Store rms of p
   --p_max                         : Store max of p
+  --p_min                         : Store min of p
+  --p_max_all                     : Store max of p (whole domain)
+  --p_min_all                     : Store min of p (whole domain)
   --p_final                       : Store final pressure field 
    
   -u                              : Store ux, uy, uz
@@ -157,12 +160,15 @@ Output flags:
   --u_raw                         : Store raw time series of ux, uy, uz
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
+  --u_min                         : Store min of ux, uy, uz
+  --u_max_all                     : Store max of ux ,uy, yz (whole domain)
+  --u_min_all                     : Store max of ux ,uy, yz (whole domain)
   --u_final                       : Store final acoustic velocity
    
   -I                              : Store intensity
                                       (the same as --I_avg) 
   --I_avg                         : Store avg of intensity
-  --I_max                         : Store max of intensity
+  --I_max                         : Store max of intensity  
    
   -s &lt;timestep&gt;                   : Time step when data collection begins
                                       (default = 1)
@@ -194,7 +200,7 @@ License</h2>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Nov 14 2012 15:22:30 for kspaceFirstOrder3D-OMP by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 8 2013 17:01:56 for kspaceFirstOrder3D-OMP by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

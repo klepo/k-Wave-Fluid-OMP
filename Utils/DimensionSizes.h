@@ -6,7 +6,7 @@
  * 
  * @brief       The header file containing the structure with 3D dimension sizes
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        9 August 2011, 12:34     (created) \n
  *              14 September 2012, 14:20 (revised)
  * 

@@ -6,9 +6,9 @@
  * 
  * @brief       The header file storing names of all variables
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        14 September 2012, 2:33       (created) \n
- *              14 September 2012, 14:20      (revised)
+ *              04 June      2013, 14:03      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -237,6 +237,12 @@ const char * const  absorb_nabla2_r_Name= "absorb_nabla2_r";
 const char * const  p_rms_Name  = "p_rms";
 /// p_max variable name        
 const char * const  p_max_Name  = "p_max";
+/// p_min variable name        
+const char * const  p_min_Name  = "p_min";
+/// p_max_all variable name        
+const char * const  p_max_all_Name  = "p_max_all";
+/// p_min_all variable name        
+const char * const  p_min_all_Name  = "p_min_all";
 /// p_final variable name        
 const char * const  p_final_Name= "p_final";
 
@@ -253,6 +259,26 @@ const char * const  ux_max_Name = "ux_max";
 const char * const  uy_max_Name = "uy_max";
 /// uz_max variable name        
 const char * const  uz_max_Name = "uz_max";
+/// ux_min variable name        
+const char * const  ux_min_Name = "ux_min";
+/// uy_min variable name        
+const char * const  uy_min_Name = "uy_min";
+/// uz_min variable name        
+const char * const  uz_min_Name = "uz_min";
+
+/// ux_max_all variable name        
+const char * const  ux_max_all_Name = "ux_max_all";
+/// uy_max_all variable name        
+const char * const  uy_max_all_Name = "uy_max_all";
+/// uz_max_all variable name        
+const char * const  uz_max_all_Name = "uz_max_all";
+/// ux_min_all variable name        
+const char * const  ux_min_all_Name = "ux_min_all";
+/// uy_min_all variable name        
+const char * const  uy_min_all_Name = "uy_min_all";
+/// uz_min_all variable name        
+const char * const  uz_min_all_Name = "uz_min_all";
+
 
 /// ux_final variable name        
 const char * const  ux_final_Name = "ux_final";

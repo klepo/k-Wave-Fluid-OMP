@@ -19,22 +19,6 @@
                     <name>Release</name>
                     <type>1</type>
                 </confElem>
-                <confElem>
-                    <name>Debug_L2</name>
-                    <type>1</type>
-                </confElem>
-                <confElem>
-                    <name>Release_No_OMP</name>
-                    <type>1</type>
-                </confElem>
-                <confElem>
-                    <name>PAPI_R</name>
-                    <type>1</type>
-                </confElem>
-                <confElem>
-                    <name>Release_dynamic</name>
-                    <type>1</type>
-                </confElem>
             </confList>
         </data>
     </configuration>

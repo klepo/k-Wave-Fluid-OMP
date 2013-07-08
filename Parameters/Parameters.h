@@ -5,9 +5,9 @@
  *              jiri.jaros@anu.edu.au   
  * @brief       The header file containing the parameters of the simulation
  * 
- * @version     kspaceFirstOrder3D 2.13
- * @date        8 December 2011, 16:34   (created)      \n      
- *              14 September 2012, 14:20 (revised)
+ * @version     kspaceFirstOrder3D 2.14
+ * @date        08 December 2011, 16:34   (created)      \n      
+ *              04 June 2012,     13:55 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -194,6 +194,12 @@ public:
     bool IsStore_p_rms()                const {return CommandLinesParameters.IsStore_p_rms();};
     /// Is --p_max specified at the command line
     bool IsStore_p_max()                const {return CommandLinesParameters.IsStore_p_max();};
+    /// Is --p_min specified at the command line
+    bool IsStore_p_min()                const {return CommandLinesParameters.IsStore_p_min();};
+    /// Is --p_max_all specified at the command line
+    bool IsStore_p_max_all()            const {return CommandLinesParameters.IsStore_p_max_all();};
+    /// Is --p_min_all specified at the command line
+    bool IsStore_p_min_all()            const {return CommandLinesParameters.IsStore_p_min_all();};
     /// Is  --p_final specified at the command line
     bool IsStore_p_final()              const {return CommandLinesParameters.IsStore_p_final();};
     
@@ -203,6 +209,13 @@ public:
     bool IsStore_u_rms()                const {return CommandLinesParameters.IsStore_u_rms();};
     /// Is --u_max specified at the command line
     bool IsStore_u_max()                const {return CommandLinesParameters.IsStore_u_max();};    
+    /// Is --u_min specified at the command line
+    bool IsStore_u_min()                const {return CommandLinesParameters.IsStore_u_min();};    
+    /// Is --u_max_all specified at the command line
+    bool IsStore_u_max_all()            const {return CommandLinesParameters.IsStore_u_max_all();};    
+    /// Is --u_min_all specified at the command line
+    bool IsStore_u_min_all()            const {return CommandLinesParameters.IsStore_u_min_all();};    
+    
     /// Is --u_final specified at the command line
     bool IsStore_u_final()              const {return CommandLinesParameters.IsStore_u_final();};    
         
@@ -210,9 +223,9 @@ public:
     bool IsStore_I_avg()                const {return CommandLinesParameters.IsStore_I_avg();};
     /// Is --I_max specified at the command line
     bool IsStore_I_max()                const {return CommandLinesParameters.IsStore_I_max();};
-
     
-            
+
+                
     /// Handle to the input HDF5 file
     THDF5_File        HDF5_InputFile;    
     /// Handle to the output HDF5 file

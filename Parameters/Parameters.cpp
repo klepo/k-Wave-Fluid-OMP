@@ -5,7 +5,7 @@
  *              jiri.jaros@anu.edu.au
  * @brief       The implementation file containing parameters of the simulation
  * 
- * @version     kspaceFirstOrder3D 2.13
+ * @version     kspaceFirstOrder3D 2.14
  * @date        9 August 2012, 1:39      (created) \n
  *              14 September 2012, 14:20 (revised)
  * 
