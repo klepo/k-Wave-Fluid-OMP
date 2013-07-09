@@ -20,4 +20,11 @@
             </bookmark>
         </file>
     </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/net/tesla/srv/home/jiri/ANU/K-Wave++/KSpaceFirstOrder3D_2.14/Code/HDF5/HDF5_File.cpp</file>
+        <file>file:/net/tesla/srv/home/jiri/ANU/K-Wave++/KSpaceFirstOrder3D_2.14/Code/Parameter_definition.txt</file>
+        <file>file:/net/tesla/srv/home/jiri/ANU/K-Wave++/KSpaceFirstOrder3D_2.14/Code/change.log</file>
+        <file>file:/net/tesla/srv/home/jiri/ANU/K-Wave++/KSpaceFirstOrder3D_2.14/Code/HDF5/HDF5_File.h</file>
+        <file>file:/net/tesla/srv/home/jiri/ANU/K-Wave++/KSpaceFirstOrder3D_2.14/Code/KSpaceSolver/KSpaceFirstOrder3DSolver.h</file>
+    </open-files>
 </project-private>
