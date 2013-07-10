@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux-x86
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
-CND_ARTIFACT_NAME_Debug=code
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/code
+CND_ARTIFACT_NAME_Debug=kspacefirstorder3d_2.14
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/kspacefirstorder3d_2.14
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Debug=code.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/code.tar
+CND_PACKAGE_NAME_Debug=kspacefirstorder3d2.14.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/kspacefirstorder3d2.14.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux-x86
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86
-CND_ARTIFACT_NAME_Release=code
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/code
+CND_ARTIFACT_NAME_Release=kspacefirstorder3d_2.14
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/kspacefirstorder3d_2.14
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Release=code.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/code.tar
+CND_PACKAGE_NAME_Release=kspacefirstorder3d2.14.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/kspacefirstorder3d2.14.tar
 #
 # include compiler specific variables
 #

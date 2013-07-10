@@ -66,9 +66,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_insput_data.h5 -o Data/kwave_output_data.h5 --benchmark 2 -u -p</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_input_data.h5 -o Data/kwave_output_data.h5 --benchmark 2 -u -p</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_input_data_linux.h5 -o Data/kwave_output_data.h5 </runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"   -t 1 -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5 -xx</runcommandpicklistitem>
@@ -76,8 +73,11 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5 -t 2</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  ../Data/</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -in ../Data/input_data_128_128_128_case_1.h5 -out ../Data/output_data_128_128_128_case_1.h5</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -in Data/input_data_128_128_128_case_1.h5 -out ../Data/output_data_128_128_128_case_1.h5 -o output_data.h5</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -in Data/input_data_128_128_128_case_1.h5 -out ../Data/output_data_128_128_128_case_1.h5 </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}"  -in ../Data/input_data_128_128_128_case_1.h5 -out ../Data/output_data_128_128_128_case_1.h5</runcommand>
+        <runcommand>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

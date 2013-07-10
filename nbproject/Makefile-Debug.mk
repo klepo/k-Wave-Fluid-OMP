@@ -69,19 +69,19 @@ LDLIBSOPTIONS=-L/home/jiri/Software/hdf5-1.8.10-serial/lib -Wl,-rpath,/home/jiri
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/code
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/code: /home/jiri/Software/fftw3/lib/libfftw3f_omp.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: /home/jiri/Software/fftw3/lib/libfftw3f_omp.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/code: /home/jiri/Software/fftw3/lib/libfftw3f.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: /home/jiri/Software/fftw3/lib/libfftw3f.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/code: /home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5_hl.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: /home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5_hl.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/code: /home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: /home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/code: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/code ${OBJECTFILES} ${LDLIBSOPTIONS} -fopenmp -fftw3f -lm
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14 ${OBJECTFILES} ${LDLIBSOPTIONS} -fopenmp -fftw3f -lm
 
 ${OBJECTDIR}/HDF5/HDF5_File.o: HDF5/HDF5_File.cpp 
 	${MKDIR} -p ${OBJECTDIR}/HDF5
@@ -159,7 +159,7 @@ ${OBJECTDIR}/main.o: main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/code
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14
 
 # Subprojects
 .clean-subprojects:
