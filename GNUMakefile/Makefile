@@ -59,8 +59,8 @@
 #################################################################################
 
 # Select compiler
-#COMPILER = GNU
-COMPILER = Intel
+COMPILER = GNU
+#COMPILER = Intel
 
 # static lining is deafult
 LINKING = STATIC
@@ -69,7 +69,7 @@ LINKING = STATIC
 #set up paths: FFT_DIR for FFTW or MKL for MKL
 FFT_DIR=/usr/local
 MKL_DIR=/opt/intel/composer_xe_2011_sp1/mkl
-HDF5_DIR=/usr/local/hdf5-1.8.9-sequential
+HDF5_DIR=/usr/local/hdf5-1.8.11-serial
 
 #################################################################################
 
@@ -81,13 +81,16 @@ ifeq ($(COMPILER),GNU)
 
 
   #Generic CPU (any intel and AMD 64b CPU)
-  CPU_FLAGS=-msse2 -m64
+#  CPU_FLAGS=-msse2 -m64
 
   #Intel Core i7 
-#  CPU_FLAGS=-msse4.2 -m64
+  CPU_FLAGS=-msse4.2 -mavx -m64
+
+  #Intel Core Sandy Bridge
+#  CPU_FLAGS=-mavx -m64
 
   CXXFLAGS = -O3 -fopenmp $(CPU_FLAGS) -ffast-math -fassociative-math -Wall \
-		     -I$(HDF5_DIR)/include -I$(FFT_DIR)/include
+		     -I$(HDF5_DIR)/include -I$(FFT_DIR)/include -I.
   
   ifeq ($(LINKING),STATIC)
 
