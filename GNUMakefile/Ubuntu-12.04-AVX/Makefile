@@ -1,13 +1,13 @@
 # /**
 # * @File        Makefile
 # * @Author      Jiri Jaros
-# * @Affiliation CECS,ANU, Australia
-# * @Email       jiri.jaros@anu.edu.au
-# * @Comments    Linux makefile
+# * @Affiliation FIT, Brno University of Technology
+# * @Email       jarosjir@fit.vutbr.cz
+# * @Comments    Linux makefile for Ubuntu 12.04 and AVX CPUs
 # * 
 # * @Tool        kspaceFirstOrder3D 2.14
 # * @Created     24 September 2012, 10:57 AM
-# * @LastModif   08 July 2013, 12:10 PM
+# * @LastModif   24 October 2013, 20:53 PM
 #
 # * @License: 
 # * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org)
@@ -83,27 +83,29 @@ ifeq ($(COMPILER),GNU)
   #Generic CPU (any intel and AMD 64b CPU)
 #  CPU_FLAGS=-msse2 -m64
 
-  #Intel Core i7 
-  CPU_FLAGS=-msse4.2 -mavx -m64
+  #Intel Core i7 (Nehalem, Westmere)
+#  CPU_FLAGS=-msse4.2 -m64
 
-  #Intel Core Sandy Bridge
-#  CPU_FLAGS=-mavx -m64
+  #Intel Core i7 (Sandy Bridge, Ivy Bridge, Haswell)
+  CPU_FLAGS=-mavx -m64
 
   CXXFLAGS = -O3 -fopenmp $(CPU_FLAGS) -ffast-math -fassociative-math -Wall \
 		     -I$(HDF5_DIR)/include -I$(FFT_DIR)/include -I.
   
   ifeq ($(LINKING),STATIC)
 
-	LDFLAGS  = -fopenmp $(CPU_FLAGS) -L$(HDF5_DIR)/lib -L$(FFT_DIR)/lib -static
+	LDFLAGS  = -fopenmp $(CPU_FLAGS) -L$(HDF5_DIR)/lib -L$(FFT_DIR)/lib  --static
 
 	LIBS     = $(FFT_DIR)/lib/libfftw3f.a  		\
 		   $(FFT_DIR)/lib/libfftw3f_omp.a 	\
-	  	   $(HDF5_DIR)/lib/libhdf5_hl.a 	\
-		   $(HDF5_DIR)/lib/libhdf5.a 		\
-	   	   -lz
+   	  	   $(HDF5_DIR)/lib/libhdf5_hl.a 		\
+   		   $(HDF5_DIR)/lib/libhdf5.a 		\
+		  -lz  					\
+		  -ldl  # we need this for HDF5-1.8.11
+
     else	
 	LDFLAGS  = -fopenmp $(CPU_FLAGS) -L$(HDF5_DIR)/lib -L$(FFT_DIR)/lib
-	LIBS     = -lfftw3f  -lfftw3f_omp -lhdf5 -lhdf5_hl
+	LIBS     = -lfftw3f  -lfftw3f_omp -lhdf5 -lhdf5_hl -lz
   endif
 endif
 
@@ -114,21 +116,27 @@ ifeq ($(COMPILER),Intel)
   CXX	   = icpc
 
   #Generic CPU (any intel and AMD 64b CPU)
-  CPU_FLAGS=-xsse2 -m64
+#  CPU_FLAGS=-xsse2 -m64
   
   #Intel Core i7 
 #  CPU_FLAGS=-xsse4.2 -m64
+
+  #Intel Core i7 (Sandy Bridge, Ivy Bridge, Haswell)
+  CPU_FLAGS=-xavx -m64
+
+
   
 		
   CXXFLAGS = -fast -openmp  $(CPU_FLAGS) -Wall \
-  	     -I$(HDF5_DIR)/include -I$(MKL_DIR)/include -I$(MKL_DIR)/include/fftw
+  	     -I$(HDF5_DIR)/include -I$(MKL_DIR)/include -I$(MKL_DIR)/include/fftw -I.
 
   ifeq ($(LINKING),STATIC)
-	LDFLAGS  = -fast -openmp $(CPU_FLAGS) -L$(HDF5_DIR)/lib -mkl=parallel
+	LDFLAGS  = -O3 -openmp $(CPU_FLAGS) -L$(HDF5_DIR)/lib -mkl=parallel
 
 	LIBS = 	$(HDF5_DIR)/lib/libhdf5_hl.a 			\
 		$(HDF5_DIR)/lib/libhdf5.a 			\
-		-lz
+		-lz						\
+		-ldl  # we need this for HDF5-1.8.11                                           
   else	
 	LDFLAGS  = -openmp $(CPU_FLAGS) -L$(HDF5_DIR)/lib  -mkl=parallel
   	LIBS     = -lhdf5 -lhdf5_hl -lz
