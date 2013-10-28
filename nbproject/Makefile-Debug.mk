@@ -55,8 +55,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-fopenmp -msse4.2
-CXXFLAGS=-fopenmp -msse4.2
+CCFLAGS=-Wall -fopenmp -msse4.2
+CXXFLAGS=-Wall -fopenmp -msse4.2
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -65,93 +65,85 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/home/jiri/Software/hdf5-1.8.10-serial/lib -Wl,-rpath,/home/jiri/Software/hdf5-1.8.10-serial/lib /home/jiri/Software/fftw3/lib/libfftw3f_omp.a /home/jiri/Software/fftw3/lib/libfftw3f.a /home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5_hl.a /home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5.a -lz
+LDLIBSOPTIONS=-L/usr/local/hdf5-1.8.11-serial/lib -Wl,-rpath,/usr/local/hdf5-1.8.11-serial/lib\ -lz -lhdf5 -lhdf5_hl -lfftw3f -lfftw3f_omp
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/k-wave-fluid-omp
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: /home/jiri/Software/fftw3/lib/libfftw3f_omp.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: /home/jiri/Software/fftw3/lib/libfftw3f.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: /home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5_hl.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: /home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5.a
-
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/k-wave-fluid-omp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14 ${OBJECTFILES} ${LDLIBSOPTIONS} -fopenmp -fftw3f -lm
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/k-wave-fluid-omp ${OBJECTFILES} ${LDLIBSOPTIONS} -fopenmp -lm
 
 ${OBJECTDIR}/HDF5/HDF5_File.o: HDF5/HDF5_File.cpp 
 	${MKDIR} -p ${OBJECTDIR}/HDF5
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/HDF5/HDF5_File.o HDF5/HDF5_File.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/HDF5/HDF5_File.o HDF5/HDF5_File.cpp
 
 ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o: KSpaceSolver/KSpaceFirstOrder3DSolver.cpp 
 	${MKDIR} -p ${OBJECTDIR}/KSpaceSolver
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
 
 ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o: MatrixClasses/BaseFloatMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o MatrixClasses/BaseFloatMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o MatrixClasses/BaseFloatMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/BaseLongMatrix.o: MatrixClasses/BaseLongMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/BaseLongMatrix.o MatrixClasses/BaseLongMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/BaseLongMatrix.o MatrixClasses/BaseLongMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/ComplexMatrix.o: MatrixClasses/ComplexMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/ComplexMatrix.o MatrixClasses/ComplexMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/ComplexMatrix.o MatrixClasses/ComplexMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/FFTWComplexMatrix.o: MatrixClasses/FFTWComplexMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/FFTWComplexMatrix.o MatrixClasses/FFTWComplexMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/FFTWComplexMatrix.o MatrixClasses/FFTWComplexMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/LongMatrix.o: MatrixClasses/LongMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/LongMatrix.o MatrixClasses/LongMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/LongMatrix.o MatrixClasses/LongMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/MatrixContainer.o: MatrixClasses/MatrixContainer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/MatrixContainer.o MatrixClasses/MatrixContainer.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/MatrixContainer.o MatrixClasses/MatrixContainer.cpp
 
 ${OBJECTDIR}/MatrixClasses/OutputHDF5Stream.o: MatrixClasses/OutputHDF5Stream.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/OutputHDF5Stream.o MatrixClasses/OutputHDF5Stream.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/OutputHDF5Stream.o MatrixClasses/OutputHDF5Stream.cpp
 
 ${OBJECTDIR}/MatrixClasses/RealMatrix.o: MatrixClasses/RealMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/RealMatrix.o MatrixClasses/RealMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/RealMatrix.o MatrixClasses/RealMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/UXYZ_SGXYZMatrix.o: MatrixClasses/UXYZ_SGXYZMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/UXYZ_SGXYZMatrix.o MatrixClasses/UXYZ_SGXYZMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/MatrixClasses/UXYZ_SGXYZMatrix.o MatrixClasses/UXYZ_SGXYZMatrix.cpp
 
 ${OBJECTDIR}/Parameters/CommandLineParameters.o: Parameters/CommandLineParameters.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Parameters
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Parameters/CommandLineParameters.o Parameters/CommandLineParameters.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/Parameters/CommandLineParameters.o Parameters/CommandLineParameters.cpp
 
 ${OBJECTDIR}/Parameters/Parameters.o: Parameters/Parameters.cpp 
 	${MKDIR} -p ${OBJECTDIR}/Parameters
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Parameters/Parameters.o Parameters/Parameters.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/Parameters/Parameters.o Parameters/Parameters.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -Wall -I/home/jiri/Software/hdf5-1.8.10-serial/include -I/home/jiri/Software/fftw3/include -I. -fopenmp -msse4.2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-1.8.11-serial/include -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -159,7 +151,7 @@ ${OBJECTDIR}/main.o: main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/kspacefirstorder3d_2.14
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/k-wave-fluid-omp
 
 # Subprojects
 .clean-subprojects:

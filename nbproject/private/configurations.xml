@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="89">
+<configurationDescriptor version="90">
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -24,8 +24,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data.mat -o Data/simulation</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data.h5 -o Data/simulation</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -p 20 -iData/kwave_input_data.h5 -o Data/simulation</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -p 20 -iData/kwave_input_data.h5 -o Data/simulation.h5</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data.h5 -o Data/simulation.h5</runcommandpicklistitem>
@@ -34,8 +32,10 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -i Data/Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 -p -u --benchmark 2</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 -p -u --benchmark 2</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" -t 1 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommand>
+        <runcommand>"${OUTPUT_PATH}" -t 1 -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 -p -u --benchmark 2</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

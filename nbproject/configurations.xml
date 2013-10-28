@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="89">
+<configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="f1" displayName="HDF5" projectFiles="true">
       <itemPath>HDF5/HDF5_File.cpp</itemPath>
@@ -73,7 +73,6 @@
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
@@ -89,28 +88,27 @@
         </cTool>
         <ccTool>
           <incDir>
-            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/include</pElem>
-            <pElem>/home/jiri/Software/fftw3/include</pElem>
+            <pElem>/usr/local/hdf5-1.8.11-serial/include</pElem>
             <pElem>.</pElem>
           </incDir>
-          <commandLine>-fopenmp -msse4.2</commandLine>
+          <commandLine>-Wall -fopenmp -msse4.2</commandLine>
           <warningLevel>2</warningLevel>
         </ccTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/lib</pElem>
+            <pElem>/usr/local/hdf5-1.8.11-serial/lib</pElem>
           </linkerAddLib>
           <linkerDynSerch>
-            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/lib</pElem>
+            <pElem>/usr/local/hdf5-1.8.11-serial/lib\</pElem>
           </linkerDynSerch>
           <linkerLibItems>
-            <linkerLibFileItem>/home/jiri/Software/fftw3/lib/libfftw3f_omp.a</linkerLibFileItem>
-            <linkerLibFileItem>/home/jiri/Software/fftw3/lib/libfftw3f.a</linkerLibFileItem>
-            <linkerLibFileItem>/home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5_hl.a</linkerLibFileItem>
-            <linkerLibFileItem>/home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5.a</linkerLibFileItem>
             <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
+            <linkerLibLibItem>hdf5</linkerLibLibItem>
+            <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
+            <linkerLibLibItem>fftw3f</linkerLibLibItem>
+            <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
           </linkerLibItems>
-          <commandLine>-fopenmp -fftw3f -lm</commandLine>
+          <commandLine>-fopenmp -lm</commandLine>
         </linkerTool>
       </compileType>
       <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="0">
@@ -192,7 +190,6 @@
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
@@ -206,8 +203,7 @@
           <developmentMode>6</developmentMode>
           <architecture>2</architecture>
           <incDir>
-            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/include</pElem>
-            <pElem>/home/jiri/Software/fftw3/include</pElem>
+            <pElem>/usr/local/hdf5-1.8.11-serial/include</pElem>
             <pElem>.</pElem>
           </incDir>
           <commandLine>-Wall -fopenmp -msse4.2 -ffast-math -fassociative-math -ftree-vectorizer-verbose=0</commandLine>
@@ -222,17 +218,20 @@
         </asmTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>/home/jiri/Software/hdf5-1.8.10-serial/lib</pElem>
+            <pElem>/usr/local/hdf5-1.8.11-serial/lib</pElem>
           </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>/usr/local/hdf5-1.8.11-serial/lib</pElem>
+          </linkerDynSerch>
           <commandlineTool>g++</commandlineTool>
           <linkerLibItems>
-            <linkerLibFileItem>/home/jiri/Software/fftw3/lib/libfftw3f_omp.a</linkerLibFileItem>
-            <linkerLibFileItem>/home/jiri/Software/fftw3/lib/libfftw3f.a</linkerLibFileItem>
-            <linkerLibFileItem>/home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5_hl.a</linkerLibFileItem>
-            <linkerLibFileItem>/home/jiri/Software/hdf5-1.8.10-serial/lib/libhdf5.a</linkerLibFileItem>
             <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
+            <linkerLibLibItem>fftw3f</linkerLibLibItem>
+            <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
+            <linkerLibLibItem>hdf5</linkerLibLibItem>
+            <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
           </linkerLibItems>
-          <commandLine>-fopenmp -fftw3f -lm</commandLine>
+          <commandLine>-fopenmp -lm</commandLine>
         </linkerTool>
       </compileType>
       <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="0">
