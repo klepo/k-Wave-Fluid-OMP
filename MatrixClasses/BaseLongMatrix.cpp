@@ -82,7 +82,7 @@ void TBaseLongMatrix::ZeroMatrix(){
 void TBaseLongMatrix::AllocateMemory(){
     /* No memory allocated before this function*/
 
-    pMatrixData = (long *) memalign(SSE_ALIGNMENT,pTotalAllocatedElementCount * sizeof (long));
+    pMatrixData = (long *) memalign(DATA_ALIGNMENT,pTotalAllocatedElementCount * sizeof (long));
     
     if (!pMatrixData) {
         fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseLongMatrix");
