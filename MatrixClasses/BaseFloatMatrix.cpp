@@ -119,7 +119,7 @@ void TBaseFloatMatrix::AllocateMemory(){
     /* No memory allocated before this function*/
     assert(pMatrixData == NULL);
     
-    pMatrixData = ( float *) memalign(SSE_ALIGNMENT,pTotalAllocatedElementCount * sizeof (float));
+    pMatrixData = ( float *) memalign(DATA_ALIGNMENT,pTotalAllocatedElementCount * sizeof (float));
     
     if (!pMatrixData) {
         fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseFloatMatrix");

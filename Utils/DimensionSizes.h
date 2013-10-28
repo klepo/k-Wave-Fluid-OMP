@@ -37,12 +37,19 @@
 
 using namespace std;
 
+#ifdef __AVX__
 /**
- * @var SSE_ALIGNMENT
- * @brief memory alignment for SSE2 (16B)
+ * @var DATA_ALIGNMENT
+ * @brief memory alignment for AVX(32B)
  */
-const int SSE_ALIGNMENT = 16;
+const int DATA_ALIGNMENT  = 32;
+#else
 
+/**
+ * @var DATA_ALIGNMENT
+ * @brief memory alignment for SSE, SSE2, SSE3, SSE4 (16B)
+ */const int DATA_ALIGNMENT  = 16;
+#endif
 /**
  * @struct TDimensionSizes
  * @brief  Structure with  3D dimension sizes  
