@@ -104,10 +104,8 @@ void TOutputHDF5Stream::CloseStream(){
  */
 void TOutputHDF5Stream::AddData(TRealMatrix& SourceMatrix, TLongMatrix& Index, float * TempBuffer){
      
-
-  #ifndef __NO_OMP__    
-    #pragma omp parallel for if (Index.GetTotalElementCount() > 1e6)
-  #endif
+     
+    #pragma omp parallel for if (Index.GetTotalElementCount() > 1e6)  
     for (size_t i = 0; i < Index.GetTotalElementCount(); i++) {
         TempBuffer[i] = SourceMatrix[Index[i]];        
     }

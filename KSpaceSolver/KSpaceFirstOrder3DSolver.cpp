@@ -31,7 +31,9 @@
 
 
 #include <iostream>
-#include <omp.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 #include <sys/resource.h>
 #include <emmintrin.h>
 #include <math.h>
@@ -341,8 +343,11 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
 void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans(){
 
     // initialization of FFTW library
-    fftwf_init_threads();        
-    fftwf_plan_with_nthreads(Parameters->GetNumberOfThreads());
+    
+    #ifdef _OPENMP
+      fftwf_init_threads();            
+      fftwf_plan_with_nthreads(Parameters->GetNumberOfThreads());    
+    #endif
         
     // create real to complex plans
     Get_FFT_X_temp().CreateFFTPlan3D_R2C(Get_p());   
@@ -431,9 +436,7 @@ void TKSpaceFirstOrder3DSolver::PreProcessingPhase(){
  */
 void TKSpaceFirstOrder3DSolver::Generate_kappa(){
      
-    #ifndef __NO_OMP__    
-       #pragma omp parallel 
-    #endif
+    #pragma omp parallel 
     {
     
         const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
@@ -454,9 +457,7 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa(){
         
         float * kappa = Get_kappa().GetRawData();        
         
-        #ifndef __NO_OMP__    
-            #pragma omp for schedule (static)     
-        #endif
+        #pragma omp for schedule (static)     
         for (size_t z = 0; z < Z_Size; z++){
                        
             const float z_f = (float) z;           
@@ -503,9 +504,7 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa(){
 void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2(){
   
     
-    #ifndef __NO_OMP__    
-       #pragma omp parallel 
-    #endif
+    #pragma omp parallel 
     {
     
         const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
@@ -538,9 +537,7 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2(){
         const float alpha_power = Parameters->Get_alpha_power();
                 
         
-        #ifndef __NO_OMP__    
-            #pragma omp for schedule (static)     
-        #endif
+        #pragma omp for schedule (static)     
         for (size_t z = 0; z < Z_Size; z++){            
             
                  const float z_f = (float) z;           
@@ -613,9 +610,7 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix(){
     }
     else {
 
-        #ifndef __NO_OMP__    
-           #pragma omp parallel 
-        #endif
+        #pragma omp parallel 
         {
 
 
@@ -658,9 +653,7 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix(){
             const float alpha_db_neper_coeff = (100.0f * powf(1.0e-6f / (2.0f * (float) M_PI), alpha_power)) / 
                                                (20.0f * (float) M_LOG10E);
 
-            #ifndef __NO_OMP__    
-                #pragma omp for schedule (static)     
-            #endif
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){                                           
                 for (size_t y = 0; y < Y_Size; y++){                           
                     size_t i = (z*Y_Size + y) * X_Size;
@@ -688,9 +681,7 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix(){
 void TKSpaceFirstOrder3DSolver::Caclucalte_dt_rho0_non_uniform(){
 
     
-#ifndef __NO_OMP__    
-    #pragma omp parallel 
-#endif
+  #pragma omp parallel 
   {
        
       float * dt_rho0_sgx   = Get_dt_rho0_sgx().GetRawData();
@@ -709,60 +700,50 @@ void TKSpaceFirstOrder3DSolver::Caclucalte_dt_rho0_non_uniform(){
       
       const size_t SliceSize = (X_Size * Y_Size );
 
-      
-      
-       #ifndef __NO_OMP__            
-             #pragma omp for schedule (static)     
-       #endif  
-        for (size_t z = 0; z < Z_Size; z++){
-
-            
-            register size_t i = z* SliceSize;                        
-            for (size_t y = 0; y< Y_Size; y++){                                               
-                for (size_t x = 0; x < X_Size; x++){              
-                    dt_rho0_sgx[i] =  (dt * duxdxn_sgx[x])  /  dt_rho0_sgx[i];                    
-                    i++;                    
-                } // x
-            } // y
-          } // z
+           
+      #pragma omp for schedule (static)     
+      for (size_t z = 0; z < Z_Size; z++){
+          
+        register size_t i = z* SliceSize;                        
+        for (size_t y = 0; y< Y_Size; y++){                                               
+            for (size_t x = 0; x < X_Size; x++){              
+                dt_rho0_sgx[i] =  (dt * duxdxn_sgx[x])  /  dt_rho0_sgx[i];                    
+                i++;                    
+            } // x
+        } // y
+      } // z
      
       
-      #ifndef __NO_OMP__            
-             #pragma omp for schedule (static)    
-       #endif  
-        for (size_t z = 0; z < Z_Size; z++){
+      #pragma omp for schedule (static)    
+      for (size_t z = 0; z < Z_Size; z++){
 
-            register size_t i = z* SliceSize;                        
-            for (size_t y = 0; y< Y_Size; y++){                                 
-                const float duydyn_el = duydyn_sgy[y];
-                for (size_t x = 0; x < X_Size; x++){
-                            
-                    dt_rho0_sgy[i] =  (dt * duydyn_el)  /  dt_rho0_sgy[i];                                  
-                    i++;                    
-                } // x
-            } // y
-          } // z
-      
-      
-      
-      #ifndef __NO_OMP__            
-             #pragma omp for schedule (static)     
-       #endif  
-        for (size_t z = 0; z < Z_Size; z++){
+        register size_t i = z* SliceSize;                        
+        for (size_t y = 0; y< Y_Size; y++){                                 
+            const float duydyn_el = duydyn_sgy[y];
+            for (size_t x = 0; x < X_Size; x++){
 
-            register size_t i = z* SliceSize;                                                
-            const float duzdzn_el = duzdzn_sgz[z];
-            for (size_t y = 0; y< Y_Size; y++){                                               
-                for (size_t x = 0; x < X_Size; x++){                                  
-                    dt_rho0_sgz[i] =  (dt * duzdzn_el)  /  dt_rho0_sgz[i];                    
-                    i++;                    
-                } // x
-            } // y
-          } // z
+                dt_rho0_sgy[i] =  (dt * duydyn_el)  /  dt_rho0_sgy[i];                                  
+                i++;                    
+            } // x
+        } // y
+      } // z
+
       
-      } // parallel
-    
+            
+      #pragma omp for schedule (static)           
+      for (size_t z = 0; z < Z_Size; z++){
+
+        register size_t i = z* SliceSize;                                                
+        const float duzdzn_el = duzdzn_sgz[z];
+        for (size_t y = 0; y< Y_Size; y++){                                               
+            for (size_t x = 0; x < X_Size; x++){                                  
+                dt_rho0_sgz[i] =  (dt * duzdzn_el)  /  dt_rho0_sgz[i];                    
+                i++;                    
+            } // x
+        } // y
+      } // z
       
+    } // parallel
     
 }// end of Caclucalte_dt_rho0_non_uniform
 //------------------------------------------------------------------------------
@@ -800,9 +781,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_p0_source(){
 
     float tmp;
     
-#ifndef __NO_OMP__    
     #pragma omp parallel for schedule (static) private(tmp)
-#endif
     for (size_t i = 0; i < Get_rhox().GetTotalElementCount(); i++){
       
       tmp = p0[i] / (3.0f* c2[i * c2_shift]);                
@@ -867,9 +846,7 @@ void TKSpaceFirstOrder3DSolver::Compute_c2(){
     
         float * c2 =  Get_c2().GetRawData();
 
-        #ifndef __NO_OMP__            
-           #pragma omp parallel for schedule (static)     
-        #endif  
+        #pragma omp parallel for schedule (static)     
         for (size_t i=0; i< Get_c2().GetTotalElementCount(); i++){
                c2[i] = c2[i] * c2[i];        
         }
@@ -903,9 +880,7 @@ void TKSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(TRealMatrix& X_Matrix,
     // Compute FFT of X
   FFT_X.Compute_FFT_3D_R2C(X_Matrix);
 
-#ifndef __NO_OMP__    
-    #pragma omp parallel 
-#endif
+  #pragma omp parallel 
   {
       float * p_k_x_data   = FFT_X.GetRawData();
       float * p_k_y_data   = FFT_Y.GetRawData();
@@ -922,9 +897,7 @@ void TKSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(TRealMatrix& X_Matrix,
       
       const size_t SliceSize = (X_Size * Y_Size ) << 1;
       
-#ifndef __NO_OMP__ 
-      #pragma omp for schedule (static)      
-#endif             
+    #pragma omp for schedule (static)      
     for (size_t z = 0; z < Z_Size; z++){
         
         register size_t i = z * SliceSize;
@@ -972,10 +945,8 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz(){
      Get_FFT_X_temp().Compute_FFT_3D_R2C(Get_ux_sgx());     
      Get_FFT_Y_temp().Compute_FFT_3D_R2C(Get_uy_sgy());
      Get_FFT_Z_temp().Compute_FFT_3D_R2C(Get_uz_sgz());
-     
-     #ifndef __NO_OMP__   
-       #pragma omp parallel
-     #endif   
+         
+     #pragma omp parallel
      {
       
        float * Temp_FFT_X_Data  = Get_FFT_X_temp().GetRawData();
@@ -996,10 +967,8 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz(){
        const TFloatComplex * ddy = (TFloatComplex *) Get_ddy_k_shift_neg().GetRawData();
        const TFloatComplex * ddz = (TFloatComplex *) Get_ddz_k_shift_neg().GetRawData();
        
-        
-   #ifndef __NO_OMP__            
-         #pragma omp for schedule (static)     
-   #endif  
+         
+    #pragma omp for schedule (static)        
     for (size_t z = 0; z < FFT_Z_dim; z++){
 
         register size_t i = z* SliceSize;
@@ -1070,76 +1039,68 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz(){
    //--------------------- Non linear grid -----------------------------------//
    //-------------------------------------------------------------------------//
    if (Parameters->Get_nonuniform_grid_flag() != 0){
-   
-   
-      #ifndef __NO_OMP__    
-        #pragma omp parallel 
-      #endif
+            
+      #pragma omp parallel       
       {
 
-          float * duxdx = Get_duxdx().GetRawData();
-          float * duydy = Get_duydy().GetRawData();
-          float * duzdz = Get_duzdz().GetRawData();
+        float * duxdx = Get_duxdx().GetRawData();
+        float * duydy = Get_duydy().GetRawData();
+        float * duzdz = Get_duzdz().GetRawData();
 
-          const float * duxdxn = Get_dxudxn().GetRawData();      
-          const float * duydyn = Get_dyudyn().GetRawData();
-          const float * duzdzn = Get_dzudzn().GetRawData();
+        const float * duxdxn = Get_dxudxn().GetRawData();      
+        const float * duydyn = Get_dyudyn().GetRawData();
+        const float * duzdzn = Get_dzudzn().GetRawData();
 
-          const size_t Z_Size = Get_duxdx().GetDimensionSizes().Z;
-          const size_t Y_Size = Get_duxdx().GetDimensionSizes().Y;
-          const size_t X_Size = Get_duxdx().GetDimensionSizes().X;
+        const size_t Z_Size = Get_duxdx().GetDimensionSizes().Z;
+        const size_t Y_Size = Get_duxdx().GetDimensionSizes().Y;
+        const size_t X_Size = Get_duxdx().GetDimensionSizes().X;
 
-          const size_t SliceSize = (X_Size * Y_Size );
-
-
-           #ifndef __NO_OMP__            
-                 #pragma omp for schedule (static)     
-           #endif  
-            for (size_t z = 0; z < Z_Size; z++){
-                register size_t i = z* SliceSize;                        
-                for (size_t y = 0; y< Y_Size; y++){                                               
-                    for (size_t x = 0; x < X_Size; x++){              
-                        duxdx[i] *= duxdxn[x];
-                        i++;                    
-                    } // x
-                } // y
-              } // z
+        const size_t SliceSize = (X_Size * Y_Size );
 
 
-          #ifndef __NO_OMP__            
-                 #pragma omp for schedule (static)    
-           #endif  
-            for (size_t z = 0; z < Z_Size; z++){
+           
+        #pragma omp for schedule (static)                
+        for (size_t z = 0; z < Z_Size; z++){
+            register size_t i = z* SliceSize;                        
+            for (size_t y = 0; y< Y_Size; y++){                                               
+                for (size_t x = 0; x < X_Size; x++){              
+                    duxdx[i] *= duxdxn[x];
+                    i++;                    
+                } // x
+            } // y
+          } // z
 
-                register size_t i = z* SliceSize;                        
-                for (size_t y = 0; y< Y_Size; y++){  
-                    const float dyudyn_el = duydyn[y];
-                    for (size_t x = 0; x < X_Size; x++){
 
-                        duydy[i] *=  dyudyn_el;
-                        i++;                    
-                    } // x
-                } // y
-              } // z
+        #pragma omp for schedule (static)              
+        for (size_t z = 0; z < Z_Size; z++){
+
+            register size_t i = z* SliceSize;                        
+            for (size_t y = 0; y< Y_Size; y++){  
+                const float dyudyn_el = duydyn[y];
+                for (size_t x = 0; x < X_Size; x++){
+
+                    duydy[i] *=  dyudyn_el;
+                    i++;                    
+                } // x
+            } // y
+          } // z
 
 
 
-          #ifndef __NO_OMP__            
-                 #pragma omp for schedule (static)     
-           #endif  
-            for (size_t z = 0; z < Z_Size; z++){
-                const float duzdzn_el = duzdzn[z];
-                register size_t i = z* SliceSize;                                        
-                for (size_t y = 0; y< Y_Size; y++){                                               
-                    for (size_t x = 0; x < X_Size; x++){
+        #pragma omp for schedule (static)     
+        for (size_t z = 0; z < Z_Size; z++){
+            const float duzdzn_el = duzdzn[z];
+            register size_t i = z* SliceSize;                                        
+            for (size_t y = 0; y< Y_Size; y++){                                               
+                for (size_t x = 0; x < X_Size; x++){
 
-                        duzdz[i] *=  duzdzn_el;
-                        i++;                    
-                    } // x
-                } // y
-              } // z
+                    duzdz[i] *=  duzdzn_el;
+                    i++;                    
+                } // x
+            } // y
+          } // z
 
-          } // parallel
+      } // parallel
     
    }// nonlinear
    
@@ -1168,10 +1129,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear(){
     const float dt2 = 2.0f * Parameters->Get_dt();
     const float dt_el = Parameters->Get_dt();
     const size_t SliceSize =  Y_Size * X_Size;
-    
-    #ifndef __NO_OMP__            
-        #pragma omp parallel 
-    #endif  
+       
+    #pragma omp parallel     
     {
     
         float * rhox_data  = Get_rhox().GetRawData();
@@ -1184,16 +1143,12 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear(){
         const float * duzdz_data = Get_duzdz().GetRawData();
 
         
-
         // Scalar
         if (Parameters->Get_rho0_scalar()) {
-            
-            
+                        
             const float dt_rho0 = Parameters->Get_rho0_scalar() * dt_el;          
-        
-            #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            
+            #pragma omp for schedule (static)         
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;
@@ -1214,9 +1169,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear(){
                 }// y
             }// z
 
-              #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;            
@@ -1239,9 +1192,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear(){
             }// z
 
           
-              #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;
@@ -1271,13 +1222,10 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear(){
         }else { 
             //----------------------------------------------------------------//
             // rho0 is a matrix
-        
-            
+                    
             const float * rho0_data  = Get_rho0().GetRawData();
         
-            #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;
@@ -1301,9 +1249,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear(){
             }// z
 
 
-              #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;            
@@ -1328,9 +1274,9 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear(){
             }// z
 
           
-              #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+
+            #pragma omp for schedule (static)     
+
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;
@@ -1379,9 +1325,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
     const float dt_el = Parameters->Get_dt();
     const size_t SliceSize =  Y_Size * X_Size;
     
-    #ifndef __NO_OMP__            
-        #pragma omp parallel 
-    #endif  
+    #pragma omp parallel 
     {
     
         float * rhox_data  = Get_rhox().GetRawData();
@@ -1401,9 +1345,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
             
             const float dt_rho0 = Parameters->Get_rho0_scalar() * dt_el;          
         
-            #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;
@@ -1421,9 +1363,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
                 }// y
             }// z
 
-              #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;            
@@ -1442,9 +1382,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
             }// z
 
           
-              #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;
@@ -1472,10 +1410,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
         
             
             const float * rho0_data  = Get_rho0().GetRawData();
-        
-            #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+                  
+            #pragma omp for schedule (static)               
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;
@@ -1496,10 +1432,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
                 }// y
             }// z
 
-
-              #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+        
+            #pragma omp for schedule (static)            
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;            
@@ -1521,9 +1455,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
             }// z
 
           
-              #ifndef __NO_OMP__            
-                #pragma omp for schedule (static)     
-            #endif  
+            #pragma omp for schedule (static)     
             for (size_t z = 0; z < Z_Size; z++){
 
                 register size_t i = z * SliceSize;
@@ -1594,9 +1526,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
         rho0_shift = 1;
     }
     
-    #ifndef __NO_OMP__            
-      #pragma  omp parallel
-    #endif    
+    
+    #pragma  omp parallel
     {
     
       float * RHO_Temp_Data  = RHO_Temp.GetRawData();
@@ -1608,9 +1539,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
             __m128 BonA_SSE       = _mm_set1_ps(Parameters->Get_BonA_scalar());
             __m128 rho0_SSE       = _mm_set1_ps(Parameters->Get_rho0_scalar());        
               
-     #ifndef __NO_OMP__            
-        #pragma omp for schedule (static) nowait
-     #endif    
+
+     #pragma omp for schedule (static) nowait
      for (size_t i = 0; i < TotalElementCount_4; i+=4){       
         
          
@@ -1660,15 +1590,18 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
       }      
 
       
-                  //-- non SSE code --//
-                  if (omp_get_thread_num() == omp_get_num_threads() -1 ){
-                    for (size_t i = TotalElementCount_4; i < RHO_Temp.GetTotalElementCount() ; i++){                        
-                      register const float rho_xyz_el = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
-                      RHO_Temp_Data[i]   = rho_xyz_el;
-                      BonA_Temp_Data[i]  =  ((BonA[i * BonA_shift] * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i* rho0_shift])) + rho_xyz_el;      
-                      SumDU_Temp_Data[i] = rho0_data[i * rho0_shift] * (dux_data[i] + duy_data[i] + duz_data[i]);
-                    }      
-                  }
+          //-- non SSE code, in OpenMP only the last thread does this --//
+       #ifdef _OPENMP
+          if (omp_get_thread_num() == omp_get_num_threads() -1 )
+       #endif 
+          {
+            for (size_t i = TotalElementCount_4; i < RHO_Temp.GetTotalElementCount() ; i++){                        
+              register const float rho_xyz_el = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
+              RHO_Temp_Data[i]   = rho_xyz_el;
+              BonA_Temp_Data[i]  =  ((BonA[i * BonA_shift] * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i* rho0_shift])) + rho_xyz_el;      
+              SumDU_Temp_Data[i] = rho0_data[i * rho0_shift] * (dux_data[i] + duy_data[i] + duz_data[i]);
+            }      
+          }
      
    }// parallel
  
@@ -1687,9 +1620,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
       
      const size_t TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
      
-    #ifndef __NO_OMP__            
-      #pragma  omp parallel
-    #endif    
+
+    #pragma  omp parallel
     {
         const float * rhox_data = Get_rhox().GetRawData();
         const float * rhoy_data = Get_rhoy().GetRawData();
@@ -1712,27 +1644,24 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
         
       
               
-         #ifndef __NO_OMP__            
-            #pragma omp for schedule (static)
-         #endif           
+                
+        #pragma omp for schedule (static)
         for (size_t i = 0; i <  TotalElementCount; i++){                                  
             Sum_rhoxyz_Data[i] = rhox_data[i] + rhoy_data[i] + rhoz_data[i];                              
         }      
          
         
         if (Parameters->Get_rho0_scalar_flag()){ // scalar
-             #ifndef __NO_OMP__            
-                #pragma omp for schedule (static) nowait
-             #endif           
+                        
+             #pragma omp for schedule (static) nowait             
              for (size_t i = 0; i <  TotalElementCount; i++){                                          
                 Sum_rho0_du_Data[i] = rho0_data_el * (dux_data[i] + duy_data[i] + duz_data[i]);            
                     
              }
         }else{ // matrix
             
-            #ifndef __NO_OMP__            
-                #pragma omp for schedule (static) nowait
-             #endif           
+                     
+            #pragma omp for schedule (static) nowait            
             for (size_t i = 0; i <  TotalElementCount; i++){                                          
                 Sum_rho0_du_Data[i] = rho0_data[i] * (dux_data[i] + duy_data[i] + duz_data[i]);            
             }      
@@ -1761,18 +1690,15 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
      
      const size_t TotalElementCount = FFT_1.GetTotalElementCount();     
      const size_t TotalElementCount_SSE = (FFT_1.GetTotalElementCount() >> 1) << 1;     
-     
-    #ifndef __NO_OMP__            
-      #pragma omp parallel
-    #endif    
+         
+      #pragma omp parallel    
     {
     
       float * FFT_1_data  = FFT_1.GetRawData();
       float * FFT_2_data  = FFT_2.GetRawData();      
         
-     #ifndef __NO_OMP__            
-        #pragma omp for schedule (static) nowait
-     #endif    
+                 
+     #pragma omp for schedule (static) nowait
       for (size_t i = 0; i < TotalElementCount_SSE; i+=2){
           
           __m128 xmm_nabla1 = _mm_set_ps( nabla1[i+1], nabla1[i+1] , nabla1[i] , nabla1[i] );
@@ -1784,9 +1710,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
           
       }
       
-     #ifndef __NO_OMP__            
-        #pragma omp for schedule (static) 
-     #endif    
+      #pragma omp for schedule (static) 
       for (size_t i = 0; i < TotalElementCount; i+=2){
           __m128 xmm_nabla2 = _mm_set_ps( nabla2[i+1], nabla2[i+1] , nabla2[i] , nabla2[i] );
           __m128 xmm_FFT_2  = _mm_load_ps(&FFT_2_data[2*i]);
@@ -1794,17 +1718,21 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
           xmm_FFT_2 = _mm_mul_ps(xmm_nabla2, xmm_FFT_2);
           _mm_store_ps(&FFT_2_data[2*i], xmm_FFT_2);
       }
+    
       
-                //-- non SSE code --//
-                  if (omp_get_thread_num() == omp_get_num_threads() -1 ){
-                    for (size_t i = TotalElementCount_SSE; i < TotalElementCount ; i++){                                            
-                           FFT_1_data[(i<<1)]   *= nabla1[i];          
-                           FFT_1_data[(i<<1)+1] *= nabla1[i];                    
-          
-                           FFT_2_data[(i<<1)]   *=  nabla2[i];          
-                           FFT_2_data[(i<<1)+1] *=  nabla2[i];                                  
-                    }      
-                  }
+    //-- non SSE code --//
+    #ifdef _OPENMP
+      if (omp_get_thread_num() == omp_get_num_threads() -1 )
+    #endif 
+      {
+        for (size_t i = TotalElementCount_SSE; i < TotalElementCount ; i++){                                            
+               FFT_1_data[(i<<1)]   *= nabla1[i];          
+               FFT_1_data[(i<<1)+1] *= nabla1[i];                    
+
+               FFT_2_data[(i<<1)]   *=  nabla2[i];          
+               FFT_2_data[(i<<1)+1] *=  nabla2[i];                                  
+        }      
+      }
      
       
     }// parallel 
@@ -1861,19 +1789,15 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
      }
      
      
-     
-    #ifndef __NO_OMP__            
-      #pragma omp parallel
-    #endif    
+                  
+    #pragma omp parallel    
     {
     
        const float * BonA_data = BonA_temp.GetRawData();  
        float * p_data  = Get_p().GetRawData();
       
-        
-     #ifndef __NO_OMP__            
-        #pragma omp for schedule (static) 
-     #endif    
+             
+      #pragma omp for schedule (static)     
       for (size_t i = 0; i < TotalElementCount; i++){
           p_data[i] = (c2_data[i * c2_shift]) *(
                       BonA_data[i] +
@@ -1937,19 +1861,15 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
      }
      
      
-     
-    #ifndef __NO_OMP__            
-      #pragma omp parallel
-    #endif    
+         
+    #pragma omp parallel
     {
     
        const float * Sum_rhoxyz_Data = Sum_rhoxyz.GetRawData();  
        float * p_data  = Get_p().GetRawData();
       
         
-     #ifndef __NO_OMP__            
-        #pragma omp for schedule (static) 
-     #endif    
+      #pragma omp for schedule (static) 
       for (size_t i = 0; i < TotalElementCount; i++){
           p_data[i] = (c2_data[i * c2_shift]) *(
                       Sum_rhoxyz_Data[i] +
@@ -1976,10 +1896,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
  */
  void TKSpaceFirstOrder3DSolver::Sum_new_p_nonlinear_lossless(){
      
-     
-    #ifndef __NO_OMP__            
-      #pragma omp parallel
-    #endif    
+                 
+    #pragma omp parallel    
     {
     
        const size_t TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
@@ -2025,9 +1943,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
          }
                      
         
-     #ifndef __NO_OMP__            
-        #pragma omp for schedule (static) 
-     #endif    
+      #pragma omp for schedule (static) 
       for (size_t i = 0; i < TotalElementCount; i++){
           const float sum_rho = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
           p_data[i] = c2_data[i * c2_shift] *(
@@ -2055,9 +1971,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
  void TKSpaceFirstOrder3DSolver::Sum_new_p_linear_lossless(){
     
      
-    #ifndef __NO_OMP__            
-      #pragma omp parallel
-    #endif    
+    #pragma omp parallel
     {
     
         const float * rhox   = Get_rhox().GetRawData();
@@ -2069,10 +1983,9 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
         
       if (Parameters->Get_c0_scalar_flag()){
      
-             const float c2_element = Parameters->Get_c0_scalar();
-             #ifndef __NO_OMP__            
-                #pragma omp for schedule (static) 
-             #endif    
+              const float c2_element = Parameters->Get_c0_scalar();
+              
+              #pragma omp for schedule (static) 
               for (size_t i = 0; i < TotalElementCount; i++){
                   p_data[i] = c2_element * ( rhox[i] + rhoy[i] + rhoz[i]);                                
               }
@@ -2081,9 +1994,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
            
              const float * c2_data  = Get_c2().GetRawData();     
              
-             #ifndef __NO_OMP__            
-                #pragma omp for schedule (static) 
-             #endif    
+              #pragma omp for schedule (static) 
               for (size_t i = 0; i < TotalElementCount; i++){
                   p_data[i] = (c2_data[i]) *( rhox[i] + rhoy[i] + rhoz[i]);                                
               }
@@ -2208,9 +2119,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
      Get_FFT_Y_temp().Compute_iFFT_3D_C2R(Get_Temp_2_RS3D());                                       
      Get_FFT_Z_temp().Compute_iFFT_3D_C2R(Get_Temp_3_RS3D());                    
      
-    #ifndef __NO_OMP__            
-      #pragma omp parallel 
-    #endif
+    #pragma omp parallel 
     {
    
      if (Parameters->Get_rho0_scalar_flag()) { // scalars
@@ -2467,10 +2376,8 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing(){
          const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();                         
                float  Divider     = 1.0f / (float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex());
          
-         #ifndef __NO_OMP__            
-             #pragma omp parallel for schedule (static) if (sensor_size > 1e5) \
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5) \
                      firstprivate(Divider)
-         #endif
          for (size_t i = 0; i < sensor_size; i++){
              p_rms[i] = sqrtf(Divider * p_rms[i]);             
          }            
@@ -2555,10 +2462,8 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing(){
          const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();                         
                float  Divider      = 1.0f / (float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex());
          
-         #ifndef __NO_OMP__            
-             #pragma omp parallel for schedule (static) if (sensor_size > 1e5) \
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5) \
                      firstprivate(Divider)
-         #endif
          for (size_t i = 0; i < sensor_size; i++){
              ux_rms[i] = sqrtf(Divider * ux_rms[i]);             
              uy_rms[i] = sqrtf(Divider * uy_rms[i]);             
@@ -2662,9 +2567,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
          const long  * index       = Get_sensor_mask_ind().GetRawData();
          const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
           
-         #ifndef __NO_OMP__            
-                #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
-         #endif
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
          for (size_t i = 0; i <sensor_size; i++){
              if (p_max[i] < p[index[i]]) p_max[i] = p[index[i]];             
          }            
@@ -2677,9 +2580,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
          const long  * index       = Get_sensor_mask_ind().GetRawData();
          const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
           
-         #ifndef __NO_OMP__            
-                #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
-         #endif
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
          for (size_t i = 0; i <sensor_size; i++){
              if (p_min[i] > p[index[i]]) p_min[i] = p[index[i]];             
          }            
@@ -2692,9 +2593,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
                float * p_max       = Get_p_sensor_max_all().GetRawData();         
          const size_t  size        = Get_p().GetTotalElementCount();
                
-         #ifndef __NO_OMP__            
-                #pragma omp parallel for schedule (static)
-         #endif
+         #pragma omp parallel for schedule (static)
          for (size_t i = 0; i <size; i++){
              if (p_max[i] < p[i]) p_max[i] = p[i];             
          }            
@@ -2706,9 +2605,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
                float * p_min       = Get_p_sensor_min_all().GetRawData();         
          const size_t  size        = Get_p().GetTotalElementCount();
           
-         #ifndef __NO_OMP__            
-                #pragma omp parallel for schedule (static)
-         #endif
+         #pragma omp parallel for schedule (static)
          for (size_t i = 0; i <size; i++){
              if (p_min[i] > p[i]) p_min[i] = p[i];             
          }            
@@ -2721,9 +2618,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
          const long  * index       = Get_sensor_mask_ind().GetRawData();
          const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
                          
-         #ifndef __NO_OMP__            
-             #pragma omp parallel for schedule (static) if (sensor_size > 1e5)                      
-         #endif
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)                      
          for (size_t i = 0; i <sensor_size; i++){
              p_rms[i] += (p[index[i]] * p[index[i]]);             
          }            
@@ -2739,9 +2634,8 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
                float* uz_max       = Get_uz_sensor_max().GetRawData();
          const long * index        = Get_sensor_mask_ind().GetRawData();
          const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
-         #ifndef __NO_OMP__            
-                #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
-         #endif
+
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
          for (size_t i = 0; i < sensor_size; i++){
              if (ux_max[i] < ux[index[i]]) ux_max[i] = ux[index[i]];             
              if (uy_max[i] < uy[index[i]]) uy_max[i] = uy[index[i]];             
@@ -2760,9 +2654,8 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
                float* uz_min       = Get_uz_sensor_min().GetRawData();
          const long * index        = Get_sensor_mask_ind().GetRawData();
          const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
-         #ifndef __NO_OMP__            
-                #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
-         #endif
+         
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)         
          for (size_t i = 0; i < sensor_size; i++){
              if (ux_min[i] > ux[index[i]]) ux_min[i] = ux[index[i]];             
              if (uy_min[i] > uy[index[i]]) uy_min[i] = uy[index[i]];             
@@ -2780,9 +2673,8 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
                float* uy_max       = Get_uy_sensor_max_all().GetRawData();
                float* uz_max       = Get_uz_sensor_max_all().GetRawData();         
          const size_t size         = Get_ux_sgx().GetTotalElementCount();
-         #ifndef __NO_OMP__            
-                #pragma omp parallel for schedule (static)
-         #endif
+
+         #pragma omp parallel for schedule (static)
          for (size_t i = 0; i < size; i++){
              if (ux_max[i] < ux[i]) ux_max[i] = ux[i];             
              if (uy_max[i] < uy[i]) uy_max[i] = uy[i];             
@@ -2800,9 +2692,8 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
                float* uy_min       = Get_uy_sensor_min_all().GetRawData();
                float* uz_min       = Get_uz_sensor_min_all().GetRawData();         
          const size_t size         = Get_ux_sgx().GetTotalElementCount();
-         #ifndef __NO_OMP__            
-                #pragma omp parallel for schedule (static)
-         #endif
+
+         #pragma omp parallel for schedule (static)
          for (size_t i = 0; i < size; i++){
              if (ux_min[i] > ux[i]) ux_min[i] = ux[i];             
              if (uy_min[i] > uy[i]) uy_min[i] = uy[i];             
@@ -2823,10 +2714,8 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
                float* uz_rms       = Get_uz_sensor_rms().GetRawData();               
          const long * index        = Get_sensor_mask_ind().GetRawData();
          const size_t sensor_size = Get_sensor_mask_ind().GetTotalElementCount();               
-          
-         #ifndef __NO_OMP__            
-             #pragma omp parallel for schedule (static) if (sensor_size > 1e5)                      
-         #endif
+                   
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)                               
          for (size_t i = 0; i <sensor_size; i++){
              ux_rms[i] += (ux[index[i]] * ux[index[i]]);             
              uy_rms[i] += (uy[index[i]] * uy[index[i]]);             
@@ -2849,9 +2738,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
  */
 void TKSpaceFirstOrder3DSolver::StoreIntensityData(){
         
-    #ifndef __NO_OMP__            
-        #pragma omp parallel 
-    #endif        
+    #pragma omp parallel 
     {
         const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();               
 
@@ -2891,9 +2778,8 @@ void TKSpaceFirstOrder3DSolver::StoreIntensityData(){
         
         // calculate  intensity
         if (t_index+1 > Parameters->GetStartTimeIndex()){
-            #ifndef __NO_OMP__            
-               #pragma omp for schedule (static) 
-            #endif
+
+            #pragma omp for schedule (static) 
             for (size_t i = 0; i < sensor_size; i++){
                // calculate positions in the grid
                const size_t sensor_point_ind    = index[i];                 
@@ -2938,9 +2824,8 @@ void TKSpaceFirstOrder3DSolver::StoreIntensityData(){
             }
         } else {
             // first step of the recording. Store only actual data
-             #ifndef __NO_OMP__            
-               #pragma omp for schedule (static) 
-            #endif
+
+            #pragma omp for schedule (static) 
             for (size_t i = 0; i < sensor_size; i++){
                // calculate positions in the grid
                const size_t sensor_point_ind    = index[i];                 

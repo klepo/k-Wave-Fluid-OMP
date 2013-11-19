@@ -32,7 +32,14 @@
 #ifndef TIMEMEASURE_H
 #define	TIMEMEASURE_H
 
-#include <omp.h>
+#include <exception>
+
+#ifdef _OPENMP  
+  #include <omp.h>
+#else
+#include <sys/time.h>
+#endif
+
 
 /**
  * @class  TTimeMesssure
@@ -74,9 +81,26 @@ public :
     virtual ~TTimeMesssure() {};
     
     ///Get start timestamp 
-    void Start() {StartTime = omp_get_wtime(); };
+    void Start() {
+       #ifdef _OPENMP
+         StartTime = omp_get_wtime(); 
+         
+       #else
+          timeval ActTime;
+          gettimeofday(&ActTime, NULL);
+          StartTime = ActTime.tv_sec + ActTime.tv_usec * 1.0e-6;
+       #endif
+    };
     ///Get stop timestamp
-    void Stop()  {StopTime = omp_get_wtime();};
+    void Stop()  {
+        #ifdef _OPENMP
+          StopTime = omp_get_wtime();    
+        #else
+          timeval ActTime;
+          gettimeofday(&ActTime, NULL);
+          StopTime = ActTime.tv_sec + ActTime.tv_usec * 1.0e-6;
+       #endif
+    };
     
     /**
      * Get elapsed time

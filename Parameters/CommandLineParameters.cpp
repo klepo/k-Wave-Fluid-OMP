@@ -32,7 +32,9 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <string.h>
-#include <omp.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 #include <Parameters/CommandLineParameters.h>
 
@@ -52,7 +54,11 @@
  */
 TCommandLineParameters::TCommandLineParameters() :
         InputFileName(""), OutputFileName (""), 
-        NumberOfThreads(omp_get_num_procs()),
+        #ifdef _OPENMP
+          NumberOfThreads(omp_get_num_procs()),
+        #else
+          NumberOfThreads(1),
+        #endif
         VerboseInterval(DefaultVerboseInterval), CompressionLevel (DefaultCompressionLevel),
         BenchmarkFlag (false), BenchmarkTimeStepsCount(0),      
         PrintVersion (false),
@@ -79,8 +85,10 @@ void TCommandLineParameters::PrintUsageAndExit(){
  printf("  -o <output_file_name>           : HDF5 output file\n");
  printf("\n");
  printf("Optional parameters: \n");
- printf("  -t <num_threads>                : Number of CPU threads\n");
- printf("                                      (default = %d)\n",omp_get_num_procs());
+ #ifdef _OPENMP
+   printf("  -t <num_threads>                : Number of CPU threads\n"); 
+   printf("                                      (default = %d)\n",omp_get_num_procs());
+ #endif
  printf("  -r <interval_in_%%>              : Progress print interval\n");
  printf("                                      (default = %d%%)\n",DefaultVerboseInterval);
  printf("  -c <comp_level>                 : Output file compression level <0,9>\n");
@@ -180,7 +188,12 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv){
     
    char c;
    int longIndex;
-   const char * shortOpts = "i:o:r:c:t:puIhs:";
+   
+   #ifdef _OPENMP
+     const char * shortOpts = "i:o:r:c:t:puIhs:";
+   #else  
+     const char * shortOpts = "i:o:r:c:puIhs:";
+   #endif
     
    const struct option longOpts[] = {
         { "benchmark", required_argument , NULL, 0},
