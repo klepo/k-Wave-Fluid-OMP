@@ -27,7 +27,10 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <omp.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif 
+
 #include <iostream>
 #include <string.h>
 #include <sstream>

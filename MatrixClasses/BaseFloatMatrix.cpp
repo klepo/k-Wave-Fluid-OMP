@@ -77,9 +77,7 @@ void TBaseFloatMatrix::CopyData(TBaseFloatMatrix & src){
  */
 void TBaseFloatMatrix::ZeroMatrix(){
 
-#ifndef __NO_OMP__    
     #pragma omp parallel for schedule (static)
-#endif
     for (size_t i=0; i < pTotalAllocatedElementCount; i++){
         pMatrixData[i] = 0.0f;
     }
@@ -94,9 +92,8 @@ void TBaseFloatMatrix::ZeroMatrix(){
  * 
  */
 void TBaseFloatMatrix::ScalarDividedBy(const float  scalar){
-#ifndef __NO_OMP__      
+
     #pragma omp parallel for schedule (static)
-#endif
     for (size_t i=0; i < pTotalAllocatedElementCount; i++){
         pMatrixData[i] = scalar / pMatrixData[i];
         

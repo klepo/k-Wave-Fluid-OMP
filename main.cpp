@@ -588,8 +588,11 @@ Name                            Size           Data type        Domain Type     
         
 #include <cstdlib>
 #include <iostream>
-#include <omp.h>
 #include <exception>
+
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 
 #include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
 
@@ -627,8 +630,10 @@ int main(int argc, char** argv) {
    
 
     // set number of threads and bind them to cores
-    omp_set_num_threads(Parameters->GetNumberOfThreads());
-    setenv("OMP_PROC_BIND","TRUE",1);  
+    #ifdef _OPENMP
+      omp_set_num_threads(Parameters->GetNumberOfThreads());
+      setenv("OMP_PROC_BIND","TRUE",1);  
+    #endif
         
                      
     fprintf(stdout, "Number of CPU threads:    %6d\n", Parameters->GetNumberOfThreads());    
