@@ -171,9 +171,8 @@ void TFFTWComplexMatrix::Compute_iFFT_3D_C2R(TRealMatrix & OutMatrix){
     }
     
     //-- first touch --//
-     #ifndef __NO_OMP__       
-        #pragma omp parallel for schedule(static)
-     #endif  
+       
+     #pragma omp parallel for schedule(static)     
     for (size_t i=0; i<pTotalAllocatedElementCount; i++){
         pMatrixData[i] = 0.0f;
     }
