@@ -35,7 +35,7 @@
   #include <omp.h>
 #endif
 #include <sys/resource.h>
-#include <emmintrin.h>
+#include <immintrin.h>
 #include <math.h>
 #include <time.h>
 #include <sstream>
