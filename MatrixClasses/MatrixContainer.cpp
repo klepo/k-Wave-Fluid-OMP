@@ -7,8 +7,8 @@
  * @brief       The implementation file containing the matrix container
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        12 July 2012, 10:27  (created) \n
- *              04 June 2013, 14:16  (revised)
+ * @date        12 July     2012, 10:27  (created) \n
+ *              18 February 2014, 13:25  (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -311,8 +311,15 @@ void TMatrixContainer::AddMatricesIntoContainer(){
     }
         
     //-- index matrices --//                
-    MatrixContainer[sensor_mask_ind].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(1 ,1, Params->Get_sensor_mask_index_size()), true, sensor_mask_index_Name);                                
-   
+    if (Params->Get_sensor_mask_type() == TParameters::smt_index){
+      MatrixContainer[sensor_mask_index].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(1 ,1, Params->Get_sensor_mask_index_size()), true, sensor_mask_index_Name);                                
+    }
+
+    //-- index matrices --//                
+    if (Params->Get_sensor_mask_type() == TParameters::smt_corners)
+    {
+      MatrixContainer[sensor_mask_corners].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(6 ,Params->Get_sensor_mask_corners_size(), 1), true, sensor_mask_corners_Name);                                
+    }
     
     
     // if p0 source flag 
@@ -437,7 +444,19 @@ void TMatrixContainer::AddMatricesIntoContainer(){
     //----------------------- output buffers ---------------------------------//
     //------------------------------------------------------------------------//
     
-    TDimensionSizes SensorDims(Params->Get_sensor_mask_index_size(), 1, 1);
+    
+    
+    TDimensionSizes SensorDims;
+    
+    if (Params->Get_sensor_mask_type() == TParameters::smt_index)
+    {
+        SensorDims = TDimensionSizes(Params->Get_sensor_mask_index_size(), 1, 1);
+    }
+    if (Params->Get_sensor_mask_type() == TParameters::smt_corners)
+    {
+        SensorDims = TDimensionSizes(Params->Get_sensor_mask_index_size(), 1, 1);
+    }
+      MatrixContainer[sensor_mask_corners].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(6 ,Params->Get_sensor_mask_corners_size(), 1), true, sensor_mask_corners_Name);                                    
             
             
     if (Params->IsStore_p_rms()){

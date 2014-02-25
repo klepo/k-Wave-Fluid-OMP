@@ -7,8 +7,8 @@
  * @brief       The header file containing the class for 64b integer matrices
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        26 July 2011, 15:16      (created) \n
- *              17 September 2012, 15:35 (revised)
+ * @date        26 July     2011, 15:16 (created) \n
+ *              18 February 2014, 13:15 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -38,7 +38,8 @@
 
 /**
  * @class TLongMatrix
- * @brief The class for 64b integers. It is used for index mask into float matrices
+ * @brief The class for 64b integers. It is used for sensor_mask_index or sensor_corners_mask 
+ * to get the address of sampled voxels. 
  */
 class TLongMatrix : public TBaseLongMatrix{
 public:
@@ -63,22 +64,37 @@ public:
         return pMatrixData[index]; 
     };
     
+    /**
+     * Get the top left corner of the index-th cuboid 
+     * @param [in] index - Id of the corner
+     * @return the top left corner
+     */
+    TDimensionSizes GetTopLeftCorner(const size_t index) const {
+        size_t X =  pMatrixData[6*index];
+        size_t Y =  pMatrixData[6*index+1];
+        size_t Z =  pMatrixData[6*index+2];
+                 
+        return TDimensionSizes(X, Y, Z);
+    }; 
     
     /**
-     * Get element form the 3D matrix
-     * @param X - X dimension
-     * @param Y - Y dimension
-     * @param Z - Z dimension
-     * @return an alement
+     * Get the bottom right corner of the index-th cuboid 
+     * @param [in] index -Id of the corner
+     * @return the bottom right corner
      */
-    inline long&  GetElementFrom3D(const size_t X, const size_t Y, const size_t Z){
-        return pMatrixData[Z * p2DDataSliceSize + Y * pDataRowSize +  X];
-    };
-    
-    
+    TDimensionSizes GetBottomRightCorner(const size_t index) const {
+        size_t X =  pMatrixData[6*index + 3];
+        size_t Y =  pMatrixData[6*index + 4];
+        size_t Z =  pMatrixData[6*index + 5];
+                 
+        return TDimensionSizes(X, Y, Z);
+    };                 
     
     ///  Recompute indices MATALAB->C++     
     void RecomputeIndices();
+    
+    /// Get the total number of elements to be sampled within all cuboids
+    size_t GetTotalNumberOfElementsInAllCuboids() const;
     
     
     

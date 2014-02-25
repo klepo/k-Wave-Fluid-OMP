@@ -8,8 +8,8 @@
  *              the output HDF5 file
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        11 July 2012, 10:30      (created) \n
- *              17 September 2012, 15:35 (revised)
+ * @date        11 July     2012, 10:30      (created) \n
+ *              18 February 2014, 15:35 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -95,14 +95,14 @@ void TOutputHDF5Stream::CloseStream(){
 
 
 /**
- * Add data into the stream (usually one time step sensor data)
+ * Add data into the stream (usually one time step sensor data) based on Index Mask
  * 
  * @param [in] SourceMatrix - Matrix from where to pick the values
  * @param [in] Index        - Index used to pick the values
  * @param [in, out] TempBuffer - Temp buffer to make the data block contiguous
  * 
  */
-void TOutputHDF5Stream::AddData(TRealMatrix& SourceMatrix, TLongMatrix& Index, float * TempBuffer){
+void TOutputHDF5Stream::AddDataIndex(TRealMatrix& SourceMatrix, TLongMatrix& Index, float * TempBuffer){
      
      
     #pragma omp parallel for if (Index.GetTotalElementCount() > 1e6)  
@@ -120,6 +120,48 @@ void TOutputHDF5Stream::AddData(TRealMatrix& SourceMatrix, TLongMatrix& Index, f
 //------------------------------------------------------------------------------
 
 
+
+/**
+ * Add data into the stream (usually one time step sensor data) based on Cuboid Corners Mask
+ * 
+ * @param [in] SourceMatrix - Matrix from where to pick the values
+ * @param [in] Corners      - Cuboid corners the interior is sampled
+ * @param [in, out] TempBuffer - Temp buffer to make the data block contiguous
+ * 
+ */
+
+void TOutputHDF5Stream::AddDataCorners(TRealMatrix& SourceMatrix, TLongMatrix& Corners, float * TempBuffer)
+{
+    ///@TODO Parallel section with some load balancing feature
+    
+    size_t BufferIndex = 0;
+    const size_t XY_Size = SourceMatrix.GetDimensionSizes().Y * SourceMatrix.GetDimensionSizes().X;
+    const size_t X_Size  = SourceMatrix.GetDimensionSizes().X;
+    
+    
+    for (size_t CuboidIdx = 0; CuboidIdx < Corners.GetDimensionSizes().Y; CuboidIdx++)        
+    {
+        const TDimensionSizes TopLeftCorner     = Corners.GetTopLeftCorner(CuboidIdx);
+        const TDimensionSizes BottomRightCorner = Corners.GetBottomRightCorner(CuboidIdx);
+        
+        for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++) 
+            for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++) 
+                for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++) 
+                {
+                   TempBuffer[BufferIndex++] = SourceMatrix[z * XY_Size + y * X_Size + x];                           
+                }
+    }
+    
+    
+    TDimensionSizes BlockSize(Corners.GetTotalNumberOfElementsInAllCuboids(),1,1);
+    
+    HDF5_File->WriteHyperSlab(HDF5_Dataset_id,Position,BlockSize,TempBuffer);
+    Position.Y++;
+    
+    
+    
+}// end of AddDataCorners   
+//------------------------------------------------------------------------------
 
 /**
  * Destructor

@@ -46,6 +46,12 @@
  */
 class TParameters {
 public:
+      
+    /**
+     * @enum SenosrMaskType
+     * @brief Sensor mask type (linear or corners)
+     */
+    enum SenosrMaskType   {smt_index = 0, smt_corners  = 1};
     
     /// Get instance of the singleton class
     static TParameters* GetInstance();
@@ -69,7 +75,7 @@ public:
     TDimensionSizes GetFullDimensionSizes   () const {return FullDimensionSizes; };
     /// Reduced dimension sizes of the simulation (complex clases)
     TDimensionSizes GetReducedDimensionSizes() const {return ReducedDimensionSizes; };
-
+      
     /// Get Nt value
     long  Get_Nt()               const {return Nt;};
     
@@ -130,9 +136,14 @@ public:
     long  Get_nonlinear_flag()               const { return nonlinear_flag; };
     /// Get transducer_source_flag value        
     long  Get_transducer_source_flag()       const {return transducer_source_flag;};    
-           
+    
+    /// Get sensor mask type (linear or corners)
+    SenosrMaskType Get_sensor_mask_type()    const {return sensor_mask_type;};    
     /// Get sensor_mask_index_size value            
-    long  Get_sensor_mask_index_size()       const { return sensor_mask_ind_size;}
+    long  Get_sensor_mask_index_size()       const {return sensor_mask_ind_size;}
+    /// Get number of cubes in the mask
+    long  Get_sensor_mask_corners_size()      const {return sensor_mask_corners_size;};
+    
     /// Get u_source_index_size value            
     long  Get_u_source_index_size()          const { return u_source_index_size;}
     /// Get p_source_index_size value            
@@ -269,9 +280,14 @@ protected:
     TDimensionSizes FullDimensionSizes;
     /// Reduced 3D dimension sizes
     TDimensionSizes ReducedDimensionSizes;
-    
+        
+    /// sensor mask type (0 = index, 1 = corners)
+    SenosrMaskType sensor_mask_type;    
     /// sensor_mask_ind_size value
     long sensor_mask_ind_size;
+    /// sensor_mask_corners_size - how many cuboids is in the mask. 
+    long sensor_mask_corners_size;
+    
     /// u_source_index_size value
     long u_source_index_size;
     /// p_source_index_size value

@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        14 September 2012, 14:33 (created) \n
- *              43 June      2013, 14:05 (revised)
+ *              18 February  2014, 13:20 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -61,7 +61,7 @@ enum TMatrixID     {kappa, c2, p,
                       dt_rho0_sgx, dt_rho0_sgy, dt_rho0_sgz,
                       
                       
-                      p0_source_input, sensor_mask_ind,
+                      p0_source_input, sensor_mask_index, sensor_mask_corners,
                       ddx_k_shift_pos, ddy_k_shift_pos, ddz_k_shift_pos,    
                       ddx_k_shift_neg, ddy_k_shift_neg, ddz_k_shift_neg,
                       

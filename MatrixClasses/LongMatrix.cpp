@@ -7,8 +7,8 @@
  * @brief       The implementation file containing the class for 64b integer matrices
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        26 July 2011, 15:16             (created) \n
- *              17 September 2012, 15:55PM      (revised)
+ * @date        26 July     2011, 15:16   (created) \n
+ *              18 February 2014, 14:30   (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -126,7 +126,28 @@ void TLongMatrix::RecomputeIndices()
 }// end of RecomputeIndices
 //------------------------------------------------------------------------------
 
-
+/**
+ * Get total number of elements in all cuboids to be able to allocate output file
+ * @return 
+ */
+size_t TLongMatrix::GetTotalNumberOfElementsInAllCuboids() const 
+{
+    
+    size_t ElementSum = 0;
+    for (size_t cuboidIdx = 0; cuboidIdx < pDimensionSizes.Y; cuboidIdx++)
+    {        
+      TDimensionSizes TopLeftCorner     = GetTopLeftCorner(cuboidIdx);
+      TDimensionSizes BottomRightCorner = GetBottomRightCorner(cuboidIdx);
+        
+      // + 1 because of planes (10.10.1 - 60.40.1)
+      ElementSum += (BottomRightCorner.X - TopLeftCorner.X + 1) *
+                    (BottomRightCorner.Y - TopLeftCorner.Y + 1) *
+                    (BottomRightCorner.Z - TopLeftCorner.Z + 1);      
+    }
+    
+    return ElementSum;
+}// end of GetTotalNumberOfElementsInAllCuboids
+//------------------------------------------------------------------------------
 
 /**
  * Write data to HDF5 file 

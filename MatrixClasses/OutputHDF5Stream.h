@@ -58,9 +58,12 @@ public:
     /// Close stream
     virtual void CloseStream();
     
-    /// Add data into stream
-    virtual void AddData   (TRealMatrix& Source_matrix, TLongMatrix& Index, float * TempBuffer);    
+    /// Add data into stream based on a Index Mask
+    virtual void AddDataIndex(TRealMatrix& SourceMatrix, TLongMatrix& Index, float * TempBuffer);    
         
+    /// Add data into stream based on a Cuboid Corners Mask
+    virtual void AddDataCorners(TRealMatrix& SourceMatrix, TLongMatrix& Corners, float * TempBuffer);    
+    
     /// Destructor
     virtual ~TOutputHDF5Stream();
 private:    

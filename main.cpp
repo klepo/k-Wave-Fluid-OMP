@@ -6,8 +6,8 @@
  * @brief       The main file
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        11 July 2012, 10:57             (created) \n
- *              04 June 2013, 13:45             (revised)
+ * @date        11 July     2012, 10:57             (created) \n
+ *              13 February 2014, 17:05             (revised)
  * 
  * 
  * 
@@ -416,7 +416,9 @@ Name                            Size           Data type       Domain Type      
 --------------------------------------------------------------------------------------------------------------  
   4. Sensor Variables
 --------------------------------------------------------------------------------------------------------------   
-sensor_mask_index               (Nsens, 1, 1)   long          real
+  sensor_mask_type              (1, 1, 1)       float         real              File version 1.1
+  sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.0 always, File version 1.1 if sensor_mask_type == 0
+  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1, if sensor_mask_type == 1
 --------------------------------------------------------------------------------------------------------------  
   5 Source Properties
 --------------------------------------------------------------------------------------------------------------   

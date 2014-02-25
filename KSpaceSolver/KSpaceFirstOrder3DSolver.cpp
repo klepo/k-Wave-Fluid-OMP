@@ -8,8 +8,8 @@
  *              responsible for the entire simulation.
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        12 July 2012, 10:27  (created)\n
- *              04 June 2013, 14:28  (revised)
+ * @date        12 July     2012, 10:27  (created)\n
+ *              19 February 2014, 13:40  (revised)
  *  
  * @section License 
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -190,11 +190,24 @@ void TKSpaceFirstOrder3DSolver::LoadInputData(){
    
    HDF5_OutputFile.Create(Parameters->GetOutputFileName().c_str());
    
+   TDimensionSizes TotalSizes;
+   TDimensionSizes ChunkSizes;
    
-   TDimensionSizes TotalSizes(Get_sensor_mask_ind().GetTotalElementCount(),Parameters->Get_Nt() - Parameters->GetStartTimeIndex(), 1);
-   TDimensionSizes ChunkSizes(Get_sensor_mask_ind().GetTotalElementCount(),1, 1);
-   
+   // in the case of index sensor mask
+   if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+   {
+     TotalSizes = TDimensionSizes(Get_sensor_mask_index().GetTotalElementCount(),Parameters->Get_Nt() - Parameters->GetStartTimeIndex(), 1);
+     ChunkSizes = TDimensionSizes(Get_sensor_mask_index().GetTotalElementCount(),1, 1);
+   }
 
+   // in the case of cuboid corners sensor mask
+   if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+   {    
+     TotalSizes = TDimensionSizes(Get_sensor_mask_corners().GetTotalNumberOfElementsInAllCuboids(),
+                                Parameters->Get_Nt() - Parameters->GetStartTimeIndex(), 1);
+     ChunkSizes = TDimensionSizes(Get_sensor_mask_corners().GetTotalNumberOfElementsInAllCuboids(), 1, 1);
+   }
+   
    if (Parameters->IsStore_p_raw()) {
         p_sensor_raw_OutputStream->CreateStream(HDF5_OutputFile,
                                                 MatrixContainer[p].HDF5MatrixName.c_str(),
@@ -323,7 +336,7 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
     fprintf(file,"| Build Number:     kspaceFirstOrder3D v2.14       |\n");
     fprintf(file,"| Operating System: Linux x64                      |\n");
     fprintf(file,"|                                                  |\n");    
-    fprintf(file,"| Copyright (C) 2013 Jiri Jaros and Bradley Treeby |\n");
+    fprintf(file,"| Copyright (C) 2014 Jiri Jaros and Bradley Treeby |\n");
     fprintf(file,"| http://www.k-wave.org                            |\n");    
     fprintf(file,"+--------------------------------------------------+\n");
     fprintf(file,"\n");
@@ -370,7 +383,11 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans(){
  */
 void TKSpaceFirstOrder3DSolver::PreProcessingPhase(){
     
-    Get_sensor_mask_ind().RecomputeIndices();
+    if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+      Get_sensor_mask_index().RecomputeIndices();
+    
+    if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+      Get_sensor_mask_corners().RecomputeIndices();
         
     
     if ((Parameters->Get_transducer_source_flag() != 0) || 
@@ -2370,22 +2387,26 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing(){
                                                    Parameters->GetCompressionLevel());        
     }// p_min_all
     
-    if (Parameters->IsStore_p_rms()){
+    
+    if (Parameters->IsStore_p_rms())
+    {               
+      size_t  sensor_element_count =  0;
+      
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)   sensor_element_count = Get_sensor_mask_index().GetTotalElementCount();
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners) sensor_element_count = Get_sensor_mask_corners().GetTotalNumberOfElementsInAllCuboids();      
+      
+      float * p_rms  = Get_p_sensor_rms().GetRawData();          
+      float   Divider = 1.0f / (float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex());
          
-               float * p_rms       = Get_p_sensor_rms().GetRawData();         
-         const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();                         
-               float  Divider     = 1.0f / (float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex());
-         
-         #pragma omp parallel for schedule (static) if (sensor_size > 1e5) \
-                     firstprivate(Divider)
-         for (size_t i = 0; i < sensor_size; i++){
-             p_rms[i] = sqrtf(Divider * p_rms[i]);             
-         }            
-        
-        
-          Get_p_sensor_rms().WriteDataToHDF5File(Parameters->HDF5_OutputFile,  
-                                                 MatrixContainer[p_sensor_rms].HDF5MatrixName.c_str(),
-                                                 Parameters->GetCompressionLevel());        
+      #pragma omp parallel for schedule (static) if (sensor_element_count > 1e5) firstprivate(Divider)
+      for (size_t i = 0; i < sensor_element_count; i++)
+      {
+        p_rms[i] = sqrtf(Divider * p_rms[i]);             
+      }            
+                
+      Get_p_sensor_rms().WriteDataToHDF5File(Parameters->HDF5_OutputFile,  
+                                             MatrixContainer[p_sensor_rms].HDF5MatrixName.c_str(),
+                                             Parameters->GetCompressionLevel());        
     }//  p_rms
     
             
@@ -2455,31 +2476,35 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing(){
     
     
     
-    if (Parameters->IsStore_u_rms()){
-               float* ux_rms       = Get_ux_sensor_rms().GetRawData();
-               float* uy_rms       = Get_uy_sensor_rms().GetRawData();
-               float* uz_rms       = Get_uz_sensor_rms().GetRawData();               
-         const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();                         
-               float  Divider      = 1.0f / (float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex());
-         
-         #pragma omp parallel for schedule (static) if (sensor_size > 1e5) \
-                     firstprivate(Divider)
-         for (size_t i = 0; i < sensor_size; i++){
-             ux_rms[i] = sqrtf(Divider * ux_rms[i]);             
-             uy_rms[i] = sqrtf(Divider * uy_rms[i]);             
-             uz_rms[i] = sqrtf(Divider * uz_rms[i]);             
-         }            
+    if (Parameters->IsStore_u_rms())
+    {
+      size_t sensor_element_count =  0;   
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)   sensor_element_count = Get_sensor_mask_index().GetTotalElementCount();
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners) sensor_element_count = Get_sensor_mask_corners().GetTotalNumberOfElementsInAllCuboids();      
+    
+      float* ux_rms       = Get_ux_sensor_rms().GetRawData();
+      float* uy_rms       = Get_uy_sensor_rms().GetRawData();
+      float* uz_rms       = Get_uz_sensor_rms().GetRawData();               
+          
+      float  Divider = 1.0f / (float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex());                   
+                     
+      #pragma omp parallel for schedule (static) if (sensor_element_count > 1e5) firstprivate(Divider)
+      for (size_t i = 0; i < sensor_element_count; i++){
+         ux_rms[i] = sqrtf(Divider * ux_rms[i]);             
+         uy_rms[i] = sqrtf(Divider * uy_rms[i]);             
+         uz_rms[i] = sqrtf(Divider * uz_rms[i]);             
+      }            
         
         
-        Get_ux_sensor_rms().WriteDataToHDF5File(Parameters->HDF5_OutputFile,  
-                                                MatrixContainer[ux_sensor_rms].HDF5MatrixName.c_str(),
-                                                Parameters->GetCompressionLevel());        
-        Get_uy_sensor_rms().WriteDataToHDF5File(Parameters->HDF5_OutputFile,  
-                                                MatrixContainer[uy_sensor_rms].HDF5MatrixName.c_str(),
-                                                Parameters->GetCompressionLevel());        
-        Get_uz_sensor_rms().WriteDataToHDF5File(Parameters->HDF5_OutputFile,  
-                                                MatrixContainer[uz_sensor_rms].HDF5MatrixName.c_str(),
-                                                Parameters->GetCompressionLevel());        
+      Get_ux_sensor_rms().WriteDataToHDF5File(Parameters->HDF5_OutputFile,  
+                                              MatrixContainer[ux_sensor_rms].HDF5MatrixName.c_str(),
+                                              Parameters->GetCompressionLevel());        
+      Get_uy_sensor_rms().WriteDataToHDF5File(Parameters->HDF5_OutputFile,  
+                                              MatrixContainer[uy_sensor_rms].HDF5MatrixName.c_str(),
+                                              Parameters->GetCompressionLevel());        
+      Get_uz_sensor_rms().WriteDataToHDF5File(Parameters->HDF5_OutputFile,  
+                                              MatrixContainer[uz_sensor_rms].HDF5MatrixName.c_str(),
+                                              Parameters->GetCompressionLevel());        
     }// u_rms
     
                                     
@@ -2542,51 +2567,133 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing(){
     
 /**
  * Store sensor data.
- * 
+ * @TODO Solve parallel sections in a better way
  */
 void TKSpaceFirstOrder3DSolver::StoreSensorData(){
     
+    // Unless the time for sampling has come, exit
     if (t_index < Parameters->GetStartTimeIndex()) return;
     
-    
-    if (Parameters->IsStore_p_raw()){
-       p_sensor_raw_OutputStream->AddData(Get_p(),Get_sensor_mask_ind(),Get_Temp_1_RS3D().GetRawData());
-    }
-    
-    if (Parameters->IsStore_u_raw()){
-       ux_sensor_raw_OutputStream->AddData(Get_ux_sgx(),Get_sensor_mask_ind(),Get_Temp_1_RS3D().GetRawData());
-       uy_sensor_raw_OutputStream->AddData(Get_uy_sgy(),Get_sensor_mask_ind(),Get_Temp_1_RS3D().GetRawData());
-       uz_sensor_raw_OutputStream->AddData(Get_uz_sgz(),Get_sensor_mask_ind(),Get_Temp_1_RS3D().GetRawData());
-    }
-
-
-    if (Parameters->IsStore_p_max()){        
-         
-         const float * p           = Get_p().GetRawData();
-               float * p_max       = Get_p_sensor_max().GetRawData();
-         const long  * index       = Get_sensor_mask_ind().GetRawData();
-         const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
-          
-         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
-         for (size_t i = 0; i <sensor_size; i++){
-             if (p_max[i] < p[index[i]]) p_max[i] = p[index[i]];             
-         }            
-      }// p_max    
-    
-    if (Parameters->IsStore_p_min()){        
-         
-         const float * p           = Get_p().GetRawData();
-               float * p_min       = Get_p_sensor_min().GetRawData();
-         const long  * index       = Get_sensor_mask_ind().GetRawData();
-         const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
-          
-         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
-         for (size_t i = 0; i <sensor_size; i++){
-             if (p_min[i] > p[index[i]]) p_min[i] = p[index[i]];             
-         }            
-      }// p_min
+    // constants for cuboid corners indexing
+    const size_t XY_Size = Parameters->GetFullDimensionSizes().Y * Parameters->GetFullDimensionSizes().X;    
+    const size_t X_Size  = Parameters->GetFullDimensionSizes().X;
         
     
+    const size_t sensor_size  = (Parameters->Get_sensor_mask_type() == TParameters::smt_index)  
+                                  ? Get_sensor_mask_index().GetTotalElementCount()  : 0;
+    const size_t cuboid_count = (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+                                  ? Get_sensor_mask_corners().GetDimensionSizes().Y : 0;
+    
+    
+    const long  * sensor_mask_index  = (Parameters->Get_sensor_mask_type() == TParameters::smt_index) 
+                                        ? Get_sensor_mask_index().GetRawData() : NULL;
+            
+    
+    // - pressure p
+    if (Parameters->IsStore_p_raw())             
+    {
+       if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+       {
+         p_sensor_raw_OutputStream->AddDataIndex(Get_p(),Get_sensor_mask_index(),Get_Temp_1_RS3D().GetRawData());
+       }
+       if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+       {
+         p_sensor_raw_OutputStream->AddDataCorners(Get_p(),Get_sensor_mask_corners(),Get_Temp_1_RS3D().GetRawData());
+       }
+    }// raw pressure
+    
+    
+    // velocity u
+    if (Parameters->IsStore_u_raw())
+    {
+        if (Parameters->Get_sensor_mask_type() == TParameters::smt_index ){
+          ux_sensor_raw_OutputStream->AddDataIndex(Get_ux_sgx(),Get_sensor_mask_index(),Get_Temp_1_RS3D().GetRawData());
+          uy_sensor_raw_OutputStream->AddDataIndex(Get_uy_sgy(),Get_sensor_mask_index(),Get_Temp_1_RS3D().GetRawData());
+          uz_sensor_raw_OutputStream->AddDataIndex(Get_uz_sgz(),Get_sensor_mask_index(),Get_Temp_1_RS3D().GetRawData());
+        }
+    
+        if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners){
+         ux_sensor_raw_OutputStream->AddDataCorners(Get_ux_sgx(),Get_sensor_mask_corners(),Get_Temp_1_RS3D().GetRawData());
+         uy_sensor_raw_OutputStream->AddDataCorners(Get_uy_sgy(),Get_sensor_mask_corners(),Get_Temp_1_RS3D().GetRawData());
+         uz_sensor_raw_OutputStream->AddDataCorners(Get_uz_sgz(),Get_sensor_mask_corners(),Get_Temp_1_RS3D().GetRawData());
+        }
+    }// raw velocity 
+
+    //------------------------ p_max ------------------------------
+    if (Parameters->IsStore_p_max())
+    {                 
+      const float * p           = Get_p().GetRawData();
+            float * p_max       = Get_p_sensor_max().GetRawData();      
+            
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_index )
+      {          
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
+         for (size_t i = 0; i <sensor_size; i++){
+             if (p_max[i] < p[sensor_mask_index[i]]) p_max[i] = p[sensor_mask_index[i]];             
+         }          
+      }
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners )
+      {
+        size_t BufferIndex = 0;
+        TLongMatrix & Cuboids = Get_sensor_mask_corners();
+        
+        for (size_t CuboidIdx = 0; CuboidIdx < cuboid_count; CuboidIdx++)        
+        {
+            const TDimensionSizes TopLeftCorner     = Cuboids.GetTopLeftCorner(CuboidIdx);
+            const TDimensionSizes BottomRightCorner = Cuboids.GetBottomRightCorner(CuboidIdx);
+            
+            for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++) 
+                for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++) 
+                    for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++) 
+                    {
+                        if (p_max[BufferIndex] < p[z * XY_Size + y * X_Size + x]) 
+                            p_max[BufferIndex] = p[z * XY_Size + y * X_Size + x];
+                        BufferIndex++;                        
+                    }
+        }
+    
+      }            
+    }// p_max    
+    
+    //------------------------ p_min ------------------------------
+    if (Parameters->IsStore_p_min())
+    {        
+         
+       const float * p           = Get_p().GetRawData();
+             float * p_min       = Get_p_sensor_min().GetRawData();         
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_index )
+      {       
+         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
+        for (size_t i = 0; i <sensor_size; i++)
+        {
+            if (p_min[i] > p[sensor_mask_index[i]]) p_min[i] = p[sensor_mask_index[i]];             
+        }            
+      }
+            
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners )
+      {
+        size_t BufferIndex = 0;
+        TLongMatrix & Cuboids = Get_sensor_mask_corners();
+        
+        for (size_t CuboidIdx = 0; CuboidIdx < cuboid_count; CuboidIdx++)        
+        {
+            const TDimensionSizes TopLeftCorner     = Cuboids.GetTopLeftCorner(CuboidIdx);
+            const TDimensionSizes BottomRightCorner = Cuboids.GetBottomRightCorner(CuboidIdx);
+            
+            for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++) 
+                for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++) 
+                    for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++) 
+                    {
+                        if (p_min[BufferIndex] > p[z * XY_Size + y * X_Size + x]) 
+                            p_min[BufferIndex] = p[z * XY_Size + y * X_Size + x];
+                        BufferIndex++;                        
+                    }
+        }
+    
+      }             
+    }// p_min
+        
+    //------------------------ p_max_all ------------------------------
     if (Parameters->IsStore_p_max_all()){        
          
          const float * p           = Get_p().GetRawData();
@@ -2599,6 +2706,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
          }            
       }// p_max    
     
+    //------------------------ p_min_all ------------------------------
     if (Parameters->IsStore_p_min_all()){        
          
          const float * p           = Get_p().GetRawData();
@@ -2611,59 +2719,131 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
          }            
       }// p_min
     
-    if (Parameters->IsStore_p_rms()){        
-         // square sum
-         const float * p           = Get_p().GetRawData();
-               float * p_rms       = Get_p_sensor_rms().GetRawData();
-         const long  * index       = Get_sensor_mask_ind().GetRawData();
-         const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
-                         
+    
+    //------------------------ p_rms ---------------------------------
+    if (Parameters->IsStore_p_rms())
+    {        
+      // square sum  aa
+      const float * p           = Get_p().GetRawData();
+            float * p_rms       = Get_p_sensor_rms().GetRawData();         
+
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_index )
+      {                                 
          #pragma omp parallel for schedule (static) if (sensor_size > 1e5)                      
-         for (size_t i = 0; i <sensor_size; i++){
-             p_rms[i] += (p[index[i]] * p[index[i]]);             
-         }            
-      }//p_rms
-    
-    if (Parameters->IsStore_u_max()){        
-         
-         const float* ux           = Get_ux_sgx().GetRawData();
-         const float* uy           = Get_uy_sgy().GetRawData();
-         const float* uz           = Get_uz_sgz().GetRawData();
-               float* ux_max       = Get_ux_sensor_max().GetRawData();
-               float* uy_max       = Get_uy_sensor_max().GetRawData();
-               float* uz_max       = Get_uz_sensor_max().GetRawData();
-         const long * index        = Get_sensor_mask_ind().GetRawData();
-         const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
-
-         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
          for (size_t i = 0; i < sensor_size; i++){
-             if (ux_max[i] < ux[index[i]]) ux_max[i] = ux[index[i]];             
-             if (uy_max[i] < uy[index[i]]) uy_max[i] = uy[index[i]];             
-             if (uz_max[i] < uz[index[i]]) uz_max[i] = uz[index[i]];             
-         }            
-      }// u_max
+             p_rms[i] += (p[sensor_mask_index[i]] * p[sensor_mask_index[i]]);             
+         }     
+      }
+      
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners )
+      {
+        size_t BufferIndex = 0;
+        TLongMatrix & Cuboids = Get_sensor_mask_corners();
+        
+        for (size_t CuboidIdx = 0; CuboidIdx < cuboid_count; CuboidIdx++)        
+        {
+          const TDimensionSizes TopLeftCorner     = Cuboids.GetTopLeftCorner(CuboidIdx);
+          const TDimensionSizes BottomRightCorner = Cuboids.GetBottomRightCorner(CuboidIdx);
+            
+          for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++) 
+            for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++) 
+              for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++) 
+              {
+                p_rms[BufferIndex++] += (p[sensor_mask_index[z * XY_Size + y * X_Size + x]] * p[z * XY_Size + y * X_Size + x]);                         
+              }
+        }  
+      }           
+    }//p_rms
     
+    //------------------------ u_max ---------------------------------
+    if (Parameters->IsStore_u_max())
+    {                 
+      const float* ux           = Get_ux_sgx().GetRawData();
+      const float* uy           = Get_uy_sgy().GetRawData();
+      const float* uz           = Get_uz_sgz().GetRawData();
+            float* ux_max       = Get_ux_sensor_max().GetRawData();
+            float* uy_max       = Get_uy_sensor_max().GetRawData();
+            float* uz_max       = Get_uz_sensor_max().GetRawData();
+         
+     if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+     {                                 
+       #pragma omp parallel for schedule (static) if (sensor_size > 1e5)
+       for (size_t i = 0; i < sensor_size; i++)
+       {
+         if (ux_max[i] < ux[sensor_mask_index[i]]) ux_max[i] = ux[sensor_mask_index[i]];             
+         if (uy_max[i] < uy[sensor_mask_index[i]]) uy_max[i] = uy[sensor_mask_index[i]];             
+         if (uz_max[i] < uz[sensor_mask_index[i]]) uz_max[i] = uz[sensor_mask_index[i]];             
+       }            
+     }
+     
+     if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+     {
+       size_t BufferIndex = 0;
+       TLongMatrix & Cuboids = Get_sensor_mask_corners();
+        
+       for (size_t CuboidIdx = 0; CuboidIdx < cuboid_count; CuboidIdx++)        
+       {
+         const TDimensionSizes TopLeftCorner     = Cuboids.GetTopLeftCorner(CuboidIdx);
+         const TDimensionSizes BottomRightCorner = Cuboids.GetBottomRightCorner(CuboidIdx);
+           
+         for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++) 
+           for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++) 
+             for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++) 
+             {
+               if (ux_max[BufferIndex] < ux[z * XY_Size + y * X_Size + x]) ux_max[BufferIndex] = ux[z * XY_Size + y * X_Size + x];             
+               if (uy_max[BufferIndex] < uy[z * XY_Size + y * X_Size + x]) uy_max[BufferIndex] = uy[z * XY_Size + y * X_Size + x];             
+               if (uz_max[BufferIndex] < uz[z * XY_Size + y * X_Size + x]) uz_max[BufferIndex] = uz[z * XY_Size + y * X_Size + x];                              
+               BufferIndex++;
+             }
+        }  
+     }                           
+    }// u_max
     
-    if (Parameters->IsStore_u_min()){        
-         
-         const float* ux           = Get_ux_sgx().GetRawData();
-         const float* uy           = Get_uy_sgy().GetRawData();
-         const float* uz           = Get_uz_sgz().GetRawData();
-               float* ux_min       = Get_ux_sensor_min().GetRawData();
-               float* uy_min       = Get_uy_sensor_min().GetRawData();
-               float* uz_min       = Get_uz_sensor_min().GetRawData();
-         const long * index        = Get_sensor_mask_ind().GetRawData();
-         const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();
-         
-         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)         
-         for (size_t i = 0; i < sensor_size; i++){
-             if (ux_min[i] > ux[index[i]]) ux_min[i] = ux[index[i]];             
-             if (uy_min[i] > uy[index[i]]) uy_min[i] = uy[index[i]];             
-             if (uz_min[i] > uz[index[i]]) uz_min[i] = uz[index[i]];             
-         }            
-      }// u_min
+    //------------------------ u_min ---------------------------------
+    if (Parameters->IsStore_u_min())
+    {               
+      const float* ux           = Get_ux_sgx().GetRawData();
+      const float* uy           = Get_uy_sgy().GetRawData();
+      const float* uz           = Get_uz_sgz().GetRawData();
+            float* ux_min       = Get_ux_sensor_min().GetRawData();
+            float* uy_min       = Get_uy_sensor_min().GetRawData();
+            float* uz_min       = Get_uz_sensor_min().GetRawData();
+      
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+      {         
+        #pragma omp parallel for schedule (static) if (sensor_size > 1e5)         
+        for (size_t i = 0; i < sensor_size; i++)
+        {
+          if (ux_min[i] > ux[sensor_mask_index[i]]) ux_min[i] = ux[sensor_mask_index[i]];             
+          if (uy_min[i] > uy[sensor_mask_index[i]]) uy_min[i] = uy[sensor_mask_index[i]];             
+          if (uz_min[i] > uz[sensor_mask_index[i]]) uz_min[i] = uz[sensor_mask_index[i]];             
+        }            
+      }
+            
+     if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+     {
+       size_t BufferIndex = 0;
+       TLongMatrix & Cuboids = Get_sensor_mask_corners();
+        
+       for (size_t CuboidIdx = 0; CuboidIdx < cuboid_count; CuboidIdx++)        
+       {
+         const TDimensionSizes TopLeftCorner     = Cuboids.GetTopLeftCorner(CuboidIdx);
+         const TDimensionSizes BottomRightCorner = Cuboids.GetBottomRightCorner(CuboidIdx);
+           
+         for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++) 
+           for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++) 
+             for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++) 
+             {
+               if (ux_min[BufferIndex] > ux[sensor_mask_index[z * XY_Size + y * X_Size + x]]) ux_min[BufferIndex] = ux[z * XY_Size + y * X_Size + x];             
+               if (uy_min[BufferIndex] > uy[sensor_mask_index[z * XY_Size + y * X_Size + x]]) uy_min[BufferIndex] = uy[z * XY_Size + y * X_Size + x];             
+               if (uz_min[BufferIndex] > uz[sensor_mask_index[z * XY_Size + y * X_Size + x]]) uz_min[BufferIndex] = uz[z * XY_Size + y * X_Size + x];             
+               BufferIndex++;
+             }
+        }  
+     }                 
+    }// u_min
 
-
+    //------------------------ u_max_all ---------------------------------
     if (Parameters->IsStore_u_max_all()){        
          
          const float* ux           = Get_ux_sgx().GetRawData();
@@ -2682,7 +2862,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
          }            
       }// u_max
     
-    
+    //------------------------ u_min_all ---------------------------------
     if (Parameters->IsStore_u_min_all()){        
          
          const float* ux           = Get_ux_sgx().GetRawData();
@@ -2703,29 +2883,51 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
 
 
     
-    
-    if (Parameters->IsStore_u_rms()){        
-         
-         const float* ux           = Get_ux_sgx().GetRawData();
-         const float* uy           = Get_uy_sgy().GetRawData();
-         const float* uz           = Get_uz_sgz().GetRawData();
-               float* ux_rms       = Get_ux_sensor_rms().GetRawData();
-               float* uy_rms       = Get_uy_sensor_rms().GetRawData();
-               float* uz_rms       = Get_uz_sensor_rms().GetRawData();               
-         const long * index        = Get_sensor_mask_ind().GetRawData();
-         const size_t sensor_size = Get_sensor_mask_ind().GetTotalElementCount();               
-                   
-         #pragma omp parallel for schedule (static) if (sensor_size > 1e5)                               
-         for (size_t i = 0; i <sensor_size; i++){
-             ux_rms[i] += (ux[index[i]] * ux[index[i]]);             
-             uy_rms[i] += (uy[index[i]] * uy[index[i]]);             
-             uz_rms[i] += (uz[index[i]] * uz[index[i]]);             
-         }            
-      }// u_rms
-    
-    
-    
-      if ((Parameters->IsStore_I_max()) || (Parameters->IsStore_I_avg())) StoreIntensityData();      
+    //------------------------ u_rms ---------------------------------
+    if (Parameters->IsStore_u_rms())
+    {                 
+      const float* ux           = Get_ux_sgx().GetRawData();
+      const float* uy           = Get_uy_sgy().GetRawData();
+      const float* uz           = Get_uz_sgz().GetRawData();
+            float* ux_rms       = Get_ux_sensor_rms().GetRawData();
+            float* uy_rms       = Get_uy_sensor_rms().GetRawData();
+            float* uz_rms       = Get_uz_sensor_rms().GetRawData();               
+
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+      {                   
+        #pragma omp parallel for schedule (static) if (sensor_size > 1e5)                               
+        for (size_t i = 0; i <sensor_size; i++)
+        {
+             ux_rms[i] += (ux[sensor_mask_index[i]] * ux[sensor_mask_index[i]]);             
+             uy_rms[i] += (uy[sensor_mask_index[i]] * uy[sensor_mask_index[i]]);             
+             uz_rms[i] += (uz[sensor_mask_index[i]] * uz[sensor_mask_index[i]]);             
+        }            
+      }
+      
+      if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+      {
+        size_t BufferIndex = 0;
+        TLongMatrix & Cuboids = Get_sensor_mask_corners();
+        
+        for (size_t CuboidIdx = 0; CuboidIdx < cuboid_count; CuboidIdx++)        
+        {
+          const TDimensionSizes TopLeftCorner     = Cuboids.GetTopLeftCorner(CuboidIdx);
+          const TDimensionSizes BottomRightCorner = Cuboids.GetBottomRightCorner(CuboidIdx);
+           
+          for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++) 
+            for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++) 
+              for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++) 
+              {
+                ux_rms[BufferIndex] += (ux[z * XY_Size + y * X_Size + x] * ux[z * XY_Size + y * X_Size + x]);             
+                uy_rms[BufferIndex] += (uy[z * XY_Size + y * X_Size + x] * uy[z * XY_Size + y * X_Size + x]);             
+                uz_rms[BufferIndex] += (uz[z * XY_Size + y * X_Size + x] * uz[z * XY_Size + y * X_Size + x]);             
+                BufferIndex++;
+              }
+        }  
+      }                               
+    }// u_rms
+            
+    if ((Parameters->IsStore_I_max()) || (Parameters->IsStore_I_avg())) StoreIntensityData();      
     
      
 }// end of StoreData
@@ -2735,12 +2937,13 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData(){
 /**
  * Store intensity data. This has to be calculated using spatial and 
  * temporary staggered grid.
+ * @TODO - this is horribly wrong by the physical means!
  */
 void TKSpaceFirstOrder3DSolver::StoreIntensityData(){
         
     #pragma omp parallel 
     {
-        const size_t  sensor_size = Get_sensor_mask_ind().GetTotalElementCount();               
+        const size_t  sensor_size = Get_sensor_mask_index().GetTotalElementCount();               
 
         const float* ux      = Get_ux_sgx().GetRawData();
         const float* uy      = Get_uy_sgy().GetRawData();
@@ -2772,7 +2975,7 @@ void TKSpaceFirstOrder3DSolver::StoreIntensityData(){
            Iz_max       = Get_Iz_sensor_max().GetRawData();                
         }
         
-        const long * index   = Get_sensor_mask_ind().GetRawData();
+        const long * index   = Get_sensor_mask_index().GetRawData();
         
         const TDimensionSizes Dims = Parameters->GetFullDimensionSizes();             
         

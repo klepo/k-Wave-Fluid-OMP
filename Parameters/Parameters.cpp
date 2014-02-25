@@ -150,14 +150,14 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile){
     if (!HDF5_FileHeader.CheckMajorFileVersion()) {
        char ErrorMessage[256] = "";
        sprintf(ErrorMessage,Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion,GetInputFileName().c_str(),
-               HDF5_FileHeader.GetSupportedHDF5_MajorVersion().c_str());
+               HDF5_FileHeader.GetCurrentHDF5_MajorVersion().c_str());
        throw ios::failure(ErrorMessage);
     }
 
     if (!HDF5_FileHeader.CheckMinorFileVersion()) {
        char ErrorMessage[256] = "";
        sprintf(ErrorMessage,Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion,GetInputFileName().c_str(),
-               HDF5_FileHeader.GetSupportedHDF5_MinorVersion().c_str());
+               HDF5_FileHeader.GetCurrentHDF5_MinorVersion().c_str());
        throw ios::failure(ErrorMessage);
     }
     
@@ -196,8 +196,45 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile){
     ReducedDimensionSizes.Y = Y;
     ReducedDimensionSizes.Z = Z; 
     
+    // if the file is of version 1.0, there must be a sensor mask index (backward compatibility)
+    if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_10) {
+        sensor_mask_ind_size = HDF5_InputFile.GetDatasetElementCount(sensor_mask_index_Name);
+    }
 
-    sensor_mask_ind_size = HDF5_InputFile.GetDatasetElementCount(sensor_mask_index_Name);
+    // This is the current version 1.1
+    if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_11) {
+        
+        // read sensor mask type as a long value to enum
+        long SensorMaskTypeLongValue = 0;
+        HDF5_InputFile.ReadCompleteDataset(sensor_mask_type_Name, ScalarSizes, &SensorMaskTypeLongValue);    
+        
+        // convert the long value on 
+        switch (SensorMaskTypeLongValue) {
+            case 0 : sensor_mask_type = smt_index; break;
+            case 1 : sensor_mask_type = smt_corners; break;
+            default  : {                                                                             
+                          throw ios::failure(Parameters_ERR_FMT_WrongSensorMaskType);
+                          break;
+                        }
+        }//case            
+            
+        // read the input mask size
+        switch (sensor_mask_type)
+        {
+          case smt_index:
+          {
+             sensor_mask_ind_size = HDF5_InputFile.GetDatasetElementCount(sensor_mask_index_Name);
+             break;
+          }
+          case smt_corners:
+          {
+            // mask dimensions are [6, N, 1] - I want to know N              
+            sensor_mask_corners_size = HDF5_InputFile.GetDatasetDimensionSizes(sensor_mask_corners_Name).Y;
+            break;
+          }
+        }// switch
+    }// version 1.1
+    
     
     // flags
     HDF5_InputFile.ReadCompleteDataset(ux_source_flag_Name        , ScalarSizes, &ux_source_flag);

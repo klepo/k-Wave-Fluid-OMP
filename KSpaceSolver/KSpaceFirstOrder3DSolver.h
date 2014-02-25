@@ -6,8 +6,8 @@
  * @brief       The header file containing the main class of the project
  *              responsible for the entire simulation. 
  * @version     kspaceFirstOrder3D 2.14
- * @date        12 July 2012, 10:27        (created)\n
- *              04 June 2013, 14:19   (revised)
+ * @date        12 July     2012, 10:27        (created)\n
+ *              18 February 2014, 14:40   (revised)
  *  
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -344,9 +344,13 @@ protected:
                 
    //-- Index matrices --//
     
-    /// Get the sensor_mask_ind matrix from the container
-    TLongMatrix         & Get_sensor_mask_ind()
-                {return MatrixContainer.GetLongMatrix(sensor_mask_ind);};
+    /// Get the sensor_mask_index matrix from the container
+    TLongMatrix         & Get_sensor_mask_index()
+                {return MatrixContainer.GetLongMatrix(sensor_mask_index);};
+    /// Get the sensor_mask_corners matrix from the container
+    TLongMatrix         & Get_sensor_mask_corners()
+                {return MatrixContainer.GetLongMatrix(sensor_mask_corners);};
+                
     /// Get the u_source_index matrix from the container                  
     TLongMatrix         & Get_u_source_index()
                 {return MatrixContainer.GetLongMatrix(u_source_index);};

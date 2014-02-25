@@ -7,8 +7,8 @@
  * @brief       The header file storing names of all variables
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        14 September 2012, 2:33       (created) \n
- *              04 June      2013, 14:03      (revised)
+ * @date        14 September 2012, 14:33      (created) \n
+ *              13 February  2013, 16:55      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -143,6 +143,10 @@ const char * const nonlinear_flag_Name         = "nonlinear_flag";
 const char * const transducer_source_flag_Name = "transducer_source_flag";
 /// sensor_mask_index variable name        
 const char * const sensor_mask_index_Name      = "sensor_mask_index"; 
+/// sensor_mask_type variable name        
+const char * const sensor_mask_type_Name       = "sensor_mask_type"; 
+/// sensor_mask_corners variable name        
+const char * const sensor_mask_corners_Name    = "sensor_mask_corners"; 
 
 /// transducer_source_input variable name        
 const char * const transducer_source_input_Name= "transducer_source_input";
