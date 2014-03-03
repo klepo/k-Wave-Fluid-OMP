@@ -7,7 +7,7 @@
  *              responsible for the entire simulation. 
  * @version     kspaceFirstOrder3D 2.14
  * @date        12 July     2012, 10:27        (created)\n
- *              18 February 2014, 14:40   (revised)
+ *              28 February 2014, 15:40   (revised)
  *  
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -402,107 +402,7 @@ protected:
     TRealMatrix         & Get_Temp_3_RS3D() 
                 {return MatrixContainer.GetRealMatrix(Temp_3_RS3D);};
 
-        //--Sensor matrices --// 
                 
-    /// Get the p_sensor_rms from the container                    
-    TRealMatrix         & Get_p_sensor_rms() 
-                {return MatrixContainer.GetRealMatrix(p_sensor_rms);};
-    /// Get the p_sensor_max from the container                                                    
-    TRealMatrix         & Get_p_sensor_max() 
-                {return MatrixContainer.GetRealMatrix(p_sensor_max);};
-    /// Get the p_sensor_min from the container                                                    
-    TRealMatrix         & Get_p_sensor_min() 
-                {return MatrixContainer.GetRealMatrix(p_sensor_min);};
-    /// Get the p_sensor_max_all from the container                                                    
-    TRealMatrix         & Get_p_sensor_max_all() 
-                {return MatrixContainer.GetRealMatrix(p_sensor_max_all);};
-    /// Get the p_sensor_min_all from the container                                                    
-    TRealMatrix         & Get_p_sensor_min_all() 
-                {return MatrixContainer.GetRealMatrix(p_sensor_min_all);};
-
-                /// Get the ux_sensor_rms from the container 
-    TRealMatrix         & Get_ux_sensor_rms() 
-                {return MatrixContainer.GetRealMatrix(ux_sensor_rms);};
-    /// Get the uy_sensor_rms from the container                 
-    TRealMatrix         & Get_uy_sensor_rms() 
-                {return MatrixContainer.GetRealMatrix(uy_sensor_rms);};
-    /// Get the uz_sensor_rms from the container                 
-    TRealMatrix         & Get_uz_sensor_rms() 
-                {return MatrixContainer.GetRealMatrix(uz_sensor_rms);};
-    
-    /// Get the ux_sensor_max from the container                                 
-    TRealMatrix         & Get_ux_sensor_max() 
-                {return MatrixContainer.GetRealMatrix(ux_sensor_max);};
-    /// Get the uy_sensor_max from the container                
-    TRealMatrix         & Get_uy_sensor_max() 
-                {return MatrixContainer.GetRealMatrix(uy_sensor_max);};
-    /// Get the uz_sensor_max from the container                                
-    TRealMatrix         & Get_uz_sensor_max() 
-                {return MatrixContainer.GetRealMatrix(uz_sensor_max);};
-    /// Get the ux_sensor_min from the container                                 
-    TRealMatrix         & Get_ux_sensor_min() 
-                {return MatrixContainer.GetRealMatrix(ux_sensor_min);};
-    /// Get the uy_sensor_min from the container                
-    TRealMatrix         & Get_uy_sensor_min() 
-                {return MatrixContainer.GetRealMatrix(uy_sensor_min);};
-    /// Get the uz_sensor_min from the container                                
-    TRealMatrix         & Get_uz_sensor_min() 
-                {return MatrixContainer.GetRealMatrix(uz_sensor_min);};
-                
-    /// Get the ux_sensor_max_all from the container                                 
-    TRealMatrix         & Get_ux_sensor_max_all() 
-                {return MatrixContainer.GetRealMatrix(ux_sensor_max_all);};
-    /// Get the uy_sensor_max_all from the container                
-    TRealMatrix         & Get_uy_sensor_max_all() 
-                {return MatrixContainer.GetRealMatrix(uy_sensor_max_all);};
-    /// Get the uz_sensor_max_all from the container                                
-    TRealMatrix         & Get_uz_sensor_max_all() 
-                {return MatrixContainer.GetRealMatrix(uz_sensor_max_all);};
-    /// Get the ux_sensor_min_all from the container                                 
-    TRealMatrix         & Get_ux_sensor_min_all() 
-                {return MatrixContainer.GetRealMatrix(ux_sensor_min_all);};
-    /// Get the uy_sensor_min_all from the container                
-    TRealMatrix         & Get_uy_sensor_min_all() 
-                {return MatrixContainer.GetRealMatrix(uy_sensor_min_all);};
-    /// Get the uz_sensor_min_all from the container                                
-    TRealMatrix         & Get_uz_sensor_min_all() 
-                {return MatrixContainer.GetRealMatrix(uz_sensor_min_all);};            
-                
-                
-                
-    /// Get the Ix_sensor_avg from the container
-    TRealMatrix         & Get_Ix_sensor_avg() 
-                {return MatrixContainer.GetRealMatrix(Ix_sensor_avg);};
-    /// Get the Iy_sensor_avg from the container                
-    TRealMatrix         & Get_Iy_sensor_avg() 
-                {return MatrixContainer.GetRealMatrix(Iy_sensor_avg);};
-    /// Get the Iz_sensor_avg from the container                
-    TRealMatrix         & Get_Iz_sensor_avg() 
-                {return MatrixContainer.GetRealMatrix(Iz_sensor_avg);};
-
-    /// Get the Ix_sensor_max from the container                
-    TRealMatrix         & Get_Ix_sensor_max() 
-                {return MatrixContainer.GetRealMatrix(Ix_sensor_max);}
-    /// Get the Iy_sensor_max from the container                    
-    TRealMatrix         & Get_Iy_sensor_max() 
-                {return MatrixContainer.GetRealMatrix(Iy_sensor_max);}
-    /// Get the Iz_sensor_max from the container                    
-    TRealMatrix         & Get_Iz_sensor_max() 
-                {return MatrixContainer.GetRealMatrix(Iz_sensor_max);}
-                              
-    /// Get the p_sensor_i_1_raw (the i-1 step) from the container                    
-    TRealMatrix         & Get_p_sensor_i_1_raw() 
-                {return MatrixContainer.GetRealMatrix(p_sensor_i_1_raw);}
-    /// Get the ux_sensor_i_1_agr_2 (the i-1 step, and average over points in staggered grid) from the container                        
-    TRealMatrix         & Get_ux_sensor_i_1_agr_2() 
-                {return MatrixContainer.GetRealMatrix(ux_sensor_i_1_agr_2);}
-    /// Get the uy_sensor_i_1_agr_2 (the i-1 step, and average over points in staggered grid) from the container                            
-    TRealMatrix         & Get_uy_sensor_i_1_agr_2() 
-                {return MatrixContainer.GetRealMatrix(uy_sensor_i_1_agr_2);}
-    /// Get the uz_sensor_i_1_agr_2 (the i-1 step, and average over 2 points in staggered grid) from the container                            
-    TRealMatrix         & Get_uz_sensor_i_1_agr_2() 
-                {return MatrixContainer.GetRealMatrix(uz_sensor_i_1_agr_2);}
-       
     /// Get the FFT_X_temp from the container                        
     TFFTWComplexMatrix  & Get_FFT_X_temp() 
                 {return MatrixContainer.GetFFTWComplexMatrix(FFT_X_temp);};
@@ -512,28 +412,16 @@ protected:
     /// Get the FFT_Z_temp from the container                                        
     TFFTWComplexMatrix  & Get_FFT_Z_temp() 
                 {return MatrixContainer.GetFFTWComplexMatrix(FFT_Z_temp);};                
-                
-                                   
-              
-    
-    /// pressure raw data output stream (timeseries)
-    TOutputHDF5Stream*  p_sensor_raw_OutputStream;        
-    
-    /// ux raw data output stream (timeseries)
-    TOutputHDF5Stream*  ux_sensor_raw_OutputStream;    
-    /// uy raw data output stream (timeseries)
-    TOutputHDF5Stream*  uy_sensor_raw_OutputStream;    
-    /// uz raw data output stream (timeseries)
-    TOutputHDF5Stream*  uz_sensor_raw_OutputStream;    
-    
-    
+                    
     
     
 private:
     
     /// Matrix container with all the matrix classes
     TMatrixContainer MatrixContainer;
-    
+    /// Output stream container 
+    TOutputStreamContainer OutputStreamContainer;
+
     /// actual time index (time step of the simulation
     int                t_index;    
     

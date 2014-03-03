@@ -9,7 +9,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:30      (created) \n
- *              18 February 2014, 15:35 (revised)
+ *              03 March    2014, 10:20      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,8 +30,14 @@
  */
 
 
+#include <string.h>
+#include <cmath>
+#include <malloc.h>
 
 #include <MatrixClasses/OutputHDF5Stream.h>
+
+#include <Parameters/Parameters.h>
+#include <Utils/ErrorMessages.h>
 
 
 using namespace std;
@@ -43,7 +49,15 @@ using namespace std;
 
 
 
-
+/**
+ * This method initialize the output stream by creating a HDF5 dataset and writing
+ * the parameters of the dataset
+ * @param [in] HDF5_File          - Handle to HDF5 output file
+ * @param [in] DatasetName        - Dataset name
+ * @param [in] TotalSize          - Total size of the dataset (usually sensor_size * time_period)
+ * @param [in] ChunkSize          - Chunk size (usually sensor_size)
+ * @param [in] CompressionLevel   - Compression level
+ */
 
 
 //----------------------------------------------------------------------------//
@@ -54,31 +68,120 @@ using namespace std;
 //                              Implementation                                //
 //                              public methods                                //
 //----------------------------------------------------------------------------//
-
 /**
- * This method initialize the output stream by creating a HDF5 dataset and writing
- * the parameters of the dataset
- * @param [in] HDF5_File          - Handle to HDF5 output file
- * @param [in] DatasetName        - Dataset name
- * @param [in] TotalSize          - Total size of the dataset (usually sensor_size * time_period)
- * @param [in] ChunkSize          - Chunk size (usually sensor_size)
- * @param [in] CompressionLevel   - Compression level
+ * This method creates the time series output stream by creating a HDF5 dataset 
+ * and writing the parameters of the dataset
+ * @param [in,out] HDF5_File                - Handle to HDF5 output file
+ * @param [in]     DatasetName              - Dataset name
+ * @param [in]     NumberOfSensorElements   - Number of elements sampled 
+ * @param [in]     NumberOfTimeSteps        - Number of time steps to sample
+ * @param [in,out] BufferToReuse            - if NULL the class will create its own memory
+ *                                            if !NULL the class will reuse specified memory 
+ *                                            to linearise the sampled data
  */
-void TOutputHDF5Stream::CreateStream(THDF5_File & HDF5_File, const char * DatasetName, 
-                                     const TDimensionSizes & TotalSize, const TDimensionSizes & ChunkSize, 
-                                     const int CompressionLevel){
+void TOutputHDF5Stream::CreateStream(THDF5_File & HDF5_File,
+                                     const char * DatasetName,
+                                     const size_t NumberOfSensorElements,
+                                     const size_t NumberOfTimeSteps,
+                                     float *      BufferToReuse)
+{
+  
+  WholeDomainStream = false;
+  
+  // if reuse buffer, set the pointer
+  BufferReuse = (BufferToReuse != NULL);
+  StoringBuffer = BufferToReuse;
+          
+  // copy the dataset name
+  this->DatasetName = new char[strlen(DatasetName)];
+  strcpy(this->DatasetName, DatasetName);
+
+  // Set the HDF5 file
+  this->HDF5_File = &HDF5_File;
     
-    this->HDF5_File = &HDF5_File;
-    
-    HDF5_Dataset_id = HDF5_File.CreateFloatDataset(DatasetName,TotalSize,ChunkSize, CompressionLevel);
-    HDF5_File.WriteMatrixDomainType(DatasetName,THDF5_File::hdf5_mdt_real);
-    HDF5_File.WriteMatrixDataType(DatasetName,THDF5_File::hdf5_mdt_float);        
-    
-    Position = TDimensionSizes(0,0,0);
-    
+  // set HDF5 domain size
+  TotalDatasetSize.X = NumberOfSensorElements;
+  TotalDatasetSize.Y = NumberOfTimeSteps;
+  TotalDatasetSize.Z = 1;
+  
+  // Set HDF5 chunk size
+  TDimensionSizes ChunkSize(NumberOfSensorElements, 1, 1);  
+  // for chunks bigger than 32 MB 
+  if (NumberOfSensorElements > (ChunkSize_4MB * 8))
+  { 
+    ChunkSize.X = ChunkSize_4MB; // set chunk size to MB
+  }
+  
+  // Set positions in the dataset
+  Position = TDimensionSizes(0,0,0);
+  
+  // Create float dataset in the file
+  HDF5_Dataset_id = HDF5_File.CreateFloatDataset(DatasetName,TotalDatasetSize,
+                                                 ChunkSize, TParameters::GetInstance()->GetCompressionLevel());
+  // Write dataset parameters
+  HDF5_File.WriteMatrixDomainType(DatasetName,THDF5_File::hdf5_mdt_real);
+  HDF5_File.WriteMatrixDataType(DatasetName,THDF5_File::hdf5_mdt_float);        
+        
+  // Set buffer size
+  BufferSize = TDimensionSizes(NumberOfSensorElements,1,1);
+  
+  // Allocate memory if needed
+  if (!BufferReuse) AllocateMemory();
+  
     
 }// end CreateStream
 //------------------------------------------------------------------------------
+
+/**
+ * Create stream operating on the whole domain (no sensor_mask), only for aggregated quantities
+ * @param [in,out] HDF5_File
+ * @param [in] DatasetName
+ */
+void TOutputHDF5Stream::CreateWholeDomainAggregatedStream(THDF5_File & HDF5_File,
+                                                          const char * DatasetName)
+{
+
+  WholeDomainStream = true;
+  // Never reuse buffer for aggregated quantities
+  BufferReuse = false;
+
+  // copy the dataset name
+  this->DatasetName = new char[strlen(DatasetName)];
+  strcpy(this->DatasetName, DatasetName);
+
+  // Set the HDF5 file
+  this->HDF5_File = &HDF5_File;
+
+  // set HDF5 domain size
+  TotalDatasetSize = TParameters::GetInstance()->GetFullDimensionSizes();
+
+  // Set HDF5 chunk size to be a 1D slab
+  TDimensionSizes ChunkSize(TotalDatasetSize.X, TotalDatasetSize.Y, 1);
+
+  // Set positions in the dataset
+  Position = TDimensionSizes(0, 0, 0);
+
+
+  // Create float dataset in the file  
+  HDF5_Dataset_id = HDF5_File.CreateFloatDataset(DatasetName, TotalDatasetSize, 
+                                                 ChunkSize, TParameters::GetInstance()->GetCompressionLevel());
+
+  // Write dataset parameters
+  HDF5_File.WriteMatrixDomainType(DatasetName, THDF5_File::hdf5_mdt_real);
+  HDF5_File.WriteMatrixDataType(DatasetName, THDF5_File::hdf5_mdt_float);
+
+  // Set buffer size
+  BufferSize = TotalDatasetSize;
+  
+  // Allocate memory - always
+  AllocateMemory();
+
+
+}// end of CreateWholeDomainAggregatedStream
+//------------------------------------------------------------------------------
+
+
+
 
 /**
  * Close the output stream and the dataset
@@ -88,80 +191,232 @@ void TOutputHDF5Stream::CloseStream(){
     
     HDF5_File->CloseDataset(HDF5_Dataset_id);
     HDF5_Dataset_id  = H5I_BADID;
-    
+            
 }// end of CloseStream
 //------------------------------------------------------------------------------
-
-
-
 /**
- * Add data into the stream (usually one time step sensor data) based on Index Mask
- * 
- * @param [in] SourceMatrix - Matrix from where to pick the values
- * @param [in] Index        - Index used to pick the values
- * @param [in, out] TempBuffer - Temp buffer to make the data block contiguous
- * 
+ * Write data directly into the dataset based on the sensor mask (linear or cuboid)
+ * @param [in] SourceMatrix  - Matrix to be sampled and stored
+ * @param [in] SensorMask - Sensor mask 
  */
-void TOutputHDF5Stream::AddDataIndex(TRealMatrix& SourceMatrix, TLongMatrix& Index, float * TempBuffer){
-     
-     
-    #pragma omp parallel for if (Index.GetTotalElementCount() > 1e6)  
-    for (size_t i = 0; i < Index.GetTotalElementCount(); i++) {
-        TempBuffer[i] = SourceMatrix[Index[i]];        
-    }
-    
-    
-    TDimensionSizes BlockSize(Index.GetTotalElementCount(),1,1);
-    
-    HDF5_File->WriteHyperSlab(HDF5_Dataset_id,Position,BlockSize,TempBuffer);
-    Position.Y++;
-    
-}// end of AddData
-//------------------------------------------------------------------------------
-
-
-
-/**
- * Add data into the stream (usually one time step sensor data) based on Cuboid Corners Mask
- * 
- * @param [in] SourceMatrix - Matrix from where to pick the values
- * @param [in] Corners      - Cuboid corners the interior is sampled
- * @param [in, out] TempBuffer - Temp buffer to make the data block contiguous
- * 
- */
-
-void TOutputHDF5Stream::AddDataCorners(TRealMatrix& SourceMatrix, TLongMatrix& Corners, float * TempBuffer)
+void TOutputHDF5Stream::WriteDataDirectly( const TRealMatrix& SourceMatrix,
+                                           const TLongMatrix& SensorMask)
 {
-    ///@TODO Parallel section with some load balancing feature
+
+  // Sample points based on linear mask index
+  if (TParameters::GetInstance()->Get_sensor_mask_type() == TParameters::smt_index)
+  {
+    #pragma omp parallel for if (SensorMask.GetTotalElementCount() > 1e6)  
+    for (size_t i = 0; i < SensorMask.GetTotalElementCount(); i++)
+    {
+      StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+    }    
+  }
+  
+  // Sample points based on cuboid corners sensor mask
+  if (TParameters::GetInstance()->Get_sensor_mask_type() == TParameters::smt_corners)
+  {
     
     size_t BufferIndex = 0;
     const size_t XY_Size = SourceMatrix.GetDimensionSizes().Y * SourceMatrix.GetDimensionSizes().X;
-    const size_t X_Size  = SourceMatrix.GetDimensionSizes().X;
-    
-    
-    for (size_t CuboidIdx = 0; CuboidIdx < Corners.GetDimensionSizes().Y; CuboidIdx++)        
+    const size_t X_Size = SourceMatrix.GetDimensionSizes().X;
+
+    ///@TODO Parallel section with some load balancing feature
+    for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
     {
-        const TDimensionSizes TopLeftCorner     = Corners.GetTopLeftCorner(CuboidIdx);
-        const TDimensionSizes BottomRightCorner = Corners.GetBottomRightCorner(CuboidIdx);
-        
-        for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++) 
-            for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++) 
-                for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++) 
-                {
-                   TempBuffer[BufferIndex++] = SourceMatrix[z * XY_Size + y * X_Size + x];                           
-                }
+      const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
+      const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
+
+      for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
+        for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
+          for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
+          {
+            StoringBuffer[BufferIndex++] = SourceMatrix[z * XY_Size + y * X_Size + x];
+          }
+    }
+
+  } 
+      
+  // Write storing buffer into the dataset
+  WriteBuffer(StoringBuffer);
+  
+}// end of WriteDataDirectly
+//------------------------------------------------------------------------------    
+
+
+/**
+ * Reduce data into buffer - add data from matrix,
+ * @warning Distribution given by indices must be compatible 
+ *      with dimension sizes provide when the stream was opened!
+ * @param [in] SourceMatrix - Matrix to be sampled
+ * @param [in] SensorMask   - Sensor mask (corner or cuboid)
+ * @param [in] ReductionOp  - Reduction operator to be applied
+ */
+void TOutputHDF5Stream::ReduceDataIntoBuffer(const TRealMatrix& SourceMatrix,
+                                             const TLongMatrix& SensorMask,
+                                             const TReductionOperator ReductionOp)
+{
+  // Sample points based on linear mask index
+  if (TParameters::GetInstance()->Get_sensor_mask_type() == TParameters::smt_index)
+  {
+    if (ReductionOp == roRMS)
+    {
+      #pragma omp parallel for if (SensorMask.GetTotalElementCount() > 1e6)  
+      for (size_t i = 0; i < BufferSize.GetElementCount(); i++)
+      {
+        StoringBuffer[i] += (SourceMatrix[SensorMask[i]] * SourceMatrix[SensorMask[i]]);
+      }
+    }
+    else if (ReductionOp == roMAX)
+    {
+      #pragma omp parallel for if (SensorMask.GetTotalElementCount() > 1e6)    
+      for (size_t i = 0; i < BufferSize.GetElementCount(); i++)
+      {
+        if (StoringBuffer[i] < SourceMatrix[SensorMask[i]])
+          StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+      }
+    }
+    else if (ReductionOp == roMIN)
+    {
+      #pragma omp parallel for if (SensorMask.GetTotalElementCount() > 1e6)  
+      for (size_t i = 0; i < BufferSize.GetElementCount(); i++)
+      {
+        if (StoringBuffer[i] > SourceMatrix[SensorMask[i]])
+          StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+      }
+    }    
+  }// smt_index
+    
+  // Sample points based on cuboid corners sensor mask
+  if (TParameters::GetInstance()->Get_sensor_mask_type() == TParameters::smt_corners)
+  {    
+    const size_t XY_Size = SourceMatrix.GetDimensionSizes().Y * SourceMatrix.GetDimensionSizes().X;
+    const size_t X_Size = SourceMatrix.GetDimensionSizes().X;
+
+    if (ReductionOp == roRMS)
+    {    
+      size_t BufferIndex = 0;
+      ///@TODO Parallel section with some load balancing feature
+      for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
+      {
+        const TDimensionSizes TopLeftCorner = SensorMask.GetTopLeftCorner(CuboidIdx);
+        const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
+
+        for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
+          for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
+            for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
+            {
+              StoringBuffer[BufferIndex++] += (SourceMatrix[z * XY_Size + y * X_Size + x] * SourceMatrix[z * XY_Size + y * X_Size + x]);                         
+            }
+      }
     }
     
+    if (ReductionOp == roMAX)
+    {    
+      size_t BufferIndex = 0;
+      ///@TODO Parallel section with some load balancing feature
+      for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
+      {
+        const TDimensionSizes TopLeftCorner = SensorMask.GetTopLeftCorner(CuboidIdx);
+        const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
+
+        for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
+          for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
+            for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
+            {
+              if (StoringBuffer[BufferIndex] < SourceMatrix[z * XY_Size + y * X_Size + x]) StoringBuffer[BufferIndex] = SourceMatrix[z * XY_Size + y * X_Size + x];             
+              BufferIndex++;              
+            }
+      }
+    }
     
-    TDimensionSizes BlockSize(Corners.GetTotalNumberOfElementsInAllCuboids(),1,1);
-    
-    HDF5_File->WriteHyperSlab(HDF5_Dataset_id,Position,BlockSize,TempBuffer);
-    Position.Y++;
-    
-    
-    
-}// end of AddDataCorners   
+    if (ReductionOp == roMIN)
+    {    
+      size_t BufferIndex = 0;
+      ///@TODO Parallel section with some load balancing feature
+      for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
+      {
+        const TDimensionSizes TopLeftCorner = SensorMask.GetTopLeftCorner(CuboidIdx);
+        const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
+
+        for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
+          for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
+            for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
+            {
+              if (StoringBuffer[BufferIndex] > SourceMatrix[z * XY_Size + y * X_Size + x]) StoringBuffer[BufferIndex] = SourceMatrix[z * XY_Size + y * X_Size + x];             
+              BufferIndex++;              
+            }
+      }
+    }    
+  }   
+}// end of ReduceDataIntoBuffer
 //------------------------------------------------------------------------------
+
+
+/**
+ * Add data into reduce buffer (rms, max, min), all domain
+ * Processes the full domain
+ * @param [in] SourceMatrix
+ * @param [in] ReductionOp
+ */
+void TOutputHDF5Stream::ReduceDataIntoBuffer(const TRealMatrix& SourceMatrix,
+                                             const TReductionOperator ReductionOp)
+{
+
+  if (ReductionOp == roRMS)
+  {
+    #pragma omp parallel for if (BufferSize.GetElementCount() > 1e6)  
+    for (size_t i = 0; i < BufferSize.GetElementCount(); i++)
+    {
+      StoringBuffer[i] += (SourceMatrix[i] * SourceMatrix[i]);
+    }
+  }
+  
+  if (ReductionOp == roMAX)
+  {
+    #pragma omp parallel for if (BufferSize.GetElementCount() > 1e6)  
+    for (size_t i = 0; i < BufferSize.GetElementCount(); i++)
+    {
+      if (StoringBuffer[i] < SourceMatrix[i]) StoringBuffer[i] = SourceMatrix[i];
+
+    }
+  }
+  
+  if (ReductionOp == roMIN)
+  {
+    #pragma omp parallel for if (BufferSize.GetElementCount() > 1e6)  
+    for (size_t i = 0; i < BufferSize.GetElementCount(); i++)
+    {
+      if (StoringBuffer[i] > SourceMatrix[i]) StoringBuffer[i] = SourceMatrix[i];
+
+    }
+  }
+}// end of ReduceDataIntoBuffer
+//------------------------------------------------------------------------------    
+
+/**
+ * RMS post-processing
+ * @param [in] ScalingCoeff - scaling coefficient
+ */
+void TOutputHDF5Stream::RMSPostprocessing(const float ScalingCoeff)
+{
+  #pragma omp parallel for if (BufferSize.GetElementCount() > 1e6)
+  for (size_t i = 0; i < BufferSize.GetElementCount(); i++)
+  {
+    StoringBuffer[i] = sqrt(StoringBuffer[i] * ScalingCoeff);
+  }        
+}// end of RMSPostprocessing
+//------------------------------------------------------------------------------    
+
+/**
+ * Write reduced buffer (after post-processing)
+ */
+void TOutputHDF5Stream::WriteRudcedBuffer()
+{
+  WriteBuffer(StoringBuffer);
+}// end of WriteRudcedBuffer
+//------------------------------------------------------------------------------
+
 
 /**
  * Destructor
@@ -170,6 +425,8 @@ void TOutputHDF5Stream::AddDataCorners(TRealMatrix& SourceMatrix, TLongMatrix& C
 TOutputHDF5Stream::~TOutputHDF5Stream(){
     
     if (HDF5_Dataset_id != -1) HDF5_File->CloseDataset(HDF5_Dataset_id);
+    // free memory only if it was allocated
+    if (!BufferReuse) FreeMemory();    
     
 }// end of Destructor
 //------------------------------------------------------------------------------
@@ -180,18 +437,56 @@ TOutputHDF5Stream::~TOutputHDF5Stream(){
 //                             protected methods                              //
 //----------------------------------------------------------------------------//
 
+/**
+ * Allocate memory. 
+ */
+void TOutputHDF5Stream::AllocateMemory()
+{
+  StoringBuffer = (float *) memalign(DATA_ALIGNMENT, BufferSize.GetElementCount() * sizeof (float));
+
+  if (!StoringBuffer)
+  {
+    fprintf(stderr, Matrix_ERR_FMT_NotEnoughMemory, "TOutputHDF5Stream");
+    throw bad_alloc();
+  }
+
+  #pragma omp parallel for if (BufferSize.GetElementCount() > 1e6)  
+  for (size_t i = 0; i < BufferSize.GetElementCount(); i++)
+  {
+    StoringBuffer[i] = 0.0f;
+  }
+}// end of AllocateMemory
+//------------------------------------------------------------------------------
+
+void TOutputHDF5Stream::FreeMemory()
+{
+  if (StoringBuffer)
+  {
+    free(StoringBuffer);
+    StoringBuffer = NULL;
+  }
+
+  if (DatasetName)
+  {
+    delete [] DatasetName;
+  }
+}// end of FreeMemory
+//------------------------------------------------------------------------------
+
+
+/**
+ * Write buffer into the dataset 
+ * @param [in] Buffer - buffer to be written
+ */
+void TOutputHDF5Stream::WriteBuffer(const float * Buffer)
+{
+  HDF5_File->WriteHyperSlab(HDF5_Dataset_id, Position, BufferSize, StoringBuffer);
+  Position.Y++;
+}// end of WriteBuffer
+//------------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------//
 //                              Implementation                                //
 //                              private methods                               //
 //----------------------------------------------------------------------------//
-
-
-
-
-
-
-
-
-

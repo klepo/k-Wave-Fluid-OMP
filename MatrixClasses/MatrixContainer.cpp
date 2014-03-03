@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        12 July     2012, 10:27  (created) \n
- *              18 February 2014, 13:25  (revised)
+ *              28 February 2014, 15:35  (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,6 +31,7 @@
 #include <stdexcept>
 
 #include <MatrixClasses/MatrixContainer.h>
+#include <MatrixClasses/OutputHDF5Stream.h>
 
 #include <Parameters/Parameters.h>
 #include <Utils/ErrorMessages.h>
@@ -74,7 +75,7 @@ TMatrixRecord::TMatrixRecord(const TMatrixRecord& src) :
 TMatrixRecord& TMatrixRecord::operator = (const TMatrixRecord& src){
 
     if (this != &src){
-        MatrixPtr = src.MatrixPtr;           
+        MatrixPtr       = src.MatrixPtr;           
         MatrixDataType  = src.MatrixDataType;            
         DimensionSizes  = src.DimensionSizes;
         LoadData        = src.LoadData;
@@ -310,12 +311,12 @@ void TMatrixContainer::AddMatricesIntoContainer(){
         );                                
     }
         
-    //-- index matrices --//                
+    // linear sensor mask
     if (Params->Get_sensor_mask_type() == TParameters::smt_index){
       MatrixContainer[sensor_mask_index].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(1 ,1, Params->Get_sensor_mask_index_size()), true, sensor_mask_index_Name);                                
     }
 
-    //-- index matrices --//                
+    // cuboiud sensor mask
     if (Params->Get_sensor_mask_type() == TParameters::smt_corners)
     {
       MatrixContainer[sensor_mask_corners].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(6 ,Params->Get_sensor_mask_corners_size(), 1), true, sensor_mask_corners_Name);                                
@@ -440,82 +441,13 @@ void TMatrixContainer::AddMatricesIntoContainer(){
     
     
     
+    
+    
     //------------------------------------------------------------------------//
     //----------------------- output buffers ---------------------------------//
     //------------------------------------------------------------------------//
-    
-    
-    
-    TDimensionSizes SensorDims;
-    
-    if (Params->Get_sensor_mask_type() == TParameters::smt_index)
-    {
-        SensorDims = TDimensionSizes(Params->Get_sensor_mask_index_size(), 1, 1);
-    }
-    if (Params->Get_sensor_mask_type() == TParameters::smt_corners)
-    {
-        SensorDims = TDimensionSizes(Params->Get_sensor_mask_index_size(), 1, 1);
-    }
-      MatrixContainer[sensor_mask_corners].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(6 ,Params->Get_sensor_mask_corners_size(), 1), true, sensor_mask_corners_Name);                                    
-            
-            
-    if (Params->IsStore_p_rms()){
-       MatrixContainer[p_sensor_rms].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, p_rms_Name);                                
-    }
-        
-    if (Params->IsStore_p_max()){
-       MatrixContainer[p_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, p_max_Name);                                
-    }
-    
-    if (Params->IsStore_p_min()){
-       MatrixContainer[p_sensor_min].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, p_min_Name);                                
-    }
-                
-    if (Params->IsStore_p_max_all()){
-       MatrixContainer[p_sensor_max_all].SetAllValues(NULL,TMatrixRecord::mdtReal,FullDim , false, p_max_all_Name);                                
-    }
-    
-    if (Params->IsStore_p_min_all()){
-       MatrixContainer[p_sensor_min_all].SetAllValues(NULL,TMatrixRecord::mdtReal,FullDim, false, p_min_all_Name);                                
-    }
-    
-    if (Params->IsStore_u_rms()){
-       MatrixContainer[ux_sensor_rms].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, ux_rms_Name);
-       MatrixContainer[uy_sensor_rms].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uy_rms_Name);
-       MatrixContainer[uz_sensor_rms].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uz_rms_Name);
-    }
-        
-    if (Params->IsStore_u_max()){
-       MatrixContainer[ux_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, ux_max_Name);
-       MatrixContainer[uy_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uy_max_Name);                                
-       MatrixContainer[uz_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uz_max_Name);                                       
-    }
-    
-    if (Params->IsStore_u_min()){
-       MatrixContainer[ux_sensor_min].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, ux_min_Name);
-       MatrixContainer[uy_sensor_min].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uy_min_Name);                                
-       MatrixContainer[uz_sensor_min].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, uz_min_Name);                                       
-    }
-    
-    if (Params->IsStore_u_max_all()){
-       MatrixContainer[ux_sensor_max_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, ux_max_all_Name);
-       MatrixContainer[uy_sensor_max_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, uy_max_all_Name);                                
-       MatrixContainer[uz_sensor_max_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, uz_max_all_Name);                                       
-    }
-    
-    if (Params->IsStore_u_min_all()){
-       MatrixContainer[ux_sensor_min_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, ux_min_all_Name);
-       MatrixContainer[uy_sensor_min_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, uy_min_all_Name);                                
-       MatrixContainer[uz_sensor_min_all].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDim, false, uz_min_all_Name);                                       
-    }
-            
-    if (Params->IsStore_I_avg()){
-       MatrixContainer[Ix_sensor_avg].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, Ix_avg_Name);                                
-       MatrixContainer[Iy_sensor_avg].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, Iy_avg_Name);                                
-       MatrixContainer[Iz_sensor_avg].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, Iz_avg_Name);                                
-       
-    }
-        
+
+/*        
     if (Params->IsStore_I_max()){
        MatrixContainer[Ix_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, Ix_max_Name);
        MatrixContainer[Iy_sensor_max].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, Iy_max_Name);
@@ -531,7 +463,7 @@ void TMatrixContainer::AddMatricesIntoContainer(){
        MatrixContainer[uz_sensor_i_1_agr_2].SetAllValues(NULL,TMatrixRecord::mdtReal, SensorDims, false, "");        
     }
     
-    
+   */ 
     
 }// end of InitMatrixContainer
 //------------------------------------------------------------------------------
@@ -568,3 +500,147 @@ void TMatrixContainer::PrintErrorAndThrowException(const char * FMT, const strin
     
 
 
+//============================================================================//
+//                        TOutputStreamContainer                              //
+//============================================================================//
+
+//----------------------------------------------------------------------------//
+//--------------------------- Public methods ---------------------------------//
+//----------------------------------------------------------------------------//
+
+
+/**
+ * Destructor
+ */
+TOutputStreamContainer::~TOutputStreamContainer()
+{
+  OutputStreamContainer.clear();
+}// end of Destructor
+//------------------------------------------------------------------------------
+
+/**
+ * Add all streams in simulation in the container
+ * set all streams records here! 
+ */
+void TOutputStreamContainer::AddStreamsIntoContainerAndCreate()
+{
+
+  TParameters * Params = TParameters::GetInstance();
+  
+  if (Params->IsStore_p_raw())
+  {
+    OutputStreamContainer[p_sensor_raw] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_p_rms())
+  {
+    OutputStreamContainer[p_sensor_rms] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_p_max())
+  {
+    OutputStreamContainer[p_sensor_max] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_p_min())
+  {
+    OutputStreamContainer[p_sensor_min] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_p_max_all())
+  {
+    OutputStreamContainer[p_sensor_max_all] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_p_min_all())
+  {
+    OutputStreamContainer[p_sensor_min_all] = new TOutputHDF5Stream();
+  }
+
+
+  if (Params->IsStore_u_raw())
+  {
+    OutputStreamContainer[ux_sensor_raw] = new TOutputHDF5Stream();
+    OutputStreamContainer[uy_sensor_raw] = new TOutputHDF5Stream();
+    OutputStreamContainer[uz_sensor_raw] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_u_rms())
+  {
+    OutputStreamContainer[ux_sensor_rms] = new TOutputHDF5Stream();
+    OutputStreamContainer[uy_sensor_rms] = new TOutputHDF5Stream();
+    OutputStreamContainer[uz_sensor_rms] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_u_max())
+  {
+    OutputStreamContainer[ux_sensor_max] = new TOutputHDF5Stream();
+    OutputStreamContainer[uy_sensor_max] = new TOutputHDF5Stream();
+    OutputStreamContainer[uz_sensor_max] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_u_min())
+  {
+    OutputStreamContainer[ux_sensor_min] = new TOutputHDF5Stream();
+    OutputStreamContainer[uy_sensor_min] = new TOutputHDF5Stream();
+    OutputStreamContainer[uz_sensor_min] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_u_max_all())
+  {
+    OutputStreamContainer[ux_sensor_max_all] = new TOutputHDF5Stream();
+    OutputStreamContainer[uy_sensor_max_all] = new TOutputHDF5Stream();
+    OutputStreamContainer[uz_sensor_max_all] = new TOutputHDF5Stream();
+  }
+
+  if (Params->IsStore_u_min_all())
+  {
+    OutputStreamContainer[ux_sensor_min_all] = new TOutputHDF5Stream();
+    OutputStreamContainer[uy_sensor_min_all] = new TOutputHDF5Stream();
+    OutputStreamContainer[uz_sensor_min_all] = new TOutputHDF5Stream();
+  }
+}// end of AddStreamsdIntoContainer
+//------------------------------------------------------------------------------    
+
+/**
+ * Close all streams.
+ */
+void TOutputStreamContainer::CloseStreams()
+{
+  for (TOutputStreamMap::iterator it = OutputStreamContainer.begin(); it != OutputStreamContainer.end(); it++)
+  {
+    if (it->second)
+    {
+      (it->second)->CloseStream();
+    }
+  }
+}// end of CloseStreams
+//------------------------------------------------------------------------------
+
+/**
+ *  Free all streams- destroy them.
+ */
+void TOutputStreamContainer::FreeAllStreams()
+{
+  for (TOutputStreamMap::iterator it = OutputStreamContainer.begin(); it != OutputStreamContainer.end(); it++)
+  {
+    if (it->second)
+    {
+      delete it->second;
+    }
+  }
+  OutputStreamContainer.clear();
+}// end of FreeAllStreams
+//------------------------------------------------------------------------------
+
+
+//----------------------------------------------------------------------------//
+//--------------------------- Protected methods ------------------------------//
+//----------------------------------------------------------------------------//
+
+
+
+
+//----------------------------------------------------------------------------//
+//--------------------------- Private methods --------------------------------//
+//----------------------------------------------------------------------------//

@@ -61,7 +61,7 @@
  * 
  */
 void TBaseLongMatrix::ZeroMatrix(){
-
+    ///@TODO: This breaks the first touch policy!
     memset(pMatrixData,0,pTotalAllocatedElementCount*sizeof(long));
     
 }// end of ZeroMatrix

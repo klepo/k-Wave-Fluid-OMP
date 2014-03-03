@@ -3,9 +3,13 @@ version 2.14 (21 January 2013)
     - fixed bug with -r verbose interval
     - added flag --p_min, --u_min, --p_max_all, --p_min_all, --u_max_all, --u_min_all
     - fixed missing <unistd.h> for gcc/4.7
+    - use _OPENMP compiler flag for OpenMPI instead of __NO_OMP__    
+    - added cuboid cornes sensor mask
+    - Output quantities are now managed by OutputStream.
+    - Check HDF5 file version    
     
-    @TODO: Check HDF5 file version
-    @TODO: use _OPENMP compiler flag for OpenMPI instead of __NO_OMP__
+    
+    @TODO: make sensor sampling parallel
     @TODO: Use proper C++ header files
     @TODO: Proper use of namespaces
     @TODO: Change <math.h> to <cmath> and get rid of old SP floating point routines

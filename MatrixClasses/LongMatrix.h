@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        26 July     2011, 15:16 (created) \n
- *              18 February 2014, 13:15 (revised)
+ *              27 February 2014, 15:41 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -64,6 +64,15 @@ public:
         return pMatrixData[index]; 
     };
     
+    /**
+     * Operator [] const
+     * @param index - 1D index into the matrix
+     * @return  Value of the index
+     */
+    const long & operator [](const size_t& index) const {
+        return pMatrixData[index]; 
+    };
+        
     /**
      * Get the top left corner of the index-th cuboid 
      * @param [in] index - Id of the corner
