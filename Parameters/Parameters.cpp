@@ -322,78 +322,84 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile){
 }// end of ReadScalarsFromMatlabInputFile
 //------------------------------------------------------------------------------
 
-
 /** 
  * Save scalars into the output HDF5 file.
  * @param [in] HDF5_OutputFile - Handle to an opened output file where to store
  */
-void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile){
-    
-      
-    // Write dimension sizes
-    HDF5_OutputFile.WriteScalarValue(Nx_Name  ,(long) FullDimensionSizes.X);    
-    HDF5_OutputFile.WriteScalarValue(Ny_Name  ,(long) FullDimensionSizes.Y);
-    HDF5_OutputFile.WriteScalarValue(Nz_Name  ,(long) FullDimensionSizes.Z);
-    
-    HDF5_OutputFile.WriteScalarValue(Nt_Name  ,(long) Nt);
-    
-    HDF5_OutputFile.WriteScalarValue(dt_Name  , dt);
-    HDF5_OutputFile.WriteScalarValue(dx_Name  , dx);
-    HDF5_OutputFile.WriteScalarValue(dy_Name  , dy);
-    HDF5_OutputFile.WriteScalarValue(dz_Name  , dz);
-    
-    HDF5_OutputFile.WriteScalarValue(c_ref_Name, c_ref);
-    
-    
-    HDF5_OutputFile.WriteScalarValue(pml_x_size_Name  , pml_x_size);
-    HDF5_OutputFile.WriteScalarValue(pml_y_size_Name  , pml_y_size);
-    HDF5_OutputFile.WriteScalarValue(pml_z_size_Name  , pml_z_size);
-    
-    HDF5_OutputFile.WriteScalarValue(pml_x_alpha_Name, pml_x_alpha);
-    HDF5_OutputFile.WriteScalarValue(pml_y_alpha_Name, pml_y_alpha);
-    HDF5_OutputFile.WriteScalarValue(pml_z_alpha_Name, pml_z_alpha);
+void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
+{
+  // Write dimension sizes
+  HDF5_OutputFile.WriteScalarValue(Nx_Name, (long) FullDimensionSizes.X);
+  HDF5_OutputFile.WriteScalarValue(Ny_Name, (long) FullDimensionSizes.Y);
+  HDF5_OutputFile.WriteScalarValue(Nz_Name, (long) FullDimensionSizes.Z);
 
-    
-    
-    HDF5_OutputFile.WriteScalarValue(ux_source_flag_Name   , ux_source_flag);
-    HDF5_OutputFile.WriteScalarValue(uy_source_flag_Name   , uy_source_flag);
-    HDF5_OutputFile.WriteScalarValue(uz_source_flag_Name   , uz_source_flag);
-    HDF5_OutputFile.WriteScalarValue(transducer_source_flag_Name   , transducer_source_flag);
-    
-    HDF5_OutputFile.WriteScalarValue(p_source_flag_Name   , p_source_flag);
-    HDF5_OutputFile.WriteScalarValue(p0_source_flag_Name  , p0_source_flag);
-    
-    HDF5_OutputFile.WriteScalarValue(nonuniform_grid_flag_Name, nonuniform_grid_flag);
-    HDF5_OutputFile.WriteScalarValue(absorbing_flag_Name      , absorbing_flag);
-    HDF5_OutputFile.WriteScalarValue(nonlinear_flag_Name      , nonlinear_flag);    
-    
+  HDF5_OutputFile.WriteScalarValue(Nt_Name, (long) Nt);
 
-    //-- uxyz_source_flags --//
-    if ((ux_source_flag > 0) || (uy_source_flag > 0) || (uz_source_flag > 0)){
+  HDF5_OutputFile.WriteScalarValue(dt_Name, dt);
+  HDF5_OutputFile.WriteScalarValue(dx_Name, dx);
+  HDF5_OutputFile.WriteScalarValue(dy_Name, dy);
+  HDF5_OutputFile.WriteScalarValue(dz_Name, dz);
 
-        HDF5_OutputFile.WriteScalarValue(u_source_many_Name   , u_source_many);
-        HDF5_OutputFile.WriteScalarValue(u_source_mode_Name   , u_source_mode);                
-    }
+  HDF5_OutputFile.WriteScalarValue(c_ref_Name, c_ref);
 
-    //-- p_source_flag --//
-    if (p_source_flag != 0) {
-        
-        HDF5_OutputFile.WriteScalarValue(p_source_many_Name   , p_source_many);
-        HDF5_OutputFile.WriteScalarValue(p_source_mode_Name   , p_source_mode);                
-        
-    }
-        
-    
-    // absorb flag
-    if (absorbing_flag != 0) {
-        HDF5_OutputFile.WriteScalarValue(alpha_power_Name, alpha_power);                
-        
-    }
+  HDF5_OutputFile.WriteScalarValue(pml_x_size_Name, pml_x_size);
+  HDF5_OutputFile.WriteScalarValue(pml_y_size_Name, pml_y_size);
+  HDF5_OutputFile.WriteScalarValue(pml_z_size_Name, pml_z_size);
 
-    
-    
+  HDF5_OutputFile.WriteScalarValue(pml_x_alpha_Name, pml_x_alpha);
+  HDF5_OutputFile.WriteScalarValue(pml_y_alpha_Name, pml_y_alpha);
+  HDF5_OutputFile.WriteScalarValue(pml_z_alpha_Name, pml_z_alpha);
+
+  HDF5_OutputFile.WriteScalarValue(ux_source_flag_Name, ux_source_flag);
+  HDF5_OutputFile.WriteScalarValue(uy_source_flag_Name, uy_source_flag);
+  HDF5_OutputFile.WriteScalarValue(uz_source_flag_Name, uz_source_flag);
+  HDF5_OutputFile.WriteScalarValue(transducer_source_flag_Name, transducer_source_flag);
+
+  HDF5_OutputFile.WriteScalarValue(p_source_flag_Name, p_source_flag);
+  HDF5_OutputFile.WriteScalarValue(p0_source_flag_Name, p0_source_flag);
+
+  HDF5_OutputFile.WriteScalarValue(nonuniform_grid_flag_Name, nonuniform_grid_flag);
+  HDF5_OutputFile.WriteScalarValue(absorbing_flag_Name, absorbing_flag);
+  HDF5_OutputFile.WriteScalarValue(nonlinear_flag_Name, nonlinear_flag);
+
+
+  //-- uxyz_source_flags --//
+  if ((ux_source_flag > 0) || (uy_source_flag > 0) || (uz_source_flag > 0))
+  {
+    HDF5_OutputFile.WriteScalarValue(u_source_many_Name, u_source_many);
+    HDF5_OutputFile.WriteScalarValue(u_source_mode_Name, u_source_mode);
+  }
+
+  //-- p_source_flag --//
+  if (p_source_flag != 0)
+  {
+    HDF5_OutputFile.WriteScalarValue(p_source_many_Name, p_source_many);
+    HDF5_OutputFile.WriteScalarValue(p_source_mode_Name, p_source_mode);
+  }
+
+  // absorb flag
+  if (absorbing_flag != 0)
+  {
+    HDF5_OutputFile.WriteScalarValue(alpha_power_Name, alpha_power);
+  }
+
+  // if copy sensor mask, then copy the mask type
+  if (IsCopySensorMask())
+  {
+    long SensorMaskTypeLongValue = 0;
+    switch (sensor_mask_type)
+    {
+      case smt_index: SensorMaskTypeLongValue = 0;
+        break;
+      case smt_corners: SensorMaskTypeLongValue = 1;
+        break;
+    }//case            
+
+    HDF5_OutputFile.WriteScalarValue(sensor_mask_type_Name, SensorMaskTypeLongValue);
+  }
+
 }// end of SaveScalarsToHDF5File
-
+//------------------------------------------------------------------------------
 
 
 
@@ -440,11 +446,9 @@ TParameters::TParameters() :
 /**
  * print usage end exit
  */
-void TParameters::PrintUsageAndExit(){
-    
- CommandLinesParameters.PrintUsageAndExit();        
-  
-    
+void TParameters::PrintUsageAndExit()
+{
+  CommandLinesParameters.PrintUsageAndExit();
 }// end of PrintUsage
 //------------------------------------------------------------------------------
 

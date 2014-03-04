@@ -7,7 +7,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        08 December 2011, 16:34   (created)      \n      
- *              04 June 2012,     13:55 (revised)
+ *              04 March    2014, 13:30 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -234,7 +234,9 @@ public:
     bool IsStore_I_avg()                const {return CommandLinesParameters.IsStore_I_avg();};
     /// Is --I_max specified at the command line
     bool IsStore_I_max()                const {return CommandLinesParameters.IsStore_I_max();};
-    
+
+    /// is --copy_mask set
+    bool IsCopySensorMask()             const {return CommandLinesParameters.IsCopySensorMask();};
 
                 
     /// Handle to the input HDF5 file

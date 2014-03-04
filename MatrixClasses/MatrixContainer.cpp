@@ -311,9 +311,9 @@ void TMatrixContainer::AddMatricesIntoContainer(){
         );                                
     }
         
-    // linear sensor mask
+    // linear sensor mask 
     if (Params->Get_sensor_mask_type() == TParameters::smt_index){
-      MatrixContainer[sensor_mask_index].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(1 ,1, Params->Get_sensor_mask_index_size()), true, sensor_mask_index_Name);                                
+      MatrixContainer[sensor_mask_index].SetAllValues(NULL,TMatrixRecord::mdtIndex, TDimensionSizes(Params->Get_sensor_mask_index_size(), 1, 1), true, sensor_mask_index_Name);                                
     }
 
     // cuboiud sensor mask

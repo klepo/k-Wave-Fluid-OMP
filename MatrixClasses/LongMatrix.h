@@ -100,7 +100,10 @@ public:
     };                 
     
     ///  Recompute indices MATALAB->C++     
-    void RecomputeIndices();
+    void RecomputeIndicesToCPP();
+    
+    ///  Recompute indices C++ -> MATLAB
+    void RecomputeIndicesToMatlab();
     
     /// Get the total number of elements to be sampled within all cuboids
     size_t GetTotalNumberOfElementsInAllCuboids() const;

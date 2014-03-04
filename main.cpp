@@ -7,7 +7,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:57             (created) \n
- *              13 February 2014, 17:05             (revised)
+ *              04 March    2014, 12:56             (revised)
  * 
  * 
  * 
@@ -255,6 +255,8 @@ Output flags:
   --I_avg                         : Store avg of intensity
   --I_max                         : Store max of intensity  
    
+  --copy_sensor_mask              : Copy sensor mask to the output file
+ 
   -s <timestep>                   : Time step when data collection begins
                                       (default = 1)
 --------------------------------------------------------------------------  
@@ -416,7 +418,7 @@ Name                            Size           Data type       Domain Type      
 --------------------------------------------------------------------------------------------------------------  
   4. Sensor Variables
 --------------------------------------------------------------------------------------------------------------   
-  sensor_mask_type              (1, 1, 1)       float         real              File version 1.1
+  sensor_mask_type              (1, 1, 1)       long          real              File version 1.1
   sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.0 always, File version 1.1 if sensor_mask_type == 0
   sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1, if sensor_mask_type == 1
 --------------------------------------------------------------------------------------------------------------  
@@ -531,8 +533,14 @@ Name                            Size           Data type        Domain Type     
   pml_y_sgy                     (1, Ny, 1)      float         real
   pml_z                         (1, 1, Nz)      float         real
   pml_z_sgz                     (1, 1, Nz)      float         real
+ --------------------------------------------------------------------------------------------------------------  
+  4. Sensor Variables (present if --copy_sensor_mask)          
+--------------------------------------------------------------------------------------------------------------   
+  sensor_mask_type              (1, 1, 1)       long          real              File version 1.1 and --copy_sensor_mask          
+  sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.1 and if sensor_mask_type == 0
+  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1 and if sensor_mask_type == 1  
 --------------------------------------------------------------------------------------------------------------  
-  4. Simulation Results
+  5. Simulation Results
 --------------------------------------------------------------------------------------------------------------   
 
   p                             (Nsens, Nt - s, 1) float      real              -p or --p_raw

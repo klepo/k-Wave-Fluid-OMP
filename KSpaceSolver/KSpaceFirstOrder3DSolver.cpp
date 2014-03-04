@@ -66,7 +66,7 @@ using namespace std;
  * 
  */
 TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver():        
-        MatrixContainer(),
+        MatrixContainer(), OutputStreamContainer(),
         t_index(0), ActPercent(0),
         Parameters(NULL),
         TotalTime(), PreProcessingTime(), DataLoadTime (), SimulationTime(),     
@@ -336,7 +336,7 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
     fprintf(file,"\n");
     fprintf(file,"+--------------------------------------------------+\n");
     fprintf(file,"| Build Number:     kspaceFirstOrder3D v2.14       |\n");
-    fprintf(file,"| Operating System: Linux x64                      |\n");
+    fprintf(file,"| Operating System: Linux x64                      |\n");    
     fprintf(file,"|                                                  |\n");    
     fprintf(file,"| Copyright (C) 2014 Jiri Jaros and Bradley Treeby |\n");
     fprintf(file,"| http://www.k-wave.org                            |\n");    
@@ -386,25 +386,25 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans(){
 void TKSpaceFirstOrder3DSolver::PreProcessingPhase(){
     
     if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
-      Get_sensor_mask_index().RecomputeIndices();
+      Get_sensor_mask_index().RecomputeIndicesToCPP();
     
     if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
-      Get_sensor_mask_corners().RecomputeIndices();
+      Get_sensor_mask_corners().RecomputeIndicesToCPP();
         
     
     if ((Parameters->Get_transducer_source_flag() != 0) || 
         (Parameters->Get_ux_source_flag() != 0)         ||
         (Parameters->Get_uy_source_flag() != 0)         ||
         (Parameters->Get_uz_source_flag() != 0)            ){
-                    Get_u_source_index().RecomputeIndices();
+                    Get_u_source_index().RecomputeIndicesToCPP();
     }                
     
     if (Parameters->Get_transducer_source_flag() != 0){
-        Get_delay_mask().RecomputeIndices();
+        Get_delay_mask().RecomputeIndicesToCPP();
     }
     
     if (Parameters->Get_p_source_flag() != 0){
-        Get_p_source_index().RecomputeIndices();
+        Get_p_source_index().RecomputeIndicesToCPP();
     }
     
     
@@ -2358,7 +2358,8 @@ void TKSpaceFirstOrder3DSolver::PrintOtputHeader(){
 }// end of PrintOtputHeader
 //------------------------------------------------------------------------------
 /**
- * Post processing and closing the output streams.
+ * Post processing the quantities, closing the output streams and storing the
+ * sensor mask.
  *
  */
 void TKSpaceFirstOrder3DSolver::PostPorcessing()
@@ -2396,7 +2397,7 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
     Get_p().WriteDataToHDF5File(Parameters->HDF5_OutputFile, p_final_Name, Parameters->GetCompressionLevel());
   }// p_final
 
-  
+ 
         
   if (Parameters->IsStore_u_max())
   {    
@@ -2446,10 +2447,27 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
     Get_uy_sgy().WriteDataToHDF5File(Parameters->HDF5_OutputFile, uy_final_Name, Parameters->GetCompressionLevel());
     Get_uz_sgz().WriteDataToHDF5File(Parameters->HDF5_OutputFile, uz_final_Name, Parameters->GetCompressionLevel());
   }// u_final
-     
-  
+       
   // close all streams
   OutputStreamContainer.CloseStreams();
+  
+  
+  // store sensor mask if wanted  
+  if (Parameters->IsCopySensorMask())
+  {
+    if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)  
+    {
+      Get_sensor_mask_index().RecomputeIndicesToMatlab();      
+      Get_sensor_mask_index().WriteDataToHDF5File(Parameters->HDF5_OutputFile,sensor_mask_index_Name,
+                                                  Parameters->GetCompressionLevel());
+    }
+    if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)  
+    {
+      Get_sensor_mask_corners().RecomputeIndicesToMatlab();
+      Get_sensor_mask_corners().WriteDataToHDF5File(Parameters->HDF5_OutputFile,sensor_mask_corners_Name,
+                                                    Parameters->GetCompressionLevel());
+    }
+  }
   
 }// end of PostPorcessing
 //------------------------------------------------------------------------------

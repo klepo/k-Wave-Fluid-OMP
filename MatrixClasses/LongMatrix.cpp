@@ -116,15 +116,29 @@ void TLongMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File, const char * Matr
 /**
  * Recompute indeces, MATLAB -> C++ 
  */
-void TLongMatrix::RecomputeIndices()
+void TLongMatrix::RecomputeIndicesToCPP()
 {
-    
-    for (size_t i = 0; i< pTotalElementCount; i++){
-        pMatrixData[i]--;
-    }    
-    
+  #pragma omp parallel for if (pTotalElementCount > 1e5)
+  for (size_t i = 0; i < pTotalElementCount; i++)
+  {
+    pMatrixData[i]--;
+  }        
 }// end of RecomputeIndices
 //------------------------------------------------------------------------------
+
+/**
+ * Recompute indeces, C++ -> MATLAB 
+ */
+void TLongMatrix::RecomputeIndicesToMatlab()
+{
+  #pragma omp parallel for if (pTotalElementCount > 1e5)
+  for (size_t i = 0; i < pTotalElementCount; i++)
+  {
+    pMatrixData[i]++;
+  }         
+}// end of RecomputeIndicesToMatlab
+//------------------------------------------------------------------------------
+
 
 /**
  * Get total number of elements in all cuboids to be able to allocate output file

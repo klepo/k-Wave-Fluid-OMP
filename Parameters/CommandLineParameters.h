@@ -7,7 +7,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        29 August 2012, 11:25 (created) \n        
- *              04 June   2013, 13:45 (revised) 
+ *              04 March  2014, 12:45 (revised) 
  * 
  * @section Params Command Line Parameters
  * 
@@ -102,6 +102,8 @@ Output flags:
                                       (the same as --I_avg) 
   --I_avg                         : Store avg of intensity
   --I_max                         : Store max of intensity  
+ 
+  --copy_sensor_mask              : Copy sensor mask to the output file
    
   -s <timestep>                   : Time step when data collection begins
                                       (default = 1)
@@ -205,7 +207,10 @@ public:
     bool IsStore_I_avg()                const {return Store_I_avg;};
     /// Is --I_max set
     bool IsStore_I_max()                const {return Store_I_max;};    
-
+    
+    /// is --copy_mask set
+    bool IsCopySensorMask()             const {return CopySensorMask;};
+    
     /// Print usage and exit
     void PrintUsageAndExit();   
     /// Print setup
@@ -275,6 +280,8 @@ private:
     bool        Store_I_avg;
     /// Store_I_max value
     bool        Store_I_max;    
+    /// Copy sensor mask to the output file
+    bool        CopySensorMask;
     /// StartTimeStep value
     int         StartTimeStep;
     

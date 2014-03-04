@@ -279,7 +279,13 @@ Name                            Size           Data type        Domain Type     
   pml_z                         (1, 1, Nz)      float         real
   pml_z_sgz                     (1, 1, Nz)      float         real
 --------------------------------------------------------------------------------------------------------------  
-  4. Simulation Results
+  4. Sensor Variables (present if --copy_sensor_mask)
+--------------------------------------------------------------------------------------------------------------   
+  sensor_mask_type              (1, 1, 1)       long          real              File version 1.1 and --copy_sensor_mask          
+  sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.1 and if sensor_mask_type == 0
+  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1 and if sensor_mask_type == 1
+--------------------------------------------------------------------------------------------------------------  
+  5. Simulation Results
 --------------------------------------------------------------------------------------------------------------   
 
   p                             (Nsens, Nt - s, 1) float      real              -p or --p_raw
@@ -559,7 +565,7 @@ public:
   
     /**
      * Get string version of current Minor version
-     * @return  0
+     * @return  current minor version
      */           
     static string GetCurrentHDF5_MinorVersion() {return HDF5_MinorFileVersionsNames[1]; };
     
