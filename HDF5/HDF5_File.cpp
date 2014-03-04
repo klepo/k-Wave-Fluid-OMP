@@ -7,8 +7,8 @@
  * @brief       The implementation file containing the HDF5 related classes
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        27 July 2012, 14:14      (created) \n
- *              17 September 2012, 15:35 (revised
+ * @date        27 July     2012, 14:14      (created) \n
+ *              14 February 2014, 11:00 (revised
  *  
  
  * @section License
@@ -59,7 +59,9 @@ const string THDF5_File::HDF5_MatrixDataTypeNames[]   = {"float","long"};
 
 const string THDF5_FileHeader::HDF5_FileTypesNames[]  = {"input","output", "checkpoint", "unknown"};
 
-
+const string THDF5_FileHeader::HDF5_MajorFileVersionsNames[] = {"1"};
+    
+const string THDF5_FileHeader::HDF5_MinorFileVersionsNames[] = {"0","1"};
 
 //----------------------------------------------------------------------------//
 //----------------------------    THDF5_File    ------------------------------//
@@ -838,6 +840,25 @@ void THDF5_FileHeader::SetFileType(const THDF5_FileHeader::THDF5_FileType FileTy
 }// end of SetFileType
 //------------------------------------------------------------------------------    
 
+
+/**
+ * Get File Version an enum
+ * @return file version as an enum
+ */
+THDF5_FileHeader::THDF5_FileVersion THDF5_FileHeader::GetFileVersion(){
+            
+    if ((HDF5_FileHeaderValues[hdf5_fhi_major_version] == HDF5_MajorFileVersionsNames[0]) &&
+        (HDF5_FileHeaderValues[hdf5_fhi_minor_version] == HDF5_MinorFileVersionsNames[0]))         
+       return hdf5_fv_10;
+    
+    if ((HDF5_FileHeaderValues[hdf5_fhi_major_version] == HDF5_MajorFileVersionsNames[0]) &&
+        (HDF5_FileHeaderValues[hdf5_fhi_minor_version] == HDF5_MinorFileVersionsNames[1]))         
+       return hdf5_fv_11;
+        
+    return hdf5_fv_unknown;
+            
+}// end of GetFileVersion
+//------------------------------------------------------------------------------    
 
 /**
  * Set actual date and time. 

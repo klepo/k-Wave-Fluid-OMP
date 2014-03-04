@@ -7,8 +7,8 @@
  * @brief       The header file containing the HDF5 related classes
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        27 July 2012, 14:14      (created) \n
- *              17 September 2012, 15:35 (revised)
+ * @date        27 July     2012, 14:14 (created) \n
+ *              13 February 2014, 17:10 (revised)
  * 
  * 
  * 
@@ -163,7 +163,9 @@ Name                            Size           Data type       Domain Type      
 --------------------------------------------------------------------------------------------------------------  
   4. Sensor Variables
 --------------------------------------------------------------------------------------------------------------   
-sensor_mask_index               (Nsens, 1, 1)   long          real
+  sensor_mask_type              (1, 1, 1)       long          real              File version 1.1 (0 = index, 1 = corners)
+  sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.0 always, File version 1.1 if sensor_mask_type == 0
+  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1, if sensor_mask_type == 1  
 --------------------------------------------------------------------------------------------------------------  
   5 Source Properties
 --------------------------------------------------------------------------------------------------------------   
@@ -373,7 +375,7 @@ class THDF5_FileHeader;
 class THDF5_File {
 public:
     
-        /**
+    /**
      * @enum THDF5_MatrixDataType
      * @brief HDF5 matrix data type
      */
@@ -385,7 +387,7 @@ public:
      */
     enum THDF5_MatrixDomainType {hdf5_mdt_real  = 0, hdf5_mdt_complex = 1};
 
-    
+        
     /// Constructor
     THDF5_File();     
     
@@ -432,7 +434,7 @@ public:
     /// Read data from the dataset
     void ReadCompleteDataset (const char * DatasetName, const TDimensionSizes & DimensionSizes, long  * Data);
     
-    /// Check dataset dimension sizes
+    /// Get dimension sizes of the dataset
     TDimensionSizes GetDatasetDimensionSizes(const char * DatasetName);
     /// Get dataset element count
     size_t          GetDatasetElementCount(const char * DatasetName);
@@ -470,7 +472,7 @@ private:
 
     /// String representation of different domain types
     static const string HDF5_MatrixDomainTypeNames[];
-     /// String representation of different data types 
+    /// String representation of different data types 
     static const string HDF5_MatrixDataTypeNames[];
     
     
@@ -494,7 +496,7 @@ private:
 class THDF5_FileHeader{
 
 public:    
-        
+            
     /**
      * @enum THDF5_FileHeaderItems
      * @brief List of all header items
@@ -522,6 +524,11 @@ public:
      */
     enum THDF5_FileType         {hdf5_ft_input  = 0, hdf5_ft_output = 1, hdf5_ft_checkpoint = 2, hdf5_ft_unknown = 3};
 
+    /**
+     * @enum  THDF5_FileVersion
+     * @brief HDF5 file version
+     */
+    enum THDF5_FileVersion       {hdf5_fv_10 = 0, hdf5_fv_11 = 1, hdf5_fv_unknown = 2};
 
     
     /// Constructor
@@ -545,32 +552,35 @@ public:
     void SetActualCreationTime();
     
     /**
-     * Get the major metadata version
-     * @return  1
-     */
-    static string GetSupportedHDF5_MajorVersion() {return "1"; };
-    
+     * Get string version of current Major version
+     * @return  current version
+     */      
+    static string GetCurrentHDF5_MajorVersion() {return HDF5_MajorFileVersionsNames[0]; };
+  
     /**
-     * Get the minor metadata version
+     * Get string version of current Minor version
      * @return  0
-     */
-    static string GetSupportedHDF5_MinorVersion() {return "0"; };
+     */           
+    static string GetCurrentHDF5_MinorVersion() {return HDF5_MinorFileVersionsNames[1]; };
     
     /// Set major file version
-    void SetMajorFileVersion() { HDF5_FileHeaderValues[hdf5_fhi_major_version] = GetSupportedHDF5_MajorVersion(); };
+    void SetMajorFileVersion() { HDF5_FileHeaderValues[hdf5_fhi_major_version] = GetCurrentHDF5_MajorVersion(); };
     /// Set minor file version
-    void SetMinorFileVersion() { HDF5_FileHeaderValues[hdf5_fhi_minor_version] = GetSupportedHDF5_MinorVersion(); };
-
+    void SetMinorFileVersion() { HDF5_FileHeaderValues[hdf5_fhi_minor_version] = GetCurrentHDF5_MinorVersion(); };
+                
+    /// Set major file version in a string
+    THDF5_FileVersion GetFileVersion();
+    
     /**
      * Check major file version
      * @return true if ok
      */
-    bool CheckMajorFileVersion() {return (HDF5_FileHeaderValues[hdf5_fhi_major_version] == GetSupportedHDF5_MajorVersion()); };
+    bool CheckMajorFileVersion() {return (HDF5_FileHeaderValues[hdf5_fhi_major_version] == GetCurrentHDF5_MajorVersion()); };
     /**
      * Check minor file version
      * @return true if ok
      */
-    bool CheckMinorFileVersion() {return (HDF5_FileHeaderValues[hdf5_fhi_minor_version] == GetSupportedHDF5_MinorVersion()); };
+    bool CheckMinorFileVersion() {return (HDF5_FileHeaderValues[hdf5_fhi_minor_version] <= GetCurrentHDF5_MinorVersion()); };
         
     /// Get File type
     THDF5_FileHeader::THDF5_FileType GetFileType();
@@ -596,9 +606,14 @@ private:
     map<THDF5_FileHeaderItems, string> HDF5_FileHeaderValues; 
     /// map for the header names
     map<THDF5_FileHeaderItems, string> HDF5_FileHeaderNames; 
-    
+      
     ///String representation of different file types
-    static const string HDF5_FileTypesNames[];
+    static const string HDF5_FileTypesNames[];    
+    /// String representations of Major file versions
+    static const string HDF5_MajorFileVersionsNames[];    
+    /// String representations of Major file versions
+    static const string HDF5_MinorFileVersionsNames[];
+    
 };// THDF5_FileHeader
 //------------------------------------------------------------------------------
 

@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        14 September 2012, 14:33 (created) \n
- *              43 June      2013, 14:05 (revised)
+ *              25 February  2014, 14:42 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -41,62 +41,64 @@
 #include <MatrixClasses/FFTWComplexMatrix.h>
 #include <MatrixClasses/UXYZ_SGXYZMatrix.h>
 #include <MatrixClasses/LongMatrix.h>
+#include <MatrixClasses/OutputHDF5Stream.h>
 
 #include <Utils/MatrixNames.h>
 #include <Utils/DimensionSizes.h>
-
 
 /**
  * @enum TMatrixID
  * @brief Matrix identifers of all matrices in the k-space code
  */
-enum TMatrixID     {kappa, c2, p, 
-                      
-                      ux_sgx,uy_sgy, uz_sgz,                      
-                      duxdx, duydy, duzdz,
-                      dxudxn    , dyudyn    , dzudzn,
-                      dxudxn_sgx, dyudyn_sgy, dzudzn_sgz,
-                      
-                      rhox, rhoy, rhoz, rho0,                     
-                      dt_rho0_sgx, dt_rho0_sgy, dt_rho0_sgz,
-                      
-                      
-                      p0_source_input, sensor_mask_ind,
-                      ddx_k_shift_pos, ddy_k_shift_pos, ddz_k_shift_pos,    
-                      ddx_k_shift_neg, ddy_k_shift_neg, ddz_k_shift_neg,
-                      
-                      pml_x_sgx, pml_y_sgy, pml_z_sgz,
-                      pml_x    , pml_y    , pml_z,
-                  
-                      absorb_tau, absorb_eta, absorb_nabla1, absorb_nabla2, BonA,
-                      
-                      ux_source_input, uy_source_input, uz_source_input,
-                      p_source_input,
-                          
-                      u_source_index, p_source_index, transducer_source_input,
-                      delay_mask,
-    
-                        //---------------- output matrices -------------//
-                      p_sensor_raw,  p_sensor_rms, p_sensor_max, p_sensor_min,
-                      p_sensor_max_all, p_sensor_min_all, p_sensor_i_1_raw,
-                      ux_sensor_raw, uy_sensor_raw, uz_sensor_raw,                      
-                      ux_sensor_i_1_agr_2, uy_sensor_i_1_agr_2, uz_sensor_i_1_agr_2,// aggregated values form two points
-                      
-                      ux_sensor_rms, uy_sensor_rms, uz_sensor_rms,
-                      ux_sensor_max, uy_sensor_max, uz_sensor_max,
-                      ux_sensor_min, uy_sensor_min, uz_sensor_min,
-                      ux_sensor_max_all, uy_sensor_max_all, uz_sensor_max_all,
-                      ux_sensor_min_all, uy_sensor_min_all, uz_sensor_min_all,
-                                      
-                      Ix_sensor_avg, Iy_sensor_avg, Iz_sensor_avg,
-                      Ix_sensor_max, Iy_sensor_max, Iz_sensor_max,                      
-    
-    
-                       //--------------Temporary matrices -------------//    
-                      Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D,
-                      FFT_X_temp, FFT_Y_temp, FFT_Z_temp                     
-                     };
-  
+enum TMatrixID
+{
+    kappa, c2, p,
+
+    ux_sgx,uy_sgy, uz_sgz,                      
+    duxdx, duydy, duzdz,
+    dxudxn    , dyudyn    , dzudzn,
+    dxudxn_sgx, dyudyn_sgy, dzudzn_sgz,
+
+    rhox, rhoy, rhoz, rho0,
+    dt_rho0_sgx, dt_rho0_sgy, dt_rho0_sgz,
+
+
+    p0_source_input, sensor_mask_index, sensor_mask_corners,
+    ddx_k_shift_pos, ddy_k_shift_pos, ddz_k_shift_pos,
+    ddx_k_shift_neg, ddy_k_shift_neg, ddz_k_shift_neg,
+
+    pml_x_sgx, pml_y_sgy, pml_z_sgz,
+    pml_x    , pml_y    , pml_z,
+
+    absorb_tau, absorb_eta, absorb_nabla1, absorb_nabla2, BonA,
+
+    ux_source_input, uy_source_input, uz_source_input,
+    p_source_input,
+
+    u_source_index, p_source_index, transducer_source_input,
+    delay_mask,
+
+    //---------------- output matrices -------------//
+    p_sensor_raw,  p_sensor_rms, p_sensor_max, p_sensor_min,
+    p_sensor_max_all, p_sensor_min_all, p_sensor_i_1_raw,
+    ux_sensor_raw, uy_sensor_raw, uz_sensor_raw,
+    ux_sensor_i_1_agr_2, uy_sensor_i_1_agr_2, uz_sensor_i_1_agr_2,// aggregated values form two points
+
+    ux_sensor_rms, uy_sensor_rms, uz_sensor_rms,
+    ux_sensor_max, uy_sensor_max, uz_sensor_max,
+    ux_sensor_min, uy_sensor_min, uz_sensor_min,
+    ux_sensor_max_all, uy_sensor_max_all, uz_sensor_max_all,
+    ux_sensor_min_all, uy_sensor_min_all, uz_sensor_min_all,
+
+    Ix_sensor_avg, Iy_sensor_avg, Iz_sensor_avg,
+    Ix_sensor_max, Iy_sensor_max, Iz_sensor_max,
+
+
+    //--------------Temporary matrices -------------//    
+    Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D,
+    FFT_X_temp, FFT_Y_temp, FFT_Z_temp
+}; // enum TMatrixID
+//------------------------------------------------------------------------------  
 
 
 /**
@@ -291,7 +293,66 @@ private:
     
         
 };// end of TMatrixContainer
+//------------------------------------------------------------------------------
 
+
+/**
+ * @class TOutputStreamContainer
+ * @brief A container for output streams
+ */
+class TOutputStreamContainer
+{
+  public:
+    /// Constructor
+    TOutputStreamContainer() {};
+    /// Destructor
+    virtual ~TOutputStreamContainer();
+
+    /// Get size of the container
+    size_t size() const
+    {
+        return OutputStreamContainer.size();
+    };
+
+    /// Is the container empty?
+    bool empty() const
+    {
+        return OutputStreamContainer.empty();
+    };
+
+    /**
+     * @brief Operator []
+     * @details Operator []
+     * @param MatrixID
+     * @return 
+     */
+    TOutputHDF5Stream & operator [] (const TMatrixID MatrixID) {
+        return (* (OutputStreamContainer[MatrixID]));
+    };
+
+    /// Set all streams records here! 
+    void AddStreamsIntoContainerAndCreate();
+
+    /// Close all streams
+    void CloseStreams();
+
+    /// Free all streams - destroy them
+    void FreeAllStreams();
+
+  protected:
+    /// Copy constructor not allowed for public
+    TOutputStreamContainer(const TOutputStreamContainer &);
+    /// Operator = not allowed for public
+    TOutputStreamContainer & operator = (TOutputStreamContainer &);
+
+  private:
+    /// Output stream map
+    typedef map < TMatrixID, TOutputHDF5Stream * > TOutputStreamMap;
+    /// Map with output streams
+    TOutputStreamMap OutputStreamContainer;
+
+}; // end of TOutputStreamContainer
+//------------------------------------------------------------------------------
 
 #endif	/* MATRIXCONTAINER_H */
 

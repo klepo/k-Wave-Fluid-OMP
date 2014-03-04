@@ -7,12 +7,12 @@
  * @brief       The header file containing all error messages of the project
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        9 August 2011, 12:34          (created) \n
- *              14 September 2012, 14:20      (revised)
+ * @date        9  August   2011, 12:34          (created) \n
+ *              17 February 2014, 16:30      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  * 
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it 
  * and/or modify it under the terms of the GNU Lesser General Public License as 
@@ -37,7 +37,7 @@
 /// HDF5 error message
 const char * const HDF5_ERR_FMT_FileNotCreated          = "Error: File \"%s\" could not be created!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_FileCannotRecreated      = "Error: Cannot recreate an opened file \"%s\"!\n";
+const char * const HDF5_ERR_FMT_FileCannotRecreated     = "Error: Cannot recreate an opened file \"%s\"!\n";
 /// HDF5 error message
 const char * const HDF5_ERR_FMT_FileCannotReopen        = "Error: Cannot reopen an opened file \"%s\"!\n";
 /// HDF5 error message
@@ -62,7 +62,6 @@ const char * const HDF5_ERR_FMT_BadAttributeValue       = "Error: Bad attribute 
 const char * const HDF5_ERR_FMT_CouldNotWriteToAttribute  = "Error: Could not write into \"%s\" attribute of \"%s\" dataset!\n";
 /// HDF5 error message
 const char * const HDF5_ERR_FMT_CouldNotReadFromAttribute = "Error: Could not read from \"%s\" attribute of \"%s\" dataset!\n";
-
 
 
 //---------------------------------- Matrix Classes  -------------------------//
@@ -117,6 +116,8 @@ const char * const Parameters_ERR_FMT_IncorrectInputFileFormat = "Error: Incorre
 const char * const Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion = "Error: Incorrect major version of the HDF5 file %s (expected is %s)!\n";
 /// Command line parameters error message
 const char * const Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion = "Error: Incorrect minor version of the HDF5 file %s (expected is %s)!\n";
+/// Command line parameters error message
+const char * const Parameters_ERR_FMT_WrongSensorMaskType = "Error: The sensor mask type specified in the input file is not supported! \n";
 
 #endif	/* ERRORMESSAGES_H */
 

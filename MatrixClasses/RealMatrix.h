@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July 2011, 10:30      (created) \n 
- *              17 September 2012, 15:35 (revised) 
+ *              27 September 2014, 15:42 (revised) 
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -67,6 +67,16 @@ public:
         return pMatrixData[index]; 
     };
                 
+    
+    /**
+     * @brief operator [] const
+     * @param index - 1D index
+     * @return an element
+     */
+    const float & operator [](const size_t& index) const {
+        return pMatrixData[index]; 
+    };
+    
     /**
      * @brief Get element from 3D matrix
      * @param X - X dimension
