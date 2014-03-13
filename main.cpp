@@ -358,9 +358,7 @@ total_memory_in_use Total               Peak memory in use
  * 
  * 
  * 
- 
- 
-  * \verbatim
+ * \verbatim
 ==============================================================================================================
                                         Input File Datasets
 ==============================================================================================================
@@ -394,15 +392,15 @@ Name                            Size           Data type       Domain Type      
   3.1 Regular Medium Properties
  
   rho0                          (Nx, Ny, Nz)    float         real              heterogenous
-  		           	(1, 1, 1)       float         real              homogenous
+  		                         	(1, 1, 1)       float         real              homogenous
   rho0_sgx                      (Nx, Ny, Nz)    float         real              heterogenous
                                 (1, 1, 1)       float         real              homogenous
   rho0_sgy                      (Nx, Ny, Nz)    float         real              heterogenous
                                 (1, 1, 1)       float         real              homogenous
   rho0_sgz                      (Nx, Ny, Nz)    float         real              heterogenous
-				(1, 1, 1)       float         real              homogenous
+				                        (1, 1, 1)       float         real              homogenous
   c0                            (Nx, Ny, Nz)    float         real              heterogenous
-  		       		(1, 1, 1)       float         real              homogenous
+  		       		                (1, 1, 1)       float         real              homogenous
   c_ref                         (1, 1, 1)       float         real
 
   3.2 Nonlinear Medium Properties (defined if (nonlinear_flag == 1))
@@ -418,9 +416,9 @@ Name                            Size           Data type       Domain Type      
 --------------------------------------------------------------------------------------------------------------  
   4. Sensor Variables
 --------------------------------------------------------------------------------------------------------------   
-  sensor_mask_type              (1, 1, 1)       long          real              File version 1.1
+  sensor_mask_type              (1, 1, 1)       long          real              File version 1.1 (0 = index, 1 = corners)
   sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.0 always, File version 1.1 if sensor_mask_type == 0
-  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1, if sensor_mask_type == 1
+  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1, if sensor_mask_type == 1  
 --------------------------------------------------------------------------------------------------------------  
   5 Source Properties
 --------------------------------------------------------------------------------------------------------------   
@@ -446,18 +444,18 @@ Name                            Size           Data type       Domain Type      
 
   5.3 Transducer Source Terms (defined if (transducer_source_flag == 1))
 
-  u_source_index        	(Nsrc, 1, 1)    long          real
-  transducer_source_input       (Nt_src, 1, 1)  float         real
-  delay_mask			(Nsrc, 1, 1)    float         real
+  u_source_index        	      (Nsrc, 1, 1)       long       real
+  transducer_source_input       (Nt_src, 1, 1)     float      real
+  delay_mask			              (Nsrc, 1, 1)       float      real
 
   5.4 IVP Source Terms (defined if ( p0_source_flag ==1)       
 
-  p0_source_input               (Nx, Ny, Nz)    float         real
+  p0_source_input               (Nx, Ny, Nz)        float     real
   
 --------------------------------------------------------------------------------------------------------------  
   6. K-space and Shift Variables
 --------------------------------------------------------------------------------------------------------------    
-  ddx_k_shift_pos_r     	(Nx/2 + 1, 1, 1)  float       complex
+  ddx_k_shift_pos_r     	      (Nx/2 + 1, 1, 1)  float       complex
   ddx_k_shift_neg_r             (Nx/2 + 1, 1, 1)  float       complex
   ddy_k_shift_pos               (1, Ny, 1)        float       complex
   ddy_k_shift_neg               (1, Ny, 1)        float       complex
@@ -484,7 +482,7 @@ Name                            Size           Data type       Domain Type      
   
  
   
-  * \verbatim
+ \verbatim
 ==============================================================================================================
                                         Output File Datasets
 ==============================================================================================================
@@ -499,8 +497,8 @@ Name                            Size           Data type        Domain Type     
   p0_source_flag                (1, 1, 1)       long          real
   transducer_source_flag        (1, 1, 1)       long          real
   nonuniform_grid_flag          (1, 1, 1)       long          real              
-  nonlinear_flag		(1, 1, 1)       long          real
-  absorbing_flag		(1, 1, 1)       long          real
+  nonlinear_flag		            (1, 1, 1)       long          real
+  absorbing_flag		            (1, 1, 1)       long          real
   u_source_mode                 (1, 1, 1)       long          real              if u_source
   u_source_many                 (1, 1, 1)       long          real              if u_source
   p_source_mode                 (1, 1, 1)       long          real              if p_source
@@ -533,14 +531,14 @@ Name                            Size           Data type        Domain Type     
   pml_y_sgy                     (1, Ny, 1)      float         real
   pml_z                         (1, 1, Nz)      float         real
   pml_z_sgz                     (1, 1, Nz)      float         real
- --------------------------------------------------------------------------------------------------------------  
-  4. Sensor Variables (present if --copy_sensor_mask)          
+--------------------------------------------------------------------------------------------------------------  
+  4. Sensor Variables (present if --copy_sensor_mask)
 --------------------------------------------------------------------------------------------------------------   
   sensor_mask_type              (1, 1, 1)       long          real              File version 1.1 and --copy_sensor_mask          
   sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.1 and if sensor_mask_type == 0
-  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1 and if sensor_mask_type == 1  
+  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1 and if sensor_mask_type == 1
 --------------------------------------------------------------------------------------------------------------  
-  5. Simulation Results
+  5a. Simulation Results: if sensor_mask_type == 0 (index), or File version == 1.0
 --------------------------------------------------------------------------------------------------------------   
 
   p                             (Nsens, Nt - s, 1) float      real              -p or --p_raw
@@ -587,6 +585,68 @@ Name                            Size           Data type        Domain Type     
   Ix_max                        (Nsens, 1, 1)      float      real              --I_max
   Iy_max                        (Nsens, 1, 1)      float      real              --I_max
   Iz_max                        (Nsens, 1, 1)      float      real              --I_max
+  
+ --------------------------------------------------------------------------------------------------------------  
+  5b. Simulation Results: if sensor_mask_type == 1 (corners) and or File version == 1.1
+--------------------------------------------------------------------------------------------------------------   
+
+  /p                            group of datasets, one per cuboid                -p or --p_raw
+  /p/1                          (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
+  /p/2                          (Cx, Cy, Cz, Nt-s) float      real              2nd sampled cuboid, etc.
+   
+  /p_rms                        group of datasets, one per cuboid               --p_rms
+  /p_rms/1                      (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
+  
+  /p_max                        group of datasets, one per cuboid               --p_max
+  /p_max/1                      (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
+  
+  /p_min                        group of datasets, one per cuboid               --p_min
+  /p_min/1                      (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
+   
+  p_max_all                     (Nx, Ny, Nz)       float      real              --p_max_all
+  p_min_all                     (Nx, Ny, Nz)       float      real              --p_min_all  
+  p_final                       (Nx, Ny, Nz)       float      real              --p_final
+ 
+  
+  /ux                           group of datasets, one per cuboid               -u or --u_raw
+  /ux/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+  /uy                           group of datasets, one per cuboid               -u or --u_raw
+  /uy/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uz                           group of datasets, one per cuboid               -u or --u_raw
+  /uz/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+
+  /ux_rms                       group of datasets, one per cuboid               --u_rms
+  /ux_rms/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+  /uy_rms                       group of datasets, one per cuboid               --u_rms
+  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+  /uz_rms                       group of datasets, one per cuboid               --u_rms
+  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+
+  /ux_max                       group of datasets, one per cuboid               --u_max
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+  /uy_max                       group of datasets, one per cuboid               --u_max
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+  /uz_max                       group of datasets, one per cuboid               --u_max
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+  
+  /ux_min                       group of datasets, one per cuboid               --u_min
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+  /uy_min                       group of datasets, one per cuboid               --u_min
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+  /uz_min                       group of datasets, one per cuboid               --u_min
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid  
+ 
+  ux_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  uy_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  uz_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  
+  ux_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+  uy_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+  uz_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+
+  ux_final                      (Nx, Ny, Nz)       float      real              --u_final
+  uy_final                      (Nx, Ny, Nz)       float      real              --u_final
+  uz_final                      (Nx, Ny, Nz)       float      real              --u_final
 ==============================================================================================================
 \endverbatim 
  * 
