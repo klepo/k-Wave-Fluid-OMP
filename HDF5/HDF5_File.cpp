@@ -183,6 +183,62 @@ THDF5_File::~THDF5_File(){
 //------------------------------------------------------------------------------
 
 
+/**
+ * Crate a HDF5 group.
+ * @param [in] Parent  - Where to link the group at
+ * @param [in] GroupName - Group name
+ * @return a hanlde to the new group
+ */
+hid_t THDF5_File::CreateGroup(const hid_t Parent, const char * GroupName)
+{
+  hid_t HDF5_group_id = H5Gcreate(Parent, GroupName, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  
+  //if error
+  if (HDF5_group_id == H5I_INVALID_HID)
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_GroupNotCreated,GroupName, FileName.c_str());        
+    throw ios::failure(ErrorMessage);    
+  }
+  
+  return HDF5_group_id;
+};// end of CreateGroup
+//------------------------------------------------------------------------------
+
+
+/**
+ * Open a HDF5 group
+ * @param [in] ParentGroupOrFile
+ * @param [in] GroupName
+ * @return 
+ */
+hid_t THDF5_File::OpenGroup(const hid_t Parent, const char * GroupName)
+{
+  hid_t 
+  HDF5_group_id = H5Gopen(Parent, GroupName, H5P_DEFAULT);
+  
+  //if error
+  if (HDF5_group_id == H5I_INVALID_HID)
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_GroupNotOpened,GroupName, FileName.c_str());        
+    throw ios::failure(ErrorMessage);    
+  }
+  
+  return HDF5_group_id;  
+}// end of OpenGroup
+//------------------------------------------------------------------------------
+
+
+/**
+ * Close a group
+ * @param[in] Group
+ */
+void THDF5_File::CloseGroup(const hid_t HDF5_group_id)
+{  
+  H5Gclose(HDF5_group_id);  
+}// end of CloseGroup
+//------------------------------------------------------------------------------
 
 /**
  * Open the dataset.
@@ -275,10 +331,9 @@ hid_t THDF5_File::CreateFloatDataset(const char * DatasetName, const TDimensionS
  * @param [in] HDF5_Dataset_id
  *  
  */
-void  THDF5_File::CloseDataset(const hid_t& HDF5_Dataset_id){
-         
-    H5Dclose (HDF5_Dataset_id);
-    
+void  THDF5_File::CloseDataset(const hid_t HDF5_Dataset_id)
+{         
+  H5Dclose (HDF5_Dataset_id);    
 }// end of CloseDataset
 //------------------------------------------------------------------------------
 

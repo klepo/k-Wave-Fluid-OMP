@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        9  August   2011, 12:34          (created) \n
- *              17 February 2014, 16:30      (revised)
+ *              12 March    2014, 17:30      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -62,7 +62,10 @@ const char * const HDF5_ERR_FMT_BadAttributeValue       = "Error: Bad attribute 
 const char * const HDF5_ERR_FMT_CouldNotWriteToAttribute  = "Error: Could not write into \"%s\" attribute of \"%s\" dataset!\n";
 /// HDF5 error message
 const char * const HDF5_ERR_FMT_CouldNotReadFromAttribute = "Error: Could not read from \"%s\" attribute of \"%s\" dataset!\n";
-
+/// HDF5 error message
+const char * const HDF5_ERR_FMT_GroupNotCreated          = "Error: Could not create group \"%s\" in file \"%s\"!\n";
+/// HDF5 error message
+const char * const HDF5_ERR_FMT_GroupNotOpened           = "Error: Could not open group \"%s\" in file \"%s\"!\n";
 
 //---------------------------------- Matrix Classes  -------------------------//
 
