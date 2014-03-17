@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        27 July     2012, 14:14 (created) \n
- *              12 March    2014, 13:15 (revised)
+ *              17 March    2014, 14:20 (revised)
  * 
  * 
  * 
@@ -458,76 +458,139 @@ public:
     /// Constructor
     THDF5_File();     
     
-    
+    //----------------------- Basic file operations --------------------------//  
     /// Create the file
-    void Create(const char * FileName, unsigned int Flags = H5F_ACC_TRUNC );
+    void Create(const char * FileName, 
+                unsigned int Flags = H5F_ACC_TRUNC );
     /// Open the file
-    void Open (const char * FileName, unsigned int Flags  = H5F_ACC_RDONLY);    
+    void Open (const char * FileName, 
+               unsigned int Flags  = H5F_ACC_RDONLY);    
     /**
      * Is the file opened?
      * @return true if the file is opened
      */
-    bool IsOpened() const {return HDF5_FileId >=0; };
+    bool IsOpened() const 
+    {
+      return HDF5_FileId != H5I_BADID; 
+    };
+    
     /// Close file
     void Close();
     
-    /// Create a group
-    hid_t CreateGroup(const hid_t Parent, const char * GroupName);
-    /// Open group
-    hid_t OpenGroup(const hid_t ParentGroupOrFile, const char * GroupName);
+    
+    //----------------------- Group manipulators -----------------------------//  
+    /// Create a HDF5 group at a specified place in the file tree
+    hid_t CreateGroup(const hid_t ParentGroup, 
+                      const char * GroupName);        
+    /// Open a HDF5 group at a specified place in the file tree
+    hid_t OpenGroup  (const hid_t ParentGroup, 
+                      const char * GroupName);           
     /// Close group
-    void CloseGroup(const hid_t Group);
+    void CloseGroup(const hid_t Group);       
+    /**
+     * Get handle to the root group
+     * @return  - handle to the root group
+     */
+    hid_t GetRootGroup() const 
+    {
+      return HDF5_FileId;
+    };
     
-    
-    /// Open the HDF5 dataset
-    hid_t OpenDataset  (const char * DatasetName);
-    /// Create the HDF5 dataset
-    hid_t CreateFloatDataset(const char * DatasetName, const TDimensionSizes & DimensionSizes, const TDimensionSizes & ChunkSizes, const int CompressionLevel);
+
+    //---------------------- Dataset manipulators ----------------------------//  
+    /// Open the HDF5 dataset  at a specified place in the file tree.
+    hid_t OpenDataset  (const hid_t ParentGroup, 
+                        const char * DatasetName);    
+    /// Create the HDF5 dataset at a specified place in the file tree.
+    hid_t CreateFloatDataset(const hid_t ParentGroup, 
+                             const char * DatasetName, 
+                             const TDimensionSizes & DimensionSizes, 
+                             const TDimensionSizes & ChunkSizes, 
+                             const int CompressionLevel);    
     /// Close the HDF5 dataset
     void  CloseDataset (const hid_t HDF5_Dataset_id);
+
+    
+    //------------------ Dataset Read/Write operations -----------------------//      
+    /// Write data into a dataset  under a specified group - float dataset
+    void WriteCompleteDataset(const hid_t ParentGroup,  
+                              const char * DatasetName, 
+                              const TDimensionSizes & DimensionSizes, 
+                              const float * Data);        
+    /// Write data into a dataset  under a specified group - float long dataset
+    void WriteCompleteDataset(const hid_t ParentGroup, 
+                              const char * DatasetName, 
+                              const TDimensionSizes & DimensionSizes, 
+                              const long  * Data);     
+    
+    /// Write a hyper-slab into the dataset - float dataset
+    void WriteHyperSlab(const hid_t HDF5_Dataset_id,
+                        const TDimensionSizes & Position,
+                        const TDimensionSizes & Size,
+                        const float * Data);
+    /// Write a hyper-slab into the dataset - long dataset
+    void WriteHyperSlab(const hid_t HDF5_Dataset_id,
+                        const TDimensionSizes & Position,
+                        const TDimensionSizes & Size,
+                        const long * Data);
+        
+    /// Write the scalar value under a specified group - float value
+    void WriteScalarValue(const hid_t ParentGroup, 
+                          const char * DatasetName, 
+                          const float Value);        
+    /// Write the scalar value under a specified group - long value
+    void WriteScalarValue(const hid_t ParentGroup, 
+                          const char * DatasetName, 
+                          const long  Value);    
+    
+    /// Read data from the dataset under a specified group - float dataset
+    void ReadCompleteDataset(const hid_t ParentGroup, 
+                             const char * DatasetName, 
+                             const TDimensionSizes & DimensionSizes, 
+                             float * Data);    
+    /// Read data from the dataset under a specified group - long dataset
+    void ReadCompleteDataset(const hid_t ParentGroup,
+                             const char * DatasetName,
+                             const TDimensionSizes & DimensionSizes,
+                             long * Data);
     
     
+    //------------------- Attributes Read/Write operations -------------------//      
     
-    /// Write data into a dataset
-    void WriteCompleteDataset(const char * DatasetName, const TDimensionSizes & DimensionSizes, const float * Data);
-    /// Write data into a dataset
-    void WriteCompleteDataset(const char * DatasetName, const TDimensionSizes & DimensionSizes, const long  * Data);
+    /// Get dimension sizes of the dataset  under a specified group
+    TDimensionSizes GetDatasetDimensionSizes(const hid_t ParentGroup,
+                                             const char * DatasetName);    
+    /// Get dataset element count under a specified group
+    size_t          GetDatasetElementCount(const hid_t ParentGroup, 
+                                           const char * DatasetName);
     
-    /// Write a hyper-slab into the dataset
-    void WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSizes & Position , const TDimensionSizes & Size, const float * Data);    
-    /// Write a hyper-slab into the dataset
-    void WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSizes & Position , const TDimensionSizes & Size, const long * Data);
+        
+    /// Write matrix data type into the dataset under a specified group
+    void WriteMatrixDataType (const hid_t ParentGroup, 
+                              const char * DatasetName, 
+                              const THDF5_MatrixDataType   & MatrixDataType);
+    /// Write matrix domain type into the dataset under the root group    
+    void WriteMatrixDomainType(const hid_t ParentGroup, 
+                               const char * DatasetName, 
+                               const THDF5_MatrixDomainType & MatrixDomainType);
+        
+    /// Read matrix data type from the dataset c
+    THDF5_File::THDF5_MatrixDataType   ReadMatrixDataType(const hid_t ParentGroup,
+                                                          const char * DatasetName);    
+    /// Read matrix domain type from the dataset under a specified group
+    THDF5_File::THDF5_MatrixDomainType ReadMatrixDomainType(const hid_t ParentGroup, 
+                                                            const char * DatasetName);
     
-    /// Write the scalar value
-    void WriteScalarValue(const char * DatasetName, const float Value);
-    /// Write the scalar value
-    void WriteScalarValue(const char * DatasetName, const long  Value);
     
-    
-    /// Read data from the dataset
-    void ReadCompleteDataset (const char * DatasetName, const TDimensionSizes & DimensionSizes, float * Data);
-    /// Read data from the dataset
-    void ReadCompleteDataset (const char * DatasetName, const TDimensionSizes & DimensionSizes, long  * Data);
-    
-    /// Get dimension sizes of the dataset
-    TDimensionSizes GetDatasetDimensionSizes(const char * DatasetName);
-    /// Get dataset element count
-    size_t          GetDatasetElementCount(const char * DatasetName);
-    
-    /// Write matrix data type into the dataset
-    void WriteMatrixDataType  (const char * DatasetName, const THDF5_MatrixDataType   & MatrixDataType);
-    /// Write matrix domain type into the dataset
-    void WriteMatrixDomainType(const char * DatasetName, const THDF5_MatrixDomainType & MatrixDomainType);
-    
-    /// Read matrix data type from the dataset
-    THDF5_File::THDF5_MatrixDataType   ReadMatrixDataType  (const char * DatasetName);
-    /// Read matrix domain type from the dataset
-    THDF5_File::THDF5_MatrixDomainType ReadMatrixDomainType(const char * DatasetName);
-    
-    /// Write string attribute into the dataset
-    void   WriteStringAttribute (const char * DatasetName, const char * AttributeName, const string &  Value);
-    /// Read string attribute from the dataset
-    string ReadStringAttribute  (const char * DatasetName, const char * AttributeName);
+        /// Write string attribute into the dataset under the root group
+    void   WriteStringAttribute (const hid_t ParentGroup, 
+                                 const char * DatasetName, 
+                                 const char * AttributeName,
+                                 const string &  Value);    
+    /// Read string attribute from the dataset under the root group
+    string ReadStringAttribute  (const hid_t ParentGroup, 
+                                 const char * DatasetName, 
+                                 const char * AttributeName);
     
     /// Destructor        
     virtual ~THDF5_File();
@@ -552,12 +615,10 @@ private:
     
     
     /// HDF file handle
-    hid_t       HDF5_FileId;
+    hid_t  HDF5_FileId;
     /// File name
-    string      FileName;
+    string FileName;
     
-    
-  
 }; // THDF5_File
 //------------------------------------------------------------------------------
 
