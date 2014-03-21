@@ -4,12 +4,12 @@
  *              CECS, ANU, Australia    \n
  *              jiri.jaros@anu.edu.au   \n
  * 
- * @brief       The header file of the class saving RealMatrix data into 
- *              the output HDF5 file
+ * @brief       The header file of classes responsible for storing output 
+ *              quantities into the output HDF5 file
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        11 July 2012, 10:30 (created) \n
- *              25 February 2014, 16:40 (revised)
+ * @date        11 July  2012, 10:30 (created) \n
+ *              18 March 2014, 15:00 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -43,10 +43,151 @@
 using namespace std;
 
 /**
- * @class TOutputHDF5Stream
- * @brief Output stream for sensor data. 
- *        This class write data to HDF5 file (time-series as well as aggregations)
+ * @class TBaseOutputHDF5Stream
+ * @brief Base class for output data streams (sampled data)
+ *       
+ *        
  */
+class TBaseOutputHDF5Stream
+{
+ public:
+   
+    /**
+     * @enum TOutputHDF5StreamReductionOperator 
+     * @brief How to aggregate data \n
+     *        roNONE - store actual data
+     *        roRMS  - calculate root mean square \n
+     *        roMAX  - store maximum
+     *        roMIN  - store minimum     
+     */
+    enum TReductionOperator 
+    {
+      roNONE, roRMS, roMAX, roMIN, 
+    };
+  
+    // Constructor (by default there is no sensor mask)
+    TBaseOutputHDF5Stream(THDF5_File &             HDF5_File,
+                          const char *             HDF5ObjectName,
+                          const TRealMatrix &      SourceMatrix, 
+                          const TReductionOperator ReductionOp,
+                          float *                  BufferToReuse = NULL) 
+            : HDF5_File     (HDF5_File), 
+              HDF5ObjectName(HDF5ObjectName),
+              SourceMatrix  (SourceMatrix),
+              ReductionOp   (ReductionOp),
+              BufferReuse   (BufferToReuse == NULL),
+              StoringBuffer (BufferToReuse)
+    {};
+                                                        
+    /// Destructor
+    virtual ~TBaseOutputHDF5Stream() = 0;
+    
+    
+    /// Create a HDF5 stream and allocate data for it - a virtual method
+    virtual void Create(const size_t NumberOfSampledElementsPerStep) = 0;
+    
+    /// Reopen the output stream
+    /// @TODO - Will be implemented with checkpoint-restart
+    virtual void Reopen(const size_t NumberOfSampledElementsPerStep) = 0;
+                       
+    /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask
+    virtual void Sample() = 0;
+                
+    /// Checkpoint the stram and close
+    virtual void Checkpoint() = 0;
+    
+    /// Close stream (apply post-processing if necessary, flush data and close)
+    virtual void Close() = 0;
+    
+ protected:
+    /// Default constructor not allowed
+    TBaseOutputHDF5Stream();
+    /// Copy constructor not allowed
+    TBaseOutputHDF5Stream(const TBaseOutputHDF5Stream & src);
+    /// Operator = not allowed (we don't want any data movements)
+    TBaseOutputHDF5Stream & operator = (const TBaseOutputHDF5Stream & src);
+  
+ 
+    /// HDF5 file handle
+    const THDF5_File &       HDF5_File;            
+    /// Dataset name
+    const char *             HDF5ObjectName;
+    /// Source matrix to be sampled
+    const TRealMatrix&       SourceMatrix;    
+    /// Reduction operator    
+    const TReductionOperator ReductionOp;
+        
+    /// if true, the container reuses e.g. Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D
+    bool BufferReuse;
+    /// Temporary buffer for store - only if Buffer Reuse = false!
+    float * StoringBuffer;    
+        
+    /// chunk size of 4MB in number of float elements
+    static const size_t ChunkSize_4MB = 1048576; 
+      
+};// end of TOutputHDF5Stream
+//------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+/**
+ * @class TIndexOutputHDF5Stream
+ * @brief Output stream for quantities sampled by an index sensor mask.
+ *        This class writes data to a single dataset in a root group of the HDF5 
+ *        file (time-series as well as aggregations)
+ * 
+ */
+class TIndexOutputHDF5Stream
+{
+  
+};// end of TIndexOutputHDF5Stream
+//------------------------------------------------------------------------------
+
+
+/**
+ * @class TCubodidOutputHDF5Stream
+ * @brief Output stream for quantities sampled by a cuboid sensor mask.
+ *        This class writes data into separated datasets (one per cuboid) under 
+ *        a given dataset in the HDF5 file (time-series as well as aggregations)
+ * 
+ */
+class TCubodidOutputHDF5Stream
+{
+  
+};// end of TCubodiOutputHDF5Stream
+//------------------------------------------------------------------------------
+
+/**
+ * @class TWholeDomainOutputHDF5Stream 
+ * @brief Output stream for quantities sampled in the whole domain.
+ *        The data is stored in a single dataset (aggregated quantities only)
+ */
+class TWholeDomainOutputHDF5Stream
+{
+  
+};// end of TWholeDomainOutputHDF5Stream
+//------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class TOutputHDF5Stream
 {
   public:
@@ -68,7 +209,7 @@ class TOutputHDF5Stream
     {
     };
 
-    /// Create stream for sensor mask based date
+    /// Create stream for a sensor mask based data
     virtual void CreateStream(THDF5_File & HDF5_File, 
                               const char * DatasetName,
                               const size_t NumberOfSensorElements, 
