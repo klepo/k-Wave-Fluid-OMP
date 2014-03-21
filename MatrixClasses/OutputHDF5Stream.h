@@ -9,7 +9,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July  2012, 10:30 (created) \n
- *              18 March 2014, 15:00 (revised)
+ *              21 March 2014, 15:00 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -44,13 +44,13 @@ using namespace std;
 
 /**
  * @class TBaseOutputHDF5Stream
- * @brief Base class for output data streams (sampled data)
+ * @brief Abstract base class for output data streams (sampled data)
  *       
  *        
  */
 class TBaseOutputHDF5Stream
 {
- public:
+  public:
    
     /**
      * @enum TOutputHDF5StreamReductionOperator 
@@ -62,25 +62,48 @@ class TBaseOutputHDF5Stream
      */
     enum TReductionOperator 
     {
-      roNONE, roRMS, roMAX, roMIN, 
+      roNONE, roRMS, roMAX, roMIN 
     };
-  
-    // Constructor (by default there is no sensor mask)
+      
+    /**
+     * Constructor - there is no sensor mask by default!
+     * it links the HDF5 dataset, source (sampled matrix) and the reduction 
+     * operator together. The constructor DOES NOT allocate memory because the 
+     * size of the sensor mask is not known at the time the instance of 
+     * the class is being created.
+     * 
+     * @param [in] HDF5_File           - Handle to the HDF5 (output) file 
+     * @param [in] HDF5_RootObjectName - The root object that stores the sample 
+     *                                   data (dataset or group)
+     * @param [in] SourceMatrix        - The source matrix (only real matrices
+     *                                   are supported)     
+     * @param [in] ReductionOp         - Reduction operator
+     * @param [in] BufferToReuse       - An external buffer can be used to line 
+     *                                   up the grid points
+     */
     TBaseOutputHDF5Stream(THDF5_File &             HDF5_File,
-                          const char *             HDF5ObjectName,
+                          const char *             HDF5_RootObjectName,
                           const TRealMatrix &      SourceMatrix, 
                           const TReductionOperator ReductionOp,
                           float *                  BufferToReuse = NULL) 
-            : HDF5_File     (HDF5_File), 
-              HDF5ObjectName(HDF5ObjectName),
-              SourceMatrix  (SourceMatrix),
-              ReductionOp   (ReductionOp),
-              BufferReuse   (BufferToReuse == NULL),
-              StoringBuffer (BufferToReuse)
-    {};
+            : HDF5_File          (HDF5_File), 
+              HDF5_RootObjectName(NULL),
+              SourceMatrix       (SourceMatrix),
+              ReductionOp        (ReductionOp),
+              BufferReuse        (BufferToReuse == NULL),
+              BufferSize         (0),
+              StoringBuffer      (BufferToReuse)
+    {
+      // copy the dataset name (just for sure)
+      this->HDF5_RootObjectName = new char[strlen(HDF5_RootObjectName)];
+      strcpy(this->HDF5_RootObjectName, HDF5_RootObjectName);
+    };
                                                         
     /// Destructor
-    virtual ~TBaseOutputHDF5Stream() = 0;
+    virtual ~TBaseOutputHDF5Stream() 
+    {
+      delete [] HDF5_RootObjectName;      
+    };
     
     
     /// Create a HDF5 stream and allocate data for it - a virtual method
@@ -99,26 +122,34 @@ class TBaseOutputHDF5Stream
     /// Close stream (apply post-processing if necessary, flush data and close)
     virtual void Close() = 0;
     
- protected:
+  protected:
     /// Default constructor not allowed
     TBaseOutputHDF5Stream();
     /// Copy constructor not allowed
     TBaseOutputHDF5Stream(const TBaseOutputHDF5Stream & src);
     /// Operator = not allowed (we don't want any data movements)
     TBaseOutputHDF5Stream & operator = (const TBaseOutputHDF5Stream & src);
-  
- 
+       
+    /// A generic function to allocate memory - not used in the base class
+    virtual void AllocateMemory();
+    /// A generic function to free memory - not used in the base class
+    virtual void FreeMemory();        
+    /// Apply post-processing on the buffer - not used in the base class
+    virtual void ApplyPostProcessing();        
+    
     /// HDF5 file handle
-    const THDF5_File &       HDF5_File;            
+    THDF5_File &             HDF5_File;            
     /// Dataset name
-    const char *             HDF5ObjectName;
+    char *                   HDF5_RootObjectName;        
     /// Source matrix to be sampled
     const TRealMatrix&       SourceMatrix;    
     /// Reduction operator    
     const TReductionOperator ReductionOp;
         
     /// if true, the container reuses e.g. Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D
-    bool BufferReuse;
+    bool    BufferReuse;
+    /// Buffer size
+    size_t  BufferSize;     
     /// Temporary buffer for store - only if Buffer Reuse = false!
     float * StoringBuffer;    
         
@@ -129,12 +160,6 @@ class TBaseOutputHDF5Stream
 //------------------------------------------------------------------------------
 
 
-
-
-
-
-
-
 /**
  * @class TIndexOutputHDF5Stream
  * @brief Output stream for quantities sampled by an index sensor mask.
@@ -142,10 +167,52 @@ class TBaseOutputHDF5Stream
  *        file (time-series as well as aggregations)
  * 
  */
-class TIndexOutputHDF5Stream
+class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
 {
+  public:
+
+    /// Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together
+    TIndexOutputHDF5Stream(THDF5_File &             HDF5_File,
+                           const char *             HDF5_ObjectName,
+                           const TRealMatrix &      SourceMatrix,
+                           const TLongMatrix        SensorMask,
+                           const TReductionOperator ReductionOp,
+                           float *                  BufferToReuse = NULL);
+
+
+    /// Destructor
+    virtual ~TIndexOutputHDF5Stream();
+
+    /// Create a HDF5 stream and allocate data for it
+    virtual void Create(const size_t NumberOfSampledElementsPerStep);
+
+    /// Reopen the output stream
+    /// @TODO - Will be implemented with checkpoint-restart
+    virtual void Reopen(const size_t NumberOfSampledElementsPerStep){};
+
+    /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask
+    virtual void Sample();
+
+    /// @TODO Checkpoint the stram and close
+    virtual void Checkpoint() {};
+    
+    /// Close stream (apply post-processing if necessary, flush data and close)
+    virtual void Close();
+    
+  protected:
+    
+    /// Flush the buffer to the file
+    virtual void FlushToFile();
+
+    /// Sensor mask to sample data 
+    const TLongMatrix &       SensorMask;
+    /// Handle to a HDF5 dataset
+    hid_t HDF5_DatasetId;
+     
+    /// Position in the dataset (Sampled data, time step, 1)
+    TDimensionSizes Position;
   
-};// end of TIndexOutputHDF5Stream
+} ; // end of TIndexOutputHDF5Stream
 //------------------------------------------------------------------------------
 
 

@@ -4,12 +4,12 @@
  *              CECS, ANU, Australia    \n
  *              jiri.jaros@anu.edu.au
  * 
- * @brief       The implementation file of the class saving RealMatrix data into 
- *              the output HDF5 file
+ * @brief       The implementation file of classes responsible for storing output 
+ *              quantities into the output HDF5 file
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:30      (created) \n
- *              03 March    2014, 10:20      (revised)
+ *              21 March    2014, 15:20      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -48,6 +48,334 @@ using namespace std;
 
 
 
+//----------------------------------------------------------------------------//
+//                              Definitions                                   //
+//----------------------------------------------------------------------------//
+
+
+//----------------------------------------------------------------------------//
+//                  TBaseOutputHDF5Stream implementation                      //
+//                              public methods                                //
+//----------------------------------------------------------------------------//
+
+//----------------------------------------------------------------------------//
+//                  TBaseOutputHDF5Stream implementation                      //
+//                              public methods                                //
+//----------------------------------------------------------------------------//
+
+
+/**
+ * Allocate memory using a proper memory alignment.
+ * @warning - This can routine is not used in the base class (should be used in 
+ *            derived ones
+ */
+void TBaseOutputHDF5Stream::AllocateMemory()
+{
+  StoringBuffer = (float *) memalign(DATA_ALIGNMENT, BufferSize * sizeof (float));
+
+  if (!StoringBuffer)
+  {
+    fprintf(stderr, Matrix_ERR_FMT_NotEnoughMemory, "TBaseOutputHDF5Stream");
+    throw bad_alloc();
+  }
+
+  // zero the matrix
+  #pragma omp parallel for if (BufferSize > 1e6)  
+  for (size_t i = 0; i < BufferSize; i++)
+  {
+    StoringBuffer[i] = 0.0f;
+  }
+  
+}// end of AllocateMemory
+//------------------------------------------------------------------------------
+
+/**
+ * Free memory.
+ * @warning - This can routine is not used in the base class (should be used in 
+ *            derived ones
+ */
+void TBaseOutputHDF5Stream::FreeMemory()
+{
+  if (StoringBuffer)
+  {
+    free(StoringBuffer);
+    StoringBuffer = NULL;
+  }
+}// end of FreeMemory
+//------------------------------------------------------------------------------
+
+
+
+
+/**
+ * Apply post-processing on the buffer. It supposes the elements are independent
+ * @warning - This can routine is not used in the base class (should be used in 
+ *            derived ones
+ */
+void TBaseOutputHDF5Stream::ApplyPostProcessing()
+{     
+  switch (ReductionOp)
+  { 
+    roNONE :
+    {
+      // do nothing
+      break;
+    }
+    
+    roRMS  : 
+    {
+      const float ScalingCoeff = TParameters::GetInstance()->Get_Nt() - TParameters::GetInstance()->GetStartTimeIndex();
+      
+      #pragma omp parallel for if (BufferSize > 1e6)
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        StoringBuffer[i] = sqrt(StoringBuffer[i] * ScalingCoeff);
+      }   
+      break;
+    }
+    
+    roMAX  :
+    {
+      // do nothing
+      break;
+    }
+    
+    roMIN  : 
+    {
+      // do nothing
+      break;
+    }    
+  }// switch  
+    
+}// end of ApplyPostProcessing
+//------------------------------------------------------------------------------
+
+
+
+
+//----------------------------------------------------------------------------//
+//                 TIndexOutputHDF5Stream implementation                      //
+//                              public methods                                //
+//----------------------------------------------------------------------------//
+
+/**
+ * Constructor - links the HDF5 dataset, source (sampled matrix), Sensor mask 
+ * and the reduction operator together. The constructor DOES NOT allocate memory 
+ * because the size of the sensor mask is not known at the time the instance of 
+ * the class is being created.
+ * 
+ * @param [in] HDF5_File           - Handle to the HDF5 (output) file 
+ * @param [in] HDF5_RootObjectName - The dataset's name (index based sensor data 
+ *                                   is store in a single dataset)
+ * @param [in] SourceMatrix        - The source matrix (only real matrices are 
+ *                                   supported)
+ * @param [in] SensorMask          - Index based sensor mask
+ * @param [in] ReductionOp         - Reduction operator
+ * @param [in] BufferToReuse       - An external buffer can be used to line up 
+ *                                   the grid points
+ */
+TIndexOutputHDF5Stream::TIndexOutputHDF5Stream(THDF5_File &             HDF5_File,
+                                               const char *             HDF5_RootObjectName,
+                                               const TRealMatrix &      SourceMatrix, 
+                                               const TLongMatrix        SensorMask,
+                                               const TReductionOperator ReductionOp,
+                                               float *                  BufferToReuse)
+        : TBaseOutputHDF5Stream(HDF5_File, HDF5_RootObjectName, SourceMatrix, ReductionOp, BufferToReuse),
+          SensorMask(SensorMask),
+          HDF5_DatasetId(H5I_BADID),          
+          Position(0,0,0)
+{
+  
+}// end of TIndexOutputHDF5Stream
+//------------------------------------------------------------------------------
+
+
+/**
+ * Destructor
+ * if the file is still opened, it applies the post processing and flush the data.
+ * Then, the object memory is freed and the object destroyed
+ */
+TIndexOutputHDF5Stream::~TIndexOutputHDF5Stream()
+{
+  
+  Close();
+  // free memory only if it was allocated
+  if (!BufferReuse) FreeMemory();        
+}// end of Destructor
+//------------------------------------------------------------------------------
+
+
+
+/**
+ * Create a HDF5 stream, create a dataset, and allocate data for it
+ * @param [in] NumberOfSampledElementsPerStep
+ */
+void TIndexOutputHDF5Stream::Create(const size_t NumberOfSampledElementsPerStep)
+{
+ 
+  TParameters * Params = TParameters::GetInstance();
+      
+  // Derive dataset dimension sizes
+  TDimensionSizes DatasetSize(NumberOfSampledElementsPerStep, 
+                              Params->GetNumberOfThreads() - Params->GetStartTimeIndex(),
+                              1);
+  
+  // Set HDF5 chunk size
+  TDimensionSizes ChunkSize(NumberOfSampledElementsPerStep, 1, 1);  
+  // for chunks bigger than 32 MB 
+  if (NumberOfSampledElementsPerStep > (ChunkSize_4MB * 8))
+  { 
+    ChunkSize.X = ChunkSize_4MB; // set chunk size to MB
+  }
+  
+  // Create a dataset under the root group
+  HDF5_DatasetId = HDF5_File.CreateFloatDataset(HDF5_File.GetRootGroup(),
+                                                HDF5_RootObjectName,
+                                                DatasetSize,
+                                                ChunkSize, 
+                                                Params->GetCompressionLevel());
+  
+  // Write dataset parameters
+  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(), 
+                                  HDF5_RootObjectName,
+                                  THDF5_File::hdf5_mdt_real);
+  HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(), 
+                                  HDF5_RootObjectName,
+                                  THDF5_File::hdf5_mdt_float);        
+  
+    
+  // Set positions in the dataset
+  Position = TDimensionSizes(0,0,0);
+      
+  // Set buffer size
+  BufferSize = NumberOfSampledElementsPerStep;
+  
+  // Allocate memory if needed
+  if (!BufferReuse) AllocateMemory();
+    
+}// end of Create
+//------------------------------------------------------------------------------
+
+/**
+ * Sample grid points, line them up in the buffer an flush to the disk unless a
+ * reduction operator is applied
+ */
+void TIndexOutputHDF5Stream::Sample()
+{  
+  switch (ReductionOp)
+  {
+    roNONE :
+    {
+      #pragma omp parallel for if (BufferSize > 1e6)  
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+      }    
+      // only raw time series are flushed down to the disk every time step
+      FlushToFile();
+      break;
+    }
+    
+    roRMS  : 
+    {
+      #pragma omp parallel for if (BufferSize > 1e6)  
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        StoringBuffer[i] += (SourceMatrix[SensorMask[i]] * SourceMatrix[SensorMask[i]]);
+      }
+      break;
+    }
+    
+    roMAX  :
+    {
+      #pragma omp parallel for if (BufferSize > 1e6)    
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        if (StoringBuffer[i] < SourceMatrix[SensorMask[i]])
+          StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+      }
+      break;
+    }
+    
+    roMIN  : 
+    {
+      #pragma omp parallel for if (BufferSize > 1e6)  
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        if (StoringBuffer[i] > SourceMatrix[SensorMask[i]])
+          StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+      }
+      break;
+    }    
+  }// switch  
+}// end of Sample
+//------------------------------------------------------------------------------
+
+/**
+ * Close stream (apply post-processing if necessary, flush data and close)
+ */
+void TIndexOutputHDF5Stream::Close()
+{
+  // the dataset is still opened
+  if (HDF5_DatasetId != H5I_BADID) 
+  {
+    ApplyPostProcessing();
+    // When no reduction operator is applied, the data is flushed after every time step
+    if (ReductionOp != roNONE) FlushToFile();
+    
+    HDF5_File.CloseDataset(HDF5_DatasetId);
+  }
+    
+  HDF5_DatasetId = H5I_BADID;
+}// end of Close
+//------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------//
+//                 TIndexOutputHDF5Stream implementation                      //
+//                            protected methods                               //
+//----------------------------------------------------------------------------//
+
+
+/**
+ * Flush the buffer down to the file at the actual position
+ */
+void TIndexOutputHDF5Stream::FlushToFile()
+{
+  HDF5_File.WriteHyperSlab(HDF5_DatasetId, 
+                           Position, 
+                           TDimensionSizes(BufferSize,1,1), 
+                           StoringBuffer);
+  Position.Y++;
+}// end of FlushToFile
+//------------------------------------------------------------------------------
+
+
+
+
+
+
+//----------------------------------------------------------------------------//
+//                 TIndexOutputHDF5Stream implementation                      //
+//                              public methods                                //
+//----------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * This method initialize the output stream by creating a HDF5 dataset and writing
@@ -60,17 +388,16 @@ using namespace std;
  */
 
 
-//----------------------------------------------------------------------------//
-//                              Definitions                                   //
-//----------------------------------------------------------------------------//
+
 
 //----------------------------------------------------------------------------//
 //                              Implementation                                //
 //                              public methods                                //
 //----------------------------------------------------------------------------//
 /**
- * This method creates the time series output stream by creating a HDF5 dataset 
- * and writing the parameters of the dataset
+ * This method creates the time series output stream by creating either a HDF5 
+ * group of datasets dataset or a dataset and writing the parameters of the dataset
+ * 
  * @param [in,out] HDF5_File                - Handle to HDF5 output file
  * @param [in]     DatasetName              - Dataset name
  * @param [in]     NumberOfSensorElements   - Number of elements sampled 
@@ -114,9 +441,10 @@ void TOutputHDF5Stream::CreateStream(THDF5_File & HDF5_File,
   
   // Set positions in the dataset
   Position = TDimensionSizes(0,0,0);
-  
+    
+  hid_t GroupId =  HDF5_File.CreateGroup(DatasetName);
   // Create float dataset in the file
-  HDF5_Dataset_id = HDF5_File.CreateFloatDataset(DatasetName,TotalDatasetSize,
+  HDF5_Dataset_id = HDF5_File.CreateFloatDataset(GroupId, "Test",TotalDatasetSize,
                                                  ChunkSize, TParameters::GetInstance()->GetCompressionLevel());
   // Write dataset parameters
   HDF5_File.WriteMatrixDomainType(DatasetName,THDF5_File::hdf5_mdt_real);
