@@ -150,13 +150,7 @@ size_t TLongMatrix::GetTotalNumberOfElementsInAllCuboids() const
     size_t ElementSum = 0;
     for (size_t cuboidIdx = 0; cuboidIdx < pDimensionSizes.Y; cuboidIdx++)
     {        
-      TDimensionSizes TopLeftCorner     = GetTopLeftCorner(cuboidIdx);
-      TDimensionSizes BottomRightCorner = GetBottomRightCorner(cuboidIdx);
-        
-      // + 1 because of planes (10.10.1 - 60.40.1)
-      ElementSum += (BottomRightCorner.X - TopLeftCorner.X + 1) *
-                    (BottomRightCorner.Y - TopLeftCorner.Y + 1) *
-                    (BottomRightCorner.Z - TopLeftCorner.Z + 1);      
+      ElementSum += (GetBottomRightCorner(cuboidIdx) - GetTopLeftCorner(cuboidIdx)).GetElementCount();
     }
     
     return ElementSum;

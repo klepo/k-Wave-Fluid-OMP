@@ -34,6 +34,8 @@
 #define	OUTPUTHDF5STREAM_H
 
 #include <string>
+#include <vector>
+#include <stdexcept> 
 
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/LongMatrix.h>
@@ -55,7 +57,7 @@ class TBaseOutputHDF5Stream
     /**
      * @enum TOutputHDF5StreamReductionOperator 
      * @brief How to aggregate data \n
-     *        roNONE - store actual data
+     *        roNONE - store actual data (time series)
      *        roRMS  - calculate root mean square \n
      *        roMAX  - store maximum
      *        roMIN  - store minimum     
@@ -107,11 +109,11 @@ class TBaseOutputHDF5Stream
     
     
     /// Create a HDF5 stream and allocate data for it - a virtual method
-    virtual void Create(const size_t NumberOfSampledElementsPerStep) = 0;
+    virtual void Create() = 0;
     
     /// Reopen the output stream
     /// @TODO - Will be implemented with checkpoint-restart
-    virtual void Reopen(const size_t NumberOfSampledElementsPerStep) = 0;
+    virtual void Reopen() = 0;
                        
     /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask
     virtual void Sample() = 0;
@@ -175,7 +177,7 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
     TIndexOutputHDF5Stream(THDF5_File &             HDF5_File,
                            const char *             HDF5_ObjectName,
                            const TRealMatrix &      SourceMatrix,
-                           const TLongMatrix        SensorMask,
+                           const TLongMatrix &      SensorMask,
                            const TReductionOperator ReductionOp,
                            float *                  BufferToReuse = NULL);
 
@@ -184,16 +186,16 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
     virtual ~TIndexOutputHDF5Stream();
 
     /// Create a HDF5 stream and allocate data for it
-    virtual void Create(const size_t NumberOfSampledElementsPerStep);
+    virtual void Create();
 
     /// Reopen the output stream
     /// @TODO - Will be implemented with checkpoint-restart
-    virtual void Reopen(const size_t NumberOfSampledElementsPerStep){};
+    virtual void Reopen(){};
 
     /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask
     virtual void Sample();
 
-    /// @TODO Checkpoint the stram and close
+    // @TODO Checkpoint the stram and close
     virtual void Checkpoint() {};
     
     /// Close stream (apply post-processing if necessary, flush data and close)
@@ -205,29 +207,108 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
     virtual void FlushToFile();
 
     /// Sensor mask to sample data 
-    const TLongMatrix &       SensorMask;
+    const TLongMatrix & SensorMask;
     /// Handle to a HDF5 dataset
-    hid_t HDF5_DatasetId;
+    hid_t               HDF5_DatasetId;
      
     /// Position in the dataset (Sampled data, time step, 1)
-    TDimensionSizes Position;
+    TDimensionSizes     Position;
   
 } ; // end of TIndexOutputHDF5Stream
 //------------------------------------------------------------------------------
 
 
 /**
- * @class TCubodidOutputHDF5Stream
- * @brief Output stream for quantities sampled by a cuboid sensor mask.
+ * @class TCuboidOutputHDF5Stream
+ * @brief Output stream for quantities sampled by a cuboid cormer sensor mask.
  *        This class writes data into separated datasets (one per cuboid) under 
  *        a given dataset in the HDF5 file (time-series as well as aggregations)
  * 
  */
-class TCubodidOutputHDF5Stream
+class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
 {
-  
+  public:
+    /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together
+    TCuboidOutputHDF5Stream(THDF5_File &             HDF5_File,
+                             const char *             HDF5_GroupName,
+                             const TRealMatrix &      SourceMatrix,
+                             const TLongMatrix &      SensorMask,
+                             const TReductionOperator ReductionOp,
+                             float *                  BufferToReuse = NULL);
+
+    /// Destructor
+    virtual ~TCuboidOutputHDF5Stream();
+    
+    /// Create a HDF5 stream and allocate data for it
+    virtual void Create();
+
+    /// Reopen the output stream
+    /// @TODO - Will be implemented with checkpoint-restart
+    virtual void Reopen(){};
+
+    /// Sample data into buffer and apply reduction, or flush to disk - based on a sensor mask
+    virtual void Sample();
+
+    // @TODO Checkpoint the stram and close
+    virtual void Checkpoint() {};
+    
+    /// Close stream (apply post-processing if necessary, flush data and close)
+    virtual void Close();
+    
+  protected:
+    /**
+     * @struct
+     * @brief This structure information about a HDF5 dataset (one cuboid)
+     * Namely it a HDF5_ID, Starting position in a lineup buffer
+     */  
+    struct TCuboidInfo
+    {
+      hid_t  HDF5_CuboidId;            
+      size_t StartingPossitionInBuffer;      
+    };
+    
+    /// Create a new dataset for a given cuboid specified by index (order)
+    virtual hid_t CreateCuboidDataset(const size_t Index);
+    
+    /// Flush the buffer to the file
+    virtual void FlushBufferToFile();
+
+    /// Flush the buffer to the file @TODO: Implement a better version
+    virtual void FlushRawDataToFile() {throw runtime_error("Routine FlushRawDataToFile not implemented"); };
+
+    
+    /// Sensor mask to sample data 
+    const TLongMatrix &      SensorMask;
+    
+    /// Handle to a HDF5 dataset
+    hid_t                    HDF5_GroupId;
+     
+    std::vector<TCuboidInfo> CuboidsInfo;
+    
+    /// Time step to store (1 for aggregated values)
+    size_t                   SampledTimeStep;
+    
 };// end of TCubodiOutputHDF5Stream
 //------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @class TWholeDomainOutputHDF5Stream 

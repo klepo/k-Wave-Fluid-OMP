@@ -265,7 +265,7 @@ hid_t THDF5_File::OpenDataset(const hid_t ParentGroup,
 
 
 /**
- *  Create the HDF5 dataset at a specified place in the file tree.
+ * Create the HDF5 dataset at a specified place in the file tree.
  * @param [in] ParentGroup       - Parent group 
  * @param [in] DatasetName       - Dataset name
  * @param [in] DimensionSizes    - Dimension sizes
