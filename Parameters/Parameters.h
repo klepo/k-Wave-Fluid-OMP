@@ -6,8 +6,8 @@
  * @brief       The header file containing the parameters of the simulation
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        08 December 2011, 16:34   (created)      \n      
- *              04 March    2014, 13:30 (revised)
+ * @date        08 December 2011, 16:34 (created)      \n      
+ *              20 June     2014, 13:48 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -51,7 +51,7 @@ public:
      * @enum SenosrMaskType
      * @brief Sensor mask type (linear or corners)
      */
-    enum SenosrMaskType   {smt_index = 0, smt_corners  = 1};
+    enum TSenosrMaskType   {smt_index = 0, smt_corners  = 1};
     
     /// Get instance of the singleton class
     static TParameters* GetInstance();
@@ -138,7 +138,7 @@ public:
     long  Get_transducer_source_flag()       const {return transducer_source_flag;};    
     
     /// Get sensor mask type (linear or corners)
-    SenosrMaskType Get_sensor_mask_type()    const {return sensor_mask_type;};    
+    TSenosrMaskType Get_sensor_mask_type()   const {return sensor_mask_type;};    
     /// Get sensor_mask_index_size value            
     long  Get_sensor_mask_index_size()       const {return sensor_mask_ind_size;}
     /// Get number of cubes in the mask
@@ -284,7 +284,7 @@ protected:
     TDimensionSizes ReducedDimensionSizes;
         
     /// sensor mask type (0 = index, 1 = corners)
-    SenosrMaskType sensor_mask_type;    
+    TSenosrMaskType sensor_mask_type;    
     /// sensor_mask_ind_size value
     long sensor_mask_ind_size;
     /// sensor_mask_corners_size - how many cuboids is in the mask. 

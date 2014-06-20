@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        27 July     2012, 14:14 (created) \n
- *              17 March    2014, 14:20 (revised)
+ *              19 June     2014, 17:20 (revised)
  * 
  * 
  * 

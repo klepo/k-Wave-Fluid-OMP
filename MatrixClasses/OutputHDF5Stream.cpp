@@ -9,7 +9,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:30      (created) \n
- *              21 March    2014, 15:20      (revised)
+ *              19 June    2014, 15:20      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n

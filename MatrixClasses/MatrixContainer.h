@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        14 September 2012, 14:33 (created) \n
- *              25 February  2014, 14:42 (revised)
+ *              20 June      2014, 13:55 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -326,12 +326,12 @@ class TOutputStreamContainer
      * @param MatrixID
      * @return 
      */
-    TOutputHDF5Stream & operator [] (const TMatrixID MatrixID) {
+    TBaseOutputHDF5Stream & operator [] (const TMatrixID MatrixID) {
         return (* (OutputStreamContainer[MatrixID]));
     };
 
-    /// Set all streams records here! 
-    void AddStreamsIntoContainerAndCreate();
+    /// Set all streams records here! - Provide with simulation matrices 
+    void AddStreamsIntoContainerAndCreate(TMatrixContainer & MatrixContainer);
 
     /// Close all streams
     void CloseStreams();
@@ -340,6 +340,15 @@ class TOutputStreamContainer
     void FreeAllStreams();
 
   protected:
+    // Create a new output stream
+    TBaseOutputHDF5Stream * CreateNewOutputStream(TMatrixContainer & MatrixContainer,
+                                                  const TMatrixID          SampledMatrixID,                                                  
+                                                  const char *             HDF5_DatasetName,                                                  
+                                                  const TBaseOutputHDF5Stream::TReductionOperator ReductionOp,
+                                                  float *                  BufferToReuse = NULL);
+    
+    
+    
     /// Copy constructor not allowed for public
     TOutputStreamContainer(const TOutputStreamContainer &);
     /// Operator = not allowed for public
@@ -347,7 +356,7 @@ class TOutputStreamContainer
 
   private:
     /// Output stream map
-    typedef map < TMatrixID, TOutputHDF5Stream * > TOutputStreamMap;
+    typedef map < TMatrixID, TBaseOutputHDF5Stream * > TOutputStreamMap;
     /// Map with output streams
     TOutputStreamMap OutputStreamContainer;
 

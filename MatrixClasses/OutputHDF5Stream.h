@@ -230,11 +230,11 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
   public:
     /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together
     TCuboidOutputHDF5Stream(THDF5_File &             HDF5_File,
-                             const char *             HDF5_GroupName,
-                             const TRealMatrix &      SourceMatrix,
-                             const TLongMatrix &      SensorMask,
-                             const TReductionOperator ReductionOp,
-                             float *                  BufferToReuse = NULL);
+                            const char *             HDF5_GroupName,
+                            const TRealMatrix &      SourceMatrix,
+                            const TLongMatrix &      SensorMask,
+                            const TReductionOperator ReductionOp,
+                            float *                  BufferToReuse = NULL);
 
     /// Destructor
     virtual ~TCuboidOutputHDF5Stream();
