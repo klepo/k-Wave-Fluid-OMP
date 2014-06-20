@@ -9,7 +9,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:30      (created) \n
- *              20 June     2014, 14:45      (revised)
+ *              20 June     2014, 15:47      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -116,13 +116,13 @@ void TBaseOutputHDF5Stream::ApplyPostProcessing()
 {     
   switch (ReductionOp)
   { 
-    roNONE :
+    case roNONE :
     {
       // do nothing
       break;
     }
     
-    roRMS  : 
+    case roRMS  : 
     {
       const float ScalingCoeff = 1.0f / (TParameters::GetInstance()->Get_Nt() - TParameters::GetInstance()->GetStartTimeIndex());
       
@@ -134,13 +134,13 @@ void TBaseOutputHDF5Stream::ApplyPostProcessing()
       break;
     }
     
-    roMAX  :
+    case roMAX  :
     {
       // do nothing
       break;
     }
     
-    roMIN  : 
+    case roMIN  : 
     {
       // do nothing
       break;
@@ -266,7 +266,7 @@ void TIndexOutputHDF5Stream::Sample()
 {  
   switch (ReductionOp)
   {
-    roNONE :
+    case roNONE :
     {
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
@@ -278,7 +278,7 @@ void TIndexOutputHDF5Stream::Sample()
       break;
     }
     
-    roRMS  : 
+    case roRMS  : 
     {
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
@@ -288,7 +288,7 @@ void TIndexOutputHDF5Stream::Sample()
       break;
     }
     
-    roMAX  :
+    case roMAX  :
     {
       #pragma omp parallel for if (BufferSize > 1e6)    
       for (size_t i = 0; i < BufferSize; i++)
@@ -299,7 +299,7 @@ void TIndexOutputHDF5Stream::Sample()
       break;
     }
     
-    roMIN  : 
+    case roMIN  : 
     {
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
@@ -410,9 +410,7 @@ TCuboidOutputHDF5Stream::~TCuboidOutputHDF5Stream()
  * with particular datasets (one per cuboid) 
  */
 void TCuboidOutputHDF5Stream::Create()
-{  
-  TParameters * Params = TParameters::GetInstance();
-  
+{     
   // Create the HDF5 group and open it    
   HDF5_GroupId = HDF5_File.CreateGroup(HDF5_File.GetRootGroup(), HDF5_RootObjectName);
                       
@@ -458,7 +456,7 @@ void TCuboidOutputHDF5Stream::Sample()
 
    switch (ReductionOp)
   {
-    roNONE :
+    case roNONE :
     {
       
       // @TODO: Fix this to use HDF5 Memspace and FileSpace (gitlab #25)
@@ -481,7 +479,7 @@ void TCuboidOutputHDF5Stream::Sample()
       break;
     }
     
-    roRMS  : 
+    case roRMS  : 
     {
       if (ReductionOp == roRMS)
       {    
@@ -506,7 +504,7 @@ void TCuboidOutputHDF5Stream::Sample()
       break;
     }
     
-    roMAX  :
+    case roMAX  :
     {
       size_t BufferIndex = 0;
       ///@TODO Parallel section with some load balancing feature
@@ -529,7 +527,7 @@ void TCuboidOutputHDF5Stream::Sample()
       break;
     }
     
-    roMIN  : 
+    case roMIN  : 
     {
       size_t BufferIndex = 0;
       ///@TODO Parallel section with some load balancing feature
@@ -757,7 +755,7 @@ void TWholeDomainOutputHDF5Stream::Sample()
 {  
   switch (ReductionOp)
   {
-    roNONE :
+    case roNONE :
     { //@TODO: Use HDF5 with File space and Memory space
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
@@ -769,7 +767,7 @@ void TWholeDomainOutputHDF5Stream::Sample()
       break;
     }
     
-    roRMS  : 
+    case roRMS  : 
     {
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
@@ -779,7 +777,7 @@ void TWholeDomainOutputHDF5Stream::Sample()
       break;
     }
     
-    roMAX  :
+    case roMAX  :
     {
       #pragma omp parallel for if (BufferSize > 1e6)    
       for (size_t i = 0; i < BufferSize; i++)
@@ -790,7 +788,7 @@ void TWholeDomainOutputHDF5Stream::Sample()
       break;
     }
     
-    roMIN  : 
+    case roMIN  : 
     {
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
