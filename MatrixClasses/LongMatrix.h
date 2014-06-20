@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        26 July     2011, 15:16 (created) \n
- *              27 February 2014, 15:41 (revised)
+ *              20 June     2014, 15:37 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -41,8 +41,9 @@
  * @brief The class for 64b integers. It is used for sensor_mask_index or sensor_corners_mask 
  * to get the address of sampled voxels. 
  */
-class TLongMatrix : public TBaseLongMatrix{
-public:
+class TLongMatrix : public TBaseLongMatrix
+{
+  public:
     
     /// Constructor 
     TLongMatrix(struct TDimensionSizes DimensionSizes);
@@ -51,17 +52,21 @@ public:
     virtual ~TLongMatrix() { FreeMemory(); };
      
     /// Read data from the HDF5 file
-    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File, const char * MatrixName);
+    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File, 
+                                      const char * MatrixName);
     /// Write data into the HDF5 file
-    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const int CompressionLevel);
+    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File, 
+                                     const char * MatrixName, 
+                                     const int CompressionLevel);
     
     /**
      * Operator []
      * @param index - 1D index into the matrix
      * @return  Value of the index
      */
-    long& operator [](const size_t& index) {
-        return pMatrixData[index]; 
+    long& operator [](const size_t& index) 
+    {
+      return pMatrixData[index]; 
     };
     
     /**
@@ -69,8 +74,9 @@ public:
      * @param index - 1D index into the matrix
      * @return  Value of the index
      */
-    const long & operator [](const size_t& index) const {
-        return pMatrixData[index]; 
+    const long & operator [](const size_t& index) const 
+    {
+      return pMatrixData[index]; 
     };
         
     /**
@@ -78,12 +84,13 @@ public:
      * @param [in] index - Id of the corner
      * @return the top left corner
      */
-    TDimensionSizes GetTopLeftCorner(const size_t index) const {
-        size_t X =  pMatrixData[6*index];
-        size_t Y =  pMatrixData[6*index+1];
-        size_t Z =  pMatrixData[6*index+2];
+    TDimensionSizes GetTopLeftCorner(const size_t index) const 
+    {
+      size_t X =  pMatrixData[6*index];
+      size_t Y =  pMatrixData[6*index+1];
+      size_t Z =  pMatrixData[6*index+2];
                  
-        return TDimensionSizes(X, Y, Z);
+      return TDimensionSizes(X, Y, Z);
     }; 
     
     /**
@@ -91,12 +98,13 @@ public:
      * @param [in] index -Id of the corner
      * @return the bottom right corner
      */
-    TDimensionSizes GetBottomRightCorner(const size_t index) const {
-        size_t X =  pMatrixData[6*index + 3];
-        size_t Y =  pMatrixData[6*index + 4];
-        size_t Z =  pMatrixData[6*index + 5];
+    TDimensionSizes GetBottomRightCorner(const size_t index) const 
+    {
+      size_t X =  pMatrixData[6*index + 3];
+      size_t Y =  pMatrixData[6*index + 4];
+      size_t Z =  pMatrixData[6*index + 5];
                  
-        return TDimensionSizes(X, Y, Z);
+      return TDimensionSizes(X, Y, Z);
     };                 
     
     ///  Recompute indices MATALAB->C++     
@@ -110,7 +118,7 @@ public:
     
     
     
-protected:
+  protected:
     /// Default constructor not allowed for public
     TLongMatrix()  : TBaseLongMatrix() {};
     
@@ -120,7 +128,7 @@ protected:
     /// Operator =  not allowed for public
     TLongMatrix& operator = (const TLongMatrix& src);
     
-private:
+  private:
 
     
 };// end of TLongMatrixData

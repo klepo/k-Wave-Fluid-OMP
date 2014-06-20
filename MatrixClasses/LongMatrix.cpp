@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        26 July     2011, 15:16   (created) \n
- *              18 February 2014, 14:30   (revised)
+ *              20 June     2014, 15:40   (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -56,56 +56,58 @@
  * Constructor
  * @param [in] DimensionSizes - Dimension sizes 
  */
-TLongMatrix::TLongMatrix(struct TDimensionSizes DimensionSizes) : 
-                TBaseLongMatrix() 
+TLongMatrix::TLongMatrix(struct TDimensionSizes DimensionSizes) 
+              : TBaseLongMatrix() 
 {
-     
-    pDimensionSizes = DimensionSizes;
-       
-     
-    pTotalElementCount = pDimensionSizes.X *
-                         pDimensionSizes.Y *
-                         pDimensionSizes.Z;
+  pDimensionSizes = DimensionSizes;
 
-    pTotalAllocatedElementCount = pTotalElementCount;
-    
-    pDataRowSize       = pDimensionSizes.X;
 
-    p2DDataSliceSize   = pDimensionSizes.X *
-                         pDimensionSizes.Y;                        
-            
-    
-    AllocateMemory();
+  pTotalElementCount = pDimensionSizes.X *
+                       pDimensionSizes.Y *
+                       pDimensionSizes.Z;
+
+  pTotalAllocatedElementCount = pTotalElementCount;
+
+  pDataRowSize       = pDimensionSizes.X;
+
+  p2DDataSliceSize   = pDimensionSizes.X *
+                       pDimensionSizes.Y;                        
+
+  AllocateMemory();
 }// end of TRealMatrixData
 //-----------------------------------------------------------------------------
 
 
 
 /**
- * Read data from HDF5 file 
+ * Read data from HDF5 file (only from the root group)
  * @throw ios:failure if there's an error
  * 
  * @param HDF5_File - HDF5 file handle
  * @param MatrixName  - HDF5 dataset name
  */
-void TLongMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File, const char * MatrixName){
-    
+void TLongMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File, 
+                                       const char * MatrixName)
+{
 
-    if (HDF5_File.ReadMatrixDataType(MatrixName) != THDF5_File::hdf5_mdt_long){        
-        char ErrorMessage[256];
-        sprintf(ErrorMessage,Matrix_ERR_FMT_MatrixNotLong,MatrixName);                        
-        throw ios::failure(ErrorMessage);       
-    }
-    
-    
-    if (HDF5_File.ReadMatrixDomainType(MatrixName) != THDF5_File::hdf5_mdt_real){
-        char ErrorMessage[256];
-        sprintf(ErrorMessage,Matrix_ERR_FMT_MatrixNotReal,MatrixName);                        
-        throw ios::failure(ErrorMessage);       
-    }
-    
-    
-    HDF5_File.ReadCompleteDataset(MatrixName,pDimensionSizes,pMatrixData);
+  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(),MatrixName) != THDF5_File::hdf5_mdt_long)
+  {        
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,Matrix_ERR_FMT_MatrixNotLong,MatrixName);                        
+    throw ios::failure(ErrorMessage);       
+  }
+
+  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_real)
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,Matrix_ERR_FMT_MatrixNotReal,MatrixName);                        
+    throw ios::failure(ErrorMessage);       
+  }
+
+  HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(), 
+                                MatrixName,
+                                pDimensionSizes,
+                                pMatrixData);
     
 }// end of LoadDataFromMatlabFile
 //------------------------------------------------------------------------------
@@ -145,15 +147,14 @@ void TLongMatrix::RecomputeIndicesToMatlab()
  * @return 
  */
 size_t TLongMatrix::GetTotalNumberOfElementsInAllCuboids() const 
-{
-    
-    size_t ElementSum = 0;
-    for (size_t cuboidIdx = 0; cuboidIdx < pDimensionSizes.Y; cuboidIdx++)
-    {        
-      ElementSum += (GetBottomRightCorner(cuboidIdx) - GetTopLeftCorner(cuboidIdx)).GetElementCount();
-    }
-    
-    return ElementSum;
+{    
+  size_t ElementSum = 0;
+  for (size_t cuboidIdx = 0; cuboidIdx < pDimensionSizes.Y; cuboidIdx++)
+  {        
+    ElementSum += (GetBottomRightCorner(cuboidIdx) - GetTopLeftCorner(cuboidIdx)).GetElementCount();
+  }
+
+  return ElementSum;
 }// end of GetTotalNumberOfElementsInAllCuboids
 //------------------------------------------------------------------------------
 
@@ -165,15 +166,22 @@ size_t TLongMatrix::GetTotalNumberOfElementsInAllCuboids() const
  * @param [in] MatrixName  - HDF5 Dataset name
  * @param [in] CompressionLevel - Compression level
  */
-void TLongMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const int CompressionLevel){
-    
-    
-    HDF5_File.WriteCompleteDataset(MatrixName,pDimensionSizes,pMatrixData);
-    
-    HDF5_File.WriteMatrixDataType  (MatrixName, THDF5_File::hdf5_mdt_long);        
-    HDF5_File.WriteMatrixDomainType(MatrixName, THDF5_File::hdf5_mdt_real);
-    
-    
+void TLongMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File, 
+                                      const char * MatrixName, 
+                                      const int CompressionLevel)
+{        
+  HDF5_File.WriteCompleteDataset(HDF5_File.GetRootGroup(), 
+                                 MatrixName,
+                                 pDimensionSizes,
+                                 pMatrixData);
+
+  HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(), 
+                                  MatrixName, 
+                                  THDF5_File::hdf5_mdt_long);        
+  
+  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(), 
+                                  MatrixName, 
+                                  THDF5_File::hdf5_mdt_real);        
 }// end of WriteDataToHDF5File
 //---------------------------------------------------------------------------
 

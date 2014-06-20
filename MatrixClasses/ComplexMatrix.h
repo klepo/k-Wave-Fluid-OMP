@@ -7,8 +7,8 @@
  * @brief       The header file with the class for complex matrices
  * 
  * @version     kspaceFirstOrder3D 2.14
- * @date        11 July 2011, 2:02       (created) \n
- *              17 September 2012, 15:35 (revised)
+ * @date        11 July 2011, 14:02 (created) \n
+ *              20 June 2012, 15:20 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -45,12 +45,14 @@ using namespace std;
 /**
  * @struct TFloatComplex
  * @brief  structure for complex values
+ * @TODO: Change to classic C++ complex (better support for Vectorisation)
  */
-struct TFloatComplex{
-    /// real part 
-    float real;
-    /// imaginary part
-    float imag;
+struct TFloatComplex
+{
+  /// real part 
+  float real;
+  /// imaginary part
+  float imag;
 };//TFloatComplex
 //------------------------------------------------------------------------------
 
@@ -59,14 +61,18 @@ struct TFloatComplex{
  * @class TComplexMatrix
  * @brief The class for complex matrices
  */
-class TComplexMatrix : public TBaseFloatMatrix {
-public:
+class TComplexMatrix : public TBaseFloatMatrix
+{
+  public:
         
     /// Constructor
     TComplexMatrix(struct TDimensionSizes DimensionSizes); 
     
     /// Destructor
-    virtual ~TComplexMatrix() { FreeMemory(); };
+    virtual ~TComplexMatrix() 
+    { 
+      FreeMemory(); 
+    };
 
         
     /**
@@ -74,8 +80,9 @@ public:
      * @param index     - 1D index into the array
      * @return          - element of the matrix
      */
-    inline TFloatComplex& operator [](const size_t& index) {
-        return ((TFloatComplex *) pMatrixData)[index];        
+    inline TFloatComplex& operator [](const size_t& index) 
+    {
+      return ((TFloatComplex *) pMatrixData)[index];        
     };
             
     
@@ -86,23 +93,24 @@ public:
      * @param Z - Z dimension
      * @return a complex element of the class
      */
-    inline const  TFloatComplex& GetElementFrom3D(const size_t X, const size_t Y, const size_t Z){
-        
-        return ((TFloatComplex *) pMatrixData)[Z * (p2DDataSliceSize>>1) + Y * (pDataRowSize>>1) + X];                    
-        
+    inline const  TFloatComplex& GetElementFrom3D(const size_t X,
+                                                  const size_t Y,
+                                                  const size_t Z)
+    {        
+      return ((TFloatComplex *) pMatrixData)[Z * (p2DDataSliceSize>>1) + Y * (pDataRowSize>>1) + X];                            
     };
     
                                        
     /// Load data from the HDF5_File
-    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File, const char * MatrixName);
+    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File,
+                                      const char * MatrixName);
             
     /// Write data into the HDF5_File
-    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const int CompressionLevel);
-    
-    
-        
-    
-protected:    
+    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File,
+                                     const char * MatrixName,
+                                     const int CompressionLevel);
+                    
+  protected:    
     /// Default constructor not allowed for public
     TComplexMatrix() : TBaseFloatMatrix() {};            
     
@@ -115,9 +123,8 @@ protected:
     
     /// Initialize dimension sizes and related structures
     virtual void InitDimensions(struct TDimensionSizes DimensionSizes);
-        
-    
-private:
+            
+  private:
     
     
 };// end of TComplexMatrix

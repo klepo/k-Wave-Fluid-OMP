@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July 2011, 10:30      (created) \n 
- *              27 September 2014, 15:42 (revised) 
+ *              20 June 2014, 15:17 (revised) 
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -43,8 +43,9 @@ class TComplexMatrix;
  * @class TRealMatrix
  * @brief The class for real matrices
  */
-class TRealMatrix : public TBaseFloatMatrix{
-public:    
+class TRealMatrix : public TBaseFloatMatrix
+{
+  public:    
     
     /// Constructor 
     TRealMatrix(struct TDimensionSizes DimensionSizes);
@@ -52,18 +53,22 @@ public:
      /// Destructor
     virtual ~TRealMatrix() { FreeMemory(); };
      
-    /// Read data from the HDF5 file
-    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File, const char * MatrixName);
+    /// Read data from the HDF5 file - only from the root group
+    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File, 
+                                      const char * MatrixName);
     
     /// Write data into the HDF5 file
-    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const int CompressionLevel);
+    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File,
+                                     const char * MatrixName,
+                                     const int CompressionLevel);
     
     /**
      * @brief operator [] 
      * @param index - 1D index
      * @return an element
      */
-    float& operator [](const size_t& index) {
+    float& operator [](const size_t& index) 
+    {
         return pMatrixData[index]; 
     };
                 
@@ -73,7 +78,8 @@ public:
      * @param index - 1D index
      * @return an element
      */
-    const float & operator [](const size_t& index) const {
+    const float & operator [](const size_t& index) const 
+    {
         return pMatrixData[index]; 
     };
     
@@ -84,15 +90,15 @@ public:
      * @param Z - Z dimension
      * @return  an element
      */
-    float&  GetElementFrom3D(const size_t X, const size_t Y, const size_t Z) {
+    float&  GetElementFrom3D(const size_t X, const size_t Y, const size_t Z) 
+    {
         return pMatrixData[Z * p2DDataSliceSize + Y * pDataRowSize +  X];
     };
          
-            
-    
+                
 protected:    
     
-    /// Init dimension 
+  /// Init dimension 
     virtual void InitDimensions(struct TDimensionSizes DimensionSizes);
     
     /// Default constructor is not allowed for public
