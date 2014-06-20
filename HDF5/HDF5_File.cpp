@@ -622,7 +622,7 @@ void THDF5_File::ReadCompleteDataset (const hid_t ParentGroup,
   * @throw ios::failure
   */
 TDimensionSizes THDF5_File::GetDatasetDimensionSizes(const hid_t ParentGroup, 
-                                                      const char * DatasetName)
+                                                     const char * DatasetName)
 {
   hsize_t dims[3] = {0, 0, 0};
 
