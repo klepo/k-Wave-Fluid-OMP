@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        12 July     2012, 10:27  (created) \n
- *              20 June     2014, 13:45  (revised)
+ *              20 June     2014, 14:10  (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -519,15 +519,13 @@ TOutputStreamContainer::~TOutputStreamContainer()
 //------------------------------------------------------------------------------
 
 /**
- * Add all streams in simulation in the container  set all streams records here! 
- * This class does not allocate ANY data (can't be done before parsing sensor masks.
- * Just links the objects. 
+ * Add all streams in simulation in the container, set all streams records here! 
  * Please note, the Matrixcontainer has to be populated before calling this routine
  * 
  * @param [in] MatrixContainer - matrix container to link the steams with 
  *                               sampled matrices and sensor masks
  */
-void TOutputStreamContainer::AddStreamsIntoContainerAndCreate(TMatrixContainer & MatrixContainer)
+void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixContainer)
 {
 
   TParameters * Params = TParameters::GetInstance();
@@ -721,6 +719,22 @@ void TOutputStreamContainer::AddStreamsIntoContainerAndCreate(TMatrixContainer &
 
 }// end of AddStreamsdIntoContainer
 //------------------------------------------------------------------------------    
+
+/**
+ * Create all streams.
+ */
+void TOutputStreamContainer::CreateStreams()
+{
+  for (TOutputStreamMap::iterator it = OutputStreamContainer.begin(); it != OutputStreamContainer.end(); it++)
+  {
+    if (it->second)
+    {
+      (it->second)->Create();
+    }
+  }
+}// end of CreateStreams
+//------------------------------------------------------------------------------
+
 
 /**
  * Close all streams.

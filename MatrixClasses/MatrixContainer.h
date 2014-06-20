@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        14 September 2012, 14:33 (created) \n
- *              20 June      2014, 13:55 (revised)
+ *              20 June      2014, 14:55 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -330,9 +330,12 @@ class TOutputStreamContainer
         return (* (OutputStreamContainer[MatrixID]));
     };
 
-    /// Set all streams records here! - Provide with simulation matrices 
-    void AddStreamsIntoContainerAndCreate(TMatrixContainer & MatrixContainer);
-
+    /// Create all streams
+    void AddStreamsIntoContainer(TMatrixContainer & MatrixContainer);
+    
+    /// Create all streams
+    void CreateStreams();
+    
     /// Close all streams
     void CloseStreams();
 
