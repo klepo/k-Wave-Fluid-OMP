@@ -334,7 +334,9 @@ class TOutputStreamContainer
     void AddStreamsIntoContainer(TMatrixContainer & MatrixContainer);
     
     /// Create all streams
-    void CreateStreams();
+    void CreateStreams();   
+    /// Sample all streams 
+    void SampleStreams();
     
     /// Close all streams
     void CloseStreams();

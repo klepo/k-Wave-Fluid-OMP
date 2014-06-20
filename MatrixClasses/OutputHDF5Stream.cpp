@@ -9,7 +9,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:30      (created) \n
- *              19 June    2014, 15:20      (revised)
+ *              20 June     2014, 14:45      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -124,7 +124,7 @@ void TBaseOutputHDF5Stream::ApplyPostProcessing()
     
     roRMS  : 
     {
-      const float ScalingCoeff = TParameters::GetInstance()->Get_Nt() - TParameters::GetInstance()->GetStartTimeIndex();
+      const float ScalingCoeff = 1.0f / (TParameters::GetInstance()->Get_Nt() - TParameters::GetInstance()->GetStartTimeIndex());
       
       #pragma omp parallel for if (BufferSize > 1e6)
       for (size_t i = 0; i < BufferSize; i++)

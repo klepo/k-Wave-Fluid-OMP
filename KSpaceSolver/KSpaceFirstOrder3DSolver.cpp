@@ -9,7 +9,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        12 July     2012, 10:27  (created)\n
- *              19 February 2014, 13:40  (revised)
+ *              20 June     2014, 14:45  (revised)
  *  
  * @section License 
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -96,8 +96,10 @@ void TKSpaceFirstOrder3DSolver::AllocateMemory()
   // create container, then all matrices 
   MatrixContainer.AddMatricesIntoContainer();
   MatrixContainer.CreateAllObjects();
-
-  OutputStreamContainer.AddStreamsIntoContainerAndCreate();
+  
+  // add output streams into container
+  //@TODO Think about moving under LoadInputData routine...
+  OutputStreamContainer.AddStreamsIntoContainer(MatrixContainer);
 }// end of AllocateMemory
 //------------------------------------------------------------------------------
 
@@ -138,94 +140,10 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   // Create the output file
   HDF5_OutputFile.Create(Parameters->GetOutputFileName().c_str());
 
-  // Dimension sizes and of the otput streams
-  size_t NumberOfSensorElements = 0;  
-  size_t RecordPeriod           =  Parameters->Get_Nt() - Parameters->GetStartTimeIndex();
 
-  // in the case of index sensor mask
-  if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
-  {
-    NumberOfSensorElements = Get_sensor_mask_index().GetTotalElementCount();
-  }
-  // in the case of cuboid corners sensor mask
-  if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
-  {
-    NumberOfSensorElements = Get_sensor_mask_corners().GetTotalNumberOfElementsInAllCuboids();
-  }
-
-  //-- allocate memory for streams --//
+  // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
+  OutputStreamContainer.CreateStreams();
   
-  if (Parameters->IsStore_p_raw())
-  {
-    OutputStreamContainer[p_sensor_raw].CreateStream(HDF5_OutputFile, p_Name, NumberOfSensorElements, 
-                                                     RecordPeriod, Get_Temp_1_RS3D().GetRawData());
-  }
-  if (Parameters->IsStore_p_rms())
-  {
-    OutputStreamContainer[p_sensor_rms].CreateStream(HDF5_OutputFile, p_rms_Name, NumberOfSensorElements, 1);
-  }
-  if (Parameters->IsStore_p_max())
-  {
-    OutputStreamContainer[p_sensor_max].CreateStream(HDF5_OutputFile, p_max_Name, NumberOfSensorElements, 1);
-  }
-  if (Parameters->IsStore_p_min())
-  {
-    OutputStreamContainer[p_sensor_min].CreateStream(HDF5_OutputFile, p_min_Name, NumberOfSensorElements, 1);
-  }
-  if (Parameters->IsStore_p_max_all())
-  {
-    OutputStreamContainer[p_sensor_max_all].CreateWholeDomainAggregatedStream(HDF5_OutputFile, p_max_all_Name);
-  }
-  if (Parameters->IsStore_p_min_all())
-  {
-    OutputStreamContainer[p_sensor_min_all].CreateWholeDomainAggregatedStream(HDF5_OutputFile, p_min_all_Name);
-  }
-
-
-
-  if (Parameters->IsStore_u_raw())
-  {
-    OutputStreamContainer[ux_sensor_raw].CreateStream(HDF5_OutputFile, ux_Name, NumberOfSensorElements, 
-                                                      RecordPeriod, Get_Temp_1_RS3D().GetRawData());
-    OutputStreamContainer[uy_sensor_raw].CreateStream(HDF5_OutputFile, uy_Name, NumberOfSensorElements,
-                                                      RecordPeriod, Get_Temp_2_RS3D().GetRawData());
-    OutputStreamContainer[uz_sensor_raw].CreateStream(HDF5_OutputFile, uz_Name, NumberOfSensorElements, 
-                                                      RecordPeriod, Get_Temp_3_RS3D().GetRawData());
-  }
-
-  if (Parameters->IsStore_u_rms())
-  {
-    OutputStreamContainer[ux_sensor_rms].CreateStream(HDF5_OutputFile, ux_rms_Name, NumberOfSensorElements, 1);
-    OutputStreamContainer[uy_sensor_rms].CreateStream(HDF5_OutputFile, uy_rms_Name, NumberOfSensorElements, 1);
-    OutputStreamContainer[uz_sensor_rms].CreateStream(HDF5_OutputFile, uz_rms_Name, NumberOfSensorElements, 1);
-  }
-
-  if (Parameters->IsStore_u_max())
-  {
-    OutputStreamContainer[ux_sensor_max].CreateStream(HDF5_OutputFile, ux_max_Name, NumberOfSensorElements, 1);
-    OutputStreamContainer[uy_sensor_max].CreateStream(HDF5_OutputFile, uy_max_Name, NumberOfSensorElements, 1);
-    OutputStreamContainer[uz_sensor_max].CreateStream(HDF5_OutputFile, uz_max_Name, NumberOfSensorElements, 1);
-  }
-  if (Parameters->IsStore_u_min())
-  {
-    OutputStreamContainer[ux_sensor_min].CreateStream(HDF5_OutputFile, ux_min_Name, NumberOfSensorElements, 1);
-    OutputStreamContainer[uy_sensor_min].CreateStream(HDF5_OutputFile, uy_min_Name, NumberOfSensorElements, 1);
-    OutputStreamContainer[uz_sensor_min].CreateStream(HDF5_OutputFile, uz_min_Name, NumberOfSensorElements, 1);
-  }
-
-  if (Parameters->IsStore_u_max_all())
-  {
-    OutputStreamContainer[ux_sensor_max_all].CreateWholeDomainAggregatedStream(HDF5_OutputFile, ux_max_all_Name);
-    OutputStreamContainer[uy_sensor_max_all].CreateWholeDomainAggregatedStream(HDF5_OutputFile, uy_max_all_Name);
-    OutputStreamContainer[uz_sensor_max_all].CreateWholeDomainAggregatedStream(HDF5_OutputFile, uz_max_all_Name);
-  }
-  if (Parameters->IsStore_u_min_all())
-  {
-    OutputStreamContainer[ux_sensor_min_all].CreateWholeDomainAggregatedStream(HDF5_OutputFile, ux_min_all_Name);
-    OutputStreamContainer[uy_sensor_min_all].CreateWholeDomainAggregatedStream(HDF5_OutputFile, uy_min_all_Name);
-    OutputStreamContainer[uz_sensor_min_all].CreateWholeDomainAggregatedStream(HDF5_OutputFile, uz_min_all_Name);
-  }
-
   // Stop timer
   DataLoadTime.Stop();
 }// end of LoadInputData
@@ -2364,83 +2282,12 @@ void TKSpaceFirstOrder3DSolver::PrintOtputHeader(){
  */
 void TKSpaceFirstOrder3DSolver::PostPorcessing()
 {
- 
-  if (Parameters->IsStore_p_max())
-  {
-    OutputStreamContainer[p_sensor_max].WriteRudcedBuffer();
-  }// p_max
-  
-  if (Parameters->IsStore_p_min())
-  {
-    OutputStreamContainer[p_sensor_min].WriteRudcedBuffer();
-  }// p_min
-     
-  if (Parameters->IsStore_p_max_all())
-  {
-    OutputStreamContainer[p_sensor_max_all].WriteRudcedBuffer();     
-  }// p_max_all
-
-  if (Parameters->IsStore_p_min_all())
-  {
-    OutputStreamContainer[p_sensor_min_all].WriteRudcedBuffer();          
-  }// p_min_all
-      
-  if (Parameters->IsStore_p_rms())
-  {
-    float Divider = 1.0f / ((float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex()));
-    OutputStreamContainer[p_sensor_rms].RMSPostprocessing(Divider);
-    OutputStreamContainer[p_sensor_rms].WriteRudcedBuffer();
-  }//  p_rms
-              
+                     
   if (Parameters->IsStore_p_final())
   {
     Get_p().WriteDataToHDF5File(Parameters->HDF5_OutputFile, p_final_Name, Parameters->GetCompressionLevel());
   }// p_final
-
- 
-        
-  if (Parameters->IsStore_u_max())
-  {    
-    OutputStreamContainer[ux_sensor_max].WriteRudcedBuffer();
-    OutputStreamContainer[uy_sensor_max].WriteRudcedBuffer();
-    OutputStreamContainer[uz_sensor_max].WriteRudcedBuffer();
-  }// u_max
-        
-  if (Parameters->IsStore_u_min())
-  {
-    OutputStreamContainer[ux_sensor_min].WriteRudcedBuffer();
-    OutputStreamContainer[uy_sensor_min].WriteRudcedBuffer();
-    OutputStreamContainer[uz_sensor_min].WriteRudcedBuffer();
-  }// u_min
-
-  if (Parameters->IsStore_u_max_all())
-  {
-    OutputStreamContainer[ux_sensor_max_all].WriteRudcedBuffer();
-    OutputStreamContainer[uy_sensor_max_all].WriteRudcedBuffer();
-    OutputStreamContainer[uz_sensor_max_all].WriteRudcedBuffer();
-  }// u_max_all
-        
-  if (Parameters->IsStore_u_min_all())
-  {
-    OutputStreamContainer[ux_sensor_min_all].WriteRudcedBuffer();
-    OutputStreamContainer[uy_sensor_min_all].WriteRudcedBuffer();
-    OutputStreamContainer[uz_sensor_min_all].WriteRudcedBuffer();
-  }// u_min
-    
-  if (Parameters->IsStore_u_rms())
-  {
-    float Divider = 1.0f / ((float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex()));
-    
-    OutputStreamContainer[ux_sensor_rms].RMSPostprocessing(Divider);
-    OutputStreamContainer[ux_sensor_rms].WriteRudcedBuffer();
-
-    OutputStreamContainer[uy_sensor_rms].RMSPostprocessing(Divider);
-    OutputStreamContainer[uy_sensor_rms].WriteRudcedBuffer();
-
-    OutputStreamContainer[uz_sensor_rms].RMSPostprocessing(Divider);
-    OutputStreamContainer[uz_sensor_rms].WriteRudcedBuffer();
-  }// u_rms    
-                                    
+                                                     
   if (Parameters->IsStore_u_final())
   {
     Get_ux_sgx().WriteDataToHDF5File(Parameters->HDF5_OutputFile, ux_final_Name, Parameters->GetCompressionLevel());
@@ -2448,7 +2295,7 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
     Get_uz_sgz().WriteDataToHDF5File(Parameters->HDF5_OutputFile, uz_final_Name, Parameters->GetCompressionLevel());
   }// u_final
        
-  // close all streams
+  // close all streams - this routine applies post-processing if ncessary
   OutputStreamContainer.CloseStreams();
   
   
@@ -2473,107 +2320,14 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
 //------------------------------------------------------------------------------
   
   
-    /**
+/**
  * Store sensor data.
  * 
  */
 void TKSpaceFirstOrder3DSolver::StoreSensorData()
 {
-
   // Unless the time for sampling has come, exit
-  if (t_index < Parameters->GetStartTimeIndex()) return;
-
-  TLongMatrix * SensorMaskPtr = NULL;
-  
-  // Set sensor mask
-  if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
-  {
-    SensorMaskPtr = &Get_sensor_mask_index();
-  }
-  if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
-  {
-    SensorMaskPtr = &Get_sensor_mask_corners();
-  }
-  
-  // if the mask type not know, the code will crash.
-  
-  if (Parameters->IsStore_p_raw())
-  {
-    OutputStreamContainer[p_sensor_raw].WriteDataDirectly(Get_p(), *SensorMaskPtr);
-  }
-  
-  if (Parameters->IsStore_p_max())
-  {
-    OutputStreamContainer[p_sensor_max].ReduceDataIntoBuffer(Get_p(), *SensorMaskPtr, TOutputHDF5Stream::roMAX);
-  }
-   
-  if (Parameters->IsStore_p_min())
-  {
-    OutputStreamContainer[p_sensor_min].ReduceDataIntoBuffer(Get_p(), *SensorMaskPtr, TOutputHDF5Stream::roMIN);
-  }
-
-  if (Parameters->IsStore_p_rms())
-  {
-    OutputStreamContainer[p_sensor_rms].ReduceDataIntoBuffer(Get_p(), *SensorMaskPtr, TOutputHDF5Stream::roRMS);
-  }
-  
-  if (Parameters->IsStore_p_max_all())
-  {
-    OutputStreamContainer[p_sensor_max_all].ReduceDataIntoBuffer(Get_p(), TOutputHDF5Stream::roMAX);
-  }
-
-  if (Parameters->IsStore_p_min_all())
-  {
-    OutputStreamContainer[p_sensor_min_all].ReduceDataIntoBuffer(Get_p(), TOutputHDF5Stream::roMIN);
-  }
-
-  
- 
-  
-  if (Parameters->IsStore_u_raw())
-  {
-    OutputStreamContainer[ux_sensor_raw].WriteDataDirectly(Get_ux_sgx(), *SensorMaskPtr);
-    OutputStreamContainer[uy_sensor_raw].WriteDataDirectly(Get_uy_sgy(), *SensorMaskPtr);
-    OutputStreamContainer[uz_sensor_raw].WriteDataDirectly(Get_uz_sgz(), *SensorMaskPtr);
-  }
-  
-  if (Parameters->IsStore_u_max())
-  {
-    OutputStreamContainer[ux_sensor_max].ReduceDataIntoBuffer(Get_ux_sgx(), *SensorMaskPtr, TOutputHDF5Stream::roMAX);
-    OutputStreamContainer[uy_sensor_max].ReduceDataIntoBuffer(Get_uy_sgy(), *SensorMaskPtr, TOutputHDF5Stream::roMAX);
-    OutputStreamContainer[uz_sensor_max].ReduceDataIntoBuffer(Get_uz_sgz(), *SensorMaskPtr, TOutputHDF5Stream::roMAX);
-  }
-  if (Parameters->IsStore_u_min())
-  {
-    OutputStreamContainer[ux_sensor_min].ReduceDataIntoBuffer(Get_ux_sgx(), *SensorMaskPtr, TOutputHDF5Stream::roMIN);
-    OutputStreamContainer[uy_sensor_min].ReduceDataIntoBuffer(Get_uy_sgy(), *SensorMaskPtr, TOutputHDF5Stream::roMIN);
-    OutputStreamContainer[uz_sensor_min].ReduceDataIntoBuffer(Get_uz_sgz(), *SensorMaskPtr, TOutputHDF5Stream::roMIN);
-  }
-  
-    if (Parameters->IsStore_u_rms())
-  {
-    OutputStreamContainer[ux_sensor_rms].ReduceDataIntoBuffer(Get_ux_sgx(), *SensorMaskPtr, TOutputHDF5Stream::roRMS);
-    OutputStreamContainer[uy_sensor_rms].ReduceDataIntoBuffer(Get_uy_sgy(), *SensorMaskPtr, TOutputHDF5Stream::roRMS);
-    OutputStreamContainer[uz_sensor_rms].ReduceDataIntoBuffer(Get_uz_sgz(), *SensorMaskPtr, TOutputHDF5Stream::roRMS);
-  }
-
-  if (Parameters->IsStore_u_max_all())
-  {
-    OutputStreamContainer[ux_sensor_max_all].ReduceDataIntoBuffer(Get_ux_sgx(), TOutputHDF5Stream::roMAX);
-    OutputStreamContainer[uy_sensor_max_all].ReduceDataIntoBuffer(Get_uy_sgy(), TOutputHDF5Stream::roMAX);
-    OutputStreamContainer[uz_sensor_max_all].ReduceDataIntoBuffer(Get_uz_sgz(), TOutputHDF5Stream::roMAX);
-  }
-  if (Parameters->IsStore_u_min_all())
-  {
-    OutputStreamContainer[ux_sensor_min_all].ReduceDataIntoBuffer(Get_ux_sgx(), TOutputHDF5Stream::roMIN);
-    OutputStreamContainer[uy_sensor_min_all].ReduceDataIntoBuffer(Get_uy_sgy(), TOutputHDF5Stream::roMIN);
-    OutputStreamContainer[uz_sensor_min_all].ReduceDataIntoBuffer(Get_uz_sgz(), TOutputHDF5Stream::roMIN);
-  }
-
-
-  //@TODO Dead code at this moment
-  //if ((Parameters->IsStore_I_max()) || (Parameters->IsStore_I_avg())) StoreIntensityData();      
-  
+  if (t_index >= Parameters->GetStartTimeIndex()) OutputStreamContainer.SampleStreams();
      
 }// end of StoreData
 //------------------------------------------------------------------------------

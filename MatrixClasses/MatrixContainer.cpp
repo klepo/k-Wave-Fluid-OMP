@@ -735,9 +735,24 @@ void TOutputStreamContainer::CreateStreams()
 }// end of CreateStreams
 //------------------------------------------------------------------------------
 
+/**
+ * Sample all streams.
+ */
+void TOutputStreamContainer::SampleStreams()
+{
+  for (TOutputStreamMap::iterator it = OutputStreamContainer.begin(); it != OutputStreamContainer.end(); it++)
+  {
+    if (it->second)
+    {
+      (it->second)->Sample();
+    }
+  }
+}// end of CloseStreams
+//------------------------------------------------------------------------------
+
 
 /**
- * Close all streams.
+ * Close all streams (apply post-processing if necessary, flush data and close).
  */
 void TOutputStreamContainer::CloseStreams()
 {
