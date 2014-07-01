@@ -168,7 +168,7 @@ void THDF5_File::Close(){
 
     FileName    = "";
     HDF5_FileId = H5I_BADID;
-    
+       
 }// end of Close
 //------------------------------------------------------------------------------    
 
@@ -385,7 +385,7 @@ void THDF5_File::WriteCompleteDataset (const hid_t ParentGroup,
   const hsize_t dims[]={DimensionSizes.Z, DimensionSizes.Y,DimensionSizes.X};
     
   // write to dataset
-  herr_t  status = H5LTmake_dataset(HDF5_FileId,DatasetName,rank,dims, H5T_STD_U64LE, Data);
+  herr_t  status = H5LTmake_dataset(ParentGroup,DatasetName,rank,dims, H5T_STD_U64LE, Data);
 
   if (status < 0)
   {

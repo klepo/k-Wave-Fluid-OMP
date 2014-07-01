@@ -92,7 +92,7 @@ class TBaseOutputHDF5Stream
               HDF5_RootObjectName(NULL),
               SourceMatrix       (SourceMatrix),
               ReductionOp        (ReductionOp),
-              BufferReuse        (BufferToReuse == NULL),
+              BufferReuse        (BufferToReuse != NULL),
               BufferSize         (0),
               StoringBuffer      (BufferToReuse)
     {

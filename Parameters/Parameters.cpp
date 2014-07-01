@@ -328,7 +328,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile){
  */
 void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
 {
-  const hid_t HDF5RootGroup = HDF5_InputFile.GetRootGroup();
+  const hid_t HDF5RootGroup = HDF5_OutputFile.GetRootGroup();
   
   // Write dimension sizes
   HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nx_Name, (long) FullDimensionSizes.X);

@@ -264,6 +264,7 @@ void TIndexOutputHDF5Stream::Create()
  */
 void TIndexOutputHDF5Stream::Sample()
 {  
+  //@TODO: Do not use SensorMask as an object but as an array
   switch (ReductionOp)
   {
     case roNONE :
