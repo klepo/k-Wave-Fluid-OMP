@@ -9,7 +9,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July  2012, 10:30 (created) \n
- *              21 March 2014, 15:00 (revised)
+ *              02 July  2014, 14:38 (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -94,7 +94,7 @@ class TBaseOutputHDF5Stream
               ReductionOp        (ReductionOp),
               BufferReuse        (BufferToReuse != NULL),
               BufferSize         (0),
-              StoringBuffer      (BufferToReuse)
+              StoreBuffer        (BufferToReuse)
     {
       // copy the dataset name (just for sure)
       this->HDF5_RootObjectName = new char[strlen(HDF5_RootObjectName)];
@@ -153,7 +153,7 @@ class TBaseOutputHDF5Stream
     /// Buffer size
     size_t  BufferSize;     
     /// Temporary buffer for store - only if Buffer Reuse = false!
-    float * StoringBuffer;    
+    float * StoreBuffer;    
         
     /// chunk size of 4MB in number of float elements
     static const size_t ChunkSize_4MB = 1048576; 

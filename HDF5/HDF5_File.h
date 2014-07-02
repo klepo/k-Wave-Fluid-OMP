@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        27 July     2012, 14:14 (created) \n
- *              19 June     2014, 17:20 (revised)
+ *              02 Juny     2014, 14:36 (revised)
  * 
  * 
  * 
@@ -560,9 +560,14 @@ public:
     /// Get dimension sizes of the dataset  under a specified group
     TDimensionSizes GetDatasetDimensionSizes(const hid_t ParentGroup,
                                              const char * DatasetName);    
+    
+    /// Get number of dimensions of the dataset  under a specified group
+    size_t GetDatasetNumberOfDimensions(const hid_t ParentGroup,
+                                        const char * DatasetName);    
+    
     /// Get dataset element count under a specified group
-    size_t          GetDatasetElementCount(const hid_t ParentGroup, 
-                                           const char * DatasetName);
+    size_t GetDatasetElementCount(const hid_t ParentGroup, 
+                                  const char * DatasetName);
     
         
     /// Write matrix data type into the dataset under a specified group

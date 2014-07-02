@@ -9,7 +9,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:30      (created) \n
- *              20 June     2014, 15:47      (revised)
+ *              02 July     2014, 14:38      (revised)
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -71,9 +71,9 @@ using namespace std;
  */
 void TBaseOutputHDF5Stream::AllocateMemory()
 {
-  StoringBuffer = (float *) memalign(DATA_ALIGNMENT, BufferSize * sizeof (float));
+  StoreBuffer = (float *) memalign(DATA_ALIGNMENT, BufferSize * sizeof (float));
 
-  if (!StoringBuffer)
+  if (!StoreBuffer)
   {
     fprintf(stderr, Matrix_ERR_FMT_NotEnoughMemory, "TBaseOutputHDF5Stream");
     throw bad_alloc();
@@ -83,7 +83,7 @@ void TBaseOutputHDF5Stream::AllocateMemory()
   #pragma omp parallel for if (BufferSize > 1e6)  
   for (size_t i = 0; i < BufferSize; i++)
   {
-    StoringBuffer[i] = 0.0f;
+    StoreBuffer[i] = 0.0f;
   }
   
 }// end of AllocateMemory
@@ -96,10 +96,10 @@ void TBaseOutputHDF5Stream::AllocateMemory()
  */
 void TBaseOutputHDF5Stream::FreeMemory()
 {
-  if (StoringBuffer)
+  if (StoreBuffer)
   {
-    free(StoringBuffer);
-    StoringBuffer = NULL;
+    free(StoreBuffer);
+    StoreBuffer = NULL;
   }
 }// end of FreeMemory
 //------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ void TBaseOutputHDF5Stream::ApplyPostProcessing()
       #pragma omp parallel for if (BufferSize > 1e6)
       for (size_t i = 0; i < BufferSize; i++)
       {
-        StoringBuffer[i] = sqrt(StoringBuffer[i] * ScalingCoeff);
+        StoreBuffer[i] = sqrt(StoreBuffer[i] * ScalingCoeff);
       }   
       break;
     }
@@ -272,7 +272,7 @@ void TIndexOutputHDF5Stream::Sample()
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
       {
-        StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+        StoreBuffer[i] = SourceMatrix[SensorMask[i]];
       }    
       // only raw time series are flushed down to the disk every time step
       FlushToFile();
@@ -284,7 +284,7 @@ void TIndexOutputHDF5Stream::Sample()
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
       {
-        StoringBuffer[i] += (SourceMatrix[SensorMask[i]] * SourceMatrix[SensorMask[i]]);
+        StoreBuffer[i] += (SourceMatrix[SensorMask[i]] * SourceMatrix[SensorMask[i]]);
       }
       break;
     }
@@ -294,8 +294,8 @@ void TIndexOutputHDF5Stream::Sample()
       #pragma omp parallel for if (BufferSize > 1e6)    
       for (size_t i = 0; i < BufferSize; i++)
       {
-        if (StoringBuffer[i] < SourceMatrix[SensorMask[i]])
-          StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+        if (StoreBuffer[i] < SourceMatrix[SensorMask[i]])
+          StoreBuffer[i] = SourceMatrix[SensorMask[i]];
       }
       break;
     }
@@ -305,8 +305,8 @@ void TIndexOutputHDF5Stream::Sample()
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
       {
-        if (StoringBuffer[i] > SourceMatrix[SensorMask[i]])
-          StoringBuffer[i] = SourceMatrix[SensorMask[i]];
+        if (StoreBuffer[i] > SourceMatrix[SensorMask[i]])
+          StoreBuffer[i] = SourceMatrix[SensorMask[i]];
       }
       break;
     }    
@@ -347,7 +347,7 @@ void TIndexOutputHDF5Stream::FlushToFile()
   HDF5_File.WriteHyperSlab(HDF5_DatasetId, 
                            Position, 
                            TDimensionSizes(BufferSize,1,1), 
-                           StoringBuffer);
+                           StoreBuffer);
   Position.Y++;
 }// end of FlushToFile
 //------------------------------------------------------------------------------
@@ -418,10 +418,10 @@ void TCuboidOutputHDF5Stream::Create()
   
   // Create all datasets (sizes, chunks, and attributes)
   size_t NumberOfCuboids        = SensorMask.GetDimensionSizes().Y;
-  CuboidsInfo.resize(NumberOfCuboids);
+  CuboidsInfo.reserve(NumberOfCuboids);  
   size_t ActualPositionInBuffer = 0;
   
-  for (size_t CuboidIndex = 0; NumberOfCuboids; CuboidIndex++)
+  for (size_t CuboidIndex = 0; CuboidIndex < NumberOfCuboids; CuboidIndex++)
   {
     TCuboidInfo CuboidInfo;
     
@@ -455,7 +455,7 @@ void TCuboidOutputHDF5Stream::Sample()
   const size_t XY_Size = SourceMatrix.GetDimensionSizes().Y * SourceMatrix.GetDimensionSizes().X;
   const size_t X_Size  = SourceMatrix.GetDimensionSizes().X;
 
-   switch (ReductionOp)
+  switch (ReductionOp)
   {
     case roNONE :
     {
@@ -473,7 +473,7 @@ void TCuboidOutputHDF5Stream::Sample()
           for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
             for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
             {
-              StoringBuffer[BufferIndex++] = SourceMatrix[z * XY_Size + y * X_Size + x];
+              StoreBuffer[BufferIndex++] = SourceMatrix[z * XY_Size + y * X_Size + x];
             }
       }
       FlushBufferToFile();
@@ -496,7 +496,7 @@ void TCuboidOutputHDF5Stream::Sample()
             for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
               for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
               {
-                StoringBuffer[BufferIndex++] += (SourceMatrix[z * XY_Size + y * X_Size + x] * 
+                StoreBuffer[BufferIndex++] += (SourceMatrix[z * XY_Size + y * X_Size + x] * 
                                                  SourceMatrix[z * XY_Size + y * X_Size + x]);                         
               }
         }
@@ -518,9 +518,9 @@ void TCuboidOutputHDF5Stream::Sample()
           for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
             for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
             {
-              if (StoringBuffer[BufferIndex] < SourceMatrix[z * XY_Size + y * X_Size + x])
+              if (StoreBuffer[BufferIndex] < SourceMatrix[z * XY_Size + y * X_Size + x])
               {
-                StoringBuffer[BufferIndex] = SourceMatrix[z * XY_Size + y * X_Size + x];             
+                StoreBuffer[BufferIndex] = SourceMatrix[z * XY_Size + y * X_Size + x];             
               }
               BufferIndex++;              
             }
@@ -541,9 +541,9 @@ void TCuboidOutputHDF5Stream::Sample()
           for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
             for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
             {
-              if (StoringBuffer[BufferIndex] > SourceMatrix[z * XY_Size + y * X_Size + x])
+              if (StoreBuffer[BufferIndex] > SourceMatrix[z * XY_Size + y * X_Size + x])
               {
-                StoringBuffer[BufferIndex] = SourceMatrix[z * XY_Size + y * X_Size + x];             
+                StoreBuffer[BufferIndex] = SourceMatrix[z * XY_Size + y * X_Size + x];             
               }
               BufferIndex++;              
             }
@@ -578,7 +578,7 @@ void TCuboidOutputHDF5Stream::Close()
     }        
     CuboidsInfo.clear();    
     
-    HDF5_File.CloseDataset(HDF5_GroupId);
+    HDF5_File.CloseGroup(HDF5_GroupId);
     HDF5_GroupId = H5I_BADID;  
   }// if opened    
 }// end of Close
@@ -624,7 +624,8 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
     
   // @TODO: Can be done easily with std::to_string and c++0x or c++-11
   char HDF5_DatasetName[32] = "";
-  sprintf(HDF5_DatasetName, "%ld",Index);
+  // Indexed from 1
+  sprintf(HDF5_DatasetName, "%ld",Index+1);
   hid_t HDF5_DatasetId = HDF5_File.CreateFloatDataset(HDF5_GroupId,
                                                       HDF5_DatasetName,
                                                       CuboidSize,
@@ -654,15 +655,21 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
 void TCuboidOutputHDF5Stream::FlushBufferToFile()
 {
   
-  TDimensionSizes Position(0,0,0);
+  TDimensionSizes Position (0,0,0,0);
+  TDimensionSizes BlockSize(0,0,0,0);
+  
   if (ReductionOp == roNONE) Position.T = SampledTimeStep;
   
   for (size_t CuboidIndex = 0; CuboidIndex < CuboidsInfo.size(); CuboidIndex++)
   {       
+    
+    BlockSize = SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex);
+    BlockSize.T = 1;
+    
     HDF5_File.WriteHyperSlab(CuboidsInfo[CuboidIndex].HDF5_CuboidId,
                              Position,
-                             SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex),
-                             StoringBuffer + CuboidsInfo[CuboidIndex].StartingPossitionInBuffer
+                             BlockSize,
+                             StoreBuffer + CuboidsInfo[CuboidIndex].StartingPossitionInBuffer
                              );
 
   }
@@ -761,7 +768,7 @@ void TWholeDomainOutputHDF5Stream::Sample()
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
       {
-        StoringBuffer[i] = SourceMatrix[i];
+        StoreBuffer[i] = SourceMatrix[i];
       }    
       // only raw time series are flushed down to the disk every time step
       FlushToFile();
@@ -773,7 +780,7 @@ void TWholeDomainOutputHDF5Stream::Sample()
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
       {
-        StoringBuffer[i] += (SourceMatrix[i] * SourceMatrix[i]);
+        StoreBuffer[i] += (SourceMatrix[i] * SourceMatrix[i]);
       }
       break;
     }
@@ -783,8 +790,8 @@ void TWholeDomainOutputHDF5Stream::Sample()
       #pragma omp parallel for if (BufferSize > 1e6)    
       for (size_t i = 0; i < BufferSize; i++)
       {
-        if (StoringBuffer[i] < SourceMatrix[i])
-          StoringBuffer[i] = SourceMatrix[i];
+        if (StoreBuffer[i] < SourceMatrix[i])
+          StoreBuffer[i] = SourceMatrix[i];
       }
       break;
     }
@@ -794,8 +801,8 @@ void TWholeDomainOutputHDF5Stream::Sample()
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
       {
-        if (StoringBuffer[i] > SourceMatrix[i])
-          StoringBuffer[i] = SourceMatrix[i];
+        if (StoreBuffer[i] > SourceMatrix[i])
+          StoreBuffer[i] = SourceMatrix[i];
       }
       break;
     }    
@@ -847,7 +854,7 @@ void TWholeDomainOutputHDF5Stream::FlushToFile()
   HDF5_File.WriteHyperSlab(HDF5_DatasetId, 
                            Position, 
                            Size, 
-                           StoringBuffer);
+                           StoreBuffer);
   SampledTimeStep++;
 }// end of FlushToFile
 //------------------------------------------------------------------------------
