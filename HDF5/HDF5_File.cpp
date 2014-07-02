@@ -709,7 +709,9 @@ TDimensionSizes THDF5_File::GetDatasetDimensionSizes(const hid_t ParentGroup,
   
   
   const size_t ndims = GetDatasetNumberOfDimensions(ParentGroup, DatasetName);    
-  hsize_t dims[ndims] = {};  
+  hsize_t dims[ndims];  
+  
+  for (size_t i = 0; i < ndims; i++) dims[i] = 0;
     
   herr_t status = H5LTget_dataset_info(ParentGroup, DatasetName, dims, NULL, NULL);
   if (status < 0)
