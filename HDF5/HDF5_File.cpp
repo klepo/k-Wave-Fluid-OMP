@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        27 July     2012, 14:14      (created) \n
- *              17 March    2014, 13:45      (revised)
+ *              02 July     2014, 12:45      (revised)
  *  
  
  * @section License
@@ -168,7 +168,7 @@ void THDF5_File::Close(){
 
     FileName    = "";
     HDF5_FileId = H5I_BADID;
-    
+       
 }// end of Close
 //------------------------------------------------------------------------------    
 
@@ -265,7 +265,7 @@ hid_t THDF5_File::OpenDataset(const hid_t ParentGroup,
 
 
 /**
- *  Create the HDF5 dataset at a specified place in the file tree.
+ * Create the HDF5 dataset at a specified place in the file tree.
  * @param [in] ParentGroup       - Parent group 
  * @param [in] DatasetName       - Dataset name
  * @param [in] DimensionSizes    - Dimension sizes
@@ -279,9 +279,36 @@ hid_t THDF5_File::CreateFloatDataset(const hid_t ParentGroup,
                                      const TDimensionSizes & ChunkSizes, 
                                      const int CompressionLevel)
 {
-  const int RANK = 3;
-  hsize_t Dims [RANK] = {DimensionSizes.Z, DimensionSizes.Y, DimensionSizes.X};
-  hsize_t Chunk[RANK] = {ChunkSizes.Z, ChunkSizes.Y, ChunkSizes.X};
+  const int RANK = (DimensionSizes.Is3D()) ? 3 : 4;
+  
+  
+  hsize_t Dims [RANK];
+  hsize_t Chunk[RANK];
+  
+    // 3D dataset
+  if (DimensionSizes.Is3D())
+  {
+    Dims[0] = DimensionSizes.Z;
+    Dims[1] = DimensionSizes.Y;
+    Dims[2] = DimensionSizes.X;
+    
+    Chunk[0] = ChunkSizes.Z;
+    Chunk[1] = ChunkSizes.Y;
+    Chunk[2] = ChunkSizes.X;
+  }
+  else  // 4D dataset
+  {
+    Dims[0] = DimensionSizes.T;
+    Dims[1] = DimensionSizes.Z;
+    Dims[2] = DimensionSizes.Y;
+    Dims[3] = DimensionSizes.X;        
+    
+    Chunk[0] = ChunkSizes.T;
+    Chunk[1] = ChunkSizes.Z;
+    Chunk[2] = ChunkSizes.Y;
+    Chunk[3] = ChunkSizes.X;
+  }
+                            
   hid_t Property_list;
   herr_t Status;
 
@@ -344,6 +371,7 @@ void  THDF5_File::CloseDataset(const hid_t HDF5_Dataset_id)
  * @param [in] DimensionSizes
  * @param [in] Data
  * @throw ios::failure
+ * @warning Only for 3D datasets!
  */
 void THDF5_File::WriteCompleteDataset(const hid_t ParentGroup,  
                                       const char * DatasetName, 
@@ -375,6 +403,7 @@ void THDF5_File::WriteCompleteDataset(const hid_t ParentGroup,
  * @param [in] DimensionSizes
  * @param [in] Data
  * @throw ios::failure
+ * @warning Only for 3D datasets!
  */
 void THDF5_File::WriteCompleteDataset (const hid_t ParentGroup, 
                                        const char * DatasetName, 
@@ -385,7 +414,7 @@ void THDF5_File::WriteCompleteDataset (const hid_t ParentGroup,
   const hsize_t dims[]={DimensionSizes.Z, DimensionSizes.Y,DimensionSizes.X};
     
   // write to dataset
-  herr_t  status = H5LTmake_dataset(HDF5_FileId,DatasetName,rank,dims, H5T_STD_U64LE, Data);
+  herr_t  status = H5LTmake_dataset(ParentGroup,DatasetName,rank,dims, H5T_STD_U64LE, Data);
 
   if (status < 0)
   {
@@ -409,47 +438,73 @@ void THDF5_File::WriteCompleteDataset (const hid_t ParentGroup,
  * @throw ios::failure
  * 
  */
-void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSizes & Position , const TDimensionSizes & Size, const float * Data){
+void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, 
+                                const TDimensionSizes & Position, 
+                                const TDimensionSizes & Size,
+                                const float * Data)
+{
+  
+  herr_t status;
+  hid_t  HDF5_Filespace,HDF5_Memspace;
+    
+  // Get File Space, to find out number of dimensions
+  HDF5_Filespace = H5Dget_space(HDF5_Dataset_id);  
+  const int Rank = H5Sget_simple_extent_ndims(HDF5_Filespace);
+  
+  
+  // Select sizes and positions
+  hsize_t ElementCount[Rank];
+  hsize_t Offset      [Rank];
+ 
+    // 3D dataset
+  if (Rank == 3)
+  {
+    ElementCount[0] = Size.Z;
+    ElementCount[1] = Size.Y;
+    ElementCount[2] = Size.X;
+    
+    Offset[0] = Position.Z;
+    Offset[1] = Position.Y;
+    Offset[2] = Position.X;
+  }
+  else  // 4D dataset
+  {
+    ElementCount[0] = Size.T;
+    ElementCount[1] = Size.Z;
+    ElementCount[2] = Size.Y;
+    ElementCount[3] = Size.X;        
+    
+    Offset[0] = Position.T;
+    Offset[1] = Position.Z;
+    Offset[2] = Position.Y;
+    Offset[3] = Position.X;
+  }
+      
+  // select hyperslab    
+  status = H5Sselect_hyperslab(HDF5_Filespace, H5S_SELECT_SET, Offset, 0, ElementCount, NULL);
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");        
+    throw ios::failure(ErrorMessage);
+  } 
     
     
-    
-     // Select hyperslab
-    const int MatrixRank = 3;    
-    hsize_t ElementCount[MatrixRank] = {Size.Z, Size.Y, Size.X};    
-    hsize_t Offset[MatrixRank] = {Position.Z,Position.Y,Position.X};
-    
-    herr_t status;
-    hid_t  HDF5_Filespace,HDF5_Memspace;
-    
-    // Select hyperslab in the file.     
-    HDF5_Filespace = H5Dget_space(HDF5_Dataset_id);  
-    
-    
-    status = H5Sselect_hyperslab(HDF5_Filespace, H5S_SELECT_SET, Offset, 0, ElementCount, NULL);
-    if (status < 0) {
-        char ErrorMessage[256];
-        sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");        
-        throw ios::failure(ErrorMessage);
-     } 
-    
-    
-    // assign memspace
-    HDF5_Memspace = H5Screate_simple(MatrixRank, ElementCount, NULL);
+  // assign memspace
+  HDF5_Memspace = H5Screate_simple(Rank, ElementCount, NULL);
 
     
-     status = H5Dwrite(HDF5_Dataset_id, H5T_NATIVE_FLOAT, HDF5_Memspace, HDF5_Filespace,  H5P_DEFAULT, Data);
-     if (status < 0) {
-        char ErrorMessage[256];
-        sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");
-        
-        throw ios::failure(ErrorMessage);
-     } 
+  status = H5Dwrite(HDF5_Dataset_id, H5T_NATIVE_FLOAT, HDF5_Memspace, HDF5_Filespace,  H5P_DEFAULT, Data);
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");
+     
+    throw ios::failure(ErrorMessage);
+  } 
     
-    H5Sclose(HDF5_Memspace);
-    H5Sclose(HDF5_Filespace);  
-    
-    
-    
+  H5Sclose(HDF5_Memspace);
+  H5Sclose(HDF5_Filespace);      
 }// end of WriteHyperSlab
 //------------------------------------------------------------------------------
 
@@ -463,47 +518,74 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSiz
  * @param [in] Data
  * @throw ios::failure
  */
-void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, const TDimensionSizes & Position , const TDimensionSizes & Size, const long * Data){
+void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id, 
+                                const TDimensionSizes & Position,
+                                const TDimensionSizes & Size,
+                                const long * Data)
+{    
     
+  herr_t status;
+  hid_t  HDF5_Filespace,HDF5_Memspace;
     
+  // Get File Space, to find out number of dimensions
+  HDF5_Filespace = H5Dget_space(HDF5_Dataset_id);  
+  const int Rank = H5Sget_simple_extent_ndims(HDF5_Filespace);
+  
+  // Set sizes and offsets
+  hsize_t ElementCount[Rank];
+  hsize_t Offset      [Rank];
+  
+    // 3D dataset
+  if (Rank == 3)
+  {
+    ElementCount[0] = Size.Z;
+    ElementCount[1] = Size.Y;
+    ElementCount[2] = Size.X;
     
-     // Select hyperslab
-    const int MatrixRank = 3;    
-    hsize_t ElementCount[MatrixRank] = {Size.Z, Size.Y, Size.X};    
-    hsize_t Offset[MatrixRank] = {Position.Z,Position.Y,Position.X};
+    Offset[0] = Position.Z;
+    Offset[1] = Position.Y;
+    Offset[2] = Position.X;
+  }
+  else  // 4D dataset
+  {
+    ElementCount[0] = Size.T;
+    ElementCount[1] = Size.Z;
+    ElementCount[2] = Size.Y;
+    ElementCount[3] = Size.X;        
     
-    herr_t status;
-    hid_t  HDF5_Filespace,HDF5_Memspace;
-    
-    // Select hyperslab in the file.     
-    HDF5_Filespace = H5Dget_space(HDF5_Dataset_id);  
-    
-    
-    status = H5Sselect_hyperslab(HDF5_Filespace, H5S_SELECT_SET, Offset, 0, ElementCount, NULL);
-    if (status < 0) {
-        char ErrorMessage[256];
-        sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");        
-        throw ios::failure(ErrorMessage);
-     } 
-    
-    
-    // assign memspace
-    HDF5_Memspace = H5Screate_simple(MatrixRank, ElementCount, NULL);
+    Offset[0] = Position.T;
+    Offset[1] = Position.Z;
+    Offset[2] = Position.Y;
+    Offset[3] = Position.X;
+  }
+
+  
+  // select hyperslab
+  status = H5Sselect_hyperslab(HDF5_Filespace, H5S_SELECT_SET, Offset, 0, ElementCount, NULL);
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");        
+    throw ios::failure(ErrorMessage);
+  } 
 
     
-     status = H5Dwrite(HDF5_Dataset_id, H5T_STD_U64LE, HDF5_Memspace, HDF5_Filespace,  H5P_DEFAULT, Data);
-     if (status < 0) {
-        char ErrorMessage[256];
-        sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");
-        
-        throw ios::failure(ErrorMessage);
-     } 
-    
-    H5Sclose(HDF5_Memspace);
-    H5Sclose(HDF5_Filespace);  
-    
-    
-    
+  // assign memspace
+  HDF5_Memspace = H5Screate_simple(Rank, ElementCount, NULL);
+
+
+  status = H5Dwrite(HDF5_Dataset_id, H5T_STD_U64LE, HDF5_Memspace, HDF5_Filespace,  H5P_DEFAULT, Data);
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");
+
+    throw ios::failure(ErrorMessage);
+  } 
+
+  H5Sclose(HDF5_Memspace);
+  H5Sclose(HDF5_Filespace);  
+ 
 }// end of WriteHyperSlab
 //------------------------------------------------------------------------------
 
@@ -619,13 +701,16 @@ void THDF5_File::ReadCompleteDataset (const hid_t ParentGroup,
   * @param [in] ParentGroup
   * @param [in] DatasetName
   * @return DimensionSizes
-  * @throw ios::failure
+  * @throw ios::failure  
   */
 TDimensionSizes THDF5_File::GetDatasetDimensionSizes(const hid_t ParentGroup, 
-                                                      const char * DatasetName)
+                                                     const char * DatasetName)
 {
-  hsize_t dims[3] = {0, 0, 0};
-
+  
+  
+  const size_t ndims = GetDatasetNumberOfDimensions(ParentGroup, DatasetName);    
+  hsize_t dims[ndims] = {};  
+    
   herr_t status = H5LTget_dataset_info(ParentGroup, DatasetName, dims, NULL, NULL);
   if (status < 0)
   {
@@ -635,9 +720,41 @@ TDimensionSizes THDF5_File::GetDatasetDimensionSizes(const hid_t ParentGroup,
     throw ios::failure(ErrorMessage);
   }
 
-  return TDimensionSizes(dims[2], dims[1], dims[0]);
+  if (ndims == 3) 
+  {
+    return TDimensionSizes(dims[2], dims[1], dims[0]);
+  }
+  else 
+  {
+    return TDimensionSizes(dims[3], dims[2], dims[1], dims[0]);
+  }
 }// end of GetDatasetDimensionSizes
- //-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+/**
+ * Get number of dimensions of the dataset  under a specified group
+ * @param [in] ParentGroup 
+ * @param [in] DatasetName
+ * @return  - Number of dimensions
+ */
+size_t THDF5_File::GetDatasetNumberOfDimensions(const hid_t ParentGroup,
+                                                const char * DatasetName)
+{
+  int dims = 0;
+  
+  herr_t status = H5LTget_dataset_ndims(ParentGroup, DatasetName, &dims);
+  if (status < 0)
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage, HDF5_ERR_FMT_CouldNotReadFrom, DatasetName);
+
+    throw ios::failure(ErrorMessage);
+  }
+
+  return dims;
+  
+}// end of GetDatasetNumberOfDimensions
+//------------------------------------------------------------------------------
 
  
 /**
