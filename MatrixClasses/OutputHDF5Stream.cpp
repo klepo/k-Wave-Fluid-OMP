@@ -268,14 +268,23 @@ void TIndexOutputHDF5Stream::Sample()
   switch (ReductionOp)
   {
     case roNONE :
-    {
+    {     
       #pragma omp parallel for if (BufferSize > 1e6)  
       for (size_t i = 0; i < BufferSize; i++)
       {
         StoreBuffer[i] = SourceMatrix[SensorMask[i]];
-      }    
+      } 
       // only raw time series are flushed down to the disk every time step
       FlushToFile();
+      /* - for future use, when offloading the sampling work to HDF5
+      HDF5_File.WriteSensorbyMaskToHyperSlab(HDF5_DatasetId,
+                                             Position,        // position in the dataset
+                                             BufferSize,      // number of elements sampled
+                                             SensorMask.GetRawData(), // Sensor
+                                             SourceMatrix.GetDimensionSizes(), // Matrix dims
+                                             SourceMatrix.GetRawData());
+      Position.Y++;
+       */
       break;
     }
     

@@ -10,7 +10,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        26 July 2011, 2:17        (created) \n
- *              17 September 2012, 15:35  (revised) \n
+ *              04 July 2014, 13:09       (revised) \n
  * 
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -79,6 +79,12 @@ public:
     
     /// Get raw data out of the class (for direct kernel access).
     virtual long* GetRawData() {return pMatrixData;}
+    
+    /// Get raw data out of the class (for direct kernel access).
+    virtual const long* GetRawData() const 
+    { 
+      return pMatrixData;
+    }
 
 protected:
     /// Total number of elements

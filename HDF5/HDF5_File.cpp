@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        27 July     2012, 14:14      (created) \n
- *              04 July     2014, 09:45      (revised)
+ *              04 July     2014, 15:06      (revised)
  *  
  
  * @section License
@@ -672,6 +672,88 @@ void THDF5_File::WriteCuboidToHyperSlab(const hid_t HDF5_Dataset_id,
   H5Sclose(HDF5_Filespace);      
     
 }// end of WriteCuboidToHyperSlab
+//------------------------------------------------------------------------------
+
+/**
+ * Write sensor data selected by the sensor mask.
+ * A routine pick elements from the MatixData based on the Sensor Data and store 
+ * them into a single hyperslab of size [Nsens, 1, 1]
+ * @param [in] HDF5_Dataset_id   - Dataset to write MaatrixData into
+ * @param [in] HyperslabPosition - 3D position in the dataset (hyperslab)
+ * @param [in] IndexSensorSize   - Size of the index based sensor mask
+ * @param [in] IndexSensorData   - Index based sensor mask
+ * @param [in] MatrixDimensions  - Size of the sampled matrix
+ * @param [in] MatrixData        - Matrix data
+ * @warning  - very slow at this version of HDF5 for orthogonal planes-> DO NOT USE
+ */
+void THDF5_File::WriteSensorbyMaskToHyperSlab(const hid_t HDF5_Dataset_id,
+                                              const TDimensionSizes & HyperslabPosition,
+                                              const size_t IndexSensorSize,
+                                              const long * IndexSensorData,
+                                              const TDimensionSizes & MatrixDimensions,                                   
+                                              const float * MatrixData)
+{
+  herr_t status;
+  hid_t  HDF5_Filespace, HDF5_Memspace;
+
+  const int Rank = 3;
+  
+  // Select sizes and positions
+  // Only one timestep
+  hsize_t SlabSize[Rank]        = {1, 1, IndexSensorSize};
+  hsize_t OffsetInDataset[Rank] = {HyperslabPosition.Z, HyperslabPosition.Y, HyperslabPosition.X };   
+  // treat as a 1D array
+  //hsize_t MatrixSize        []  = {MatrixDimensions.Z  * MatrixDimensions.Y * MatrixDimensions.X};
+  hsize_t MatrixSize = MatrixDimensions.Z  * MatrixDimensions.Y * MatrixDimensions.X;
+  
+        
+  // select hyperslab in the HDF5 dataset   
+  HDF5_Filespace = H5Dget_space(HDF5_Dataset_id);
+  status = H5Sselect_hyperslab(HDF5_Filespace, 
+                               H5S_SELECT_SET, 
+                               OffsetInDataset, 
+                               NULL,
+                               SlabSize,
+                               NULL);
+  if (status < 0)
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");
+    throw ios::failure(ErrorMessage);
+  } 
+    
+  // assign 1D memspace and select the elements within the array
+  HDF5_Memspace = H5Screate_simple(1, &MatrixSize, NULL);
+  status =  H5Sselect_elements(HDF5_Memspace,
+                               H5S_SELECT_SET, 
+                               IndexSensorSize, 
+                               ( hsize_t *) (IndexSensorData));
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");
+    throw ios::failure(ErrorMessage);
+  } 
+  
+  // Write the data   
+  status = H5Dwrite(HDF5_Dataset_id, 
+                    H5T_NATIVE_FLOAT, 
+                    HDF5_Memspace, 
+                    HDF5_Filespace,  
+                    H5P_DEFAULT, 
+                    MatrixData);
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");
+     
+    throw ios::failure(ErrorMessage);
+  } 
+    
+  // close memspace and filespace
+  H5Sclose(HDF5_Memspace);
+  H5Sclose(HDF5_Filespace);      
+}// end of WriteSensorbyMaskToHyperSlab
 //------------------------------------------------------------------------------
 
 /**

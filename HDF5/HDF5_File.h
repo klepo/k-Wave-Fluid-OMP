@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        27 July     2012, 14:14 (created) \n
- *              04 Juny     2014, 09:36 (revised)
+ *              04 Juny     2014, 15:07 (revised)
  * 
  * 
  * 
@@ -541,6 +541,14 @@ public:
                                 const TDimensionSizes & CuboidSize,
                                 const TDimensionSizes & MatrixDimensions,                                   
                                 const float * MatrixData);
+    
+    /// Write sensor data selected by the sensor mask - Occasionally very slow, do not use!
+    void WriteSensorbyMaskToHyperSlab(const hid_t HDF5_Dataset_id,
+                                      const TDimensionSizes & HyperslabPosition,
+                                      const size_t IndexSensorSize,
+                                      const long * IndexSensorData,
+                                      const TDimensionSizes & MatrixDimensions,                                   
+                                      const float * MatrixData);
         
     /// Write the scalar value under a specified group - float value
     void WriteScalarValue(const hid_t ParentGroup, 
