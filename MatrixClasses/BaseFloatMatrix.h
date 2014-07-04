@@ -93,7 +93,12 @@ public:
         return pMatrixData ;
     }
     
-    
+    /// Get raw data out of the class (for direct kernel access).
+    virtual const float * GetRawData() const 
+    {
+      return pMatrixData;
+    }
+
 protected:
     
     /// Total number of elements

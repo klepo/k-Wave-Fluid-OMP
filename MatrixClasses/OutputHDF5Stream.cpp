@@ -459,24 +459,28 @@ void TCuboidOutputHDF5Stream::Sample()
   {
     case roNONE :
     {
-      
-      // @TODO: Fix this to use HDF5 Memspace and FileSpace (gitlab #25)
-      size_t BufferIndex = 0;
-      
-      // @TODO Parallel section with some load balancing feature
-      for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
-      {
-        const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
-        const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
+      TDimensionSizes DatasetPosition(0,0,0,0); //4D position in the dataset
+      TDimensionSizes CuboidSize(0,0,0,0);       // Size of the cuboid
 
-        for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
-          for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
-            for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
-            {
-              StoreBuffer[BufferIndex++] = SourceMatrix[z * XY_Size + y * X_Size + x];
-            }
+      DatasetPosition.T = SampledTimeStep;
+      const float * MatrixData = SourceMatrix.GetRawData();
+
+      // iterate over all cuboid to be sampled
+      for (size_t CuboidIndex = 0; CuboidIndex < CuboidsInfo.size(); CuboidIndex++)
+      {
+        CuboidSize = SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex);
+        CuboidSize.T = 1; 
+
+        HDF5_File.WriteCuboidToHyperSlab(CuboidsInfo[CuboidIndex].HDF5_CuboidId,
+                                         DatasetPosition,
+                                         SensorMask.GetTopLeftCorner(CuboidIndex), // position in the SourceMatrix
+                                         CuboidSize,
+                                         SourceMatrix.GetDimensionSizes(),
+                                         MatrixData
+        );
       }
-      FlushBufferToFile();
+      SampledTimeStep++;   // Move forward in time
+
       break;
     }
     

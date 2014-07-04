@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        27 July     2012, 14:14 (created) \n
- *              02 Juny     2014, 14:36 (revised)
+ *              04 Juny     2014, 09:36 (revised)
  * 
  * 
  * 
@@ -533,6 +533,14 @@ public:
                         const TDimensionSizes & Position,
                         const TDimensionSizes & Size,
                         const long * Data);
+    
+    /// Write a cuboid selected inside MatrixData into a Hyperslab
+    void WriteCuboidToHyperSlab(const hid_t HDF5_Dataset_id,
+                                const TDimensionSizes & HyperslabPosition,
+                                const TDimensionSizes & CuboidPosition,
+                                const TDimensionSizes & CuboidSize,
+                                const TDimensionSizes & MatrixDimensions,                                   
+                                const float * MatrixData);
         
     /// Write the scalar value under a specified group - float value
     void WriteScalarValue(const hid_t ParentGroup, 

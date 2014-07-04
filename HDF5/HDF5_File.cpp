@@ -8,7 +8,7 @@
  * 
  * @version     kspaceFirstOrder3D 2.14
  * @date        27 July     2012, 14:14      (created) \n
- *              02 July     2014, 12:45      (revised)
+ *              04 July     2014, 09:45      (revised)
  *  
  
  * @section License
@@ -481,7 +481,7 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
   }
       
   // select hyperslab    
-  status = H5Sselect_hyperslab(HDF5_Filespace, H5S_SELECT_SET, Offset, 0, ElementCount, NULL);
+  status = H5Sselect_hyperslab(HDF5_Filespace, H5S_SELECT_SET, Offset, NULL, ElementCount, NULL);
   if (status < 0) 
   {
     char ErrorMessage[256];
@@ -561,7 +561,7 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
 
   
   // select hyperslab
-  status = H5Sselect_hyperslab(HDF5_Filespace, H5S_SELECT_SET, Offset, 0, ElementCount, NULL);
+  status = H5Sselect_hyperslab(HDF5_Filespace, H5S_SELECT_SET, Offset, NULL, ElementCount, NULL);
   if (status < 0) 
   {
     char ErrorMessage[256];
@@ -590,6 +590,89 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
 //------------------------------------------------------------------------------
 
 
+/**
+ * Write a cuboid selected inside MatrixData into a Hyperslab.
+ * The routine writes 3D cuboid into a 4D dataset (only intended for raw time series)
+ * @param [in] HDF5_Dataset_id   - Dataset to write MatrixData into
+ * @param [in] HyperslabPosition - Position in the dataset (hyperslab) - may be 3D/4D
+ * @param [in] CuboidPosition    - Position of the cuboid in MatrixData (what to sample) - must be 3D
+ * @param [in] CuboidSize        - Cuboid size (size of data being sampled) - must by 3D
+ * @param [in] MatrixDimensions  - Size of the original matrix (the sampled one)
+ * @param [in] MatrixData        - C array of MatrixData
+ */
+void THDF5_File::WriteCuboidToHyperSlab(const hid_t HDF5_Dataset_id,
+                                        const TDimensionSizes & HyperslabPosition,
+                                        const TDimensionSizes & CuboidPosition,
+                                        const TDimensionSizes & CuboidSize,   
+                                        const TDimensionSizes & MatrixDimensions,   
+                                        const float * MatrixData)
+{
+  
+  herr_t status;
+  hid_t  HDF5_Filespace, HDF5_Memspace;
+    
+  const int Rank = 4;
+  
+  // Select sizes and positions
+  // The T here is always 1 (only one timestep)
+  hsize_t SlabSize[Rank]        = {1,  CuboidSize.Z, CuboidSize.Y, CuboidSize.X};
+  hsize_t OffsetInDataset[Rank] = {HyperslabPosition.T, HyperslabPosition.Z, HyperslabPosition.Y, HyperslabPosition.X };
+  hsize_t OffsetInMatrixData[]  = {CuboidPosition.Z,   CuboidPosition.Y,   CuboidPosition.X};
+  hsize_t MatrixSize        []  = {MatrixDimensions.Z, MatrixDimensions.Y, MatrixDimensions.X};
+  
+        
+  // select hyperslab in the HDF5 dataset   
+  HDF5_Filespace = H5Dget_space(HDF5_Dataset_id);  
+  status = H5Sselect_hyperslab(HDF5_Filespace, 
+                               H5S_SELECT_SET, 
+                               OffsetInDataset, 
+                               NULL,    
+                               SlabSize, 
+                               NULL);
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");        
+    throw ios::failure(ErrorMessage);
+  } 
+    
+    
+  // assign memspace and select the cuboid in the sampled matrix
+  HDF5_Memspace = H5Screate_simple(3, MatrixSize, NULL);      
+  status = H5Sselect_hyperslab(HDF5_Memspace, 
+                               H5S_SELECT_SET, 
+                               OffsetInMatrixData, 
+                               NULL, 
+                               SlabSize + 1,  // Slab size has to be 3D in this case (done by skipping the T dimension)                                                              
+                               NULL);
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");        
+    throw ios::failure(ErrorMessage);
+  } 
+  
+  // Write the data   
+  status = H5Dwrite(HDF5_Dataset_id, 
+                    H5T_NATIVE_FLOAT, 
+                    HDF5_Memspace, 
+                    HDF5_Filespace,  
+                    H5P_DEFAULT, 
+                    MatrixData);
+  if (status < 0) 
+  {
+    char ErrorMessage[256];
+    sprintf(ErrorMessage,HDF5_ERR_FMT_CouldNotWriteTo,"");
+     
+    throw ios::failure(ErrorMessage);
+  } 
+    
+  // close memspace and filespace
+  H5Sclose(HDF5_Memspace);
+  H5Sclose(HDF5_Filespace);      
+    
+}// end of WriteCuboidToHyperSlab
+//------------------------------------------------------------------------------
 
 /**
  * Write the scalar value at a specified place in the file tree.
