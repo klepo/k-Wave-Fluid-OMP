@@ -7,7 +7,7 @@
  *
  * @version     kspaceFirstOrder3D 2.14
  * @date        08 December 2011, 16:34 (created)      \n
- *              07 July     2014, 14:15 (revised)
+ *              07 July     2014, 16:38 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -57,10 +57,14 @@ class TParameters {
     static TParameters* GetInstance();
 
     /// Destructor
-    virtual ~TParameters() {
-        ParametersInstanceFlag = false;
-         if (ParametersSingleInstance) delete ParametersSingleInstance;
-         ParametersSingleInstance = NULL;
+    virtual ~TParameters()
+    {
+      ParametersInstanceFlag = false;
+      if (ParametersSingleInstance)
+      {
+        delete ParametersSingleInstance;
+      }
+      ParametersSingleInstance = NULL;
 
     };
 
@@ -71,13 +75,19 @@ class TParameters {
     /// Save scalars into the output HDF5 file
     void SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile);
 
-    /// Full dimension sizes of the simulation (real clases)
+    /// Full dimension sizes of the simulation (real classes)
     TDimensionSizes GetFullDimensionSizes   () const {return FullDimensionSizes; };
-    /// Reduced dimension sizes of the simulation (complex clases)
+    /// Reduced dimension sizes of the simulation (complex classes)
     TDimensionSizes GetReducedDimensionSizes() const {return ReducedDimensionSizes; };
 
     /// Get Nt value
     long  Get_Nt()               const {return Nt;};
+    /// Get simulation time step
+    long  Get_t_index()          const {return t_index;};
+    /// Set simulation time step -- should be used only when recovering from checkpoint
+    void  Set_t_index(const long new_t_index)  {t_index = new_t_index;};
+    /// Increment simulation time step
+    void  Increment_t_index()          {t_index++;};
 
     /// Get dt value
     float Get_dt()               const {return dt;};
@@ -273,6 +283,8 @@ class TParameters {
 
     /// Nt value
     long  Nt;
+    /// actual time index (time step of the simulation)
+    long  t_index;
 
     /// dt value
     float dt;

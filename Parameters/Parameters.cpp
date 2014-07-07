@@ -7,7 +7,7 @@
  *
  * @version     kspaceFirstOrder3D 2.14
  * @date        09 August 2012,   13:39 (created) \n
- *              07 July   2014,   14:20 (revised)
+ *              07 July   2014,   16:38 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -444,7 +444,7 @@ void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
 TParameters::TParameters() :
         HDF5_InputFile(), HDF5_OutputFile(), HDF5_CheckpointFile(), HDF5_FileHeader(),
         CommandLinesParameters(),
-        Nt(0),dt(0.0f),
+        Nt(0), t_index(0), dt(0.0f),
         dx(0.0f), dy(0.0f), dz(0.0f),
         c_ref(0.0f), alpha_power(0.0f),
         FullDimensionSizes(0,0,0), ReducedDimensionSizes(0,0,0),
