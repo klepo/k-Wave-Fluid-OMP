@@ -127,5 +127,17 @@ const char * const Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion = "Error: In
 /// Command line parameters error message
 const char * const Parameters_ERR_FMT_WrongSensorMaskType = "Error: The sensor mask type specified in the input file is not supported! \n";
 
+
+//---------------------------------- FFTW Classes  -------------------------//
+/// FFTW error message
+const char * const FFTWComplexMatrix_ERR_FMT_PlanNotCreated = "Error: The FFTW plan creation for %s failed! \n";
+/// FFTW error message
+const char * const FFTWComplexMatrix_ERR_FMT_InvalidPlan    = "Error: Invalid plan for %s! \n";
+/// FFTW error message
+const char * const  FFTW_WARNING_FMT_WisdomNotExported = "Warning: Wisdom could not be exported!\n";
+/// FFTW error message
+const char * const  FFTW_WARNING_FMT_WisdomNotImported = "Warning: Wisdom could not be imported!\n";
+
+
 #endif	/* ERRORMESSAGES_H */
 
