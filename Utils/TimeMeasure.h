@@ -3,28 +3,28 @@
  * @author      Jiri Jaros              \n
  *              CECS, ANU, Australia   \n
  *              jiri.jaros@anu.edu.au
- * 
+ *
  * @brief       The header file containing the class measuring elapsed time
- * 
+ *
  * @version     kspaceFirstOrder3D 2.14
- * @date        15 August 2012, 9:35          (created) \n
- *              17 September 2012, 15:35      (revised)
- * 
- * @section License 
+ * @date        15 August    2012, 9:35          (created) \n
+ *              07 July      2014, 15:50      (revised)
+ *
+ * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
  * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
- * 
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it 
- * and/or modify it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 3 of the License, 
+ *
+ * This file is part of k-Wave. k-Wave is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- * 
- * k-Wave is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * See the GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
+ *
+ * k-Wave is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  *  */
 
@@ -34,7 +34,7 @@
 
 #include <exception>
 
-#ifdef _OPENMP  
+#ifdef _OPENMP
   #include <omp.h>
 #else
 #include <sys/time.h>
@@ -45,68 +45,96 @@
  * @class  TTimeMesssure
  * @brief  Class measuring elapsed time
  */
-class TTimeMesssure{
-public :
-    /// Start timestamp of the interval
-    double StartTime;
-    /// Stop timestamp of the interval
-    double StopTime;
-    
+class TTimeMesssure
+{
+  public :
+
     /// Default constructor
-    TTimeMesssure() : StartTime(0.0), StopTime(0.0) {};
-    
+    TTimeMesssure() :
+        StartTime(0.0),
+        StopTime(0.0),
+        ComulatedElaspedTimeOverPreviousLegs(0.0)
+    { };
+
     /**
      * @brief Copy constructor
      * @param [in] src - the other class to copy from
      */
     TTimeMesssure(const TTimeMesssure & src) :
         StartTime(src.StartTime),
-        StopTime (src.StopTime) { };
-    
+        StopTime (src.StopTime),
+        ComulatedElaspedTimeOverPreviousLegs(src.ComulatedElaspedTimeOverPreviousLegs)
+    { };
+
     /**
      * @brief operator =
      * @param [in] src - source
-     * @return 
+     * @return
      */
-    TTimeMesssure& operator = (const TTimeMesssure & src){
-        if (this != &src){
-            StartTime = src.StartTime;
-            StopTime  = src.StopTime;            
-        }       
-        return *this;
+    TTimeMesssure& operator = (const TTimeMesssure & src)
+    {
+      if (this != &src)
+      {
+        StartTime = src.StartTime;
+        StopTime  = src.StopTime;
+        ComulatedElaspedTimeOverPreviousLegs = src.ComulatedElaspedTimeOverPreviousLegs;
+      }
+      return *this;
     };
-    
-    
+
+
     /// Destructor
     virtual ~TTimeMesssure() {};
-    
-    ///Get start timestamp 
-    void Start() {
-       #ifdef _OPENMP
-         StartTime = omp_get_wtime(); 
-         
+
+    ///Get start timestamp
+    void Start()
+    {
+      #ifdef _OPENMP
+        StartTime = omp_get_wtime();
        #else
-          timeval ActTime;
-          gettimeofday(&ActTime, NULL);
-          StartTime = ActTime.tv_sec + ActTime.tv_usec * 1.0e-6;
+        timeval ActTime;
+        gettimeofday(&ActTime, NULL);
+        StartTime = ActTime.tv_sec + ActTime.tv_usec * 1.0e-6;
        #endif
     };
+
     ///Get stop timestamp
-    void Stop()  {
-        #ifdef _OPENMP
-          StopTime = omp_get_wtime();    
-        #else
-          timeval ActTime;
-          gettimeofday(&ActTime, NULL);
-          StopTime = ActTime.tv_sec + ActTime.tv_usec * 1.0e-6;
-       #endif
+    void Stop()
+    {
+      #ifdef _OPENMP
+        StopTime = omp_get_wtime();
+      #else
+        timeval ActTime;
+        gettimeofday(&ActTime, NULL);
+        StopTime = ActTime.tv_sec + ActTime.tv_usec * 1.0e-6;
+      #endif
     };
-    
+
     /**
      * Get elapsed time
      * @return elapsed time between start timestamp and stop timestamp
      */
-    double GetElapsedTime() const {return StopTime - StartTime;};
+    double GetElapsedTime() const
+    {
+      return StopTime - StartTime;
+    };
+
+    /**
+     * Get cumulated elapsed time over all simulation legs
+     * @return
+     */
+    double GetComulatedElaspedTimeOverAllLegs() const
+    {
+      return ComulatedElaspedTimeOverPreviousLegs + (StopTime - StartTime);
+    };
+
+  private:
+    /// Start timestamp of the interval
+    double StartTime;
+    /// Stop timestamp of the interval
+    double StopTime;
+    /// Elapsed time in previous simulation legs
+    double ComulatedElaspedTimeOverPreviousLegs;
 };// end of TTimeMesssure
 //------------------------------------------------------------------------------
 
