@@ -3,28 +3,28 @@
  * @author      Jiri Jaros              \n
  *              CECS, ANU, Australia     \n
  *              jiri.jaros@anu.edu.au
- * 
+ *
  * @brief       The header file containing all error messages of the project
- * 
+ *
  * @version     kspaceFirstOrder3D 2.14
- * @date        9  August   2011, 12:34          (created) \n
- *              12 March    2014, 17:30      (revised)
- * 
+ * @date        09 August   2011, 12:34      (created) \n
+ *              07 July     2014, 13:52      (revised)
+ *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
  * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
- * 
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it 
- * and/or modify it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 3 of the License, 
+ *
+ * This file is part of k-Wave. k-Wave is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- * 
- * k-Wave is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * See the GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
+ *
+ * k-Wave is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -83,12 +83,12 @@ const char * const  Matrix_ERR_FMT_MatrixNotLong      = "Error: Matrix [%s] data
 //--------------------------------- Matrix Container  ------------------------//
 
 /// Matrix container error message
-const char * const  MatrixContainer_ERR_FMT_RecordUnknownDistributionType = 
+const char * const  MatrixContainer_ERR_FMT_RecordUnknownDistributionType =
     "K-Space panic: Matrix [%s] has unknown distribution type in the C++ code!\n\
     [File, line] : [%s,%d]!\n";
 
 /// Matrix container error message
-const char * const  MatrixContainer_ERR_FMT_ReloactaionError = 
+const char * const  MatrixContainer_ERR_FMT_ReloactaionError =
     "K-Space panic: Matrix [%s] is being reallocated!\n\
     [File, line] : [%s,%d]!\n";
 
@@ -106,9 +106,14 @@ const char * const CommandlineParameters_ERR_FMT_NoStartTimestep          = "Com
 /// Command line parameters error message
 const char * const CommandlineParameters_ERR_FMT_NoBenchmarkTimeStepCount = "Command line parsing error: No or invalid benchmark time step count!\n";
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoInputFile =  "Error: The input file was not specified!\n";
+const char * const CommandlineParameters_ERR_FMT_NoInputFile              = "Error: The input file was not specified!\n";
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoOutputFile=  "Error: The output file was not specified!\n";
+const char * const CommandlineParameters_ERR_FMT_NoOutputFile             = "Error: The output file was not specified!\n";
+/// Command line parameters error message
+const char * const CommandlineParameters_ERR_FMT_NoCheckpointFile         = "Error: The checkpoint file was not specified!\n";
+/// Command line parameters error message
+const char * const CommandlineParameters_ERR_FMT_NoCheckpointInterval     = "Error: The checkpoint interval was not specified!\n";
+
 /// Command line parameters error message
 const char * const Parameters_ERR_FMT_Illegal_alpha_power_value = "Error: Illegal value of alpha_power!";
 /// Command line parameters error message
