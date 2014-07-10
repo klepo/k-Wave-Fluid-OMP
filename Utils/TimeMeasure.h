@@ -7,8 +7,8 @@
  * @brief       The header file containing the class measuring elapsed time
  *
  * @version     kspaceFirstOrder3D 2.14
- * @date        15 August    2012, 9:35          (created) \n
- *              07 July      2014, 15:50      (revised)
+ * @date        15 August    2012,  9:35 (created) \n
+ *              08 July      2014, 17:53 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -82,7 +82,6 @@ class TTimeMesssure
       return *this;
     };
 
-
     /// Destructor
     virtual ~TTimeMesssure() {};
 
@@ -127,6 +126,24 @@ class TTimeMesssure
     {
       return ComulatedElaspedTimeOverPreviousLegs + (StopTime - StartTime);
     };
+
+    /**
+     * Get time spent in previous legs
+     * @return
+     */
+    double GetComulatedElaspedTimePreviousAllLegs() const
+    {
+      return ComulatedElaspedTimeOverPreviousLegs;
+    };
+
+    /**
+     * @brief Set elapsed time in previous legs of the simulation
+     * @param [in] ElapsedTime
+     */
+    void SetCumulatedElapsedTimeOverPreviousLefs(const double ElapsedTime)
+    {
+      ComulatedElaspedTimeOverPreviousLegs = ElapsedTime;
+    }
 
   private:
     /// Start timestamp of the interval

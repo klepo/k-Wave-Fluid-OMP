@@ -3,28 +3,28 @@
  * @author      Jiri Jaros              \n
  *              CECS, ANU, Australia    \n
  *              jiri.jaros@anu.edu.au
- * 
+ *
  * @brief       The header file storing names of all variables
- * 
+ *
  * @version     kspaceFirstOrder3D 2.14
  * @date        14 September 2012, 14:33      (created) \n
- *              13 February  2013, 16:55      (revised)
- * 
+ *              08 July      2014, 15:27      (revised)
+ *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
  * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
- * 
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it 
- * and/or modify it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 3 of the License, 
+ *
+ * This file is part of k-Wave. k-Wave is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- * 
- * k-Wave is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * See the GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
+ *
+ * k-Wave is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -41,6 +41,8 @@
 
 /// Nt variable name
 const char * const  Nt_Name                     = "Nt";
+/// t_index name
+const char * const  t_index_Name                = "t_index";
 /// dt variable name
 const char * const  dt_Name                     = "dt";
 /// dx variable name
@@ -50,7 +52,7 @@ const char * const  dy_Name                     = "dy";
 /// dz variable name
 const char * const  dz_Name                     = "dz";
 
-/// c_ref variable name       
+/// c_ref variable name
 const char * const  c_ref_Name                  = "c_ref";
 /// c0 variable name
 const char * const  c0_Name                     = "c0";
@@ -73,7 +75,7 @@ const char * const  pml_x_size_Name             = "pml_x_size";
 const char * const  pml_y_size_Name             = "pml_z_size";
 /// pml_z_size variable name
 const char * const  pml_z_size_Name             = "pml_y_size";
-    
+
 /// pml_x_sgx variable name
 const char * const  pml_x_sgx_Name             = "pml_x_sgx";
 /// pml_y_sgy variable name
@@ -92,217 +94,217 @@ const char * const  pml_z_Name                 = "pml_z";
 /// pml_x_alpha variable name
 const char * const  pml_x_alpha_Name           = "pml_x_alpha";
 /// pml_y_alpha variable name
-const char * const  pml_y_alpha_Name           = "pml_y_alpha";  
+const char * const  pml_y_alpha_Name           = "pml_y_alpha";
 /// pml_z_alpha variable name
 const char * const  pml_z_alpha_Name           = "pml_z_alpha";
-    
-/// ux_source_flag variable name        
+
+/// ux_source_flag variable name
 const char * const ux_source_flag_Name         = "ux_source_flag";
-/// uy_source_flag variable name        
+/// uy_source_flag variable name
 const char * const uy_source_flag_Name         = "uy_source_flag";
-/// uz_source_flag variable name        
+/// uz_source_flag variable name
 const char * const uz_source_flag_Name         = "uz_source_flag";
-    
-/// u_source_many variable name        
+
+/// u_source_many variable name
 const char * const u_source_many_Name          = "u_source_many";
-/// p_source_many variable name        
+/// p_source_many variable name
 const char * const p_source_many_Name          = "p_source_many";
 
-/// p_source_flag variable name        
+/// p_source_flag variable name
 const char * const p_source_flag_Name          = "p_source_flag";
-/// p0_source_flag variable name        
+/// p0_source_flag variable name
 const char * const p0_source_flag_Name         = "p0_source_flag";
-    
-/// u_source_mode variable name        
+
+/// u_source_mode variable name
 const char * const u_source_mode_Name          = "u_source_mode";
-/// p_source_mode variable name        
+/// p_source_mode variable name
 const char * const p_source_mode_Name          = "p_source_mode";
-    
-/// p_source_input variable name        
+
+/// p_source_input variable name
 const char * const p_source_input_Name         = "p_source_input";
-/// p_source_index variable name        
+/// p_source_index variable name
 const char * const p_source_index_Name         = "p_source_index";
 
-/// u_source_index variable name        
+/// u_source_index variable name
 const char * const u_source_index_Name         = "u_source_index";
-/// ux_source_input variable name        
+/// ux_source_input variable name
 const char * const ux_source_input_Name        = "ux_source_input";
-/// uy_source_input variable name        
+/// uy_source_input variable name
 const char * const uy_source_input_Name        = "uy_source_input";
-/// uz_source_input variable name        
+/// uz_source_input variable name
 const char * const uz_source_input_Name        = "uz_source_input";
 
-/// nonuniform_grid_flag variable name        
+/// nonuniform_grid_flag variable name
 const char * const nonuniform_grid_flag_Name   = "nonuniform_grid_flag";
-/// absorbing_flag variable name        
+/// absorbing_flag variable name
 const char * const absorbing_flag_Name         = "absorbing_flag";
-/// nonlinear_flag variable name        
+/// nonlinear_flag variable name
 const char * const nonlinear_flag_Name         = "nonlinear_flag";
 
-/// transducer_source_flag variable name        
+/// transducer_source_flag variable name
 const char * const transducer_source_flag_Name = "transducer_source_flag";
-/// sensor_mask_index variable name        
-const char * const sensor_mask_index_Name      = "sensor_mask_index"; 
-/// sensor_mask_type variable name        
-const char * const sensor_mask_type_Name       = "sensor_mask_type"; 
-/// sensor_mask_corners variable name        
-const char * const sensor_mask_corners_Name    = "sensor_mask_corners"; 
+/// sensor_mask_index variable name
+const char * const sensor_mask_index_Name      = "sensor_mask_index";
+/// sensor_mask_type variable name
+const char * const sensor_mask_type_Name       = "sensor_mask_type";
+/// sensor_mask_corners variable name
+const char * const sensor_mask_corners_Name    = "sensor_mask_corners";
 
-/// transducer_source_input variable name        
+/// transducer_source_input variable name
 const char * const transducer_source_input_Name= "transducer_source_input";
 
-/// p0_source_input variable name        
+/// p0_source_input variable name
 const char * const p0_source_input_Name = "p0_source_input";
-/// delay_mask variable name        
+/// delay_mask variable name
 const char * const delay_mask_Name      = "delay_mask";
 
 
-/// kappa_r variable name        
+/// kappa_r variable name
 const char * const  kappa_r_Name        = "kappa_r";
-/// BonA variable name        
+/// BonA variable name
 const char * const  BonA_Name           = "BonA";
-/// p variable name        
+/// p variable name
 const char * const  p_Name              = "p";
-/// rhox variable name        
+/// rhox variable name
 const char * const  rhox_Name           = "rhox";
-/// rhoy variable name        
+/// rhoy variable name
 const char * const  rhoy_Name           = "rhoy";
-/// rhoz variable name        
+/// rhoz variable name
 const char * const  rhoz_Name           = "rhoz";
 
-/// ux variable name        
+/// ux variable name
 const char * const  ux_Name             = "ux";
-/// uy variable name        
+/// uy variable name
 const char * const  uy_Name             = "uy";
-/// uz variable name        
+/// uz variable name
 const char * const  uz_Name             = "uz";
 
-/// ux_sgx variable name        
+/// ux_sgx variable name
 const char * const  ux_sgx_Name         = "ux_sgx";
-/// uy_sgy variable name        
+/// uy_sgy variable name
 const char * const  uy_sgy_Name         = "uy_sgy";
-/// uz_sgz variable name        
+/// uz_sgz variable name
 const char * const  uz_sgz_Name         = "uz_sgz";
 
-/// duxdx variable name        
+/// duxdx variable name
 const char * const  duxdx_Name          = "duxdx";
-/// duydy variable name        
+/// duydy variable name
 const char * const  duydy_Name          = "duydy";
-/// duzdz variable name        
+/// duzdz variable name
 const char * const  duzdz_Name          = "duzdz";
 
-/// dxudxn variable name        
+/// dxudxn variable name
 const char * const  dxudxn_Name         = "dxudxn";
-/// dyudyn variable name        
+/// dyudyn variable name
 const char * const  dyudyn_Name         = "dyudyn";
-/// dzudzn variable name        
+/// dzudzn variable name
 const char * const  dzudzn_Name         = "dzudzn";
 
-/// dxudxn_sgx variable name        
+/// dxudxn_sgx variable name
 const char * const  dxudxn_sgx_Name     = "dxudxn_sgx";
-/// dyudyn_sgy variable name        
+/// dyudyn_sgy variable name
 const char * const  dyudyn_sgy_Name     = "dyudyn_sgy";
-/// dzudzn_sgz variable name        
+/// dzudzn_sgz variable name
 const char * const  dzudzn_sgz_Name     = "dzudzn_sgz";
 
-/// ddx_k_shift_pos_r variable name        
+/// ddx_k_shift_pos_r variable name
 const char * const  ddx_k_shift_pos_r_Name = "ddx_k_shift_pos_r";
-/// ddy_k_shift_pos variable name        
+/// ddy_k_shift_pos variable name
 const char * const  ddy_k_shift_pos_Name   = "ddy_k_shift_pos";
-/// ddz_k_shift_pos variable name        
+/// ddz_k_shift_pos variable name
 const char * const  ddz_k_shift_pos_Name   = "ddz_k_shift_pos";
 
-/// ddx_k_shift_neg_r variable name        
+/// ddx_k_shift_neg_r variable name
 const char * const  ddx_k_shift_neg_r_Name = "ddx_k_shift_neg_r";
-/// ddy_k_shift_neg variable name        
+/// ddy_k_shift_neg variable name
 const char * const  ddy_k_shift_neg_Name   = "ddy_k_shift_neg";
-/// ddz_k_shift_neg variable name        
+/// ddz_k_shift_neg variable name
 const char * const  ddz_k_shift_neg_Name   = "ddz_k_shift_neg";
 
-/// rho0 variable name        
+/// rho0 variable name
 const char * const  rho0_Name           = "rho0";
-/// rho0_sgx variable name        
+/// rho0_sgx variable name
 const char * const  rho0_sgx_Name       = "rho0_sgx";
-/// rho0_sgy variable name        
+/// rho0_sgy variable name
 const char * const  rho0_sgy_Name       = "rho0_sgy";
-/// rho0_sgz variable name        
+/// rho0_sgz variable name
 const char * const  rho0_sgz_Name       = "rho0_sgz";
 
-/// absorb_tau variable name        
+/// absorb_tau variable name
 const char * const  absorb_tau_Name     = "absorb_tau";
-/// absorb_eta variable name        
+/// absorb_eta variable name
 const char * const  absorb_eta_Name     = "absorb_eta";
-/// absorb_nabla1_r variable name        
+/// absorb_nabla1_r variable name
 const char * const  absorb_nabla1_r_Name= "absorb_nabla1_r";
-/// absorb_nabla2_r variable name        
+/// absorb_nabla2_r variable name
 const char * const  absorb_nabla2_r_Name= "absorb_nabla2_r";
 
-/// p_rms variable name        
+/// p_rms variable name
 const char * const  p_rms_Name  = "p_rms";
-/// p_max variable name        
+/// p_max variable name
 const char * const  p_max_Name  = "p_max";
-/// p_min variable name        
+/// p_min variable name
 const char * const  p_min_Name  = "p_min";
-/// p_max_all variable name        
+/// p_max_all variable name
 const char * const  p_max_all_Name  = "p_max_all";
-/// p_min_all variable name        
+/// p_min_all variable name
 const char * const  p_min_all_Name  = "p_min_all";
-/// p_final variable name        
+/// p_final variable name
 const char * const  p_final_Name= "p_final";
 
-/// ux_rms variable name        
+/// ux_rms variable name
 const char * const  ux_rms_Name = "ux_rms";
-/// uy_rms variable name        
+/// uy_rms variable name
 const char * const  uy_rms_Name = "uy_rms";
-/// uz_rms variable name        
+/// uz_rms variable name
 const char * const  uz_rms_Name = "uz_rms";
 
-/// ux_max variable name        
+/// ux_max variable name
 const char * const  ux_max_Name = "ux_max";
-/// uy_max variable name        
+/// uy_max variable name
 const char * const  uy_max_Name = "uy_max";
-/// uz_max variable name        
+/// uz_max variable name
 const char * const  uz_max_Name = "uz_max";
-/// ux_min variable name        
+/// ux_min variable name
 const char * const  ux_min_Name = "ux_min";
-/// uy_min variable name        
+/// uy_min variable name
 const char * const  uy_min_Name = "uy_min";
-/// uz_min variable name        
+/// uz_min variable name
 const char * const  uz_min_Name = "uz_min";
 
-/// ux_max_all variable name        
+/// ux_max_all variable name
 const char * const  ux_max_all_Name = "ux_max_all";
-/// uy_max_all variable name        
+/// uy_max_all variable name
 const char * const  uy_max_all_Name = "uy_max_all";
-/// uz_max_all variable name        
+/// uz_max_all variable name
 const char * const  uz_max_all_Name = "uz_max_all";
-/// ux_min_all variable name        
+/// ux_min_all variable name
 const char * const  ux_min_all_Name = "ux_min_all";
-/// uy_min_all variable name        
+/// uy_min_all variable name
 const char * const  uy_min_all_Name = "uy_min_all";
-/// uz_min_all variable name        
+/// uz_min_all variable name
 const char * const  uz_min_all_Name = "uz_min_all";
 
 
-/// ux_final variable name        
+/// ux_final variable name
 const char * const  ux_final_Name = "ux_final";
-/// uy_final variable name        
+/// uy_final variable name
 const char * const  uy_final_Name = "uy_final";
-/// uz_final variable name        
+/// uz_final variable name
 const char * const  uz_final_Name = "uz_final";
 
-/// Ix_avg variable name        
+/// Ix_avg variable name
 const char * const  Ix_avg_Name = "Ix_avg";
-/// Iy_avg variable name        
+/// Iy_avg variable name
 const char * const  Iy_avg_Name = "Iy_avg";
-/// Iz_avg variable name        
+/// Iz_avg variable name
 const char * const  Iz_avg_Name = "Iz_avg";
 
-/// Ix_max variable name        
+/// Ix_max variable name
 const char * const  Ix_max_Name = "Ix_max";
-/// Iy_max variable name        
+/// Iy_max variable name
 const char * const  Iy_max_Name = "Iy_max";
-/// Iz_max variable name        
+/// Iz_max variable name
 const char * const  Iz_max_Name = "Iz_max";
 
 #endif	/* MATRIXNAMES_H */
