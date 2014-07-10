@@ -4,28 +4,28 @@
  *              CECS, ANU, Australia    \n
  *              jiri.jaros@anu.edu.au
  * @brief       The implementation file containing the command line parameters
- * 
- * @version     kspaceFirstOrder3D 2.14
- * @date        29 August 2012, 11:25 (created) \n        
- *              04 March  2014, 13:28 (revised) 
- * 
  *
- * 
+ * @version     kspaceFirstOrder3D 2.14
+ * @date        29 August 2012, 11:25 (created) \n
+ *              07 July   2014, 14:54 (revised)
+ *
+ *
+ *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
  * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
- * 
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it 
- * and/or modify it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 3 of the License, 
+ *
+ * This file is part of k-Wave. k-Wave is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- * 
- * k-Wave is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * See the GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
+ *
+ * k-Wave is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -50,27 +50,27 @@
 
 
 /**
- * Constructor 
+ * Constructor
  */
 TCommandLineParameters::TCommandLineParameters() :
-        InputFileName(""), OutputFileName (""), 
+        InputFileName(""), OutputFileName (""), CheckpointFileName(""),
         #ifdef _OPENMP
           NumberOfThreads(omp_get_num_procs()),
         #else
           NumberOfThreads(1),
         #endif
         VerboseInterval(DefaultVerboseInterval), CompressionLevel (DefaultCompressionLevel),
-        BenchmarkFlag (false), BenchmarkTimeStepsCount(0),      
+        BenchmarkFlag (false), BenchmarkTimeStepsCount(0), CheckpointInterval(0),
         PrintVersion (false),
-        Store_p_raw(false), Store_p_rms(false), Store_p_max(false), Store_p_min(false), 
+        Store_p_raw(false), Store_p_rms(false), Store_p_max(false), Store_p_min(false),
         Store_p_max_all(false), Store_p_min_all(false), Store_p_final(false),
         Store_u_raw(false), Store_u_rms(false), Store_u_max(false), Store_u_min(false),
         Store_u_max_all(false), Store_u_min_all(false), Store_u_final(false),
-        Store_I_avg(false), Store_I_max(false), 
+        Store_I_avg(false), Store_I_max(false),
         CopySensorMask(false),
         StartTimeStep(0)
 {
-    
+
 }// end of TCommandLineParameters
 //------------------------------------------------------------------------------
 
@@ -79,25 +79,27 @@ TCommandLineParameters::TCommandLineParameters() :
  */
 void TCommandLineParameters::PrintUsageAndExit()
 {
-
-
   printf("---------------------------------- Usage ---------------------------------\n");
   printf("Mandatory parameters:\n");
   printf("  -i <input_file_name>            : HDF5 input file\n");
   printf("  -o <output_file_name>           : HDF5 output file\n");
   printf("\n");
   printf("Optional parameters: \n");
-  
+
 #ifdef _OPENMP
   printf("  -t <num_threads>                : Number of CPU threads\n");
   printf("                                      (default = %d)\n", omp_get_num_procs());
 #endif
-  
+
   printf("  -r <interval_in_%%>              : Progress print interval\n");
   printf("                                      (default = %d%%)\n", DefaultVerboseInterval);
   printf("  -c <comp_level>                 : Output file compression level <0,9>\n");
   printf("                                      (default = %d)\n", DefaultCompressionLevel);
   printf("  --benchmark <steps>             : Run a specified number of time steps\n");
+  printf("\n");
+  printf("  --checkpoint_file <file_name>   : HDF5 Checkpoint file\n");
+  printf("  --checkpoint_interval <seconds> : Stop after a given number of seconds and\n");
+  printf("                                      store the actual state\n");
   printf("\n");
   printf("  -h                              : Print help\n");
   printf("  --help                          : Print help\n");
@@ -138,7 +140,6 @@ void TCommandLineParameters::PrintUsageAndExit()
   printf("\n");
 
   exit(EXIT_FAILURE);
-
 }// end of PrintUsageAndExit
 //------------------------------------------------------------------------------
 
@@ -158,6 +159,9 @@ void TCommandLineParameters::PrintSetup()
   printf("\n");
   printf("  Benchmark flag        %d\n", BenchmarkFlag);
   printf("  Benchmark time steps  %d\n", BenchmarkTimeStepsCount);
+  printf("\n");
+  printf("  Checkpoint_file       %s\n", CheckpointFileName.c_str());
+  printf("  Checkpoint_interval   %d\n", CheckpointInterval);
   printf("\n");
   printf("  Store p_raw           %d\n", Store_p_raw);
   printf("  Store p_rms           %d\n", Store_p_rms);
@@ -194,17 +198,21 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
 
   char c;
   int longIndex;
+  bool CheckpointFlag = false;
 
 #ifdef _OPENMP
   const char * shortOpts = "i:o:r:c:t:puIhs:";
-#else  
+#else
   const char * shortOpts = "i:o:r:c:puIhs:";
 #endif
 
-  const struct option longOpts[] = {
+  const struct option longOpts[] =
+  {
     { "benchmark", required_argument, NULL, 0},
     { "help", no_argument, NULL, 'h'},
     { "version", no_argument, NULL, 0},
+    { "checkpoint_file"    , required_argument, NULL, 0 },
+    { "checkpoint_interval", required_argument, NULL, 0 },
 
     { "p_raw", no_argument, NULL, 'p'},
     { "p_rms", no_argument, NULL, 0},
@@ -228,101 +236,143 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
     { "copy_sensor_mask", no_argument, NULL, 0},
     { NULL, no_argument, NULL, 0}
   };
-    
+
 
    // Short parameters //
   while ((c = getopt_long (argc, argv, shortOpts, longOpts, &longIndex )) != -1)
   {
     switch (c)
     {
-      case 'i':{
+      case 'i':
+      {
          InputFileName = optarg;
-         break;        
+         break;
       }
-      case 'o':{
+
+      case 'o':
+      {
          OutputFileName = optarg;
-         break;        
-      }          
-
-      case 'r': {
-          if ((optarg == NULL) || (atoi(optarg) <= 0)) {
-              fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoVerboseIntreval);
-              PrintUsageAndExit();
-          }else {                  
-              VerboseInterval = atoi(optarg);
-          }    
-
-          break;
+         break;
       }
 
-      case 't':{
-          if ((optarg == NULL) || (atoi(optarg) <= 0)) {
-              fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoThreadNumbers);
-              PrintUsageAndExit();
-          }else {                  
-            NumberOfThreads = atoi(optarg);
-          }  
-
-          break;
+      case 'r':
+      {
+        if ((optarg == NULL) || (atoi(optarg) <= 0))
+        {
+          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoVerboseIntreval);
+           PrintUsageAndExit();
+        }
+        else
+        {
+          VerboseInterval = atoi(optarg);
+        }
+        break;
       }
 
-      case 'c':{
-           if ((optarg == NULL) || (atoi(optarg) < 0) || atoi(optarg) > 9) {
-              fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCompressionLevel);
-              PrintUsageAndExit();
-           } else {    
-               CompressionLevel = atoi(optarg);     
-           }    
-
-         break;        
+      case 't':
+      {
+        if ((optarg == NULL) || (atoi(optarg) <= 0))
+        {
+          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoThreadNumbers);
+          PrintUsageAndExit();
+        }
+        else
+        {
+          NumberOfThreads = atoi(optarg);
+        }
+        break;
       }
 
-      case 'p':{
-         Store_p_raw = true;
-         break;        
+      case 'c':
+      {
+        if ((optarg == NULL) || (atoi(optarg) < 0) || atoi(optarg) > 9)
+        {
+          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCompressionLevel);
+          PrintUsageAndExit();
+        }
+        else
+        {
+          CompressionLevel = atoi(optarg);
+        }
+         break;
       }
 
-      case 'u':{
-         Store_u_raw = true;                                 
-         break;        
+      case 'p':
+      {
+        Store_p_raw = true;
+        break;
       }
 
-      case 'I':{
-         Store_I_avg = true; 
-         break;        
+      case 'u':
+      {
+        Store_u_raw = true;
+        break;
       }
 
-      case 'h':{
+      case 'I':
+      {
+        Store_I_avg = true;
+        break;
+      }
 
-         PrintUsageAndExit();
-         break;        
+      case 'h':
+      {
+        PrintUsageAndExit();
+        break;
       }
 
       case 's':
       {
-        if ((optarg == NULL) || (atoi(optarg) < 1)) {                   
+        if ((optarg == NULL) || (atoi(optarg) < 1))
+        {
           fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoStartTimestep);
           PrintUsageAndExit();
         }
-        StartTimeStep = atoi(optarg) - 1;     
+        StartTimeStep = atoi(optarg) - 1;
 
-        break;        
-      }          
+        break;
+      }
 
-      // long option without a short arg 
+      // long option without a short arg
       case 0:
-      { 
-        if( strcmp( "benchmark", longOpts[longIndex].name ) == 0 ) 
+      {
+        if( strcmp( "benchmark", longOpts[longIndex].name ) == 0 )
         {
-          BenchmarkFlag = true;  
-          if ((optarg == NULL) || (atoi(optarg) <= 0)) 
-          {                   
+          BenchmarkFlag = true;
+          if ((optarg == NULL) || (atoi(optarg) <= 0))
+          {
             fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoBenchmarkTimeStepCount);
             PrintUsageAndExit();
-          } 
+          }
           else
           {
-             BenchmarkTimeStepsCount = atoi(optarg);                
+             BenchmarkTimeStepsCount = atoi(optarg);
+          }
+        }
+        else if( strcmp( "checkpoint_file", longOpts[longIndex].name ) == 0 )
+        {
+          CheckpointFlag = true;
+          if ((optarg == NULL))
+          {
+            fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCheckpointFile);
+            PrintUsageAndExit();
+          }
+          else
+          {
+            CheckpointFileName = optarg;
+          }
+        }
+        else if( strcmp( "checkpoint_interval", longOpts[longIndex].name ) == 0 )
+        {
+          CheckpointFlag = true ;
+          if ((optarg == NULL) || (atoi(optarg) <= 0))
+          {
+            fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCheckpointInterval);
+            PrintUsageAndExit();
+          }
+          else
+          {
+            CheckpointInterval = atoi(optarg);
           }
         }
         else if (strcmp("version", longOpts[longIndex].name) == 0)
@@ -330,6 +380,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           PrintVersion = true;
           return;
         }
+
         else if (strcmp("p_rms", longOpts[longIndex].name) == 0)
         {
           Store_p_rms = true;
@@ -354,8 +405,8 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
         {
           Store_p_final = true;
         }
-        
-        
+
+
         else if (strcmp("u_rms", longOpts[longIndex].name) == 0)
         {
           Store_u_rms = true;
@@ -380,8 +431,8 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
         {
           Store_u_final = true;
         }
-        
-        
+
+
         else if (strcmp("I_max", longOpts[longIndex].name) == 0)
         {
           Store_I_max = true;
@@ -390,7 +441,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
         {
           CopySensorMask = true;
         }
-        else 
+        else
         {
           PrintUsageAndExit();
         }
@@ -401,13 +452,11 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         PrintUsageAndExit();
       }
-    }    
-  }      
+    }
+  }
 
 
   //-- Post checks --//
-
-
   if (InputFileName == "")
   {
     fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoInputFile);
@@ -421,6 +470,19 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
     PrintUsageAndExit();
   }
 
+  if (CheckpointFlag)
+  {
+    if (CheckpointFileName == "")
+    {
+      fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoCheckpointFile);
+      PrintUsageAndExit();
+    }
+    if (CheckpointInterval <= 0)
+    {
+      fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoCheckpointInterval);
+      PrintUsageAndExit();
+    }
+  }
 
   if (!(Store_p_raw     || Store_p_rms     || Store_p_max   || Store_p_min ||
         Store_p_max_all || Store_p_min_all || Store_p_final ||
@@ -432,6 +494,6 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
   }
 
   //PrintSetup();
-    
+
 }// end of ParseCommandLine
 //------------------------------------------------------------------------------
