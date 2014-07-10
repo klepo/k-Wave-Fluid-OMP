@@ -8,7 +8,7 @@
  *
  * @version     kspaceFirstOrder3D 2.14
  * @date        12 July     2012, 10:27  (created) \n
- *              08 July     2014, 15:04  (revised)
+ *              08 July     2014, 16:19  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -372,7 +372,7 @@ void TMatrixContainer::AddMatricesIntoContainer()
                                                     LOAD, NOCHECKPOINT, sensor_mask_index_Name);
   }
 
-  // cuboiud sensor mask
+  // cuboid sensor mask
   if (Params->Get_sensor_mask_type() == TParameters::smt_corners)
   {
     MatrixContainer[sensor_mask_corners].SetAllValues(NULL,TMatrixRecord::mdtIndex,
@@ -484,7 +484,7 @@ void TMatrixContainer::AddMatricesIntoContainer()
 
 
 
-  //-- Non linear grid
+  //-- Nonlinear grid
   if (Params->Get_nonuniform_grid_flag()!= 0)
   {
     MatrixContainer[dxudxn]    .SetAllValues(NULL,TMatrixRecord::mdtReal, TDimensionSizes(FullDim.X, 1, 1), LOAD, NOCHECKPOINT, dxudxn_Name);
@@ -765,6 +765,22 @@ void TOutputStreamContainer::CreateStreams()
 //------------------------------------------------------------------------------
 
 /**
+ * Reopen all streams after restarting form checkpoint.
+ */
+void TOutputStreamContainer::ReopenStreams()
+{
+  for (TOutputStreamMap::iterator it = OutputStreamContainer.begin(); it != OutputStreamContainer.end(); it++)
+  {
+    if (it->second)
+    {
+      (it->second)->Reopen();
+    }
+  }
+}// end of CreateStreams
+//------------------------------------------------------------------------------
+
+
+/**
  * Sample all streams.
  */
 void TOutputStreamContainer::SampleStreams()
@@ -777,6 +793,37 @@ void TOutputStreamContainer::SampleStreams()
     }
   }
 }// end of CloseStreams
+//------------------------------------------------------------------------------
+
+
+/**
+ * Checkpoint streams without post-processing (flush to the file)
+ */
+void TOutputStreamContainer::CheckpointStreams()
+{
+  for (TOutputStreamMap::iterator it = OutputStreamContainer.begin(); it != OutputStreamContainer.end(); it++)
+  {
+    if (it->second)
+    {
+      (it->second)->Checkpoint();
+    }
+  }
+}// end of CheckpointStreams
+//------------------------------------------------------------------------------
+
+/**
+ * /// Post-process all streams and flush them to the file
+ */
+void TOutputStreamContainer::PostProcessStreams()
+{
+  for (TOutputStreamMap::iterator it = OutputStreamContainer.begin(); it != OutputStreamContainer.end(); it++)
+  {
+    if (it->second)
+    {
+      (it->second)->PostProcess();
+    }
+  }
+}// end of CheckpointStreams
 //------------------------------------------------------------------------------
 
 

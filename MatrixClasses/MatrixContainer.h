@@ -8,7 +8,7 @@
  *
  * @version     kspaceFirstOrder3D 2.14
  * @date        14 September 2012, 14:33 (created) \n
- *              08 July      2014, 13:57 (revised)
+ *              08 July      2014, 16:19 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -172,12 +172,19 @@ class TMatrixContainer
      * Get number of matrices in the container
      * @return number of matrices in the container
      */
-    size_t size ()  {return MatrixContainer.size(); };
+    size_t size()
+    {
+      return MatrixContainer.size();
+    };
+
     /**
      * Is the container empty?
      * @return true if the container is empty
      */
-    bool   empty()  {return MatrixContainer.empty();};
+    bool empty()
+    {
+      return MatrixContainer.empty();
+    };
 
 
     /// Create instances of all objects in the container
@@ -355,8 +362,15 @@ class TOutputStreamContainer
 
     /// Create all streams
     void CreateStreams();
+    /// Reopen streams after checkpoint file
+    void ReopenStreams();
+
     /// Sample all streams
     void SampleStreams();
+    /// Post-process all streams and flush them to the file
+    void PostProcessStreams();
+    /// Checkpoint streams
+    void CheckpointStreams();
 
     /// Close all streams
     void CloseStreams();
