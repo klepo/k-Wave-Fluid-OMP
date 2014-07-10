@@ -6,8 +6,8 @@
  * @brief       The main file
  *
  * @version     kspaceFirstOrder3D 2.14
- * @date        11 July     2012, 10:57             (created) \n
- *              07 July     2014, 13:25             (revised)
+ * @date        11 July     2012, 10:57 (created) \n
+ *              09 July     2014, 17:00 (revised)
  *
  *
  *
@@ -386,6 +386,7 @@ Name                            Size           Data type       Domain Type      
   Ny                            (1, 1, 1)       long            real
   Nz                            (1, 1, 1)       long            real
   Nt                            (1, 1, 1)       long            real
+  t_index                       (1, 1, 1)       long            real            File version 1.1
   dt                            (1, 1, 1)       float           real
   dx                            (1, 1, 1)       float           real
   dy                            (1, 1, 1)       float           real
@@ -683,85 +684,101 @@ static const char * FMT_SmallSeparator = "--------------------------------\n";
  * @param argv
  * @return
  */
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
-    // Create K-Space solver
-    TKSpaceFirstOrder3DSolver KSpaceSolver;
+  // Create K-Space solver
+  TKSpaceFirstOrder3DSolver KSpaceSolver;
 
-   // print header
-    fprintf(stdout,"%s",FMT_SmallSeparator);
-    fprintf(stdout,"  %s\n",KSpaceSolver.GetCodeName().c_str());
-    fprintf(stdout,"%s",FMT_SmallSeparator);
+ // print header
+  fprintf(stdout,"%s",FMT_SmallSeparator);
+  fprintf(stdout,"  %s\n",KSpaceSolver.GetCodeName().c_str());
+  fprintf(stdout,"%s",FMT_SmallSeparator);
 
-    // Create parameters and parse command line
-    TParameters* Parameters = TParameters::GetInstance();
+  // Create parameters and parse command line
+  TParameters* Parameters = TParameters::GetInstance();
 
-    Parameters->ParseCommandLine(argc,argv);
-        if (Parameters->IsVersion()){
-        KSpaceSolver.PrintFullNameCodeAndLicense(stdout);
-        return 0;
-    }
-
-
-    // set number of threads and bind them to cores
-    #ifdef _OPENMP
-      omp_set_num_threads(Parameters->GetNumberOfThreads());
-      setenv("OMP_PROC_BIND","TRUE",1);
-    #endif
+  Parameters->ParseCommandLine(argc,argv);
+  if (Parameters->IsVersion())
+  {
+    KSpaceSolver.PrintFullNameCodeAndLicense(stdout);
+    return 0;
+  }
 
 
-    fprintf(stdout, "Number of CPU threads:    %6d\n", Parameters->GetNumberOfThreads());
-    KSpaceSolver.PrintParametersOfSimulation(stdout);
+  // set number of threads and bind them to cores
+  #ifdef _OPENMP
+    omp_set_num_threads(Parameters->GetNumberOfThreads());
+    setenv("OMP_PROC_BIND","TRUE",1);
+  #endif
 
 
-    fprintf(stdout,"%s",FMT_SmallSeparator);
-    fprintf(stdout,"........ Initialization ........\n");
-    fprintf(stdout,"Memory allocation ..........");
-    fflush(stdout);
+  fprintf(stdout, "Number of CPU threads:    %6d\n", Parameters->GetNumberOfThreads());
+  KSpaceSolver.PrintParametersOfSimulation(stdout);
 
 
-    // allocate memory
-    try {
-      KSpaceSolver.AllocateMemory();
-    } catch (exception e){
-        fprintf(stdout, "Failed!\nK-Wave panic: Not enough memory to run this simulation!\n%s\n",e.what());
-        fprintf(stderr, "K-Wave panic: Not enough memory to run this simulation! \n%s\n",e.what());
-        return EXIT_FAILURE;
-    }
-    fprintf(stdout, "Done\n");
+  fprintf(stdout,"%s",FMT_SmallSeparator);
+  fprintf(stdout,"........ Initialization ........\n");
+  fprintf(stdout,"Memory allocation ..........");
+  fflush(stdout);
 
 
-    // Load data from disk
-    fprintf(stdout, "Data loading................");
-    fflush(stdout);
-    try {
-      KSpaceSolver.LoadInputData();
-    }catch (ios::failure e) {
-        fprintf(stdout, "Failed!\nK-Wave panic: Data loading was not successful!\n%s\n",e.what());
-        fprintf(stderr, "K-Wave panic: Data loading was not successful! \n%s\n",e.what());
-        return EXIT_FAILURE;
-    }
-    fprintf(stdout, "Done\n");
-
-    fprintf(stdout,"Elapsed time:          %8.2fs\n",KSpaceSolver.GetDataLoadTime());
-
-    // start computation
-    fprintf(stdout,"%s",FMT_SmallSeparator);
-    fprintf(stdout, ".......... Computation .........\n");
-
-    KSpaceSolver.Compute();
-
-    fprintf(stdout,"%s",FMT_SmallSeparator);
-    fprintf(stdout, "............ Summary ...........\n");
-    fprintf(stdout, "Peak memory in use:   %8ldMB\n",KSpaceSolver.ShowMemoryUsageInMB());
-    fprintf(stdout, "Total execution time:  %8.2fs\n",KSpaceSolver.GetTotalTime());
+  // allocate memory
+  try
+  {
+    KSpaceSolver.AllocateMemory();
+  }
+  catch (exception e)
+  {
+    fprintf(stdout, "Failed!\nK-Wave panic: Not enough memory to run this simulation!\n%s\n",e.what());
+    fprintf(stderr, "K-Wave panic: Not enough memory to run this simulation! \n%s\n",e.what());
+    return EXIT_FAILURE;
+  }
+  fprintf(stdout, "Done\n");
 
 
-    fprintf(stdout,"%s",FMT_SmallSeparator);
-    fprintf(stdout,"       End of computation \n");
-    fprintf(stdout,"%s",FMT_SmallSeparator);
+  // Load data from disk
+  fprintf(stdout, "Data loading................");
+  fflush(stdout);
+  try
+  {
+    KSpaceSolver.LoadInputData();
+  }catch (ios::failure e)
+  {
+    fprintf(stdout, "Failed!\nK-Wave panic: Data loading was not successful!\n%s\n",e.what());
+    fprintf(stderr, "K-Wave panic: Data loading was not successful! \n%s\n",e.what());
+    return EXIT_FAILURE;
+  }
+  fprintf(stdout, "Done\n");
 
-    return  EXIT_SUCCESS;
+  fprintf(stdout,"Elapsed time:          %8.2fs\n",KSpaceSolver.GetDataLoadTime());
+
+  if (Parameters->Get_t_index() > 0)
+  {
+    fprintf(stdout, "Recovered from t_index: %8ld\n", Parameters->Get_t_index());
+  }
+
+  // start computation
+  fprintf(stdout,"%s",FMT_SmallSeparator);
+  fprintf(stdout, ".......... Computation .........\n");
+
+  KSpaceSolver.Compute();
+
+  fprintf(stdout,"%s",FMT_SmallSeparator);
+  fprintf(stdout, "............ Summary ...........\n");
+  fprintf(stdout, "Peak memory in use:   %8ldMB\n",KSpaceSolver.ShowMemoryUsageInMB());
+  if (KSpaceSolver.GetCumulatedTotalTime() != KSpaceSolver.GetTotalTime())
+  {
+    fprintf(stdout,"This leg execution time:%7.2fs\n",KSpaceSolver.GetTotalTime());
+  }
+  fprintf(stdout, "Total execution time:  %8.2fs\n",KSpaceSolver.GetCumulatedTotalTime());
+
+
+  fprintf(stdout,"%s",FMT_SmallSeparator);
+  fprintf(stdout,"       End of computation \n");
+  fprintf(stdout,"%s",FMT_SmallSeparator);
+
+  return  EXIT_SUCCESS;
 }// end of main
 //------------------------------------------------------------------------------
 

@@ -230,15 +230,14 @@ class TKSpaceFirstOrder3DSolver
     /// Print the header of the progress statistics
     void PrintOtputHeader();
 
-    /// Is time to checkpoint (save actual state on disk )
-    bool IsTimeToCheckpoint() {return false;};
+    /// Is time to checkpoint (save actual state on disk)
+    bool IsTimeToCheckpoint();
 
     /// Was the loop interrupted to checkpoint
     bool IsCheckpointInterruption() const
     {
       return (Parameters->Get_t_index() != Parameters->Get_Nt());
     };
-
 
     /// Reads the header of the output file and sets the cumulative elapsed time from the first log
     void RestoreCumulatedElapsedFromOutputFile(THDF5_File& HDF5_OutputFile);

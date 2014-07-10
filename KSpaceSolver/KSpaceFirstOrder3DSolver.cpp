@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.14
  * @date        12 July     2012, 10:27  (created)\n
- *              20 June     2014, 14:45  (revised)
+ *              08 July     2014, 13:41  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -39,6 +39,7 @@
 #include <math.h>
 #include <time.h>
 #include <sstream>
+#include <cstdio>
 
 #include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
 
@@ -121,30 +122,60 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   // Start timer
   DataLoadTime.Start();
 
-  // Open and load input file
-  THDF5_File& HDF5_InputFile  = Parameters->HDF5_InputFile; // file is opened (in Parameters)
-  THDF5_File& HDF5_OutputFile = Parameters->HDF5_OutputFile;
+  // get handles
+  THDF5_File& HDF5_InputFile       = Parameters->HDF5_InputFile; // file is opened (in Parameters)
+  THDF5_File& HDF5_OutputFile      = Parameters->HDF5_OutputFile;
+  THDF5_File& HDF5_CheckpointFile  = Parameters->HDF5_CheckpointFile;
 
   // Load data from disk
-  MatrixContainer.LoadMatricesDataFromDisk(HDF5_InputFile);
+  MatrixContainer.LoadDataFromInputHDF5File(HDF5_InputFile);
 
   // close the input file
   HDF5_InputFile.Close();
 
+  // The simulation does not use checkpointing or this is the first turn
+  bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
+                               THDF5_File::IsHDF5(Parameters->GetCheckpointFileName().c_str()));
+
+  //-------------------- Read data from the checkpoint file -----------------//
+  if (RecoverFromPrevState)
+  {
+    // Open checkpoint file
+    HDF5_CheckpointFile.Open(Parameters->GetCheckpointFileName().c_str());
+
+    // read the actual value of t_index
+    long new_t_index;
+    HDF5_CheckpointFile.ReadCompleteDataset(HDF5_CheckpointFile.GetRootGroup(),
+                                            t_index_Name,
+                                            TDimensionSizes(1,1,1),
+                                            &new_t_index);
+    Parameters->Set_t_index(new_t_index);
+
+    // Read necessary matrices from the checkpoint file
+    MatrixContainer.LoadDataFromCheckpointHDF5File(HDF5_CheckpointFile);
+
+    HDF5_CheckpointFile.Close();
+
+    //------------- Read data from the output file -------------------------//
+    // Reopen output file for RW access
+    HDF5_OutputFile.Open(Parameters->GetOutputFileName().c_str(), H5F_ACC_RDWR);
+    // Restore elapsed time
+    RestoreCumulatedElapsedFromOutputFile(HDF5_OutputFile);
+
+    OutputStreamContainer.ReopenStreams();
+  }
+  else
+  { //-------------------- First round of multi-leg simulation ---------------//
+    // Create the output file
+    HDF5_OutputFile.Create(Parameters->GetOutputFileName().c_str());
 
 
-  //--------------------------------------------------------------------------//
-  //-------------------- First round of multi-leg simulation -----------------//
-  //--------------------------------------------------------------------------//
+    // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
+    OutputStreamContainer.CreateStreams();
 
-  // Create the output file
-  HDF5_OutputFile.Create(Parameters->GetOutputFileName().c_str());
+    // Stop timer
+  }
 
-
-  // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
-  OutputStreamContainer.CreateStreams();
-
-  // Stop timer
   DataLoadTime.Stop();
 }// end of LoadInputData
 //------------------------------------------------------------------------------
@@ -156,20 +187,20 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
  * FFT initialization, pre-processing, main loop and post-processing phases.
  *
  */
-void TKSpaceFirstOrder3DSolver::Compute(){
+void TKSpaceFirstOrder3DSolver::Compute()
+{
 
   PreProcessingTime.Start();
 
   fprintf(stdout,"FFT plans creation.........."); fflush(stdout);
 
-        InitializeFFTWPlans( );
+    InitializeFFTWPlans( );
 
   fprintf(stdout,"Done \n");
   fprintf(stdout,"Pre-processing phase........"); fflush(stdout);
 
 
-        PreProcessingPhase( );
-
+    PreProcessingPhase( );
 
   fprintf(stdout,"Done \n");
   fprintf(stdout,"Current memory in use:%8ldMB\n", ShowMemoryUsageInMB());
@@ -177,32 +208,50 @@ void TKSpaceFirstOrder3DSolver::Compute(){
 
   fprintf(stdout,"Elapsed time:          %8.2fs\n",PreProcessingTime.GetElapsedTime());
 
-
   SimulationTime.Start();
 
-        Compute_MainLoop();
+    Compute_MainLoop();
 
   SimulationTime.Stop();
 
-  fprintf(stdout,"-------------------------------------------------------------\n");
-  fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.GetElapsedTime());
-  fprintf(stdout,"-------------------------------------------------------------\n");
-
-  fprintf(stdout,"Post-processing phase......."); fflush(stdout);
   PostProcessingTime.Start();
 
+  if (IsCheckpointInterruption())
+  { // Checkpoint
+    fprintf(stdout,"-------------------------------------------------------------\n");
+    fprintf(stdout,".............. Interrupted to checkpoint! ...................\n");
+    fprintf(stdout,"Number of time steps completed:                    %10ld\n",   Parameters->Get_t_index());
+    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.GetElapsedTime());
+    fprintf(stdout,"-------------------------------------------------------------\n");
+    fprintf(stdout,"Checkpoint in progress......"); fflush(stdout);
 
-        PostPorcessing();
+    SaveCheckpointData();
+  }
+  else
+  { // Finish
+    fprintf(stdout,"-------------------------------------------------------------\n");
+    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.GetElapsedTime());
+    fprintf(stdout,"-------------------------------------------------------------\n");
+    fprintf(stdout,"Post-processing phase......."); fflush(stdout);
+
+    PostPorcessing();
+
+    // if checkpointing is enabled and the checkpoint file was created created in the past, delete it
+    if (Parameters->IsCheckpointEnabled())
+    {
+      std::remove(Parameters->GetCheckpointFileName().c_str());
+      TFFTWComplexMatrix::DeleteStoredWisdom();
+    }
+  }
+
   PostProcessingTime.Stop();
+
   fprintf(stdout,"Done \n");
   fprintf(stdout,"Elapsed time:          %8.2fs\n",PostProcessingTime.GetElapsedTime());
 
-
-  WriteOutputDataInfo();
+    WriteOutputDataInfo();
 
   Parameters->HDF5_OutputFile.Close();
-
-
 }// end of Compute()
 //------------------------------------------------------------------------------
 
@@ -273,24 +322,35 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
  * Initialize FFTW plans.
  *
  */
-void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans(){
+void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
+{
 
-    // initialization of FFTW library
+  // initialization of FFTW library
+  #ifdef _OPENMP
+    fftwf_init_threads();
+    fftwf_plan_with_nthreads(Parameters->GetNumberOfThreads());
+  #endif
 
-    #ifdef _OPENMP
-      fftwf_init_threads();
-      fftwf_plan_with_nthreads(Parameters->GetNumberOfThreads());
-    #endif
+  // The simulation does not use checkpointing or this is the first turn
+  bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
+                               THDF5_File::IsHDF5(Parameters->GetCheckpointFileName().c_str()));
 
-    // create real to complex plans
-    Get_FFT_X_temp().CreateFFTPlan3D_R2C(Get_p());
-    Get_FFT_Y_temp().CreateFFTPlan3D_R2C(Get_p());
-    Get_FFT_Z_temp().CreateFFTPlan3D_R2C(Get_p());
+  // import FFTW wisdom if it is here
+  if (RecoverFromPrevState)
+  {
+     // try to find the wisdom in the file that has the same name as the checkpoint file (different extension)
+    TFFTWComplexMatrix::ImportWisdom();
+  }
 
-    // create real to complex plans
-    Get_FFT_X_temp().CreateFFTPlan3D_C2R(Get_p());
-    Get_FFT_Y_temp().CreateFFTPlan3D_C2R(Get_p());
-    Get_FFT_Z_temp().CreateFFTPlan3D_C2R(Get_p());
+  // create real to complex plans
+  Get_FFT_X_temp().CreateFFTPlan3D_R2C(Get_p());
+  Get_FFT_Y_temp().CreateFFTPlan3D_R2C(Get_p());
+  Get_FFT_Z_temp().CreateFFTPlan3D_R2C(Get_p());
+
+  // create real to complex plans
+  Get_FFT_X_temp().CreateFFTPlan3D_C2R(Get_p());
+  Get_FFT_Y_temp().CreateFFTPlan3D_C2R(Get_p());
+  Get_FFT_Z_temp().CreateFFTPlan3D_C2R(Get_p());
 }// end of PrepareData
 //------------------------------------------------------------------------------
 
@@ -2246,14 +2306,13 @@ void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
 
   if (t_index > (ActPercent * Nt * 0.01f) )
   {
-
     ActPercent += Parameters->GetVerboseInterval();
 
     IterationTime.Stop();
 
-    double ElTime = IterationTime.GetElapsedTime();
-    const double ToGo   = ((ElTime / (float) (t_index+1)) * Nt) - ElTime;
-
+    const double ElTime = IterationTime.GetElapsedTime();
+    const double ElTimeWithLegs = IterationTime.GetElapsedTime() + SimulationTime.GetComulatedElaspedTimePreviousAllLegs();
+    const double ToGo   = ((ElTimeWithLegs / (float) (t_index + 1)) *  Nt) - ElTimeWithLegs;
 
     struct tm *current;
     time_t now;
@@ -2269,7 +2328,7 @@ void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
             );
 
     fflush(stdout);
- }
+  }
 }// end of KSpaceFirstOrder3DSolver
 //------------------------------------------------------------------------------
 
@@ -2283,6 +2342,23 @@ void TKSpaceFirstOrder3DSolver::PrintOtputHeader(){
 
 }// end of PrintOtputHeader
 //------------------------------------------------------------------------------
+
+/**
+ * Is time to checkpoint
+ * @return true if it is necessary to stop to checkpoint
+ */
+bool TKSpaceFirstOrder3DSolver::IsTimeToCheckpoint()
+{
+  if (!Parameters->IsCheckpointEnabled()) return false;
+
+  TotalTime.Stop();
+
+  return (TotalTime.GetElapsedTime() > (float) Parameters->GetCheckpointInterval());
+
+}// end of IsTimeToCheckpoint
+//------------------------------------------------------------------------------
+
+
 /**
  * Post processing the quantities, closing the output streams and storing the
  * sensor mask.
@@ -2303,7 +2379,8 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
     Get_uz_sgz().WriteDataToHDF5File(Parameters->HDF5_OutputFile, uz_final_Name, Parameters->GetCompressionLevel());
   }// u_final
 
-  // close all streams - this routine applies post-processing if ncessary
+  // Apply post-processing and close
+  OutputStreamContainer.PostProcessStreams();
   OutputStreamContainer.CloseStreams();
 
 
@@ -2338,6 +2415,47 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData()
   if (Parameters->Get_t_index() >= Parameters->GetStartTimeIndex()) OutputStreamContainer.SampleStreams();
 
 }// end of StoreData
+//------------------------------------------------------------------------------
+
+/**
+ * Save checkpoint data into the checkpoint file, flush aggregated outputs into
+ * the output file
+ */
+void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
+{
+  // export FFTW wisdom
+  TFFTWComplexMatrix::ExportWisdom();
+
+
+  // Create Checkpoint file
+  THDF5_File & HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  // if it happens and the file is opened (from the recovery, close it)
+  if (HDF5_CheckpointFile.IsOpened()) HDF5_CheckpointFile.Close();
+  // Create the new file (overwrite the old one)
+  HDF5_CheckpointFile.Create(Parameters->GetCheckpointFileName().c_str());
+
+
+  //--------------------- Store Matrices ------------------------------//
+
+  // Store all necessary matrices in Checkpoint file
+  MatrixContainer.StoreDataIntoCheckpointHDF5File(HDF5_CheckpointFile);
+  // Write t_index
+  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+                                       t_index_Name,
+                                       Parameters->Get_t_index());
+  HDF5_CheckpointFile.Close();
+
+  //--------------------- Store Scalars ------------------------------//
+  //-- These are stored into the output file!                         //
+
+
+  // checkpoint only if necessary (t_index >= start_index)
+  if (Parameters->Get_t_index() >= Parameters->GetStartTimeIndex())
+  {
+    OutputStreamContainer.CheckpointStreams();
+  }
+  OutputStreamContainer.CloseStreams();
+}// end of SaveCheckpointData()
 //------------------------------------------------------------------------------
 
 
@@ -2466,43 +2584,72 @@ void TKSpaceFirstOrder3DSolver::StoreIntensityData(){
 /**
  * Write statistics and the header into the output file.
  */
-void  TKSpaceFirstOrder3DSolver::WriteOutputDataInfo(){
+void TKSpaceFirstOrder3DSolver::WriteOutputDataInfo()
+{
+  // write t_index into the output file
+  Parameters->HDF5_OutputFile.WriteScalarValue(Parameters->HDF5_OutputFile.GetRootGroup(),
+                                               t_index_Name,
+                                               Parameters->Get_t_index());
 
-    // Write scalars
-    Parameters->SaveScalarsToHDF5File(Parameters->HDF5_OutputFile);
-    THDF5_FileHeader & HDF5_FileHeader = Parameters->HDF5_FileHeader;
+  // Write scalars
+  Parameters->SaveScalarsToHDF5File(Parameters->HDF5_OutputFile);
+  THDF5_FileHeader & HDF5_FileHeader = Parameters->HDF5_FileHeader;
 
-    // Write File header
+  // Write File header
 
-    HDF5_FileHeader.SetCodeName(GetCodeName());
-    HDF5_FileHeader.SetMajorFileVersion();
-    HDF5_FileHeader.SetMinorFileVersion();
-    HDF5_FileHeader.SetActualCreationTime();
-    HDF5_FileHeader.SetFileType(THDF5_FileHeader::hdf5_ft_output);
-    HDF5_FileHeader.SetHostName();
+  HDF5_FileHeader.SetCodeName(GetCodeName());
+  HDF5_FileHeader.SetMajorFileVersion();
+  HDF5_FileHeader.SetMinorFileVersion();
+  HDF5_FileHeader.SetActualCreationTime();
+  HDF5_FileHeader.SetFileType(THDF5_FileHeader::hdf5_ft_output);
+  HDF5_FileHeader.SetHostName();
 
-    HDF5_FileHeader.SetMemoryConsumption(ShowMemoryUsageInMB());
+  HDF5_FileHeader.SetMemoryConsumption(ShowMemoryUsageInMB());
 
-    // Stop total timer here
-    TotalTime.Stop();
-    HDF5_FileHeader.SetExecutionTimes(GetTotalTime(),
-                                      GetDataLoadTime(),
-                                      GetPreProcessingTime(),
-                                      GetSimulationTime(),
-                                      GetPostProcessingTime());
+  // Stop total timer here
+  TotalTime.Stop();
+  HDF5_FileHeader.SetExecutionTimes(GetCumulatedTotalTime(),
+                                    GetCumulatedDataLoadTime(),
+                                    GetCumulatedPreProcessingTime(),
+                                    GetCumulatedSimulationTime(),
+                                    GetCumulatedPostProcessingTime());
 
-
-    HDF5_FileHeader.SetNumberOfCores();
-
-
-
-    HDF5_FileHeader.WriteHeaderToOutputFile(Parameters->HDF5_OutputFile);
-
-
-
+  HDF5_FileHeader.SetNumberOfCores();
+  HDF5_FileHeader.WriteHeaderToOutputFile(Parameters->HDF5_OutputFile);
 }// end of WriteOutputDataInfo
 //------------------------------------------------------------------------------
 
+
+/**
+ *
+ * Restore cumulated elapsed time form Output file
+ * Open the header, read this and store into TMPI_Time classes
+ * @param [in] OutputFile
+ */
+void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile(THDF5_File& HDF5_OutputFile)
+{
+  //Read times from the output file header
+  Parameters->HDF5_FileHeader.ReadHeaderFromOutputFile(HDF5_OutputFile);
+
+
+  double ElapsedTotalTime, ElapsedDataLoadTime, ElapsedPreProcessingTime,
+         ElapsedSimulationTime, ElapsedPostProcessingTime;
+
+  /// Get execution times stored in the output file header
+  Parameters->HDF5_FileHeader.GetExecutionTimes(ElapsedTotalTime,
+                                                ElapsedDataLoadTime,
+                                                ElapsedPreProcessingTime,
+                                                ElapsedSimulationTime,
+                                                ElapsedPostProcessingTime);
+
+  TotalTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedTotalTime);
+  DataLoadTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedDataLoadTime);
+  PreProcessingTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedPreProcessingTime);
+  SimulationTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedSimulationTime);
+  PostProcessingTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedPostProcessingTime);
+
+}// end of RestoreCumulatedElapsedFromOutputFile
+//------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------//
 //                            Private methods                                 //
