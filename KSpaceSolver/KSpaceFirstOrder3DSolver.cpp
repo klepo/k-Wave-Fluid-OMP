@@ -173,9 +173,9 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
     OutputStreamContainer.CreateStreams();
 
-    // Stop timer
   }
-
+  
+ // Stop timer
   DataLoadTime.Stop();
 }// end of LoadInputData
 //------------------------------------------------------------------------------

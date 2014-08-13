@@ -608,6 +608,9 @@ void TCuboidOutputHDF5Stream::Sample()
                                          CuboidSize,
                                          SourceMatrix.GetDimensionSizes(),
                                          MatrixData
+        // @TODO: measure the performace and if it is bad use the default version
+        // in terms of WriteHyperSlab
+
         );
       }
       SampledTimeStep++;   // Move forward in time
@@ -765,13 +768,13 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
                             );
 
   // Set chunk size
-  // If the size of the cuboid is bigger than 32 MB, set the chunk to approx 4MB
-  size_t NumberOfSlabs = 0;
+  // If the size of the cuboid is bigger than 32 MB per timestep, set the chunk to approx 4MB 
+  size_t NumberOfSlabs = 1; //at least one slab
   TDimensionSizes CuboidChunkSize(CuboidSize.X, CuboidSize.Y, CuboidSize.Z, (ReductionOp == roNONE) ? 1 : 0);
 
-  if (CuboidSize.GetElementCount() > (ChunkSize_4MB * 8))
+  if (CuboidChunkSize.GetElementCount() > (ChunkSize_4MB * 8))
   {
-    while (NumberOfSlabs * CuboidSize.X * CuboidSize.Y > ChunkSize_4MB) NumberOfSlabs++;
+    while (NumberOfSlabs * CuboidSize.X * CuboidSize.Y < ChunkSize_4MB) NumberOfSlabs++;
     CuboidChunkSize.Z = NumberOfSlabs;
   }
 
