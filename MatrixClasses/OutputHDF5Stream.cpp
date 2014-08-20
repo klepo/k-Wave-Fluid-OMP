@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:30      (created) \n
- *              19 August   2014, 11:00      (revised)
+ *              30 August   2014, 15:00      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -313,7 +313,7 @@ void TIndexOutputHDF5Stream::Sample()
       }
       // only raw time series are flushed down to the disk every time step
       FlushBufferToFile();
-      /* - for future use, when offloading the sampling work to HDF5 - now it seem to be slower
+      /* - for future use when offloading the sampling work to HDF5 - now it seem to be slower
       HDF5_File.WriteSensorbyMaskToHyperSlab(HDF5_DatasetId,
                                              Position,        // position in the dataset
                                              BufferSize,      // number of elements sampled
@@ -469,8 +469,6 @@ TCuboidOutputHDF5Stream::~TCuboidOutputHDF5Stream()
 //------------------------------------------------------------------------------
 
 
-
-
 /**
  * Create a HDF5 stream and allocate data for it. It also creates a HDF5 group
  * with particular datasets (one per cuboid)
@@ -615,7 +613,7 @@ void TCuboidOutputHDF5Stream::Sample()
 
     /* At the time being, this version using manual data lining up seems to be slower, and is not used
       size_t BufferStart = 0;
-        // @TODO Parallel section with some load balancing feature
+
       for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
       {
         const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);

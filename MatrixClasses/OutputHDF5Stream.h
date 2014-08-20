@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July   2012, 10:30 (created) \n
- *              19 August 2014, 17:15 (revised)
+ *              20 August 2014, 14:15 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -278,10 +278,6 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
 
     /// Flush the buffer to the file
     virtual void FlushBufferToFile();
-
-    /// Flush the buffer to the file @TODO: Implement a better version
-    virtual void FlushRawDataToFile() {throw runtime_error("Routine FlushRawDataToFile not implemented"); };
-
 
     /// Sensor mask to sample data
     const TLongMatrix &      SensorMask;
