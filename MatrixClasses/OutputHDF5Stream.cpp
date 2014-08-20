@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.14
  * @date        11 July     2012, 10:30      (created) \n
- *              02 July     2014, 14:38      (revised)
+ *              30 August   2014, 15:00      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -77,7 +77,7 @@ void TBaseOutputHDF5Stream::PostProcess()
     {
       const float ScalingCoeff = 1.0f / (TParameters::GetInstance()->Get_Nt() - TParameters::GetInstance()->GetStartTimeIndex());
 
-      #pragma omp parallel for if (BufferSize > 1e6)
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         StoreBuffer[i] = sqrt(StoreBuffer[i] * ScalingCoeff);
@@ -125,7 +125,7 @@ void TBaseOutputHDF5Stream::AllocateMemory()
   }
 
   // zero the matrix
-  #pragma omp parallel for if (BufferSize > 1e6)
+  #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
   for (size_t i = 0; i < BufferSize; i++)
   {
     StoreBuffer[i] = 0.0f;
@@ -302,19 +302,18 @@ void TIndexOutputHDF5Stream::Sample()
   const float * SourceData = SourceMatrix.GetRawData();
   const long  * SensorData = SensorMask.GetRawData();
 
-  //@TODO: Do not use SensorMask as an object but as an array
   switch (ReductionOp)
   {
     case roNONE :
     {
-      #pragma omp parallel for if (BufferSize > 1e6)
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         StoreBuffer[i] = SourceData[SensorData[i]];
       }
       // only raw time series are flushed down to the disk every time step
       FlushBufferToFile();
-      /* - for future use, when offloading the sampling work to HDF5
+      /* - for future use when offloading the sampling work to HDF5 - now it seem to be slower
       HDF5_File.WriteSensorbyMaskToHyperSlab(HDF5_DatasetId,
                                              Position,        // position in the dataset
                                              BufferSize,      // number of elements sampled
@@ -324,39 +323,39 @@ void TIndexOutputHDF5Stream::Sample()
       Position.Y++;
        */
       break;
-    }
+    }// case roNONE
 
     case roRMS  :
     {
-      #pragma omp parallel for if (BufferSize > 1e6)
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         StoreBuffer[i] += (SourceData[SensorData[i]] * SourceData[SensorData[i]]);
       }
       break;
-    }
+    }// case roRMS
 
     case roMAX  :
     {
-      #pragma omp parallel for if (BufferSize > 1e6)
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         if (StoreBuffer[i] < SourceData[SensorData[i]])
           StoreBuffer[i] = SourceData[SensorData[i]];
       }
       break;
-    }
+    }// case roMAX
 
     case roMIN  :
     {
-      #pragma omp parallel for if (BufferSize > 1e6)
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         if (StoreBuffer[i] > SourceData[SensorData[i]])
           StoreBuffer[i] = SourceData[SensorData[i]];
       }
       break;
-    }
+    } //case roMIN
   }// switch
 }// end of Sample
 //------------------------------------------------------------------------------
@@ -468,8 +467,6 @@ TCuboidOutputHDF5Stream::~TCuboidOutputHDF5Stream()
   if (!BufferReuse) FreeMemory();
 }// end ~TCubodidOutputHDF5Stream
 //------------------------------------------------------------------------------
-
-
 
 
 /**
@@ -590,6 +587,7 @@ void TCuboidOutputHDF5Stream::Sample()
   {
     case roNONE :
     {
+      /* We use here direct HDF5 offload using MEMSPACE - seems to be faster for bigger datasets*/
       TDimensionSizes DatasetPosition(0,0,0,0); //4D position in the dataset
       TDimensionSizes CuboidSize(0,0,0,0);       // Size of the cuboid
 
@@ -607,88 +605,154 @@ void TCuboidOutputHDF5Stream::Sample()
                                          SensorMask.GetTopLeftCorner(CuboidIndex), // position in the SourceMatrix
                                          CuboidSize,
                                          SourceMatrix.GetDimensionSizes(),
-                                         MatrixData
-        // @TODO: measure the performace and if it is bad use the default version
-        // in terms of WriteHyperSlab
-
-        );
+                                         MatrixData);
       }
       SampledTimeStep++;   // Move forward in time
 
       break;
-    }
+
+    /* At the time being, this version using manual data lining up seems to be slower, and is not used
+      size_t BufferStart = 0;
+
+      for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
+      {
+        const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
+        const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
+
+        size_t cuboid_XY_plane_size = ( BottomRightCorner.Y - TopLeftCorner.Y) * ( BottomRightCorner.X - TopLeftCorner.X);
+        size_t cuboid_X_plane_size  = ( BottomRightCorner.X - TopLeftCorner.X);
+
+        #pragma omp parallel for collapse(3)
+        for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
+          for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
+            for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
+            {
+              StoreBuffer[BufferStart +
+                            (z - TopLeftCorner.Z) * cuboid_XY_plane_size +
+                            (y - TopLeftCorner.Y) * cuboid_X_plane_size  +
+                            (x - TopLeftCorner.X) ]
+
+                    = SourceMatrix[z * XY_Size + y * X_Size + x];
+            }
+        BufferStart += (BottomRightCorner - TopLeftCorner).GetElementCount();
+      }
+      FlushBufferToFile();
+      break;
+        */
+    }// case roNONE
 
     case roRMS  :
     {
-      if (ReductionOp == roRMS)
+      size_t CuboidInBufferStart = 0;
+
+      // Parallelise within the cuboid - Since a typical number of cuboids is 1, than we have to paralelise inside
+      for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
       {
-        size_t BufferIndex = 0;
+        const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
+        const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
 
-        // @TODO - figure out how to do this with OpenMP
-        for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
-        {
-          const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
-          const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
+        size_t cuboid_XY_plane_size = (BottomRightCorner.Y - TopLeftCorner.Y + 1) *
+                                      (BottomRightCorner.X - TopLeftCorner.X + 1);
+        size_t cuboid_X_plane_size  = (BottomRightCorner.X - TopLeftCorner.X + 1);
 
-          for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
-            for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
-              for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
-              {
-                StoreBuffer[BufferIndex++] += (SourceData[z * XY_Size + y * X_Size + x] *
-                                               SourceData[z * XY_Size + y * X_Size + x]);
-              }
-        }
+        #pragma omp parallel for collapse(3) \
+                if ((BottomRightCorner - TopLeftCorner).GetElementCount() > MinGridpointsToSampleInParallel)
+        for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
+          for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
+            for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
+            {
+              const size_t StoreBufferIndex = CuboidInBufferStart +
+                                              (z - TopLeftCorner.Z) * cuboid_XY_plane_size +
+                                              (y - TopLeftCorner.Y) * cuboid_X_plane_size  +
+                                              (x - TopLeftCorner.X);
+
+              const size_t SourceIndex = z * XY_Size + y * X_Size + x;
+
+              // aggregating the sum over timesteps
+              StoreBuffer[StoreBufferIndex] += (SourceData[SourceIndex] * SourceData[SourceIndex]);
+            }
+
+        CuboidInBufferStart += (BottomRightCorner - TopLeftCorner).GetElementCount();
       }
 
       break;
-    }
+    }// case roRMS
 
     case roMAX  :
     {
-      size_t BufferIndex = 0;
-      ///@TODO Parallel section with some load balancing feature
+      size_t CuboidInBufferStart = 0;
+
+      // Parallelise within the cuboid - Since a typical number of cuboids is 1, than we have to paralelise inside
       for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
       {
-        const TDimensionSizes TopLeftCorner = SensorMask.GetTopLeftCorner(CuboidIdx);
+        const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
         const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
 
+        size_t cuboid_XY_plane_size = (BottomRightCorner.Y - TopLeftCorner.Y + 1) *
+                                      (BottomRightCorner.X - TopLeftCorner.X + 1);
+        size_t cuboid_X_plane_size  = (BottomRightCorner.X - TopLeftCorner.X + 1);
+
+        #pragma omp parallel for collapse(3) \
+                if ((BottomRightCorner - TopLeftCorner).GetElementCount() > MinGridpointsToSampleInParallel)
         for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
           for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
             for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
             {
-              if (StoreBuffer[BufferIndex] < SourceData[z * XY_Size + y * X_Size + x])
+              const size_t StoreBufferIndex = CuboidInBufferStart +
+                                              (z - TopLeftCorner.Z) * cuboid_XY_plane_size +
+                                              (y - TopLeftCorner.Y) * cuboid_X_plane_size  +
+                                              (x - TopLeftCorner.X);
+
+              const size_t SourceIndex = z * XY_Size + y * X_Size + x;
+
+              // finding max
+              if (StoreBuffer[StoreBufferIndex] < SourceData[SourceIndex])
               {
-                StoreBuffer[BufferIndex] = SourceData[z * XY_Size + y * X_Size + x];
+                StoreBuffer[StoreBufferIndex] = SourceData[SourceIndex];
               }
-              BufferIndex++;
             }
+        CuboidInBufferStart += (BottomRightCorner - TopLeftCorner).GetElementCount();
       }
       break;
-    }
+    }// case roMAX
 
     case roMIN  :
     {
-      size_t BufferIndex = 0;
-      ///@TODO Parallel section with some load balancing feature
+      size_t CuboidInBufferStart = 0;
+
+      // Parallelise within the cuboid - Since a typical number of cuboids is 1, than we have to paralelise inside
       for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
       {
-        const TDimensionSizes TopLeftCorner = SensorMask.GetTopLeftCorner(CuboidIdx);
+        const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
         const TDimensionSizes BottomRightCorner = SensorMask.GetBottomRightCorner(CuboidIdx);
 
+        size_t cuboid_XY_plane_size = (BottomRightCorner.Y - TopLeftCorner.Y + 1) *
+                                      (BottomRightCorner.X - TopLeftCorner.X + 1);
+        size_t cuboid_X_plane_size  = (BottomRightCorner.X - TopLeftCorner.X + 1);
+
+        #pragma omp parallel for collapse(3) \
+                if ((BottomRightCorner - TopLeftCorner).GetElementCount() > MinGridpointsToSampleInParallel)
         for (size_t z = TopLeftCorner.Z; z <= BottomRightCorner.Z; z++)
           for (size_t y = TopLeftCorner.Y; y <= BottomRightCorner.Y; y++)
             for (size_t x = TopLeftCorner.X; x <= BottomRightCorner.X; x++)
             {
-              if (StoreBuffer[BufferIndex] > SourceData[z * XY_Size + y * X_Size + x])
+              const size_t StoreBufferIndex = CuboidInBufferStart +
+                                              (z - TopLeftCorner.Z) * cuboid_XY_plane_size +
+                                              (y - TopLeftCorner.Y) * cuboid_X_plane_size  +
+                                              (x - TopLeftCorner.X);
+              const size_t SourceIndex = z * XY_Size + y * X_Size + x;
+
+              // finding min
+              if (StoreBuffer[StoreBufferIndex] > SourceData[SourceIndex])
               {
-                StoreBuffer[BufferIndex] = SourceData[z * XY_Size + y * X_Size + x];
+                StoreBuffer[StoreBufferIndex] = SourceData[SourceIndex];
               }
-              BufferIndex++;
             }
+        CuboidInBufferStart += (BottomRightCorner - TopLeftCorner).GetElementCount();
       }
 
       break;
-    }
+    }// case roMIN
   }// switch
 
 }// end of Sample
@@ -768,7 +832,7 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
                             );
 
   // Set chunk size
-  // If the size of the cuboid is bigger than 32 MB per timestep, set the chunk to approx 4MB 
+  // If the size of the cuboid is bigger than 32 MB per timestep, set the chunk to approx 4MB
   size_t NumberOfSlabs = 1; //at least one slab
   TDimensionSizes CuboidChunkSize(CuboidSize.X, CuboidSize.Y, CuboidSize.Z, (ReductionOp == roNONE) ? 1 : 0);
 
@@ -957,46 +1021,67 @@ void TWholeDomainOutputHDF5Stream::Sample()
   switch (ReductionOp)
   {
     case roNONE :
-    { //@TODO: Use HDF5 with File space and Memory space
-      #pragma omp parallel for if (BufferSize > 1e6)
+    {
+
+       /* We use here direct HDF5 offload using MEMSPACE - seems to be faster for bigger datasets*/
+      const TDimensionSizes DatasetPosition(0,0,0,SampledTimeStep); //4D position in the dataset
+
+      TDimensionSizes CuboidSize(SourceMatrix.GetDimensionSizes());// Size of the cuboid
+      CuboidSize.T = 1;
+
+      // iterate over all cuboid to be sampled
+      HDF5_File.WriteCuboidToHyperSlab(HDF5_DatasetId,
+                                       DatasetPosition,
+                                       TDimensionSizes(0,0,0,0), // position in the SourceMatrix
+                                       CuboidSize,
+                                       SourceMatrix.GetDimensionSizes(),
+                                       SourceMatrix.GetRawData());
+
+      SampledTimeStep++;   // Move forward in time
+
+      // This version is obsolete (needs one more data movement)
+      /*
+       #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         StoreBuffer[i] = SourceData[i];
       }
       // only raw time series are flushed down to the disk every time step
       FlushBufferToFile();
+      */
+
       break;
-    }
+    }// case roNONE
 
     case roRMS  :
     {
-      #pragma omp parallel for if (BufferSize > 1e6)
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         StoreBuffer[i] += (SourceData[i] * SourceData[i]);
       }
       break;
-    }
+    }// case roRMS
 
     case roMAX  :
     {
-      #pragma omp parallel for if (BufferSize > 1e6)
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         if (StoreBuffer[i] < SourceData[i])  StoreBuffer[i] = SourceData[i];
       }
       break;
-    }
+    }//case roMAX
 
     case roMIN  :
     {
-      #pragma omp parallel for if (BufferSize > 1e6)
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
       {
         if (StoreBuffer[i] > SourceData[i]) StoreBuffer[i] = SourceData[i];
       }
       break;
-    }
+    } //case roMIN
   }// switch
 }// end of Sample
 //------------------------------------------------------------------------------
@@ -1054,6 +1139,7 @@ void TWholeDomainOutputHDF5Stream::FlushBufferToFile()
   TDimensionSizes Size = SourceMatrix.GetDimensionSizes();
   TDimensionSizes Position(0,0,0);
 
+  // Not used for roNONE now!
   if (ReductionOp == roNONE)
   {
     Position.T = SampledTimeStep;

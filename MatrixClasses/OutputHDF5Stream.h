@@ -8,8 +8,8 @@
  *              quantities into the output HDF5 file
  *
  * @version     kspaceFirstOrder3D 2.14
- * @date        11 July  2012, 10:30 (created) \n
- *              08 July  2014, 16:19 (revised)
+ * @date        11 July   2012, 10:30 (created) \n
+ *              20 August 2014, 14:15 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -158,6 +158,8 @@ class TBaseOutputHDF5Stream
     /// chunk size of 4MB in number of float elements
     static const size_t ChunkSize_4MB = 1048576;
 
+    /// The minimum number of elements to start sampling in parallel (4MB)
+    static const size_t MinGridpointsToSampleInParallel = 1048576;
 };// end of TOutputHDF5Stream
 //------------------------------------------------------------------------------
 
@@ -276,10 +278,6 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
 
     /// Flush the buffer to the file
     virtual void FlushBufferToFile();
-
-    /// Flush the buffer to the file @TODO: Implement a better version
-    virtual void FlushRawDataToFile() {throw runtime_error("Routine FlushRawDataToFile not implemented"); };
-
 
     /// Sensor mask to sample data
     const TLongMatrix &      SensorMask;
