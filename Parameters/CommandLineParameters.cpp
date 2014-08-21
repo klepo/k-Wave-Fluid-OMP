@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        29 August 2012, 11:25 (created) \n
- *              07 July   2014, 14:54 (revised)
+ *              21 August 2014, 14:45 (revised)
  *
  *
  * @section License
@@ -66,7 +66,8 @@ TCommandLineParameters::TCommandLineParameters() :
         PrintVersion (false),
         Store_p_raw(false), Store_p_rms(false), Store_p_max(false), Store_p_min(false),
         Store_p_max_all(false), Store_p_min_all(false), Store_p_final(false),
-        Store_u_raw(false), Store_u_rms(false), Store_u_max(false), Store_u_min(false),
+        Store_u_raw(false), Store_u_non_staggered_raw(false),
+        Store_u_rms(false), Store_u_max(false), Store_u_min(false),
         Store_u_max_all(false), Store_u_min_all(false), Store_u_final(false),
         Store_I_avg(false), Store_I_max(false),
         CopySensorMask(false),
@@ -122,6 +123,8 @@ void TCommandLineParameters::PrintUsageAndExit()
   printf("  -u                              : Store ux, uy, uz\n");
   printf("                                      (the same as --u_raw)\n");
   printf("  --u_raw                         : Store raw time series of ux, uy, uz\n");
+  printf("  --u_non_staggered_raw           : Store non-staggered raw time series of\n");
+  printf("                                      ux, uy, uz");
   printf("  --u_rms                         : Store rms of ux, uy, uz\n");
   printf("  --u_max                         : Store max of ux, uy, uz\n");
   printf("  --u_min                         : Store min of ux, uy, uz\n");
@@ -152,41 +155,42 @@ void TCommandLineParameters::PrintSetup()
 {
   printf("List of enabled parameters:\n");
 
-  printf("  Input  file           %s\n", InputFileName.c_str());
-  printf("  Output file           %s\n", OutputFileName.c_str());
+  printf("  Input  file               %s\n", InputFileName.c_str());
+  printf("  Output file               %s\n", OutputFileName.c_str());
   printf("\n");
-  printf("  Number of threads     %d\n", NumberOfThreads);
-  printf("  Verbose interval[%%]  %d\n", VerboseInterval);
-  printf("  Compression level     %d\n", CompressionLevel);
+  printf("  Number of threads         %d\n", NumberOfThreads);
+  printf("  Verbose interval[%%]       %d\n", VerboseInterval);
+  printf("  Compression level         %d\n", CompressionLevel);
   printf("\n");
-  printf("  Benchmark flag        %d\n", BenchmarkFlag);
-  printf("  Benchmark time steps  %d\n", BenchmarkTimeStepsCount);
+  printf("  Benchmark flag            %d\n", BenchmarkFlag);
+  printf("  Benchmark time steps      %d\n", BenchmarkTimeStepsCount);
   printf("\n");
-  printf("  Checkpoint_file       %s\n", CheckpointFileName.c_str());
-  printf("  Checkpoint_interval   %d\n", CheckpointInterval);
+  printf("  Checkpoint_file           %s\n", CheckpointFileName.c_str());
+  printf("  Checkpoint_interval       %d\n", CheckpointInterval);
   printf("\n");
-  printf("  Store p_raw           %d\n", Store_p_raw);
-  printf("  Store p_rms           %d\n", Store_p_rms);
-  printf("  Store p_max           %d\n", Store_p_max);
-  printf("  Store p_min           %d\n", Store_p_min);
-  printf("  Store p_max_all       %d\n", Store_p_max_all);
-  printf("  Store p_min_all       %d\n", Store_p_min_all);
-  printf("  Store p_final         %d\n", Store_p_final);
+  printf("  Store p_raw               %d\n", Store_p_raw);
+  printf("  Store p_rms               %d\n", Store_p_rms);
+  printf("  Store p_max               %d\n", Store_p_max);
+  printf("  Store p_min               %d\n", Store_p_min);
+  printf("  Store p_max_all           %d\n", Store_p_max_all);
+  printf("  Store p_min_all           %d\n", Store_p_min_all);
+  printf("  Store p_final             %d\n", Store_p_final);
   printf("\n");
-  printf("  Store u_raw           %d\n", Store_u_raw);
-  printf("  Store u_rms           %d\n", Store_u_rms);
-  printf("  Store u_max           %d\n", Store_u_max);
-  printf("  Store u_min           %d\n", Store_u_min);
-  printf("  Store u_max_all       %d\n", Store_u_max_all);
-  printf("  Store u_min_all       %d\n", Store_u_min_all);
-  printf("  Store u_final         %d\n", Store_u_final);
+  printf("  Store u_raw               %d\n", Store_u_raw);
+  printf("  Store u_non_staggered_raw %d\n", Store_u_non_staggered_raw);
+  printf("  Store u_rms               %d\n", Store_u_rms);
+  printf("  Store u_max               %d\n", Store_u_max);
+  printf("  Store u_min               %d\n", Store_u_min);
+  printf("  Store u_max_all           %d\n", Store_u_max_all);
+  printf("  Store u_min_all           %d\n", Store_u_min_all);
+  printf("  Store u_final             %d\n", Store_u_final);
   printf("\n");
-  printf("  Store I_avg           %d\n", Store_I_avg);
-  printf("  Store I_max           %d\n", Store_I_max);
+  printf("  Store I_avg               %d\n", Store_I_avg);
+  printf("  Store I_max               %d\n", Store_I_max);
   printf("\n");
-  printf("  Copy sensor mask      %d\n", CopySensorMask);
+  printf("  Copy sensor mask          %d\n", CopySensorMask);
   printf("\n");
-  printf("  Collection begins at  %d\n", StartTimeStep + 1);
+  printf("  Collection begins at      %d\n", StartTimeStep + 1);
 }// end of PrintSetup
 //------------------------------------------------------------------------------
 
@@ -210,33 +214,34 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
 
   const struct option longOpts[] =
   {
-    { "benchmark", required_argument, NULL, 0},
-    { "help", no_argument, NULL, 'h'},
-    { "version", no_argument, NULL, 0},
+    { "benchmark",           required_argument, NULL, 0},
+    { "help",                no_argument, NULL, 'h'},
+    { "version",             no_argument, NULL, 0},
     { "checkpoint_file"    , required_argument, NULL, 0 },
     { "checkpoint_interval", required_argument, NULL, 0 },
 
-    { "p_raw", no_argument, NULL, 'p'},
-    { "p_rms", no_argument, NULL, 0},
-    { "p_max", no_argument, NULL, 0},
-    { "p_min", no_argument, NULL, 0},
-    { "p_max_all", no_argument, NULL, 0},
-    { "p_min_all", no_argument, NULL, 0},
-    { "p_final", no_argument, NULL, 0},
+    { "p_raw",               no_argument, NULL, 'p'},
+    { "p_rms",               no_argument, NULL, 0},
+    { "p_max",               no_argument, NULL, 0},
+    { "p_min",               no_argument, NULL, 0},
+    { "p_max_all",           no_argument, NULL, 0},
+    { "p_min_all",           no_argument, NULL, 0},
+    { "p_final",             no_argument, NULL, 0},
 
-    { "u_raw", no_argument, NULL, 'u'},
-    { "u_rms", no_argument, NULL, 0},
-    { "u_max", no_argument, NULL, 0},
-    { "u_min", no_argument, NULL, 0},
-    { "u_max_all", no_argument, NULL, 0},
-    { "u_min_all", no_argument, NULL, 0},
-    { "u_final", no_argument, NULL, 0},
+    { "u_raw",               no_argument, NULL, 'u'},
+    { "u_non_staggered_raw", no_argument, NULL, 0},
+    { "u_rms",               no_argument, NULL, 0},
+    { "u_max",               no_argument, NULL, 0},
+    { "u_min",               no_argument, NULL, 0},
+    { "u_max_all",           no_argument, NULL, 0},
+    { "u_min_all",           no_argument, NULL, 0},
+    { "u_final",             no_argument, NULL, 0},
 
-    { "I_avg", no_argument, NULL, 'I'},
-    { "I_max", no_argument, NULL, 0},
+    { "I_avg",               no_argument, NULL, 'I'},
+    { "I_max",               no_argument, NULL, 0},
 
-    { "copy_sensor_mask", no_argument, NULL, 0},
-    { NULL, no_argument, NULL, 0}
+    { "copy_sensor_mask",    no_argument, NULL, 0},
+    { NULL,                  no_argument, NULL, 0}
   };
 
 
@@ -383,6 +388,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           return;
         }
 
+        //-- pressure related flags
         else if (strcmp("p_rms", longOpts[longIndex].name) == 0)
         {
           Store_p_rms = true;
@@ -408,7 +414,11 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           Store_p_final = true;
         }
 
-
+        //-- velocity related flags
+        else if (strcmp("u_non_staggered_raw", longOpts[longIndex].name) == 0)
+        {
+          Store_u_non_staggered_raw = true;
+        }
         else if (strcmp("u_rms", longOpts[longIndex].name) == 0)
         {
           Store_u_rms = true;
@@ -488,7 +498,8 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
 
   if (!(Store_p_raw     || Store_p_rms     || Store_p_max   || Store_p_min ||
         Store_p_max_all || Store_p_min_all || Store_p_final ||
-        Store_u_raw     || Store_u_rms     || Store_u_max   || Store_u_min ||
+        Store_u_raw     || Store_u_non_staggered_raw        ||
+        Store_u_rms     || Store_u_max     || Store_u_min   ||
         Store_u_max_all || Store_u_min_all || Store_u_final ||
         Store_I_avg     || Store_I_max))
   {

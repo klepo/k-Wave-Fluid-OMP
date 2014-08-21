@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        08 December 2011, 16:34 (created)      \n
- *              07 July     2014, 16:38 (revised)
+ *              21 August   2014, 14:45 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -236,6 +236,8 @@ class TParameters {
 
     /// Is -u or --u_raw specified at the command line
     bool IsStore_u_raw()                const {return CommandLinesParameters.IsStore_u_raw();};
+    /// Is --u_non_staggered_raw set?
+    bool IsStore_u_non_staggered_raw()  const {return CommandLinesParameters.IsStore_u_non_staggered_raw();};
     /// Is --u_raw specified at the command line
     bool IsStore_u_rms()                const {return CommandLinesParameters.IsStore_u_rms();};
     /// Is --u_max specified at the command line
