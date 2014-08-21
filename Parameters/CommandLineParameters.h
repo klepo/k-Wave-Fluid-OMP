@@ -1,11 +1,14 @@
 /**
  * @file        CommandLineParameters.h
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
+ *
  * @brief       The header file containing the command line parameters
  *
- * @version     kspaceFirstOrder3D 2.14
+ * @version     kspaceFirstOrder3D 2.15
+ * 
  * @date        29 August 2012, 11:25 (created) \n
  *              07 July   2014, 13:30 (revised)
  *
@@ -117,7 +120,7 @@ Output flags:
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -202,7 +205,7 @@ class TCommandLineParameters {
     /// Is --u_raw set?
     bool IsStore_u_raw()                const {return Store_u_raw;};
     /// Is --u_rms set?
-    bool IsStore_u_rms()                const {return Store_u_rms;}; 
+    bool IsStore_u_rms()                const {return Store_u_rms;};
     /// Is --u_max set?
     bool IsStore_u_max()                const {return Store_u_max;};
     /// Is --u_min_all set?

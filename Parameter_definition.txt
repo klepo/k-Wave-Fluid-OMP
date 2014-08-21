@@ -1,12 +1,14 @@
 /**
  * @File        Parameter_definition.txt
  * @Author      Jiri Jaros
- * @Affiliation CECS,ANU, Australia
- * @Email       jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
  * 
  * @Comments    Parameter definition 
  * 
- * @Tool        kspaceFirstOrder3D 2.14
+ * @Tool        kspaceFirstOrder3D 2.15
+ *
  * @Created     29 August 2012
  * @LastModif   08 July 2012, 16:46
  * 
@@ -15,7 +17,7 @@
  *
  * @License: 
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org)
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  * 
  * This file is part of the k-Wave. k-Wave is free software: you can redistribute it 
  * and/or modify it under the terms of the GNU Lesser General Public License as 
