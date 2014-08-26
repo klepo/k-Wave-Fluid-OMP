@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        12 July     2012, 10:27  (created)\n
- *              08 July     2014, 13:41  (revised)
+ *              26 August   2014, 14:10  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -352,7 +352,25 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
   Get_FFT_X_temp().Create_FFT_Plan_3D_C2R(Get_p());
   Get_FFT_Y_temp().Create_FFT_Plan_3D_C2R(Get_p());
   Get_FFT_Z_temp().Create_FFT_Plan_3D_C2R(Get_p());
-}// end of PrepareData
+
+  // if necessary, create 1D shift plans.
+  // in this case, the matrix has a bit bigger dimensions to be able to store
+  // shifted matrices
+  if (TParameters::GetInstance()->IsStore_u_non_staggered_raw())
+  {
+    // X shifts
+    Get_FFT_shift_temp().Create_FFT_Plan_1DX_R2C(Get_p());
+    Get_FFT_shift_temp().Create_FFT_Plan_1DX_C2R(Get_p());
+
+    // Y shifts
+    Get_FFT_shift_temp().Create_FFT_Plan_1DY_R2C(Get_p());
+    Get_FFT_shift_temp().Create_FFT_Plan_1DY_C2R(Get_p());
+
+    // Z shifts
+    Get_FFT_shift_temp().Create_FFT_Plan_1DZ_R2C(Get_p());
+    Get_FFT_shift_temp().Create_FFT_Plan_1DZ_C2R(Get_p());
+  }// end u_non_staggered
+}// end of InitializeFFTWPlans
 //------------------------------------------------------------------------------
 
 

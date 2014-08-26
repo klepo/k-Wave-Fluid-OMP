@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        12 July     2012, 10:27   (created)\n
- *              07 July     2014, 15:40   (revised)
+ *              26 August   2014, 16:40   (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -279,6 +279,22 @@ class TKSpaceFirstOrder3DSolver
     Tuxyz_sgxyzMatrix& Get_uz_sgz()
     {
       return MatrixContainer.GetUxyz_sgxyzMatrix(uz_sgz);
+    };
+
+    /// Get the ux_shifted matrix from the container
+    Tuxyz_sgxyzMatrix& Get_ux_shifted()
+    {
+      return MatrixContainer.GetUxyz_sgxyzMatrix(ux_shifted);
+    };
+    /// Get the uy_shifted matrix from the container
+    Tuxyz_sgxyzMatrix& Get_uy_shifted()
+    {
+      return MatrixContainer.GetUxyz_sgxyzMatrix(uy_shifted);
+    };
+    /// Get the uz_shifted matrix from the container
+    Tuxyz_sgxyzMatrix& Get_uz_shifted()
+    {
+      return MatrixContainer.GetUxyz_sgxyzMatrix(uz_shifted);
     };
 
     /// Get the duxdx matrix from the container
@@ -559,7 +575,13 @@ class TKSpaceFirstOrder3DSolver
     };
     /// Get the FFT_Z_temp from the container
     TFFTWComplexMatrix& Get_FFT_Z_temp()
-    {return MatrixContainer.GetFFTWComplexMatrix(FFT_Z_temp);
+    {
+      return MatrixContainer.GetFFTWComplexMatrix(FFT_Z_temp);
+    };
+    /// Get the FFT_shift_temp the container
+    TFFTWComplexMatrix& Get_FFT_shift_temp()
+    {
+      return MatrixContainer.GetFFTWComplexMatrix(FFT_shift_temp);
     };
 
   private:

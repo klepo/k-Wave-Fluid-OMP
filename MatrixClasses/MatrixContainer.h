@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              08 July      2014, 16:19 (revised)
+ *              26 August    2014, 16:30 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -57,6 +57,7 @@ enum TMatrixID
     kappa, c2, p,
 
     ux_sgx,uy_sgy, uz_sgz,
+    ux_shifted, uy_shifted, uz_shifted,
     duxdx, duydy, duzdz,
     dxudxn    , dyudyn    , dzudzn,
     dxudxn_sgx, dyudyn_sgy, dzudzn_sgz,
@@ -98,7 +99,7 @@ enum TMatrixID
 
     //--------------Temporary matrices -------------//
     Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D,
-    FFT_X_temp, FFT_Y_temp, FFT_Z_temp
+    FFT_X_temp, FFT_Y_temp, FFT_Z_temp, FFT_shift_temp
 }; // enum TMatrixID
 //------------------------------------------------------------------------------
 
