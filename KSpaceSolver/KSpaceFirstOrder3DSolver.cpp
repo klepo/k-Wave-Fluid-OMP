@@ -344,14 +344,14 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
   }
 
   // create real to complex plans
-  Get_FFT_X_temp().CreateFFTPlan3D_R2C(Get_p());
-  Get_FFT_Y_temp().CreateFFTPlan3D_R2C(Get_p());
-  Get_FFT_Z_temp().CreateFFTPlan3D_R2C(Get_p());
+  Get_FFT_X_temp().Create_FFT_Plan_3D_R2C(Get_p());
+  Get_FFT_Y_temp().Create_FFT_Plan_3D_R2C(Get_p());
+  Get_FFT_Z_temp().Create_FFT_Plan_3D_R2C(Get_p());
 
   // create real to complex plans
-  Get_FFT_X_temp().CreateFFTPlan3D_C2R(Get_p());
-  Get_FFT_Y_temp().CreateFFTPlan3D_C2R(Get_p());
-  Get_FFT_Z_temp().CreateFFTPlan3D_C2R(Get_p());
+  Get_FFT_X_temp().Create_FFT_Plan_3D_C2R(Get_p());
+  Get_FFT_Y_temp().Create_FFT_Plan_3D_C2R(Get_p());
+  Get_FFT_Z_temp().Create_FFT_Plan_3D_C2R(Get_p());
 }// end of PrepareData
 //------------------------------------------------------------------------------
 
@@ -1029,9 +1029,9 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz(){
 
      } // parallel;
 
-   Get_FFT_X_temp().Compute_iFFT_3D_C2R(Get_duxdx());
-   Get_FFT_Y_temp().Compute_iFFT_3D_C2R(Get_duydy());
-   Get_FFT_Z_temp().Compute_iFFT_3D_C2R(Get_duzdz());
+   Get_FFT_X_temp().Compute_FFT_3D_C2R(Get_duxdx());
+   Get_FFT_Y_temp().Compute_FFT_3D_C2R(Get_duydy());
+   Get_FFT_Z_temp().Compute_FFT_3D_C2R(Get_duzdz());
 
    //-------------------------------------------------------------------------//
    //--------------------- Non linear grid -----------------------------------//
@@ -2037,8 +2037,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
         TRealMatrix& Absorb_tau_temp = Sum_du;
         TRealMatrix& Absorb_eta_temp = Sum_rhoxyz;
 
-        Get_FFT_X_temp().Compute_iFFT_3D_C2R(Absorb_tau_temp);
-        Get_FFT_Y_temp().Compute_iFFT_3D_C2R(Absorb_eta_temp);
+        Get_FFT_X_temp().Compute_FFT_3D_C2R(Absorb_tau_temp);
+        Get_FFT_Y_temp().Compute_FFT_3D_C2R(Absorb_eta_temp);
 
         Sum_Subterms_nonlinear(Absorb_tau_temp, Absorb_eta_temp, BonA_rho_rhoxyz);
     }else {
@@ -2081,8 +2081,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
         TRealMatrix& Absorb_tau_temp = Get_Temp_2_RS3D(); // override Sum_rho0_dx
         TRealMatrix& Absorb_eta_temp = Get_Temp_3_RS3D();
 
-        Get_FFT_X_temp().Compute_iFFT_3D_C2R(Absorb_tau_temp);
-        Get_FFT_Y_temp().Compute_iFFT_3D_C2R(Absorb_eta_temp);
+        Get_FFT_X_temp().Compute_FFT_3D_C2R(Absorb_tau_temp);
+        Get_FFT_Y_temp().Compute_FFT_3D_C2R(Absorb_eta_temp);
 
         Sum_Subterms_linear(Absorb_tau_temp, Absorb_eta_temp, Sum_rhoxyz);
     }else{
@@ -2113,9 +2113,9 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
                                Get_ddx_k_shift_pos(),Get_ddy_k_shift_pos(),Get_ddz_k_shift_pos()
                                );
 
-     Get_FFT_X_temp().Compute_iFFT_3D_C2R(Get_Temp_1_RS3D());
-     Get_FFT_Y_temp().Compute_iFFT_3D_C2R(Get_Temp_2_RS3D());
-     Get_FFT_Z_temp().Compute_iFFT_3D_C2R(Get_Temp_3_RS3D());
+     Get_FFT_X_temp().Compute_FFT_3D_C2R(Get_Temp_1_RS3D());
+     Get_FFT_Y_temp().Compute_FFT_3D_C2R(Get_Temp_2_RS3D());
+     Get_FFT_Z_temp().Compute_FFT_3D_C2R(Get_Temp_3_RS3D());
 
     #pragma omp parallel
     {

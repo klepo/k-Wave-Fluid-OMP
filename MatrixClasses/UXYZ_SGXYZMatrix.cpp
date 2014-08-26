@@ -56,7 +56,7 @@ using namespace std;
  */
 void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2(TRealMatrix& dt_rho0_sg, TFFTWComplexMatrix& FFT){
 
-    FFT.Compute_iFFT_3D_C2R(*this);
+    FFT.Compute_FFT_3D_C2R(*this);
 
 
     const float Divider = 1.0f/(2.0f *pTotalElementCount);
@@ -79,7 +79,7 @@ void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2(TRealMatrix& dt_rho0_sg
  * @param [in] FFT              - FFT matrix
  */
 void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2(float dt_rho_0_sgx, TFFTWComplexMatrix& FFT){
-    FFT.Compute_iFFT_3D_C2R(*this);
+    FFT.Compute_FFT_3D_C2R(*this);
 
 
     const float Divider = 1.0f/(2.0f *pTotalElementCount) * dt_rho_0_sgx;
@@ -106,7 +106,7 @@ void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x
 
 
 
-    FFT.Compute_iFFT_3D_C2R(*this);
+    FFT.Compute_FFT_3D_C2R(*this);
 
     const float Divider = 1.0f/(2.0f *pTotalElementCount) * dt_rho_0_sgx;
     //dt_rho0_sgx .* real...
@@ -142,7 +142,7 @@ void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y
 
 
 
-    FFT.Compute_iFFT_3D_C2R(*this);
+    FFT.Compute_FFT_3D_C2R(*this);
 
     const float Divider = 1.0f/(2.0f *pTotalElementCount) * dt_rho_0_sgy;
     //dt_rho0_sgx .* real...
@@ -180,7 +180,7 @@ void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z
 
 
 
-    FFT.Compute_iFFT_3D_C2R(*this);
+    FFT.Compute_FFT_3D_C2R(*this);
 
     const float Divider = 1.0f/(2.0f *pTotalElementCount) * dt_rho_0_sgz;
     //dt_rho0_sgx .* real...
