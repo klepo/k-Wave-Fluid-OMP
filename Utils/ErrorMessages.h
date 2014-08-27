@@ -8,7 +8,7 @@
  * @brief       The header file containing all error messages of the project
  *
  * @version     kspaceFirstOrder3D 2.15
- * 
+ *
  * @date        09 August   2011, 12:34      (created) \n
  *              07 July     2014, 13:52      (revised)
  *
@@ -129,6 +129,7 @@ const char * const Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion = "Error: In
 /// Command line parameters error message
 const char * const Parameters_ERR_FMT_WrongSensorMaskType = "Error: The sensor mask type specified in the input file is not supported! \n";
 
+const char * const Parameters_ERR_FMT_UNonStaggeredNotSupportedForFile10 = "Error: --u_non_staggered_raw is not supported along with the input file of the version 1.0! \n";
 
 //---------------------------------- FFTW Classes  -------------------------//
 /// FFTW error message

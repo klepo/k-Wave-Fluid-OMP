@@ -381,6 +381,21 @@ class TKSpaceFirstOrder3DSolver
       return MatrixContainer.GetComplexMatrix(ddz_k_shift_neg);
     };
 
+    /// Get the x_shift_neg_r matrix from the container
+    TComplexMatrix& Get_x_shift_neg_r()
+    {
+      return MatrixContainer.GetComplexMatrix(x_shift_neg_r);
+    };
+    /// Get the y_shift_neg_r from the container
+    TComplexMatrix& Get_y_shift_neg_r()
+    {
+      return MatrixContainer.GetComplexMatrix(y_shift_neg_r);
+    };
+    /// Get the y_shift_neg_r from the container
+    TComplexMatrix& Get_z_shift_neg_r()
+    {
+      return MatrixContainer.GetComplexMatrix(z_shift_neg_r);
+    };
 
     /// Get the pml_x_sgx matrix from the container
     TRealMatrix& Get_pml_x_sgx()

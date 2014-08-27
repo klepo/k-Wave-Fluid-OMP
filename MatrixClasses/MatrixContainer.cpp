@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        12 July     2012, 10:27  (created) \n
- *              26 August   2014, 16:40  (revised)
+ *              26 August   2014, 17:45  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -483,8 +483,6 @@ void TMatrixContainer::AddMatricesIntoContainer()
   }// uz_source_input
 
 
-
-
   //-- Nonlinear grid
   if (Params->Get_nonuniform_grid_flag()!= 0)
   {
@@ -496,6 +494,45 @@ void TMatrixContainer::AddMatricesIntoContainer()
     MatrixContainer[dyudyn_sgy].SetAllValues(NULL,TMatrixRecord::mdtReal, TDimensionSizes(1, FullDims.Y, 1), LOAD, NOCHECKPOINT, dyudyn_sgy_Name);
     MatrixContainer[dzudzn_sgz].SetAllValues(NULL,TMatrixRecord::mdtReal, TDimensionSizes(1 ,1, FullDims.Z), LOAD, NOCHECKPOINT, dzudzn_sgz_Name);
   }
+
+  //-- u_non_staggered_raw
+  if (Params->IsStore_u_non_staggered_raw())
+  {
+    TDimensionSizes ShiftDims = FullDims;
+    size_t X_2 = FullDims.X / 2 + 1;
+    size_t Y_2 = FullDims.Y / 2 + 1;
+    size_t Z_2 = FullDims.Z / 2 + 1;
+
+    if ((FullDims.X > FullDims.Y) && (FullDims.X > FullDims.Z))
+    { // X is the longest
+      ShiftDims.X = X_2;
+    }
+    else if ((FullDims.Y > FullDims.X) && (FullDims.Y > FullDims.Z))
+    { // Y is the longest
+      ShiftDims.Y = Y_2;
+    }
+    else if ((FullDims.Z > FullDims.X) && (FullDims.Z > FullDims.Y))
+    { // Z is the longest
+      ShiftDims.Z = Z_2;
+    }
+    else
+    { //all are the same
+      ShiftDims.X = X_2;
+    }
+
+    MatrixContainer[FFT_shift_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ShiftDims, NOLOAD, NOCHECKPOINT, "");
+
+    // these three are necessary only for u_non_staggered calculation now
+    MatrixContainer[ux_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, "");
+    MatrixContainer[uy_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, "");
+    MatrixContainer[uz_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, "");
+
+    // shifts from the input file
+    MatrixContainer[x_shift_neg_r].SetAllValues(NULL, TMatrixRecord::mdtComplex, TDimensionSizes(X_2, 1  , 1  ), LOAD, NOCHECKPOINT, x_shift_neg_r_Name);
+    MatrixContainer[y_shift_neg_r].SetAllValues(NULL, TMatrixRecord::mdtComplex, TDimensionSizes(1  , Y_2, 1  ), LOAD, NOCHECKPOINT, y_shift_neg_r_Name);
+    MatrixContainer[z_shift_neg_r].SetAllValues(NULL, TMatrixRecord::mdtComplex, TDimensionSizes(1  , 1  , Z_2), LOAD, NOCHECKPOINT, z_shift_neg_r_Name);
+  }// u_non_staggered
+
 
   //------------------------------------------------------------------------//
   //--------------------- Temporary matrices -------------------------------//
@@ -517,38 +554,6 @@ void TMatrixContainer::AddMatricesIntoContainer()
   MatrixContainer[FFT_X_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ReducedDims, NOLOAD, NOCHECKPOINT, "");
   MatrixContainer[FFT_Y_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ReducedDims, NOLOAD, NOCHECKPOINT, "");
   MatrixContainer[FFT_Z_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ReducedDims, NOLOAD, NOCHECKPOINT, "");
-
-
-  //-- u_non_staggered_raw
-  if (Params->IsStore_u_non_staggered_raw())
-  {
-    TDimensionSizes ShiftDims = FullDims;
-
-    if ((FullDims.X > FullDims.Y) && (FullDims.X > FullDims.Z))
-    { // X is the longest
-      ShiftDims.X = FullDims.X / 2 + 1;
-    }
-    else if ((FullDims.Y > FullDims.X) && (FullDims.Y > FullDims.Z))
-    { // Y is the longest
-      ShiftDims.Y = FullDims.Y / 2 + 1;
-    }
-    else if ((FullDims.Z > FullDims.X) && (FullDims.Z > FullDims.Y))
-    { // Z is the longest
-      ShiftDims.Z = FullDims.Z / 2 + 1;
-    }
-    else
-    { //all are the same
-      ShiftDims.X = FullDims.X / 2 + 1;
-    }
-
-    MatrixContainer[FFT_shift_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ShiftDims, NOLOAD, NOCHECKPOINT, "");
-
-    // these three are necessary only for u_non_staggered calculation now
-    MatrixContainer[ux_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, "");
-    MatrixContainer[uy_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, "");
-    MatrixContainer[uz_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, "");
-  }// u_non_staggered
-
 }// end of InitMatrixContainer
 //------------------------------------------------------------------------------
 

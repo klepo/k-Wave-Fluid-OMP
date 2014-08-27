@@ -69,7 +69,7 @@ enum TMatrixID
     p0_source_input, sensor_mask_index, sensor_mask_corners,
     ddx_k_shift_pos, ddy_k_shift_pos, ddz_k_shift_pos,
     ddx_k_shift_neg, ddy_k_shift_neg, ddz_k_shift_neg,
-
+    x_shift_neg_r, y_shift_neg_r, z_shift_neg_r,
     pml_x_sgx, pml_y_sgy, pml_z_sgz,
     pml_x    , pml_y    , pml_z,
 

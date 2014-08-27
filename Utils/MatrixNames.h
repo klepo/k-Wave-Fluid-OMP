@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        14 September 2012, 14:33      (created) \n
- *              08 July      2014, 15:27      (revised)
+ *              26 August    2014, 17:30      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -69,6 +69,13 @@ const char * const  Nx_Name                     = "Nx";
 const char * const  Ny_Name                     = "Ny";
 /// Nz variable name
 const char * const  Nz_Name                     = "Nz";
+
+/// x_shift_neg_r variable name
+const char * const x_shift_neg_r_Name           = "x_shift_neg_r";
+/// y_shift_neg_r variable name
+const char * const y_shift_neg_r_Name           = "y_shift_neg_r";
+/// z_shift_neg_r variable name
+const char * const z_shift_neg_r_Name           = "z_shift_neg_r";
 
 /// pml_x_size variable name
 const char * const  pml_x_size_Name             = "pml_x_size";

@@ -8,7 +8,7 @@
  * @brief       The implementation file containing parameters of the simulation
  *
  * @version     kspaceFirstOrder3D 2.15
- * 
+ *
  * @date        09 August 2012,   13:39 (created) \n
  *              07 July   2014,   16:38 (revised)
  *
@@ -206,6 +206,12 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_10)
   {
     sensor_mask_ind_size = HDF5_InputFile.GetDatasetElementCount(HDF5RootGroup, sensor_mask_index_Name);
+
+    //if -u_non_staggered_raw enabled, throw an error - not supported
+    if (IsStore_u_non_staggered_raw())
+    {
+      throw ios::failure(Parameters_ERR_FMT_UNonStaggeredNotSupportedForFile10);
+    }
   }
 
   // This is the current version 1.1
