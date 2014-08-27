@@ -194,6 +194,13 @@ const char * const  uy_sgy_Name         = "uy_sgy";
 /// uz_sgz variable name
 const char * const  uz_sgz_Name         = "uz_sgz";
 
+/// ux_non_staggered variable name
+const char * const  ux_non_staggered_Name = "ux_non_staggered";
+/// uy_non_staggered variable name
+const char * const  uy_non_staggered_Name = "uy_non_staggered";
+/// uz_non_staggered variable name
+const char * const  uz_non_staggered_Name = "uz_non_staggered";
+
 /// duxdx variable name
 const char * const  duxdx_Name          = "duxdx";
 /// duydy variable name

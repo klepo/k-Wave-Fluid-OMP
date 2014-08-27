@@ -87,6 +87,8 @@ enum TMatrixID
     ux_sensor_raw, uy_sensor_raw, uz_sensor_raw,
     ux_sensor_i_1_agr_2, uy_sensor_i_1_agr_2, uz_sensor_i_1_agr_2,// aggregated values form two points
 
+
+    ux_shifted_sensor_raw, uy_shifted_sensor_raw, uz_shifted_sensor_raw, //non_staggered
     ux_sensor_rms, uy_sensor_rms, uz_sensor_rms,
     ux_sensor_max, uy_sensor_max, uz_sensor_max,
     ux_sensor_min, uy_sensor_min, uz_sensor_min,

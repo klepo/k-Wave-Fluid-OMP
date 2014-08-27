@@ -697,6 +697,25 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                  TempBufferZ);
   }
 
+  if (Params->IsStore_u_non_staggered_raw())
+  {
+    OutputStreamContainer[ux_shifted_sensor_raw] = CreateNewOutputStream(MatrixContainer,
+                                                                         ux_shifted,
+                                                                         ux_non_staggered_Name,
+                                                                         TBaseOutputHDF5Stream::roNONE,
+                                                                         TempBufferX);
+    OutputStreamContainer[uy_shifted_sensor_raw] = CreateNewOutputStream(MatrixContainer,
+                                                                         uy_shifted,
+                                                                         uy_non_staggered_Name,
+                                                                         TBaseOutputHDF5Stream::roNONE,
+                                                                         TempBufferY);
+    OutputStreamContainer[uz_shifted_sensor_raw] = CreateNewOutputStream(MatrixContainer,
+                                                                         uz_shifted,
+                                                                         uz_non_staggered_Name,
+                                                                         TBaseOutputHDF5Stream::roNONE,
+                                                                         TempBufferZ);
+  }
+
   if (Params->IsStore_u_rms())
   {
     OutputStreamContainer[ux_sensor_rms] = CreateNewOutputStream(MatrixContainer,
