@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        12 July     2012, 10:27   (created)\n
- *              26 August   2014, 16:40   (revised)
+ *              27 August   2014, 12:50   (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -227,6 +227,8 @@ class TKSpaceFirstOrder3DSolver
     ///  Sum sub-terms for new p, linear lossless case
     void Sum_new_p_linear_lossless();
 
+    /// Calculate ux_shifted, uy_shifted and uz_shifted
+    void Calculate_shifted_velocity();
 
     /// Print progress statistics
     void PrintStatisitcs();

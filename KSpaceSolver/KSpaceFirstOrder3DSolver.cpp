@@ -2250,6 +2250,131 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
 
 
 /**
+ * Calculated shifted velocities.
+ *
+ * ux_shifted = real(ifft(bsxfun(@times, x_shift_neg, fft(ux_sgx, [], 1)), [], 1));
+ * uy_shifted = real(ifft(bsxfun(@times, y_shift_neg, fft(uy_sgy, [], 2)), [], 2));
+ * uz_shifted = real(ifft(bsxfun(@times, z_shift_neg, fft(uz_sgz, [], 3)), [], 3));
+ */
+void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
+{
+  const TFloatComplex * x_shift_neg_r  = (TFloatComplex *) Get_x_shift_neg_r().GetRawData();
+  const TFloatComplex * y_shift_neg_r  = (TFloatComplex *) Get_y_shift_neg_r().GetRawData();
+  const TFloatComplex * z_shift_neg_r  = (TFloatComplex *) Get_z_shift_neg_r().GetRawData();
+
+        TFloatComplex * FFT_shift_temp = (TFloatComplex *) Get_FFT_shift_temp().GetRawData();
+
+
+  // sizes of frequency spaces
+  TDimensionSizes XShiftDims = Parameters->GetFullDimensionSizes();
+                  XShiftDims.X = XShiftDims.X/2 + 1;
+
+  TDimensionSizes YShiftDims = Parameters->GetFullDimensionSizes();
+                  YShiftDims.Y = YShiftDims.Y/2 + 1;
+
+  TDimensionSizes ZShiftDims = Parameters->GetFullDimensionSizes();
+                  ZShiftDims.Z = ZShiftDims.Z/2 + 1;
+
+  // normalization constants for FFTs
+  const float DividerX = 1.0f / (float) Parameters->GetFullDimensionSizes().X;
+  const float DividerY = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
+  const float DividerZ = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
+
+  size_t i;
+
+  //-------------------------- ux_shifted --------------------------------------
+  Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
+  i = 0;
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < XShiftDims.Z; z++)
+  {
+    for (size_t y = 0; y < XShiftDims.Y; y++)
+    {
+      for (size_t x = 0; x < XShiftDims.X; x++)
+      {
+        TFloatComplex Temp;
+
+        Temp.real = ((FFT_shift_temp[i].real * x_shift_neg_r[x].real) -
+                     (FFT_shift_temp[i].imag * x_shift_neg_r[x].imag)
+                    ) * DividerX;
+
+
+        Temp.imag = ((FFT_shift_temp[i].imag * x_shift_neg_r[x].real) +
+                     (FFT_shift_temp[i].real * x_shift_neg_r[x].imag)
+                    ) * DividerX;
+
+        FFT_shift_temp[i] = Temp;
+
+        i++;
+      } // x
+    } // y
+  }//z
+  Get_FFT_shift_temp().Compute_FFT_1DX_C2R(Get_ux_shifted());
+
+
+  //-------------------------- uy_shifted --------------------------------------
+  Get_FFT_shift_temp().Compute_FFT_1DY_R2C(Get_uy_sgy());
+  i = 0;
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < YShiftDims.Z; z++)
+  {
+    for (size_t y = 0; y < YShiftDims.Y; y++)
+    {
+      for (size_t x = 0; x < YShiftDims.X; x++)
+      {
+        TFloatComplex Temp;
+
+        Temp.real = ((FFT_shift_temp[i].real * y_shift_neg_r[y].real) -
+                     (FFT_shift_temp[i].imag * y_shift_neg_r[y].imag)) *
+                      DividerY;
+
+
+        Temp.imag = ((FFT_shift_temp[i].imag * y_shift_neg_r[y].real) +
+                     (FFT_shift_temp[i].real * y_shift_neg_r[y].imag)
+                    ) * DividerY;
+
+        FFT_shift_temp[i] = Temp;
+
+        i++;
+      } // x
+    } // y
+  }//z
+  Get_FFT_shift_temp().Compute_FFT_1DY_C2R(Get_uy_shifted());
+
+
+  //-------------------------- uz_shifted --------------------------------------
+  Get_FFT_shift_temp().Compute_FFT_1DZ_R2C(Get_uz_sgz());
+  i = 0;
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < ZShiftDims.Z; z++)
+  {
+    for (size_t y = 0; y < ZShiftDims.Y; y++)
+    {
+      for (size_t x = 0; x < ZShiftDims.X; x++)
+      {
+        TFloatComplex Temp;
+
+        Temp.real = ((FFT_shift_temp[i].real * z_shift_neg_r[z].real) -
+                     (FFT_shift_temp[i].imag * z_shift_neg_r[z].imag)) *
+                      DividerZ;
+
+
+        Temp.imag = ((FFT_shift_temp[i].imag * z_shift_neg_r[z].real) +
+                     (FFT_shift_temp[i].real * z_shift_neg_r[z].imag)
+                    ) * DividerZ;
+
+        FFT_shift_temp[i] = Temp;
+
+        i++;
+      } // x
+    } // y
+  }//z
+  Get_FFT_shift_temp().Compute_FFT_1DZ_C2R(Get_uz_shifted());
+}// end of Calculate_shifted_velocity()
+//------------------------------------------------------------------------------
+
+
+/**
  * Compute the main time loop of KSpaceFirstOrder3D.
  *
  */
@@ -2431,8 +2556,14 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
 void TKSpaceFirstOrder3DSolver::StoreSensorData()
 {
   // Unless the time for sampling has come, exit
-  if (Parameters->Get_t_index() >= Parameters->GetStartTimeIndex()) OutputStreamContainer.SampleStreams();
-
+  if (Parameters->Get_t_index() >= Parameters->GetStartTimeIndex())
+  {
+    if (Parameters->IsStore_u_non_staggered_raw())
+    {
+      Calculate_shifted_velocity();
+    }
+    OutputStreamContainer.SampleStreams();
+  }
 }// end of StoreData
 //------------------------------------------------------------------------------
 
