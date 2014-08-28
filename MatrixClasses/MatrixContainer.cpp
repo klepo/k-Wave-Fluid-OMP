@@ -499,20 +499,25 @@ void TMatrixContainer::AddMatricesIntoContainer()
   if (Params->IsStore_u_non_staggered_raw())
   {
     TDimensionSizes ShiftDims = FullDims;
+
     size_t X_2 = FullDims.X / 2 + 1;
     size_t Y_2 = FullDims.Y / 2 + 1;
     size_t Z_2 = FullDims.Z / 2 + 1;
 
-    if ((FullDims.X > FullDims.Y) && (FullDims.X > FullDims.Z))
-    { // X is the longest
+    size_t XCutSize = X_2        * FullDims.Y * FullDims.Z;
+    size_t YCutSize = FullDims.X * Y_2        * FullDims.Z;
+    size_t ZCutSize = FullDims.X * FullDims.Y * Z_2;
+
+    if ((XCutSize >= YCutSize) && (XCutSize >= ZCutSize))
+    { // X cut is the biggest
       ShiftDims.X = X_2;
     }
-    else if ((FullDims.Y > FullDims.X) && (FullDims.Y > FullDims.Z))
-    { // Y is the longest
+    else if ((YCutSize >= XCutSize) && (YCutSize >= ZCutSize))
+    { // Y cut is the biggest
       ShiftDims.Y = Y_2;
     }
-    else if ((FullDims.Z > FullDims.X) && (FullDims.Z > FullDims.Y))
-    { // Z is the longest
+    else if ((ZCutSize >= XCutSize) && (ZCutSize >= YCutSize))
+    { // Z cut is the biggest
       ShiftDims.Z = Z_2;
     }
     else

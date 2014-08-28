@@ -2284,10 +2284,11 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
 
   //-------------------------- ux_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
-  i = 0;
+  
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < XShiftDims.Z; z++)
   {
+    i = z *  XShiftDims.Y * XShiftDims.X;
     for (size_t y = 0; y < XShiftDims.Y; y++)
     {
       for (size_t x = 0; x < XShiftDims.X; x++)
@@ -2308,16 +2309,17 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
         i++;
       } // x
     } // y
-  }//z
+  }//z*/
   Get_FFT_shift_temp().Compute_FFT_1DX_C2R(Get_ux_shifted());
 
 
   //-------------------------- uy_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DY_R2C(Get_uy_sgy());
-  i = 0;
+
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < YShiftDims.Z; z++)
   {
+    i = z *  YShiftDims.Y * YShiftDims.X;
     for (size_t y = 0; y < YShiftDims.Y; y++)
     {
       for (size_t x = 0; x < YShiftDims.X; x++)
@@ -2344,10 +2346,10 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
 
   //-------------------------- uz_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DZ_R2C(Get_uz_sgz());
-  i = 0;
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < ZShiftDims.Z; z++)
   {
+    i = z *  ZShiftDims.Y * ZShiftDims.X;
     for (size_t y = 0; y < ZShiftDims.Y; y++)
     {
       for (size_t x = 0; x < ZShiftDims.X; x++)

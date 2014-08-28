@@ -124,7 +124,7 @@ void TCommandLineParameters::PrintUsageAndExit()
   printf("                                      (the same as --u_raw)\n");
   printf("  --u_raw                         : Store raw time series of ux, uy, uz\n");
   printf("  --u_non_staggered_raw           : Store non-staggered raw time series of\n");
-  printf("                                      ux, uy, uz");
+  printf("                                      ux, uy, uz \n");
   printf("  --u_rms                         : Store rms of ux, uy, uz\n");
   printf("  --u_max                         : Store max of ux, uy, uz\n");
   printf("  --u_min                         : Store min of ux, uy, uz\n");
