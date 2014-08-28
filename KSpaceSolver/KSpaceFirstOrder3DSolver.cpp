@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        12 July     2012, 10:27  (created)\n
- *              28 August   2014, 15:45  (revised)
+ *              28 August   2014, 16:50  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -37,7 +37,7 @@
 #endif
 #include <sys/resource.h>
 #include <immintrin.h>
-#include <math.h>
+#include <cmath>
 #include <time.h>
 #include <sstream>
 #include <cstdio>
@@ -450,65 +450,56 @@ void TKSpaceFirstOrder3DSolver::PreProcessingPhase(){
  * lossless mode.
  *
  */
-void TKSpaceFirstOrder3DSolver::Generate_kappa(){
+void TKSpaceFirstOrder3DSolver::Generate_kappa()
+{
+  #pragma omp parallel
+  {
+    const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
+    const float dy_sq_rec = 1.0f / (Parameters->Get_dy()*Parameters->Get_dy());
+    const float dz_sq_rec = 1.0f / (Parameters->Get_dz()*Parameters->Get_dz());
 
-    #pragma omp parallel
+    const float c_ref_dt_pi = Parameters->Get_c_ref() * Parameters->Get_dt() * float(M_PI);
+
+    const float Nx_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().X;
+    const float Ny_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
+    const float Nz_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
+
+
+    const size_t X_Size  = Parameters->GetReducedDimensionSizes().X;
+    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().Y;
+    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().Z;
+
+    float * kappa = Get_kappa().GetRawData();
+
+    #pragma omp for schedule (static)
+    for (size_t z = 0; z < Z_Size; z++)
     {
+      const float z_f = (float) z;
+      float z_part = 0.5f - fabs(0.5f - z_f * Nz_rec );
+      z_part = (z_part * z_part) * dz_sq_rec;
 
-        const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
-        const float dy_sq_rec = 1.0f / (Parameters->Get_dy()*Parameters->Get_dy());
-        const float dz_sq_rec = 1.0f / (Parameters->Get_dz()*Parameters->Get_dz());
+      for (size_t y = 0; y < Y_Size; y++)
+      {
+        const float y_f = (float) y;
+        float y_part = 0.5f - fabs(0.5f - y_f * Ny_rec);
+        y_part = (y_part * y_part) * dy_sq_rec;
 
-        const float c_ref_dt_pi = Parameters->Get_c_ref() * Parameters->Get_dt() * float(M_PI);
+        const float yz_part = z_part + y_part;
+        for (size_t x = 0; x < X_Size; x++)
+        {
+          const float x_f = (float) x;
+          float x_part = 0.5f - fabs(0.5f - x_f * Nx_rec);
+          x_part = (x_part * x_part) * dx_sq_rec;
 
-        const float Nx_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().X;
-        const float Ny_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
-        const float Nz_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
+          float  k = c_ref_dt_pi * sqrtf(x_part + yz_part);
 
+          // kappa element
+          kappa[(z*Y_Size + y) * X_Size + x ] = (k == 0.0f) ? 1.0f : sin(k)/k;
 
-        const size_t X_Size  = Parameters->GetReducedDimensionSizes().X;
-        const size_t Y_Size  = Parameters->GetReducedDimensionSizes().Y;
-        const size_t Z_Size  = Parameters->GetReducedDimensionSizes().Z;
-
-
-        float * kappa = Get_kappa().GetRawData();
-
-        #pragma omp for schedule (static)
-        for (size_t z = 0; z < Z_Size; z++){
-
-            const float z_f = (float) z;
-            float z_part = 0.5f - fabsf(0.5f - z_f * Nz_rec );
-                  z_part = (z_part * z_part) * dz_sq_rec;
-
-
-            for (size_t y = 0; y < Y_Size; y++){
-
-                const float y_f = (float) y;
-                      float y_part = 0.5f - fabsf(0.5f - y_f * Ny_rec);
-                            y_part = (y_part * y_part) * dy_sq_rec;
-
-                const float yz_part = z_part + y_part;
-                for (size_t x = 0; x < X_Size; x++){
-
-                    const float x_f = (float) x;
-                          float x_part = 0.5f - fabsf(0.5f - x_f * Nx_rec);
-                                x_part = (x_part * x_part) * dx_sq_rec;
-
-                         float  k = c_ref_dt_pi * sqrtf(x_part + yz_part);
-
-                         // kappa element
-                         kappa[(z*Y_Size + y) * X_Size + x ] = (k == 0.0f) ? 1.0f : sinf(k)/k;
-
-                }//x
-
-            }//y
-        }// z
-
-
-
-    }// parallel
-
-
+        }//x
+      }//y
+    }// z
+  }// parallel
 }// end of GenerateKappa
 //------------------------------------------------------------------------------
 
@@ -517,176 +508,158 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa(){
  * absorbing media.
  *
  */
-void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2(){
+void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2()
+{
+  #pragma omp parallel
+  {
+    const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
+    const float dy_sq_rec = 1.0f / (Parameters->Get_dy()*Parameters->Get_dy());
+    const float dz_sq_rec = 1.0f / (Parameters->Get_dz()*Parameters->Get_dz());
 
+    const float c_ref_dt_2 = Parameters->Get_c_ref() * Parameters->Get_dt() * 0.5f;
+    const float pi_2       = float(M_PI) * 2.0f;
 
-    #pragma omp parallel
+    const size_t Nx = Parameters->GetFullDimensionSizes().X;
+    const size_t Ny = Parameters->GetFullDimensionSizes().Y;
+    const size_t Nz = Parameters->GetFullDimensionSizes().Z;
+
+    const float Nx_rec   = 1.0f / (float) Nx;
+    const float Ny_rec   = 1.0f / (float) Ny;
+    const float Nz_rec   = 1.0f / (float) Nz;
+
+    const size_t X_Size  = Parameters->GetReducedDimensionSizes().X;
+    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().Y;
+    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().Z;
+
+    float * kappa           = Get_kappa().GetRawData();
+    float * absorb_nabla1   = Get_absorb_nabla1().GetRawData();
+    float * absorb_nabla2   = Get_absorb_nabla2().GetRawData();
+    const float alpha_power = Parameters->Get_alpha_power();
+
+    #pragma omp for schedule (static)
+    for (size_t z = 0; z < Z_Size; z++)
     {
+      const float z_f = (float) z;
+      float z_part = 0.5f - fabs(0.5f - z_f * Nz_rec );
+      z_part = (z_part * z_part) * dz_sq_rec;
 
-        const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
-        const float dy_sq_rec = 1.0f / (Parameters->Get_dy()*Parameters->Get_dy());
-        const float dz_sq_rec = 1.0f / (Parameters->Get_dz()*Parameters->Get_dz());
+      for (size_t y = 0; y < Y_Size; y++)
+      {
+        const float y_f = (float) y;
+        float y_part = 0.5f - fabs(0.5f - y_f * Ny_rec);
+        y_part = (y_part * y_part) * dy_sq_rec;
 
+        const float yz_part = z_part + y_part;
 
-        const float c_ref_dt_2 = Parameters->Get_c_ref() * Parameters->Get_dt() * 0.5f;
-        const float pi_2       = float(M_PI) * 2.0f;
+        size_t i = (z*Y_Size + y) * X_Size;
 
-        const size_t Nx = Parameters->GetFullDimensionSizes().X;
-        const size_t Ny = Parameters->GetFullDimensionSizes().Y;
-        const size_t Nz = Parameters->GetFullDimensionSizes().Z;
+        for (size_t x = 0; x < X_Size; x++)
+        {
+          const float x_f = (float) x;
 
-        const float Nx_rec   = 1.0f / (float) Nx;
-        const float Ny_rec   = 1.0f / (float) Ny;
-        const float Nz_rec   = 1.0f / (float) Nz;
-
-
-
-        const size_t X_Size  = Parameters->GetReducedDimensionSizes().X;
-        const size_t Y_Size  = Parameters->GetReducedDimensionSizes().Y;
-        const size_t Z_Size  = Parameters->GetReducedDimensionSizes().Z;
+          float x_part = 0.5f - fabs(0.5f - x_f * Nx_rec);
+          x_part = (x_part * x_part) * dx_sq_rec;
 
 
+          float  k         = pi_2 * sqrt(x_part + yz_part);
+          float  c_ref_k   = c_ref_dt_2 * k;
 
-        float * kappa           = Get_kappa().GetRawData();
-        float * absorb_nabla1   = Get_absorb_nabla1().GetRawData();
-        float * absorb_nabla2   = Get_absorb_nabla2().GetRawData();
-        const float alpha_power = Parameters->Get_alpha_power();
+          absorb_nabla1[i] = pow(k, alpha_power - 2);
+          absorb_nabla2[i] = pow(k, alpha_power - 1);
 
+          kappa[i]         =  (c_ref_k == 0.0f) ? 1.0f : sin(c_ref_k)/c_ref_k;
 
-        #pragma omp for schedule (static)
-        for (size_t z = 0; z < Z_Size; z++){
+          if (absorb_nabla1[i] == INFINITY) absorb_nabla1[i] = 0.0f;
+          if (absorb_nabla2[i] == INFINITY) absorb_nabla2[i] = 0.0f;
 
-                 const float z_f = (float) z;
-            float z_part = 0.5f - fabsf(0.5f - z_f * Nz_rec );
-                  z_part = (z_part * z_part) * dz_sq_rec;
-
-            for (size_t y = 0; y < Y_Size; y++){
-
-                const float y_f = (float) y;
-                      float y_part = 0.5f - fabsf(0.5f - y_f * Ny_rec);
-                            y_part = (y_part * y_part) * dy_sq_rec;
-
-                const float yz_part = z_part + y_part;
-
-
-                size_t i = (z*Y_Size + y) * X_Size;
-
-                for (size_t x = 0; x < X_Size; x++){
-                     const float x_f = (float) x;
-
-                         float x_part = 0.5f - fabsf(0.5f - x_f * Nx_rec);
-                               x_part = (x_part * x_part) * dx_sq_rec;
-
-
-                         float  k         = pi_2 * sqrtf(x_part + yz_part);
-                         float  c_ref_k   = c_ref_dt_2 * k;
-
-                         absorb_nabla1[i] = powf(k, alpha_power - 2);
-                         absorb_nabla2[i] = powf(k, alpha_power - 1);
-
-                         kappa[i]         =  (c_ref_k == 0.0f) ? 1.0f : sinf(c_ref_k)/c_ref_k;
-
-
-
-                         if (absorb_nabla1[i] == INFINITY) absorb_nabla1[i] = 0.0f;
-                         if (absorb_nabla2[i] == INFINITY) absorb_nabla2[i] = 0.0f;
-
-                         i++;
-                }//x
-
-            }//y
-        }// z
-
-
-
-    }// parallel
-
+          i++;
+        }//x
+      }//y
+    }// z
+  }// parallel
 }// end of Generate_kappa_absorb_nabla1_absorb_nabla2
 //------------------------------------------------------------------------------
 
 /**
  * Generate absorb_tau and absorb_eta in for heterogenous media.
  */
-void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix(){
+void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
+{
+  // test for scalars
+  if ((Parameters->Get_alpha_coeff_scallar_flag()) && (Parameters->Get_c0_scalar_flag()))
+  {
+    const float alpha_power = Parameters->Get_alpha_power();
+    const float tan_pi_y_2  = tan(float(M_PI_2)* alpha_power);
+    const float alpha_db_neper_coeff = (100.0f * pow(1.0e-6f / (2.0f * (float) M_PI), alpha_power)) /
+                                       (20.0f * (float) M_LOG10E);
 
+    const float alpha_coeff_2 = 2.0f * Parameters->Get_alpha_coeff_scallar() * alpha_db_neper_coeff;
 
-    // test for scalars
-    if ((Parameters->Get_alpha_coeff_scallar_flag()) && (Parameters->Get_c0_scalar_flag())){
+    Parameters->Get_absorb_tau_scalar() =  (-alpha_coeff_2) * pow(Parameters->Get_c0_scalar(),alpha_power-1);
+    Parameters->Get_absorb_eta_scalar() =    alpha_coeff_2  * pow(Parameters->Get_c0_scalar(),alpha_power) * tan_pi_y_2;
+  }
+  else
+  {
+    #pragma omp parallel
+    {
+      const size_t Z_Size  = Parameters->GetFullDimensionSizes().Z;
+      const size_t Y_Size  = Parameters->GetFullDimensionSizes().Y;
+      const size_t X_Size  = Parameters->GetFullDimensionSizes().X;
 
-          const float alpha_power = Parameters->Get_alpha_power();
-          const float tan_pi_y_2  = tanf(float(M_PI_2)* alpha_power);
-          const float alpha_db_neper_coeff = (100.0f * powf(1.0e-6f / (2.0f * (float) M_PI), alpha_power)) /
-                                             (20.0f * (float) M_LOG10E);
+      float * absorb_tau = Get_absorb_tau().GetRawData();
+      float * absorb_eta = Get_absorb_eta().GetRawData();
 
-         const float alpha_coeff_2 = 2.0f * Parameters->Get_alpha_coeff_scallar() * alpha_db_neper_coeff;
+      float * alpha_coeff;
+      size_t  alpha_shift;
 
-         Parameters->Get_absorb_tau_scalar() =  (-alpha_coeff_2) * powf(Parameters->Get_c0_scalar(),alpha_power-1);
-         Parameters->Get_absorb_eta_scalar() =    alpha_coeff_2  * powf(Parameters->Get_c0_scalar(),alpha_power) * tan_pi_y_2;
+      if (Parameters->Get_alpha_coeff_scallar_flag())
+      {
+        alpha_coeff = &(Parameters->Get_alpha_coeff_scallar());
+        alpha_shift = 0;
+      }else
+      {
+        alpha_coeff = Get_Temp_1_RS3D().GetRawData();
+        alpha_shift = 1;
+      }
 
-    }
-    else {
+      float * c0;
+      size_t  c0_shift;
+      if (Parameters->Get_c0_scalar_flag())
+      {
+        c0 = &(Parameters->Get_c0_scalar());
+        c0_shift = 0;
+      }
+      else
+      {
+        c0 = Get_c2().GetRawData();
+        c0_shift = 1;
+      }
 
-        #pragma omp parallel
+      const float alpha_power = Parameters->Get_alpha_power();
+      const float tan_pi_y_2  = tan(float(M_PI_2)* alpha_power);
+
+      //alpha = 100*alpha.*(1e-6/(2*pi)).^y./
+      //                  (20*log10(exp(1)));
+      const float alpha_db_neper_coeff = (100.0f * pow(1.0e-6f / (2.0f * (float) M_PI), alpha_power)) /
+                                         (20.0f * (float) M_LOG10E);
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < Z_Size; z++)
+      {
+        for (size_t y = 0; y < Y_Size; y++)
         {
-
-
-            const size_t Z_Size  = Parameters->GetFullDimensionSizes().Z;
-            const size_t Y_Size  = Parameters->GetFullDimensionSizes().Y;
-            const size_t X_Size  = Parameters->GetFullDimensionSizes().X;
-
-            float * absorb_tau = Get_absorb_tau().GetRawData();
-            float * absorb_eta = Get_absorb_eta().GetRawData();
-
-
-            float * alpha_coeff;
-            size_t  alpha_shift;
-
-            if (Parameters->Get_alpha_coeff_scallar_flag()) {
-                alpha_coeff = &(Parameters->Get_alpha_coeff_scallar());
-                alpha_shift = 0;
-            }else {
-                alpha_coeff = Get_Temp_1_RS3D().GetRawData();
-                alpha_shift = 1;
-            }
-
-
-            float * c0;
-            size_t  c0_shift;
-            if (Parameters->Get_c0_scalar_flag()) {
-                c0 = &(Parameters->Get_c0_scalar());
-                c0_shift = 0;
-            }else {
-                c0 = Get_c2().GetRawData();
-                c0_shift = 1;
-            }
-
-
-            const float alpha_power = Parameters->Get_alpha_power();
-            const float tan_pi_y_2  = tanf(float(M_PI_2)* alpha_power);
-
-            //alpha = 100*alpha.*(1e-6/(2*pi)).^y./
-            //                  (20*log10(exp(1)));
-            const float alpha_db_neper_coeff = (100.0f * powf(1.0e-6f / (2.0f * (float) M_PI), alpha_power)) /
-                                               (20.0f * (float) M_LOG10E);
-
-            #pragma omp for schedule (static)
-            for (size_t z = 0; z < Z_Size; z++){
-                for (size_t y = 0; y < Y_Size; y++){
-                    size_t i = (z*Y_Size + y) * X_Size;
-                    for (size_t x = 0; x < X_Size; x++){
-
-                        const float alpha_coeff_2 = 2.0f * alpha_coeff[i * alpha_shift] * alpha_db_neper_coeff;
-                        absorb_tau[i] = (-alpha_coeff_2) * powf(c0[i * c0_shift],alpha_power-1);
-                        absorb_eta[i] =   alpha_coeff_2  * powf(c0[i * c0_shift],alpha_power) * tan_pi_y_2;
-                        i++;
-
-                    }//x
-
-                }//y
-            }// z
-        }// parallel
-    } // absorb_tau and aborb_eta = matrics
-
+          size_t i = (z*Y_Size + y) * X_Size;
+          for (size_t x = 0; x < X_Size; x++)
+          {
+            const float alpha_coeff_2 = 2.0f * alpha_coeff[i * alpha_shift] * alpha_db_neper_coeff;
+            absorb_tau[i] = (-alpha_coeff_2) * pow(c0[i * c0_shift],alpha_power-1);
+            absorb_eta[i] =   alpha_coeff_2  * pow(c0[i * c0_shift],alpha_power) * tan_pi_y_2;
+            i++;
+          }//x
+        }//y
+      }// z
+    }// parallel
+  } // absorb_tau and aborb_eta = matrics
 }// end of Generate_absorb_tau_absorb_eta_matrix
 //------------------------------------------------------------------------------
 
