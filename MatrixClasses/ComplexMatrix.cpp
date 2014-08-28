@@ -1,30 +1,32 @@
 /**
  * @file        ComplexMatrix.cpp
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au   \n
- * 
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
+ *
  * @brief       The implementation file with the class for complex matrices
- * 
- * @version     kspaceFirstOrder3D 2.14
+ *
+ * @version     kspaceFirstOrder3D 2.15
+ *
  * @date        11 July 2011, 14:02      (created) \n
  *              20 June 2014, 15:23      (revised)
- * 
+ *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
- * 
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it 
- * and/or modify it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 3 of the License, 
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
+ *
+ * This file is part of k-Wave. k-Wave is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- * 
- * k-Wave is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
- * See the GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
+ *
+ * k-Wave is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -50,10 +52,10 @@
 
 /**
  * Constructor
- * @param [in] DimensionSizes - Dimension sizes 
+ * @param [in] DimensionSizes - Dimension sizes
  */
 
-TComplexMatrix::TComplexMatrix(struct TDimensionSizes DimensionSizes) 
+TComplexMatrix::TComplexMatrix(struct TDimensionSizes DimensionSizes)
                   : TBaseFloatMatrix()
 {
 
@@ -66,12 +68,12 @@ TComplexMatrix::TComplexMatrix(struct TDimensionSizes DimensionSizes)
 
 /**
  * Read data from HDF5 file (do some basic checks). Only from the root group
- * \throw ios::failure when there is a problem 
- * 
+ * \throw ios::failure when there is a problem
+ *
  * @param [in] HDF5_File   - HDF5 file
- * @param [in] MatrixName  - HDF5 dataset name 
+ * @param [in] MatrixName  - HDF5 dataset name
  */
-void TComplexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File, 
+void TComplexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
                                           const char * MatrixName)
 {
 
@@ -131,12 +133,12 @@ void TComplexMatrix::InitDimensions(struct TDimensionSizes DimensionSizes)
 /**
  * Write data to HDF5 file (only from the root group)
  * \throw an exception what the operation fails
- * 
+ *
  * @param HDF5_File             - HDF5 file hande
  * @param MatrixName            - HDF5 dataset name
  * @param CompressionLevel      - Compression level for the dataset
  */
-void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File, 
+void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                          const char * MatrixName,
                                          const int CompressionLevel)
 {
@@ -148,24 +150,24 @@ void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
   ComplexDims.Z = 1;
 
 
-  hid_t HDF5_Dataset_id = HDF5_File.CreateFloatDataset(HDF5_File.GetRootGroup(), 
-                                                       MatrixName, 
-                                                       ComplexDims, 
-                                                       Chunks, 
+  hid_t HDF5_Dataset_id = HDF5_File.CreateFloatDataset(HDF5_File.GetRootGroup(),
+                                                       MatrixName,
+                                                       ComplexDims,
+                                                       Chunks,
                                                        CompressionLevel);
-  
-  HDF5_File.WriteHyperSlab(HDF5_Dataset_id, 
-                           TDimensionSizes(0, 0, 0), 
-                           pDimensionSizes, 
+
+  HDF5_File.WriteHyperSlab(HDF5_Dataset_id,
+                           TDimensionSizes(0, 0, 0),
+                           pDimensionSizes,
                            pMatrixData);
   HDF5_File.CloseDataset(HDF5_Dataset_id);
 
 
-  HDF5_File.WriteMatrixDataType(HDF5_File.GetRootGroup(), 
-                                MatrixName, 
+  HDF5_File.WriteMatrixDataType(HDF5_File.GetRootGroup(),
+                                MatrixName,
                                 THDF5_File::hdf5_mdt_float);
-  
-  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(), 
+
+  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
                                   MatrixName,
                                   THDF5_File::hdf5_mdt_complex);
 }// end of WriteDataToHDF5File

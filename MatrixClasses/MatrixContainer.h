@@ -1,18 +1,20 @@
 /**
  * @file        MatrixContainer.h
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
  *
  * @brief       The header file containing the matrix container
  *
- * @version     kspaceFirstOrder3D 2.14
+ * @version     kspaceFirstOrder3D 2.15
+ *
  * @date        14 September 2012, 14:33 (created) \n
- *              08 July      2014, 16:19 (revised)
+ *              26 August    2014, 16:30 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -55,6 +57,7 @@ enum TMatrixID
     kappa, c2, p,
 
     ux_sgx,uy_sgy, uz_sgz,
+    ux_shifted, uy_shifted, uz_shifted,
     duxdx, duydy, duzdz,
     dxudxn    , dyudyn    , dzudzn,
     dxudxn_sgx, dyudyn_sgy, dzudzn_sgz,
@@ -66,7 +69,7 @@ enum TMatrixID
     p0_source_input, sensor_mask_index, sensor_mask_corners,
     ddx_k_shift_pos, ddy_k_shift_pos, ddz_k_shift_pos,
     ddx_k_shift_neg, ddy_k_shift_neg, ddz_k_shift_neg,
-
+    x_shift_neg_r, y_shift_neg_r, z_shift_neg_r,
     pml_x_sgx, pml_y_sgy, pml_z_sgz,
     pml_x    , pml_y    , pml_z,
 
@@ -84,6 +87,8 @@ enum TMatrixID
     ux_sensor_raw, uy_sensor_raw, uz_sensor_raw,
     ux_sensor_i_1_agr_2, uy_sensor_i_1_agr_2, uz_sensor_i_1_agr_2,// aggregated values form two points
 
+
+    ux_shifted_sensor_raw, uy_shifted_sensor_raw, uz_shifted_sensor_raw, //non_staggered
     ux_sensor_rms, uy_sensor_rms, uz_sensor_rms,
     ux_sensor_max, uy_sensor_max, uz_sensor_max,
     ux_sensor_min, uy_sensor_min, uz_sensor_min,
@@ -96,7 +101,7 @@ enum TMatrixID
 
     //--------------Temporary matrices -------------//
     Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D,
-    FFT_X_temp, FFT_Y_temp, FFT_Z_temp
+    FFT_X_temp, FFT_Y_temp, FFT_Z_temp, FFT_shift_temp
 }; // enum TMatrixID
 //------------------------------------------------------------------------------
 

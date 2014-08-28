@@ -1,19 +1,22 @@
 /**
  * @file        main.cpp
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
+ *
  * @brief       The main file
  *
- * @version     kspaceFirstOrder3D 2.14
+ * @version     kspaceFirstOrder3D 2.15
+ *
  * @date        11 July     2012, 10:57 (created) \n
- *              09 July     2014, 17:00 (revised)
+ *              21 August   2014, 14:30 (revised)
  *
  *
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -246,6 +249,8 @@ Output flags:
   -u                              : Store ux, uy, uz
                                       (the same as --u_raw)
   --u_raw                         : Store raw time series of ux, uy, uz
+  --u_non_staggered_raw           : Store non-staggered raw time series of
+                                      ux, uy, uz
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
   --u_min                         : Store min of ux, uy, uz

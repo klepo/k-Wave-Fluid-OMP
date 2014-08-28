@@ -1,17 +1,21 @@
 /**
  * @file        KSpaceFirstOrder3DSolver.h
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
+ *
  * @brief       The header file containing the main class of the project
  *              responsible for the entire simulation.
- * @version     kspaceFirstOrder3D 2.14
+ *
+ * @version     kspaceFirstOrder3D 2.15
+ *
  * @date        12 July     2012, 10:27   (created)\n
- *              07 July     2014, 15:40   (revised)
+ *              27 August   2014, 12:50   (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby.
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -223,6 +227,8 @@ class TKSpaceFirstOrder3DSolver
     ///  Sum sub-terms for new p, linear lossless case
     void Sum_new_p_linear_lossless();
 
+    /// Calculate ux_shifted, uy_shifted and uz_shifted
+    void Calculate_shifted_velocity();
 
     /// Print progress statistics
     void PrintStatisitcs();
@@ -275,6 +281,22 @@ class TKSpaceFirstOrder3DSolver
     Tuxyz_sgxyzMatrix& Get_uz_sgz()
     {
       return MatrixContainer.GetUxyz_sgxyzMatrix(uz_sgz);
+    };
+
+    /// Get the ux_shifted matrix from the container
+    Tuxyz_sgxyzMatrix& Get_ux_shifted()
+    {
+      return MatrixContainer.GetUxyz_sgxyzMatrix(ux_shifted);
+    };
+    /// Get the uy_shifted matrix from the container
+    Tuxyz_sgxyzMatrix& Get_uy_shifted()
+    {
+      return MatrixContainer.GetUxyz_sgxyzMatrix(uy_shifted);
+    };
+    /// Get the uz_shifted matrix from the container
+    Tuxyz_sgxyzMatrix& Get_uz_shifted()
+    {
+      return MatrixContainer.GetUxyz_sgxyzMatrix(uz_shifted);
     };
 
     /// Get the duxdx matrix from the container
@@ -361,6 +383,21 @@ class TKSpaceFirstOrder3DSolver
       return MatrixContainer.GetComplexMatrix(ddz_k_shift_neg);
     };
 
+    /// Get the x_shift_neg_r matrix from the container
+    TComplexMatrix& Get_x_shift_neg_r()
+    {
+      return MatrixContainer.GetComplexMatrix(x_shift_neg_r);
+    };
+    /// Get the y_shift_neg_r from the container
+    TComplexMatrix& Get_y_shift_neg_r()
+    {
+      return MatrixContainer.GetComplexMatrix(y_shift_neg_r);
+    };
+    /// Get the y_shift_neg_r from the container
+    TComplexMatrix& Get_z_shift_neg_r()
+    {
+      return MatrixContainer.GetComplexMatrix(z_shift_neg_r);
+    };
 
     /// Get the pml_x_sgx matrix from the container
     TRealMatrix& Get_pml_x_sgx()
@@ -555,7 +592,13 @@ class TKSpaceFirstOrder3DSolver
     };
     /// Get the FFT_Z_temp from the container
     TFFTWComplexMatrix& Get_FFT_Z_temp()
-    {return MatrixContainer.GetFFTWComplexMatrix(FFT_Z_temp);
+    {
+      return MatrixContainer.GetFFTWComplexMatrix(FFT_Z_temp);
+    };
+    /// Get the FFT_shift_temp the container
+    TFFTWComplexMatrix& Get_FFT_shift_temp()
+    {
+      return MatrixContainer.GetFFTWComplexMatrix(FFT_shift_temp);
     };
 
   private:

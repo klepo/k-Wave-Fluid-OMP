@@ -1,18 +1,19 @@
 /**
  * @file        MatrixNames.h
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
  *
  * @brief       The header file storing names of all variables
  *
- * @version     kspaceFirstOrder3D 2.14
+ * @version     kspaceFirstOrder3D 2.15
  * @date        14 September 2012, 14:33      (created) \n
- *              08 July      2014, 15:27      (revised)
+ *              26 August    2014, 17:30      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -68,6 +69,13 @@ const char * const  Nx_Name                     = "Nx";
 const char * const  Ny_Name                     = "Ny";
 /// Nz variable name
 const char * const  Nz_Name                     = "Nz";
+
+/// x_shift_neg_r variable name
+const char * const x_shift_neg_r_Name           = "x_shift_neg_r";
+/// y_shift_neg_r variable name
+const char * const y_shift_neg_r_Name           = "y_shift_neg_r";
+/// z_shift_neg_r variable name
+const char * const z_shift_neg_r_Name           = "z_shift_neg_r";
 
 /// pml_x_size variable name
 const char * const  pml_x_size_Name             = "pml_x_size";
@@ -185,6 +193,13 @@ const char * const  ux_sgx_Name         = "ux_sgx";
 const char * const  uy_sgy_Name         = "uy_sgy";
 /// uz_sgz variable name
 const char * const  uz_sgz_Name         = "uz_sgz";
+
+/// ux_non_staggered variable name
+const char * const  ux_non_staggered_Name = "ux_non_staggered";
+/// uy_non_staggered variable name
+const char * const  uy_non_staggered_Name = "uy_non_staggered";
+/// uz_non_staggered variable name
+const char * const  uz_non_staggered_Name = "uz_non_staggered";
 
 /// duxdx variable name
 const char * const  duxdx_Name          = "duxdx";

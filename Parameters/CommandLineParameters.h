@@ -1,13 +1,16 @@
 /**
  * @file        CommandLineParameters.h
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
+ *
  * @brief       The header file containing the command line parameters
  *
- * @version     kspaceFirstOrder3D 2.14
+ * @version     kspaceFirstOrder3D 2.15
+ *
  * @date        29 August 2012, 11:25 (created) \n
- *              07 July   2014, 13:30 (revised)
+ *              21 August 2014, 14:30 (revised)
  *
  * @section Params Command Line Parameters
  *
@@ -95,6 +98,8 @@ Output flags:
   -u                              : Store ux, uy, uz
                                       (the same as --u_raw)
   --u_raw                         : Store raw time series of ux, uy, uz
+  --u_non_staggered_raw           : Store non-staggered raw time series of
+                                      ux, uy, uz
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
   --u_min                         : Store min of ux, uy, uz
@@ -117,7 +122,7 @@ Output flags:
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -147,7 +152,8 @@ Output flags:
  * @class TCommandLineParameters
  * @brief The class to parse and store command line parameters
  */
-class TCommandLineParameters {
+class TCommandLineParameters
+{
   public:
 
     /// Constructor
@@ -201,8 +207,10 @@ class TCommandLineParameters {
 
     /// Is --u_raw set?
     bool IsStore_u_raw()                const {return Store_u_raw;};
+    /// Is --u_non_staggered_raw set?
+    bool IsStore_u_non_staggered_raw()  const {return Store_u_non_staggered_raw;};
     /// Is --u_rms set?
-    bool IsStore_u_rms()                const {return Store_u_rms;}; 
+    bool IsStore_u_rms()                const {return Store_u_rms;};
     /// Is --u_max set?
     bool IsStore_u_max()                const {return Store_u_max;};
     /// Is --u_min_all set?
@@ -279,6 +287,8 @@ class TCommandLineParameters {
 
     /// Store_u_raw value
     bool        Store_u_raw;
+    /// Store_u_non_staggered_raw value
+    bool        Store_u_non_staggered_raw;
     /// Store_u_rms value
     bool        Store_u_rms;
     /// Store_u_max value

@@ -1,19 +1,21 @@
 /**
  * @file        FFTWComplexMatrix.h
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
  *
  * @brief       The header file containing the class that implements
  *              3D FFT using the FFTW interface
  *
- * @version     kspaceFirstOrder3D 2.14
+ * @version     kspaceFirstOrder3D 2.15
+ *
  * @date        09 August    2011, 13:10 (created) \n
- *              07 July      2014, 18:01 (revised)
+ *              21 August    2014, 15:45 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -52,15 +54,44 @@ class TFFTWComplexMatrix : public TComplexMatrix
     virtual ~TFFTWComplexMatrix();
 
     /// Create FFTW plan for Real-to-Complex
-    void CreateFFTPlan3D_R2C(TRealMatrix& InMatrix);
+    void Create_FFT_Plan_3D_R2C(TRealMatrix& InMatrix);
     /// Create FFTW plan for Complex-to-Real
-    void CreateFFTPlan3D_C2R(TRealMatrix& OutMatrix);
+    void Create_FFT_Plan_3D_C2R(TRealMatrix& OutMatrix);
+
+    /// Create FFTW plan for Real-to-Complex in the X dimension
+    void Create_FFT_Plan_1DX_R2C(TRealMatrix& InMatrix);
+    /// Create FFTW plan for Real-to-Complex in the Y dimension
+    void Create_FFT_Plan_1DY_R2C(TRealMatrix& InMatrix);
+    /// Create FFTW plan for Real-to-Complex in the Z dimension
+    void Create_FFT_Plan_1DZ_R2C(TRealMatrix& InMatrix);
+
+    /// Create FFTW plan for Complex-to-Real in the X dimension
+    void Create_FFT_Plan_1DX_C2R(TRealMatrix& OutMatrix);
+    /// Create FFTW plan for Complex-to-Real in the Y dimension
+    void Create_FFT_Plan_1DY_C2R(TRealMatrix& OutMatrix);
+    /// Create FFTW plan for Complex-to-Real in the Z dimension
+    void Create_FFT_Plan_1DZ_C2R(TRealMatrix& OutMatrix);
+
 
 
     /// Compute 3D out-of-place Real-to-Complex FFT
     void Compute_FFT_3D_R2C(TRealMatrix& InMatrix);
     /// Compute 3D out-of-place Complex-to-Real FFT
-    void Compute_iFFT_3D_C2R(TRealMatrix& OutMatrix);
+    void Compute_FFT_3D_C2R(TRealMatrix& OutMatrix);
+
+    /// Compute 1D out-of-place Real-to-Complex FFT in the X dimension
+    void Compute_FFT_1DX_R2C(TRealMatrix& InMatrix);
+    /// Compute 1D out-of-place Real-to-Complex FFT in the Y dimension
+    void Compute_FFT_1DY_R2C(TRealMatrix& InMatrix);
+    /// Compute 1D out-of-place Real-to-Complex FFT in the Z dimension
+    void Compute_FFT_1DZ_R2C(TRealMatrix& InMatrix);
+
+     /// Compute 1D out-of-place Complex-to-Real FFT in the X dimension
+    void Compute_FFT_1DX_C2R(TRealMatrix& OutMatrix);
+    /// Compute 1D out-of-place Complex-to-Real FFT in the Y dimension
+    void Compute_FFT_1DY_C2R(TRealMatrix& OutMatrix);
+    /// Compute 1D out-of-place Complex-to-Real FFT in the Z dimension
+    void Compute_FFT_1DZ_C2R(TRealMatrix& OutMatrix);
 
     /// Export wisdom to the file
     static void ExportWisdom();
@@ -73,8 +104,9 @@ protected:
     /// Default constructor not allowed for public
     TFFTWComplexMatrix() :
                  TComplexMatrix(),
-                 fftw_plan_R2C(NULL),
-                 fftw_plan_C2R(NULL)
+                 fftw_plan_3D_R2C(NULL),  fftw_plan_3D_C2R(NULL),
+                 fftw_plan_1DX_R2C(NULL), fftw_plan_1DY_R2C(NULL), fftw_plan_1DZ_R2C(NULL),
+                 fftw_plan_1DX_C2R(NULL), fftw_plan_1DY_C2R(NULL), fftw_plan_1DZ_C2R(NULL)
     {};
 
     /// Copy constructor not allowed for public
@@ -96,10 +128,24 @@ protected:
 
     static const string FFTW_Wisdom_FileName_Extension;// = "FFTW_Wisdom";
 
-    /// FFTW plan for the Real-to-Complex transform
-    fftwf_plan fftw_plan_R2C;
-    /// FFTW plan for the Complex-to-Real transform
-    fftwf_plan fftw_plan_C2R;
+    /// FFTW plan for the 3D Real-to-Complex transform
+    fftwf_plan fftw_plan_3D_R2C;
+    /// FFTW plan for the 3D Complex-to-Real transform
+    fftwf_plan fftw_plan_3D_C2R;
+
+    /// FFTW plan for the 1D Real-to-Complex transform in the X dimension
+    fftwf_plan fftw_plan_1DX_R2C;
+    /// FFTW plan for the 3D Real-to-Complex transform in the Y dimension
+    fftwf_plan fftw_plan_1DY_R2C;
+    /// FFTW plan for the 3D Real-to-Complex transform in the Z dimension
+    fftwf_plan fftw_plan_1DZ_R2C;
+
+    /// FFTW plan for the 3D Complex-to-Real transform in the X dimension
+    fftwf_plan fftw_plan_1DX_C2R;
+    /// FFTW plan for the 3D Complex-to-Real transform in the Y dimension
+    fftwf_plan fftw_plan_1DY_C2R;
+    /// FFTW plan for the 3Z Complex-to-Real transform in the Z dimension
+    fftwf_plan fftw_plan_1DZ_C2R;
 
 private:
 

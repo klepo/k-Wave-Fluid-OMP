@@ -1,17 +1,20 @@
 /**
  * @file        Parameters.cpp
  * @author      Jiri Jaros
- *              CECS, ANU, Australia
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
+ *
  * @brief       The implementation file containing parameters of the simulation
  *
- * @version     kspaceFirstOrder3D 2.14
+ * @version     kspaceFirstOrder3D 2.15
+ *
  * @date        09 August 2012,   13:39 (created) \n
  *              07 July   2014,   16:38 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -203,6 +206,12 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_10)
   {
     sensor_mask_ind_size = HDF5_InputFile.GetDatasetElementCount(HDF5RootGroup, sensor_mask_index_Name);
+
+    //if -u_non_staggered_raw enabled, throw an error - not supported
+    if (IsStore_u_non_staggered_raw())
+    {
+      throw ios::failure(Parameters_ERR_FMT_UNonStaggeredNotSupportedForFile10);
+    }
   }
 
   // This is the current version 1.1

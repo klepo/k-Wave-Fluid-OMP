@@ -1,17 +1,20 @@
 /**
  * @file        Parameters.h
  * @author      Jiri Jaros              \n
- *              CECS, ANU, Australia    \n
- *              jiri.jaros@anu.edu.au
+ *              Faculty of Information Technology\n
+ *              Brno University of Technology \n
+ *              jarosjir@fit.vutbr.cz
+ *
  * @brief       The header file containing the parameters of the simulation
  *
- * @version     kspaceFirstOrder3D 2.14
+ * @version     kspaceFirstOrder3D 2.15
+ *
  * @date        08 December 2011, 16:34 (created)      \n
- *              07 July     2014, 16:38 (revised)
+ *              21 August   2014, 14:45 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2012 Jiri Jaros and Bradley Treeby.
+ * Copyright (C) 2014 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of k-Wave. k-Wave is free software: you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License as
@@ -233,6 +236,8 @@ class TParameters {
 
     /// Is -u or --u_raw specified at the command line
     bool IsStore_u_raw()                const {return CommandLinesParameters.IsStore_u_raw();};
+    /// Is --u_non_staggered_raw set?
+    bool IsStore_u_non_staggered_raw()  const {return CommandLinesParameters.IsStore_u_non_staggered_raw();};
     /// Is --u_raw specified at the command line
     bool IsStore_u_rms()                const {return CommandLinesParameters.IsStore_u_rms();};
     /// Is --u_max specified at the command line
