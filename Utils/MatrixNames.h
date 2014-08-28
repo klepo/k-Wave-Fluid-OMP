@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        14 September 2012, 14:33      (created) \n
- *              26 August    2014, 17:30      (revised)
+ *              28 August    2014, 15:35      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -307,20 +307,6 @@ const char * const  ux_final_Name = "ux_final";
 const char * const  uy_final_Name = "uy_final";
 /// uz_final variable name
 const char * const  uz_final_Name = "uz_final";
-
-/// Ix_avg variable name
-const char * const  Ix_avg_Name = "Ix_avg";
-/// Iy_avg variable name
-const char * const  Iy_avg_Name = "Iy_avg";
-/// Iz_avg variable name
-const char * const  Iz_avg_Name = "Iz_avg";
-
-/// Ix_max variable name
-const char * const  Ix_max_Name = "Ix_max";
-/// Iy_max variable name
-const char * const  Iy_max_Name = "Iy_max";
-/// Iz_max variable name
-const char * const  Iz_max_Name = "Iz_max";
 
 #endif	/* MATRIXNAMES_H */
 

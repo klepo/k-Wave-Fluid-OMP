@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        12 July     2012, 10:27  (created)\n
- *              26 August   2014, 14:10  (revised)
+ *              28 August   2014, 15:45  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -2284,7 +2284,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
 
   //-------------------------- ux_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
-  
+
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < XShiftDims.Z; z++)
   {
@@ -2610,128 +2610,6 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
 }// end of SaveCheckpointData()
 //------------------------------------------------------------------------------
 
-
-/**
- * Store intensity data. This has to be calculated using spatial and
- * temporary staggered grid.
- * @TODO - this is horribly wrong by the physical means!
- */
-void TKSpaceFirstOrder3DSolver::StoreIntensityData(){
-
-  //@TODO Dead code at this moment
-/*
-    #pragma omp parallel
-    {
-        const size_t  sensor_size = Get_sensor_mask_index().GetTotalElementCount();
-
-        const float* ux      = Get_ux_sgx().GetRawData();
-        const float* uy      = Get_uy_sgy().GetRawData();
-        const float* uz      = Get_uz_sgz().GetRawData();
-        const float* p       = Get_p().GetRawData();
-
-        float * ux_i_1       = Get_ux_sensor_i_1_agr_2().GetRawData();
-        float * uy_i_1       = Get_uy_sensor_i_1_agr_2().GetRawData();
-        float * uz_i_1       = Get_uz_sensor_i_1_agr_2().GetRawData();
-        float * p_i_1        = Get_p_sensor_i_1_raw().GetRawData();
-
-        float * Ix_avg       = NULL;
-        float * Iy_avg       = NULL;
-        float * Iz_avg       = NULL;
-
-        float * Ix_max       = NULL;
-        float * Iy_max       = NULL;
-        float * Iz_max       = NULL;
-
-
-        if (Parameters->IsStore_I_avg()) {
-           Ix_avg       = Get_Ix_sensor_avg().GetRawData();
-           Iy_avg       = Get_Iy_sensor_avg().GetRawData();
-           Iz_avg       = Get_Iz_sensor_avg().GetRawData();
-        }
-        if (Parameters->IsStore_I_max()) {
-           Ix_max       = Get_Ix_sensor_max().GetRawData();
-           Iy_max       = Get_Iy_sensor_max().GetRawData();
-           Iz_max       = Get_Iz_sensor_max().GetRawData();
-        }
-
-        const long * index   = Get_sensor_mask_index().GetRawData();
-
-        const TDimensionSizes Dims = Parameters->GetFullDimensionSizes();
-
-        // calculate  intensity
-        if (t_index+1 > Parameters->GetStartTimeIndex()){
-
-            #pragma omp for schedule (static)
-            for (size_t i = 0; i < sensor_size; i++){
-               // calculate positions in the grid
-               const size_t sensor_point_ind    = index[i];
-               const size_t sensor_point_ind_1x = ((sensor_point_ind % Dims.X) == 0) ?
-                                                    sensor_point_ind : sensor_point_ind - 1;
-               const size_t sensor_point_ind_1y = (((sensor_point_ind /  Dims.X) %  Dims.Y) == 0) ?
-                                                     sensor_point_ind : sensor_point_ind - Dims.X;
-               const size_t sensor_point_ind_1z = (((sensor_point_ind /  (Dims.Y * Dims.X))) == 0) ?
-                                                     sensor_point_ind : sensor_point_ind - (Dims.X * Dims.Y);
-
-               //avg of actual values of u in staggered grid
-               const float ux_act = (ux[sensor_point_ind] + ux[sensor_point_ind_1x]) * 0.5f;
-               const float uy_act = (uy[sensor_point_ind] + uy[sensor_point_ind_1y]) * 0.5f;
-               const float uz_act = (uz[sensor_point_ind] + uz[sensor_point_ind_1z]) * 0.5f;
-               const float p_data = p_i_1[i];
-
-               // calculate actual intensity based on p(n-1) * 1/4[ u(i-1)(n-1) + u(i)(n-1) + u(i-1)(n) + u(i)(n)
-               const float Ix = p_data * ((ux_act + ux_i_1[i]) * 0.5f);
-               const float Iy = p_data * ((uy_act + uy_i_1[i]) * 0.5f);
-               const float Iz = p_data * ((uz_act + uz_i_1[i]) * 0.5f);
-
-               ux_i_1[i] = ux_act;
-               uy_i_1[i] = uy_act;
-               uz_i_1[i] = uz_act;
-               p_i_1[i]  = p[sensor_point_ind];
-
-               const float Divider = 1.0f / (float) (Parameters->Get_Nt() - Parameters->GetStartTimeIndex());
-
-               // easily predictable...
-               if (Parameters->IsStore_I_max()) {
-                  if (Ix_max[i] < Ix)  Ix_max[i] = Ix;
-                  if (Iy_max[i] < Iy)  Iy_max[i] = Iy;
-                  if (Iz_max[i] < Iz)  Iz_max[i] = Iz;
-               }
-
-               // easily predictable...
-               if (Parameters->IsStore_I_avg()) {
-                  Ix_avg[i] += (Ix * Divider);
-                  Iy_avg[i] += (Iy * Divider);
-                  Iz_avg[i] += (Iz * Divider);
-               }
-            }
-        } else {
-            // first step of the recording. Store only actual data
-
-            #pragma omp for schedule (static)
-            for (size_t i = 0; i < sensor_size; i++){
-               // calculate positions in the grid
-               const size_t sensor_point_ind    = index[i];
-               const size_t sensor_point_ind_1x = ((sensor_point_ind % Dims.X) == 0) ?
-                                                    sensor_point_ind : sensor_point_ind - 1;
-               const size_t sensor_point_ind_1y = (((sensor_point_ind /  Dims.X) %  Dims.Y) == 0) ?
-                                                     sensor_point_ind : sensor_point_ind - Dims.X;
-               const size_t sensor_point_ind_1z = (((sensor_point_ind /  (Dims.Y * Dims.X))) == 0) ?
-                                                     sensor_point_ind : sensor_point_ind - (Dims.X * Dims.Y);
-
-               //avg of actual values of u in staggered grid
-               ux_i_1[i] = (ux[sensor_point_ind] + ux[sensor_point_ind_1x]) * 0.5f;
-               uy_i_1[i] = (uy[sensor_point_ind] + uy[sensor_point_ind_1y]) * 0.5f;
-               uz_i_1[i] = (uz[sensor_point_ind] + uz[sensor_point_ind_1z]) * 0.5f;
-               p_i_1[i]   = p[sensor_point_ind];
-
-            }
-        }// else
-
-    }// parallel
-    */
-
-}// end of StoreIntensity
-//------------------------------------------------------------------------------
 
 /**
  * Write statistics and the header into the output file.

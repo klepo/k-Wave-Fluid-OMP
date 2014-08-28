@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        08 December 2011, 16:34 (created)      \n
- *              21 August   2014, 14:45 (revised)
+ *              28 August   2014, 15:35 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -251,11 +251,6 @@ class TParameters {
 
     /// Is --u_final specified at the command line
     bool IsStore_u_final()              const {return CommandLinesParameters.IsStore_u_final();};
-
-    /// Is --I_avg specified at the command line
-    bool IsStore_I_avg()                const {return CommandLinesParameters.IsStore_I_avg();};
-    /// Is --I_max specified at the command line
-    bool IsStore_I_max()                const {return CommandLinesParameters.IsStore_I_max();};
 
     /// is --copy_mask set
     bool IsCopySensorMask()             const {return CommandLinesParameters.IsCopySensorMask();};

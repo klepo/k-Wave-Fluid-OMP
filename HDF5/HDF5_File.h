@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        27 July     2012, 14:14 (created) \n
- *              10 July     2014, 12:50 (revised)
+ *              28 August   2014, 15:50 (revised)
  *
  *
  *
@@ -302,6 +302,10 @@ Name                            Size           Data type        Domain Type     
   uy                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
   uz                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
 
+  ux_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
+  uy_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
+  uz_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
+
   ux_rms                        (Nsens, 1, 1)      float      real              --u_rms
   uy_rms                        (Nsens, 1, 1)      float      real              --u_rms
   uz_rms                        (Nsens, 1, 1)      float      real              --u_rms
@@ -362,6 +366,13 @@ Name                            Size           Data type        Domain Type     
   /uy/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
   /uz                           group of datasets, one per cuboid               -u or --u_raw
   /uz/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+
+  /ux_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
+  /ux_non_staggered/1           (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uy_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
+  /uy_non_staggered/1           (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uz_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
+  /uz_non_staggered/1           (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
 
   /ux_rms                       group of datasets, one per cuboid               --u_rms
   /ux_rms/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid

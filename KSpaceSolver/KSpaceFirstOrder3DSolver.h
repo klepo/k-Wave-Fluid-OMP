@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        12 July     2012, 10:27   (created)\n
- *              27 August   2014, 12:50   (revised)
+ *              28 August   2014, 15:45   (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -137,8 +137,6 @@ class TKSpaceFirstOrder3DSolver
 
     /// Store sensor data
     void StoreSensorData();
-    /// Store intensity data
-    void StoreIntensityData();
 
     /// Save checkpoint data
     void SaveCheckpointData();

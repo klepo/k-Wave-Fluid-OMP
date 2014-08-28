@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        29 August 2012, 11:25 (created) \n
- *              21 August 2014, 14:45 (revised)
+ *              28 August 2014, 15:40 (revised)
  *
  *
  * @section License
@@ -69,7 +69,6 @@ TCommandLineParameters::TCommandLineParameters() :
         Store_u_raw(false), Store_u_non_staggered_raw(false),
         Store_u_rms(false), Store_u_max(false), Store_u_min(false),
         Store_u_max_all(false), Store_u_min_all(false), Store_u_final(false),
-        Store_I_avg(false), Store_I_max(false),
         CopySensorMask(false),
         StartTimeStep(0)
 {
@@ -132,12 +131,7 @@ void TCommandLineParameters::PrintUsageAndExit()
   printf("  --u_min_all                     : Store min of ux, uy, uz (whole domain)\n");
   printf("  --u_final                       : Store final acoustic velocity\n");
   printf("\n");
-  printf("  -I                              : Store intensity\n");
-  printf("                                      (the same as --I_avg)\n");
-  printf("  --I_avg                         : Store avg of intensity\n");
-  printf("  --I_max                         : Store max of intensity\n");
   printf("  --copy_sensor_mask              : Copy sensor mask to the output file\n");
-  printf("\n");
   printf("\n");
   printf("  -s <timestep>                   : Time step when data collection begins\n");
   printf("                                      (default = 1)\n");
@@ -185,9 +179,6 @@ void TCommandLineParameters::PrintSetup()
   printf("  Store u_min_all           %d\n", Store_u_min_all);
   printf("  Store u_final             %d\n", Store_u_final);
   printf("\n");
-  printf("  Store I_avg               %d\n", Store_I_avg);
-  printf("  Store I_max               %d\n", Store_I_max);
-  printf("\n");
   printf("  Copy sensor mask          %d\n", CopySensorMask);
   printf("\n");
   printf("  Collection begins at      %d\n", StartTimeStep + 1);
@@ -207,7 +198,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
   bool CheckpointFlag = false;
 
 #ifdef _OPENMP
-  const char * shortOpts = "i:o:r:c:t:puIhs:";
+  const char * shortOpts = "i:o:r:c:t:puhs:";
 #else
   const char * shortOpts = "i:o:r:c:puIhs:";
 #endif
@@ -236,9 +227,6 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
     { "u_max_all",           no_argument, NULL, 0},
     { "u_min_all",           no_argument, NULL, 0},
     { "u_final",             no_argument, NULL, 0},
-
-    { "I_avg",               no_argument, NULL, 'I'},
-    { "I_max",               no_argument, NULL, 0},
 
     { "copy_sensor_mask",    no_argument, NULL, 0},
     { NULL,                  no_argument, NULL, 0}
@@ -313,12 +301,6 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       case 'u':
       {
         Store_u_raw = true;
-        break;
-      }
-
-      case 'I':
-      {
-        Store_I_avg = true;
         break;
       }
 
@@ -444,11 +426,6 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           Store_u_final = true;
         }
 
-
-        else if (strcmp("I_max", longOpts[longIndex].name) == 0)
-        {
-          Store_I_max = true;
-        }
         else if (strcmp("copy_sensor_mask", longOpts[longIndex].name) == 0)
         {
           CopySensorMask = true;
@@ -500,8 +477,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
         Store_p_max_all || Store_p_min_all || Store_p_final ||
         Store_u_raw     || Store_u_non_staggered_raw        ||
         Store_u_rms     || Store_u_max     || Store_u_min   ||
-        Store_u_max_all || Store_u_min_all || Store_u_final ||
-        Store_I_avg     || Store_I_max))
+        Store_u_max_all || Store_u_min_all || Store_u_final ))
   {
     Store_p_raw = true;
   }

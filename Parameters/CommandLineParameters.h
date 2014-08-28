@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        29 August 2012, 11:25 (created) \n
- *              21 August 2014, 14:30 (revised)
+ *              28 August 2014, 14:38 (revised)
  *
  * @section Params Command Line Parameters
  *
@@ -51,10 +51,6 @@
  * field in the final time step of the simulation is stored (this will always include the PML, regardless of the setting for <tt> `PMLInside' </tt>). Flags to record the acoustic
  * particular velocity are defined in an analogous fashion.
  *
- * In addition to returning the acoustic pressure and particle velocity, the acoustic intensity at the grid points specified by
- * the sensor mask can also be calculated and stored. To account for the staggered grid scheme, approximate values for the particle
- * velocity at the unstaggered grid points are automatically calculated using linear interpolation before multiplication by the acoustic pressure.
- * Two means of aggregation are possible: \c -I or \c --I_avg calculates and stores the average acoustic intensity, while \c --I max calculates the maximum acoustic intensity.
  *
  * Any combination of \c p, \c u and \c I fags is admissible. If no output flag is set, a time-series for
  * the acoustic pressure is recorded. If it is not necessary to collect the output quantities over
@@ -106,11 +102,6 @@ Output flags:
   --u_max_all                     : Store max of ux ,uy, yz (whole domain)
   --u_min_all                     : Store max of ux ,uy, yz (whole domain)
   --u_final                       : Store final acoustic velocity
-
-  -I                              : Store intensity
-                                      (the same as --I_avg)
-  --I_avg                         : Store avg of intensity
-  --I_max                         : Store max of intensity
 
   --copy_sensor_mask              : Copy sensor mask to the output file
 
@@ -222,11 +213,6 @@ class TCommandLineParameters
     /// Is --u_final set?
     bool IsStore_u_final()              const {return Store_u_final;};
 
-    /// Is --I_avg set
-    bool IsStore_I_avg()                const {return Store_I_avg;};
-    /// Is --I_max set
-    bool IsStore_I_max()                const {return Store_I_max;};
-
     /// is --copy_mask set
     bool IsCopySensorMask()             const {return CopySensorMask;};
 
@@ -302,10 +288,6 @@ class TCommandLineParameters
     /// Store_u_final value
     bool        Store_u_final;
 
-    /// Store_I_avg value
-    bool        Store_I_avg;
-    /// Store_I_max value
-    bool        Store_I_max;
     /// Copy sensor mask to the output file
     bool        CopySensorMask;
     /// StartTimeStep value

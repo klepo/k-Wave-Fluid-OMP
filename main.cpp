@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July     2012, 10:57 (created) \n
- *              21 August   2014, 14:30 (revised)
+ *              28 August   2014, 15:45 (revised)
  *
  *
  *
@@ -202,10 +202,6 @@
  * field in the final time step of the simulation is stored (this will always include the PML, regardless of the setting for <tt> `PMLInside' </tt>). Flags to record the acoustic
  * particular velocity are defined in an analogous fashion.
  *
- * In addition to returning the acoustic pressure and particle velocity, the acoustic intensity at the grid points specified by
- * the sensor mask can also be calculated and stored. To account for the staggered grid scheme, approximate values for the particle
- * velocity at the unstaggered grid points are automatically calculated using linear interpolation before multiplication by the acoustic pressure.
- * Two means of aggregation are possible: \c -I or \c --I_avg calculates and stores the average acoustic intensity, while \c --I max calculates the maximum acoustic intensity.
  *
  * Any combination of \c p, \c u and \c I  fags is admissible. If no output flag is set, a time-series for
  * the acoustic pressure is recorded. If it is not necessary to collect the output quantities over
@@ -257,12 +253,6 @@ Output flags:
   --u_max_all                     : Store max of ux ,uy, yz (whole domain)
   --u_min_all                     : Store max of ux ,uy, yz (whole domain)
   --u_final                       : Store final acoustic velocity
-
-
-  -I                              : Store intensity
-                                      (the same as --I_avg)
-  --I_avg                         : Store avg of intensity
-  --I_max                         : Store max of intensity
 
   --copy_sensor_mask              : Copy sensor mask to the output file
 
@@ -564,6 +554,10 @@ Name                            Size           Data type        Domain Type     
   uy                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
   uz                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
 
+  ux_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
+  uy_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
+  uz_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
+
   ux_rms                        (Nsens, 1, 1)      float      real              --u_rms
   uy_rms                        (Nsens, 1, 1)      float      real              --u_rms
   uz_rms                        (Nsens, 1, 1)      float      real              --u_rms
@@ -588,13 +582,6 @@ Name                            Size           Data type        Domain Type     
   uy_final                      (Nx, Ny, Nz)       float      real              --u_final
   uz_final                      (Nx, Ny, Nz)       float      real              --u_final
 
-  Ix_avg                        (Nsens, 1, 1)      float      real              -I or --I_avg
-  Iy_avg                        (Nsens, 1, 1)      float      real              -I or --I_avg
-  Iz_avg                        (Nsens, 1, 1)      float      real              -I or --I_avg
-
-  Ix_max                        (Nsens, 1, 1)      float      real              --I_max
-  Iy_max                        (Nsens, 1, 1)      float      real              --I_max
-  Iz_max                        (Nsens, 1, 1)      float      real              --I_max
 
  --------------------------------------------------------------------------------------------------------------
   5b. Simulation Results: if sensor_mask_type == 1 (corners) and or File version == 1.1
@@ -624,6 +611,13 @@ Name                            Size           Data type        Domain Type     
   /uy/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
   /uz                           group of datasets, one per cuboid               -u or --u_raw
   /uz/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+
+  /ux_non_staggered              group of datasets, one per cuboid               --u_non_staggered_raw
+  /ux_non_staggered/1            (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uy_non_staggered              group of datasets, one per cuboid               --u_non_staggered_raw
+  /uy_non_staggered/1            (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uz_non_staggered              group of datasets, one per cuboid               --u_non_staggered_raw
+  /uz_non_staggered/1            (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
 
   /ux_rms                       group of datasets, one per cuboid               --u_rms
   /ux_rms/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid

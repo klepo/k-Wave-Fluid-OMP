@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              26 August    2014, 16:30 (revised)
+ *              28 August    2014, 15:40 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -83,10 +83,8 @@ enum TMatrixID
 
     //---------------- output matrices -------------//
     p_sensor_raw,  p_sensor_rms, p_sensor_max, p_sensor_min,
-    p_sensor_max_all, p_sensor_min_all, p_sensor_i_1_raw,
+    p_sensor_max_all, p_sensor_min_all,
     ux_sensor_raw, uy_sensor_raw, uz_sensor_raw,
-    ux_sensor_i_1_agr_2, uy_sensor_i_1_agr_2, uz_sensor_i_1_agr_2,// aggregated values form two points
-
 
     ux_shifted_sensor_raw, uy_shifted_sensor_raw, uz_shifted_sensor_raw, //non_staggered
     ux_sensor_rms, uy_sensor_rms, uz_sensor_rms,
@@ -94,9 +92,6 @@ enum TMatrixID
     ux_sensor_min, uy_sensor_min, uz_sensor_min,
     ux_sensor_max_all, uy_sensor_max_all, uz_sensor_max_all,
     ux_sensor_min_all, uy_sensor_min_all, uz_sensor_min_all,
-
-    Ix_sensor_avg, Iy_sensor_avg, Iz_sensor_avg,
-    Ix_sensor_max, Iy_sensor_max, Iz_sensor_max,
 
 
     //--------------Temporary matrices -------------//

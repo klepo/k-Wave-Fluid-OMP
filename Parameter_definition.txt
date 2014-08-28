@@ -10,7 +10,7 @@
  * @Tool        kspaceFirstOrder3D 2.15
  *
  * @Created     29 August 2012
- * @LastModif   08 July 2012, 16:46
+ * @LastModif   28 August 2014, 15:53
  * 
  * @License: 
  *
@@ -51,7 +51,7 @@ Optional parameters:
   --version                       : Print version
    
 Output flags:   
-  -p                              : Store acoustic pressure 
+  -p                              : Store acoustic pressure
                                       (default if nothing else is on)
                                       (the same as --p_raw)
   --p_raw                         : Store raw time series of p (default)
@@ -60,22 +60,21 @@ Output flags:
   --p_min                         : Store min of p
   --p_max_all                     : Store max of p (whole domain)
   --p_min_all                     : Store min of p (whole domain)
-  --p_final                       : Store final pressure field 
-   
+  --p_final                       : Store final pressure field
+
   -u                              : Store ux, uy, uz
                                       (the same as --u_raw)
   --u_raw                         : Store raw time series of ux, uy, uz
+  --u_non_staggered_raw           : Store non-staggered raw time series of
+                                      ux, uy, uz
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
   --u_min                         : Store min of ux, uy, uz
   --u_max_all                     : Store max of ux ,uy, yz (whole domain)
   --u_min_all                     : Store max of ux ,uy, yz (whole domain)
   --u_final                       : Store final acoustic velocity
-   
-  -I                              : Store intensity
-                                      (the same as --I_avg) 
-  --I_avg                         : Store avg of intensity
-  --I_max                         : Store max of intensity  
-   
+
+  --copy_sensor_mask              : Copy sensor mask to the output file
+
   -s <timestep>                   : Time step when data collection begins
                                       (default = 1)
