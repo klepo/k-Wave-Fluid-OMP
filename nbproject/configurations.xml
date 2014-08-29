@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="90">
+<configurationDescriptor version="94">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="f1" displayName="HDF5" projectFiles="true">
       <itemPath>HDF5/HDF5_File.cpp</itemPath>
@@ -88,18 +88,18 @@
         </cTool>
         <ccTool>
           <incDir>
-            <pElem>/usr/local/hdf5-1.8.11-serial/include</pElem>
+            <pElem>/usr/local/hdf5-serial/include</pElem>
             <pElem>.</pElem>
           </incDir>
-          <commandLine>-Wall -fopenmp -msse4.2</commandLine>
+          <commandLine>-Wall -fopenmp -mavx</commandLine>
           <warningLevel>2</warningLevel>
         </ccTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>/usr/local/hdf5-1.8.11-serial/lib</pElem>
+            <pElem>/usr/local/hdf5-serial/lib</pElem>
           </linkerAddLib>
           <linkerDynSerch>
-            <pElem>/usr/local/hdf5-1.8.11-serial/lib\</pElem>
+            <pElem>/usr/local/hdf5-serial/lib\</pElem>
           </linkerDynSerch>
           <linkerLibItems>
             <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
@@ -203,10 +203,10 @@
           <developmentMode>6</developmentMode>
           <architecture>2</architecture>
           <incDir>
-            <pElem>/usr/local/hdf5-1.8.11-serial/include</pElem>
+            <pElem>/usr/local/hdf5-serial/include</pElem>
             <pElem>.</pElem>
           </incDir>
-          <commandLine>-Wall -fopenmp -msse4.2 -ffast-math -fassociative-math -ftree-vectorizer-verbose=0</commandLine>
+          <commandLine>-Wall -fopenmp -mavx -mtune=native -ffast-math -fassociative-math -ftree-vectorizer-verbose=0</commandLine>
           <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -218,10 +218,10 @@
         </asmTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>/usr/local/hdf5-1.8.11-serial/lib</pElem>
+            <pElem>/usr/local/hdf5-serial/lib</pElem>
           </linkerAddLib>
           <linkerDynSerch>
-            <pElem>/usr/local/hdf5-1.8.11-serial/lib</pElem>
+            <pElem>/usr/local/hdf5-serial/lib</pElem>
           </linkerDynSerch>
           <commandlineTool>g++</commandlineTool>
           <linkerLibItems>
