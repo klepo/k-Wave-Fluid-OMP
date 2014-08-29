@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        09 August    2011, 13:10 (created) \n
- *              26 August    2014, 13:50 (revised)
+ *              28 August    2014, 15:35 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -659,31 +659,37 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_C2R(TRealMatrix& OutMatrix)
 
 
 /**
- * export wisdom to the file
+ * Export wisdom to the file
+ * @warning This routine is supported only while compiling with the GNU C++ compiler
  */
 void TFFTWComplexMatrix::ExportWisdom()
 {
-  int success = fftwf_export_wisdom_to_filename(GetWisdomFileName().c_str());
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    int success = fftwf_export_wisdom_to_filename(GetWisdomFileName().c_str());
 
-  if (success == 0)
-  {
-    fprintf(stderr,FFTW_WARNING_FMT_WisdomNotExported);
-  }
+    if (success == 0)
+    {
+      fprintf(stderr,FFTW_WARNING_FMT_WisdomNotExported);
+    }
+  #endif
 }// end of ExportWisdom
 //------------------------------------------------------------------------------
 
 
 
 /**
- * import wisdom from the file
+ * Import wisdom from the file
+ * @warning This routine is supported only while compiling with the GNU C++ compiler
  */
 void TFFTWComplexMatrix::ImportWisdom()
 {
-  int success = fftwf_import_wisdom_from_filename(GetWisdomFileName().c_str());
-  if (success == 0)
-  {
-    fprintf(stderr,FFTW_WARNING_FMT_WisdomNotImported);
-  }
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    int success = fftwf_import_wisdom_from_filename(GetWisdomFileName().c_str());
+    if (success == 0)
+    {
+      fprintf(stderr,FFTW_WARNING_FMT_WisdomNotImported);
+    }
+  #endif
 }// end of Import wisdom
 //------------------------------------------------------------------------------
 
