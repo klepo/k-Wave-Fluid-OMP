@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        29 August 2012, 11:25 (created) \n
- *              28 August 2014, 15:40 (revised)
+ * @date        29 August    2012, 11:25 (created) \n
+ *              01 September 2014, 14:20 (revised)
  *
  *
  * @section License
@@ -94,9 +94,9 @@ void TCommandLineParameters::PrintUsageAndExit()
 #endif
 
   printf("  -r <interval_in_%%>              : Progress print interval\n");
-  printf("                                      (default = %d%%)\n", DefaultVerboseInterval);
+  printf("                                      (default = %ld%%)\n", DefaultVerboseInterval);
   printf("  -c <comp_level>                 : Output file compression level <0,9>\n");
-  printf("                                      (default = %d)\n", DefaultCompressionLevel);
+  printf("                                      (default = %ld)\n", DefaultCompressionLevel);
   printf("  --benchmark <steps>             : Run a specified number of time steps\n");
   printf("\n");
   printf("  --checkpoint_file <file_name>   : HDF5 Checkpoint file\n");
@@ -152,15 +152,15 @@ void TCommandLineParameters::PrintSetup()
   printf("  Input  file               %s\n", InputFileName.c_str());
   printf("  Output file               %s\n", OutputFileName.c_str());
   printf("\n");
-  printf("  Number of threads         %d\n", NumberOfThreads);
-  printf("  Verbose interval[%%]       %d\n", VerboseInterval);
-  printf("  Compression level         %d\n", CompressionLevel);
+  printf("  Number of threads         %ld\n", NumberOfThreads);
+  printf("  Verbose interval[%%]       %ld\n", VerboseInterval);
+  printf("  Compression level         %ld\n", CompressionLevel);
   printf("\n");
   printf("  Benchmark flag            %d\n", BenchmarkFlag);
-  printf("  Benchmark time steps      %d\n", BenchmarkTimeStepsCount);
+  printf("  Benchmark time steps      %ld\n", BenchmarkTimeStepsCount);
   printf("\n");
   printf("  Checkpoint_file           %s\n", CheckpointFileName.c_str());
-  printf("  Checkpoint_interval       %d\n", CheckpointInterval);
+  printf("  Checkpoint_interval       %ld\n", CheckpointInterval);
   printf("\n");
   printf("  Store p_raw               %d\n", Store_p_raw);
   printf("  Store p_rms               %d\n", Store_p_rms);
@@ -181,7 +181,7 @@ void TCommandLineParameters::PrintSetup()
   printf("\n");
   printf("  Copy sensor mask          %d\n", CopySensorMask);
   printf("\n");
-  printf("  Collection begins at      %d\n", StartTimeStep + 1);
+  printf("  Collection begins at      %ld\n", StartTimeStep + 1);
 }// end of PrintSetup
 //------------------------------------------------------------------------------
 
@@ -252,42 +252,42 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
 
       case 'r':
       {
-        if ((optarg == NULL) || (atoi(optarg) <= 0))
+        if ((optarg == NULL) || (atol(optarg) <= 0))
         {
           fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoVerboseIntreval);
            PrintUsageAndExit();
         }
         else
         {
-          VerboseInterval = atoi(optarg);
+          VerboseInterval = atol(optarg);
         }
         break;
       }
 
       case 't':
       {
-        if ((optarg == NULL) || (atoi(optarg) <= 0))
+        if ((optarg == NULL) || (atol(optarg) <= 0))
         {
           fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoThreadNumbers);
           PrintUsageAndExit();
         }
         else
         {
-          NumberOfThreads = atoi(optarg);
+          NumberOfThreads = atol(optarg);
         }
         break;
       }
 
       case 'c':
       {
-        if ((optarg == NULL) || (atoi(optarg) < 0) || atoi(optarg) > 9)
+        if ((optarg == NULL) || (atol(optarg) < 0) || atol(optarg) > 9)
         {
           fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCompressionLevel);
           PrintUsageAndExit();
         }
         else
         {
-          CompressionLevel = atoi(optarg);
+          CompressionLevel = atol(optarg);
         }
          break;
       }
@@ -312,13 +312,12 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
 
       case 's':
       {
-        if ((optarg == NULL) || (atoi(optarg) < 1))
+        if ((optarg == NULL) || (atol(optarg) < 1))
         {
           fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoStartTimestep);
           PrintUsageAndExit();
         }
-        StartTimeStep = atoi(optarg) - 1;
-
+        StartTimeStep = (size_t) (atol(optarg) - 1);
         break;
       }
 
@@ -328,14 +327,14 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
         if( strcmp( "benchmark", longOpts[longIndex].name ) == 0 )
         {
           BenchmarkFlag = true;
-          if ((optarg == NULL) || (atoi(optarg) <= 0))
+          if ((optarg == NULL) || (atol(optarg) <= 0))
           {
             fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoBenchmarkTimeStepCount);
             PrintUsageAndExit();
           }
           else
           {
-             BenchmarkTimeStepsCount = atoi(optarg);
+             BenchmarkTimeStepsCount = atol(optarg);
           }
         }
         else if( strcmp( "checkpoint_file", longOpts[longIndex].name ) == 0 )
@@ -354,14 +353,14 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
         else if( strcmp( "checkpoint_interval", longOpts[longIndex].name ) == 0 )
         {
           CheckpointFlag = true ;
-          if ((optarg == NULL) || (atoi(optarg) <= 0))
+          if ((optarg == NULL) || (atol(optarg) <= 0))
           {
             fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCheckpointInterval);
             PrintUsageAndExit();
           }
           else
           {
-            CheckpointInterval = atoi(optarg);
+            CheckpointInterval = atol(optarg);
           }
         }
         else if (strcmp("version", longOpts[longIndex].name) == 0)
@@ -466,7 +465,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoCheckpointFile);
       PrintUsageAndExit();
     }
-    if (CheckpointInterval <= 0)
+    if (CheckpointInterval == 0)
     {
       fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoCheckpointInterval);
       PrintUsageAndExit();

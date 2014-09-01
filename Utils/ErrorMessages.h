@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        09 August   2011, 12:34      (created) \n
- *              07 July     2014, 13:52      (revised)
+ * @date        09 August    2011, 12:34      (created) \n
+ *              01 September 2014, 14:40      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -57,7 +57,7 @@ const char * const HDF5_ERR_FMT_NotHDF5File             = "Error: File \"%s\" is
 /// HDF5 error message
 const char * const HDF5_ERR_FMT_DatasetNotOpened        = "Error: File \"%s\" could not open dataset \"%s\"!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_CouldNotSetCompression  = "Error: File \"%s\", dataset \"%s\" could set compression level [%d]!\n";
+const char * const HDF5_ERR_FMT_CouldNotSetCompression  = "Error: File \"%s\", dataset \"%s\" could set compression level [%ld]!\n";
 /// HDF5 error message
 const char * const HDF5_ERR_FMT_BadAttributeValue       = "Error: Bad attribute value: [%s,%s] = %s";
 /// HDF5 error message
@@ -80,7 +80,7 @@ const char * const  Matrix_ERR_FMT_MatrixNotReal      = "Error: Matrix [%s] doma
 /// Matrix class error message
 const char * const  Matrix_ERR_FMT_MatrixNotComplex   = "Error: Matrix [%s] domain is not complex!\n";
 /// Matrix class error message
-const char * const  Matrix_ERR_FMT_MatrixNotLong      = "Error: Matrix [%s] data type is not unsigned long!\n";
+const char * const  Matrix_ERR_FMT_MatrixNotLong      = "Error: Matrix [%s] data type is not unsigned long (uint64_t)!\n";
 
 //--------------------------------- Matrix Container  ------------------------//
 

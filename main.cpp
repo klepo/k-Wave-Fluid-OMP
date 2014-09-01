@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        11 July     2012, 10:57 (created) \n
- *              28 August   2014, 15:45 (revised)
+ * @date        11 July      2012, 10:57 (created) \n
+ *              01 September 2014, 14:36 (revised)
  *
  *
  *
@@ -712,7 +712,7 @@ int main(int argc, char** argv)
   #endif
 
 
-  fprintf(stdout, "Number of CPU threads:    %6d\n", Parameters->GetNumberOfThreads());
+  fprintf(stdout, "Number of CPU threads:    %6ld\n", Parameters->GetNumberOfThreads());
   KSpaceSolver.PrintParametersOfSimulation(stdout);
 
 

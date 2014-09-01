@@ -24,18 +24,20 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -p 20 -iData/kwave_input_data.h5 -o Data/simulation.h5</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data.h5 -o Data/simulation.h5</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/simulation.h5</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 4 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -p 20 -iData/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -i Data/kwave_input_data03-Oct-2012-11-01-34.h5 -o Data/kwave_bad.h5 -p -u --benchmark 2</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -i Data/Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 -p -u --benchmark 2</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 -p -u --benchmark 2</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" -t 1 -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 -p -u --benchmark 100</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 100</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 10 </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 10</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 10 --u_non_staggered_raw</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_coners.h5 -o Data/output_data_128_128_128_coners.h5 --benchmark 10 --u_non_staggered_raw</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10 </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10 
+
+--u_non_staggered_raw</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10 --u_non_staggered_raw</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" -t 1 -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 -p -u --benchmark 100</runcommand>
+        <runcommand>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
@@ -66,18 +68,19 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5 -xx</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5 </runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  -p 5 -i Data/kwave_input_linux.h5 -o Data/kwave_output_data.h5 -t 2</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  ../Data/</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  -in ../Data/input_data_128_128_128_case_1.h5 -out ../Data/output_data_128_128_128_case_1.h5</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  -in Data/input_data_128_128_128_case_1.h5 -out ../Data/output_data_128_128_128_case_1.h5 -o output_data.h5</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  -in Data/input_data_128_128_128_case_1.h5 -out ../Data/output_data_128_128_128_case_1.h5 </runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 100</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 10 </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 10</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 10 --u_non_staggered_raw</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10 </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10 --u_non_staggered_raw</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_64_64_corners.h5 -o Data/output_data_128_64_64_corners.h5 --benchmark 10 </runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_64_64_corners.h5 -o Data/output_data_128_64_64_corners.h5 --benchmark 10
+--u_non_staggered_raw</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_64_64_corners.h5 -o Data/output_data_128_64_64_corners.h5 --benchmark 10 --u_non_staggered_raw</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 100</runcommand>
+        <runcommand>"${OUTPUT_PATH}"  -i Data/input_data_128_64_64_corners.h5 -o Data/output_data_128_64_64_corners.h5 --benchmark 10 --u_non_staggered_raw</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

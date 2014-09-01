@@ -9,8 +9,8 @@
  *              responsible for the entire simulation.
  *
  * @version     kspaceFirstOrder3D 2.15
- * @date        12 July     2012, 10:27  (created)\n
- *              28 August   2014, 16:50  (revised)
+ * @date        12 July      2012, 10:27  (created)\n
+ *              01 September 2014, 13:53  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -145,7 +145,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     HDF5_CheckpointFile.Open(Parameters->GetCheckpointFileName().c_str());
 
     // read the actual value of t_index
-    long new_t_index;
+    size_t new_t_index;
     HDF5_CheckpointFile.ReadCompleteDataset(HDF5_CheckpointFile.GetRootGroup(),
                                             t_index_Name,
                                             TDimensionSizes(1,1,1),
@@ -2139,7 +2139,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
  */
 void TKSpaceFirstOrder3DSolver::Add_u_source()
 {
-  const long t_index = Parameters->Get_t_index();
+  const size_t t_index = Parameters->Get_t_index();
 
   if (Parameters->Get_ux_source_flag() > t_index)
   {
@@ -2172,7 +2172,7 @@ void TKSpaceFirstOrder3DSolver::Add_u_source()
 void TKSpaceFirstOrder3DSolver::Add_p_source()
 {
 
-  const long t_index = Parameters->Get_t_index();
+  const size_t t_index = Parameters->Get_t_index();
 
   if (Parameters->Get_p_source_flag() > t_index)
   {
@@ -2181,8 +2181,8 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
     float * rhoy = Get_rhoy().GetRawData();
     float * rhoz = Get_rhoz().GetRawData();
 
-    float * p_source_input = Get_p_source_input().GetRawData();
-    long * p_source_index = Get_p_source_index().GetRawData();
+    float  * p_source_input = Get_p_source_input().GetRawData();
+    size_t * p_source_index = Get_p_source_index().GetRawData();
 
 
     size_t index2D = t_index;
@@ -2253,15 +2253,13 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   const float DividerY = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
   const float DividerZ = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
 
-  size_t i;
-
   //-------------------------- ux_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
 
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < XShiftDims.Z; z++)
   {
-    i = z *  XShiftDims.Y * XShiftDims.X;
+    register size_t i = z *  XShiftDims.Y * XShiftDims.X;
     for (size_t y = 0; y < XShiftDims.Y; y++)
     {
       for (size_t x = 0; x < XShiftDims.X; x++)
@@ -2292,7 +2290,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < YShiftDims.Z; z++)
   {
-    i = z *  YShiftDims.Y * YShiftDims.X;
+    register size_t i = z *  YShiftDims.Y * YShiftDims.X;
     for (size_t y = 0; y < YShiftDims.Y; y++)
     {
       for (size_t x = 0; x < YShiftDims.X; x++)
@@ -2322,7 +2320,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < ZShiftDims.Z; z++)
   {
-    i = z *  ZShiftDims.Y * ZShiftDims.X;
+    register size_t i = z *  ZShiftDims.Y * ZShiftDims.X;
     for (size_t y = 0; y < ZShiftDims.Y; y++)
     {
       for (size_t x = 0; x < ZShiftDims.X; x++)
@@ -2371,7 +2369,7 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
 
   while (Parameters->Get_t_index() < Parameters->Get_Nt() && (!IsTimeToCheckpoint()))
   {
-    const long t_index = Parameters->Get_t_index();
+    const size_t t_index = Parameters->Get_t_index();
 
     Compute_uxyz();
     // add in the velocity u source term
@@ -2419,8 +2417,8 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
 void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
 {
 
-  const float Nt = (float) Parameters->Get_Nt();
-  const long t_index = Parameters->Get_t_index();
+  const float  Nt = (float) Parameters->Get_Nt();
+  const size_t t_index = Parameters->Get_t_index();
 
 
   if (t_index > (ActPercent * Nt * 0.01f) )
@@ -2439,8 +2437,8 @@ void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
     now += ToGo;
     current = localtime(&now);
 
-    fprintf(stdout, "%5i%c      %9.3fs      %9.3fs      %02i/%02i/%02i %02i:%02i:%02i\n",
-            (int) ((t_index) / (Nt * 0.01f)),'%',
+    fprintf(stdout, "%5li%c      %9.3fs      %9.3fs      %02i/%02i/%02i %02i:%02i:%02i\n",
+            (size_t) ((t_index) / (Nt * 0.01f)),'%',
             ElTime, ToGo,
             current->tm_mday, current->tm_mon+1, current->tm_year-100,
             current->tm_hour, current->tm_min, current->tm_sec

@@ -110,7 +110,7 @@ class TComplexMatrix : public TBaseFloatMatrix
     /// Write data into the HDF5_File
     virtual void WriteDataToHDF5File(THDF5_File & HDF5_File,
                                      const char * MatrixName,
-                                     const int CompressionLevel);
+                                     const size_t CompressionLevel);
 
   protected:
     /// Default constructor not allowed for public

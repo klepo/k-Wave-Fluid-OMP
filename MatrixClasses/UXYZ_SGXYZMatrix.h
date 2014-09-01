@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        28 July 2011, 11:37             (created) \n
- *              17 September 2012, 15:25        (revised)
+ * @date        28 July      2011, 11:37             (created) \n
+ *              01 September 2014, 15:25        (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -37,6 +37,7 @@
 
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/FFTWComplexMatrix.h>
+#include <MatrixClasses/IndexMatrix.h>
 
 /**
  * @class Tuxyz_sgxyzMatrix
@@ -88,10 +89,10 @@ public:
 
 
    /// Add transducer data  source to X component
-   void AddTransducerSource(TLongMatrix& u_source_index, TLongMatrix& delay_mask, TRealMatrix& transducer_signal);
+   void AddTransducerSource(TIndexMatrix& u_source_index, TIndexMatrix& delay_mask, TRealMatrix& transducer_signal);
 
    /// Add in velocity source terms
-   void Add_u_source(TRealMatrix &u_source_input, TLongMatrix & u_source_index, int t_index, long u_source_mode, long u_source_many);
+   void Add_u_source(TRealMatrix &u_source_input, TIndexMatrix & u_source_index, size_t t_index, size_t u_source_mode, size_t u_source_many);
 
    /// Destructor
    virtual ~Tuxyz_sgxyzMatrix() {};

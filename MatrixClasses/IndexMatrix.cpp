@@ -1,5 +1,5 @@
 /**
- * @file        LongMatrix.cpp
+ * @file        IndexMatrix.cpp
  * @author      Jiri Jaros              \n
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n
@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        26 July     2011, 15:16   (created) \n
- *              09 June     2014, 16:51   (revised)
+ * @date        26 July      2011, 15:16   (created) \n
+ *              01 September 2014, 13:00   (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -34,7 +34,7 @@
 
 #include <iostream>
 
-#include <MatrixClasses/LongMatrix.h>
+#include <MatrixClasses/IndexMatrix.h>
 
 #include <Utils/ErrorMessages.h>
 
@@ -58,11 +58,10 @@
  * Constructor
  * @param [in] DimensionSizes - Dimension sizes
  */
-TLongMatrix::TLongMatrix(struct TDimensionSizes DimensionSizes)
-              : TBaseLongMatrix()
+TIndexMatrix::TIndexMatrix(struct TDimensionSizes DimensionSizes)
+              : TBaseIndexMatrix()
 {
   pDimensionSizes = DimensionSizes;
-
 
   pTotalElementCount = pDimensionSizes.X *
                        pDimensionSizes.Y *
@@ -88,10 +87,9 @@ TLongMatrix::TLongMatrix(struct TDimensionSizes DimensionSizes)
  * @param HDF5_File - HDF5 file handle
  * @param MatrixName  - HDF5 dataset name
  */
-void TLongMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
-                                       const char * MatrixName)
+void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
+                                        const char * MatrixName)
 {
-
   if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(),MatrixName) != THDF5_File::hdf5_mdt_long)
   {
     char ErrorMessage[256];
@@ -120,7 +118,7 @@ void TLongMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
 /**
  * Recompute indeces, MATLAB -> C++
  */
-void TLongMatrix::RecomputeIndicesToCPP()
+void TIndexMatrix::RecomputeIndicesToCPP()
 {
   #pragma omp parallel for if (pTotalElementCount > 1e5)
   for (size_t i = 0; i < pTotalElementCount; i++)
@@ -133,7 +131,7 @@ void TLongMatrix::RecomputeIndicesToCPP()
 /**
  * Recompute indeces, C++ -> MATLAB
  */
-void TLongMatrix::RecomputeIndicesToMatlab()
+void TIndexMatrix::RecomputeIndicesToMatlab()
 {
   #pragma omp parallel for if (pTotalElementCount > 1e5)
   for (size_t i = 0; i < pTotalElementCount; i++)
@@ -146,9 +144,9 @@ void TLongMatrix::RecomputeIndicesToMatlab()
 
 /**
  * Get total number of elements in all cuboids to be able to allocate output file
- * @return
+ * @return - total sampled gridpoints
  */
-size_t TLongMatrix::GetTotalNumberOfElementsInAllCuboids() const
+size_t TIndexMatrix::GetTotalNumberOfElementsInAllCuboids() const
 {
   size_t ElementSum = 0;
   for (size_t cuboidIdx = 0; cuboidIdx < pDimensionSizes.Y; cuboidIdx++)
@@ -168,9 +166,9 @@ size_t TLongMatrix::GetTotalNumberOfElementsInAllCuboids() const
  * @param [in] MatrixName  - HDF5 Dataset name
  * @param [in] CompressionLevel - Compression level
  */
-void TLongMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
+void TIndexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                       const char * MatrixName,
-                                      const int CompressionLevel)
+                                      const size_t CompressionLevel)
 {
   // set chunks - may be necessary for long index based sensor masks
   TDimensionSizes Chunks = pDimensionSizes;
@@ -194,7 +192,7 @@ void TLongMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
     }
   }
 
-  hid_t HDF5_Dataset_id = HDF5_File.CreateLongDataset(HDF5_File.GetRootGroup(),
+  hid_t HDF5_Dataset_id = HDF5_File.CreateIndexDataset(HDF5_File.GetRootGroup(),
                                                        MatrixName,
                                                        pDimensionSizes,
                                                        Chunks,

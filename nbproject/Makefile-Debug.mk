@@ -38,10 +38,10 @@ OBJECTFILES= \
 	${OBJECTDIR}/HDF5/HDF5_File.o \
 	${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o \
 	${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o \
-	${OBJECTDIR}/MatrixClasses/BaseLongMatrix.o \
+	${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/ComplexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/FFTWComplexMatrix.o \
-	${OBJECTDIR}/MatrixClasses/LongMatrix.o \
+	${OBJECTDIR}/MatrixClasses/IndexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/MatrixContainer.o \
 	${OBJECTDIR}/MatrixClasses/OutputHDF5Stream.o \
 	${OBJECTDIR}/MatrixClasses/RealMatrix.o \
@@ -55,8 +55,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-Wall -fopenmp -mavx
-CXXFLAGS=-Wall -fopenmp -mavx
+CCFLAGS=-m64 -Wall -fopenmp -mavx -mtune=native -ffast-math -fassociative-math -ftree-vectorizer-verbose=0
+CXXFLAGS=-m64 -Wall -fopenmp -mavx -mtune=native -ffast-math -fassociative-math -ftree-vectorizer-verbose=0
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -65,7 +65,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/usr/local/hdf5-serial/lib -Wl,-rpath,/usr/local/hdf5-serial/lib\ -lz -lhdf5 -lhdf5_hl -lfftw3f -lfftw3f_omp
+LDLIBSOPTIONS=-L/usr/local/hdf5-serial/lib -Wl,-rpath,/usr/local/hdf5-serial/lib -lz -lfftw3f -lfftw3f_omp -lhdf5 -lhdf5_hl
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -73,7 +73,7 @@ LDLIBSOPTIONS=-L/usr/local/hdf5-serial/lib -Wl,-rpath,/usr/local/hdf5-serial/lib
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/k-wave-fluid-omp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/k-wave-fluid-omp ${OBJECTFILES} ${LDLIBSOPTIONS} -fopenmp -lm
+	g++ -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/k-wave-fluid-omp ${OBJECTFILES} ${LDLIBSOPTIONS} -fopenmp -lm
 
 ${OBJECTDIR}/HDF5/HDF5_File.o: HDF5/HDF5_File.cpp 
 	${MKDIR} -p ${OBJECTDIR}/HDF5
@@ -90,10 +90,10 @@ ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o: MatrixClasses/BaseFloatMatrix.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-serial/include -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o MatrixClasses/BaseFloatMatrix.cpp
 
-${OBJECTDIR}/MatrixClasses/BaseLongMatrix.o: MatrixClasses/BaseLongMatrix.cpp 
+${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o: MatrixClasses/BaseIndexMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-serial/include -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/BaseLongMatrix.o MatrixClasses/BaseLongMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-serial/include -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o MatrixClasses/BaseIndexMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/ComplexMatrix.o: MatrixClasses/ComplexMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
@@ -105,10 +105,10 @@ ${OBJECTDIR}/MatrixClasses/FFTWComplexMatrix.o: MatrixClasses/FFTWComplexMatrix.
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-serial/include -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/FFTWComplexMatrix.o MatrixClasses/FFTWComplexMatrix.cpp
 
-${OBJECTDIR}/MatrixClasses/LongMatrix.o: MatrixClasses/LongMatrix.cpp 
+${OBJECTDIR}/MatrixClasses/IndexMatrix.o: MatrixClasses/IndexMatrix.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-serial/include -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/LongMatrix.o MatrixClasses/LongMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I/usr/local/hdf5-serial/include -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/IndexMatrix.o MatrixClasses/IndexMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/MatrixContainer.o: MatrixClasses/MatrixContainer.cpp 
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses

@@ -164,21 +164,21 @@ class TCommandLineParameters
     /// Is --version flag set
     bool IsVersion()                    const {return PrintVersion; };
     /// Get benchmark time step count
-    int  GetBenchmarkTimeStepsCount()   const {return BenchmarkTimeStepsCount;};
+    size_t GetBenchmarkTimeStepsCount() const {return BenchmarkTimeStepsCount;};
 
     /// Get compression level
-    int  GetCompressionLevel()          const {return CompressionLevel;};
+    size_t GetCompressionLevel()        const {return CompressionLevel;};
     /// Get number of threads
-    int  GetNumberOfThreads()           const {return NumberOfThreads;};
+    size_t GetNumberOfThreads()         const {return NumberOfThreads;};
     /// Get verbose interval
-    int  GetVerboseInterval()           const {return VerboseInterval;};
+    size_t GetVerboseInterval()         const {return VerboseInterval;};
     /// Get start time index when sensor data collection begins
-    int GetStartTimeIndex()             const {return StartTimeStep;};
+    size_t GetStartTimeIndex()          const {return StartTimeStep;};
 
     /// Is checkpoint enabled
     bool IsCheckpointEnabled()          const {return (CheckpointInterval > 0); };
     /// Get checkpoint interval
-    int  GetCheckpointInterval()        const {return CheckpointInterval; };
+    size_t  GetCheckpointInterval()     const {return CheckpointInterval; };
 
     /// Is --p_raw set?
     bool IsStore_p_raw()                const {return Store_p_raw;};
@@ -240,18 +240,18 @@ class TCommandLineParameters
     std::string CheckpointFileName;
 
     /// NumberOfThreads value
-    int         NumberOfThreads;
+    size_t      NumberOfThreads;
     /// VerboseInterval value
-    int         VerboseInterval;
+    size_t      VerboseInterval;
     /// CompressionLevel value
-    int         CompressionLevel;
+    size_t      CompressionLevel;
 
     /// BenchmarkFlag value
     bool        BenchmarkFlag;
     /// BenchmarkTimeStepsCount value
-    int         BenchmarkTimeStepsCount;
+    size_t      BenchmarkTimeStepsCount;
     /// Checkpoint interval in seconds
-    int         CheckpointInterval;
+    size_t      CheckpointInterval;
 
     /// PrintVersion value
     bool        PrintVersion;
@@ -291,14 +291,14 @@ class TCommandLineParameters
     /// Copy sensor mask to the output file
     bool        CopySensorMask;
     /// StartTimeStep value
-    int         StartTimeStep;
+    size_t      StartTimeStep;
 
 
 
     /// Default compression level
-    static const int DefaultCompressionLevel = 3;
+    static const size_t DefaultCompressionLevel = 3;
     /// Default verbose interval
-    static const int DefaultVerboseInterval  = 5;
+    static const size_t DefaultVerboseInterval  = 5;
 
 
 };// end of class TCommandLineParameters

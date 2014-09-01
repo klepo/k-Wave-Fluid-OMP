@@ -68,7 +68,7 @@ public:
      * @param [in] HDF5_File    - Handle to the HDF5 file
      * @param [in] MatrixName   - HDF5 dataset name to read from
      */
-    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File, const char * MatrixName) {};
+    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File, const char * MatrixName) = 0;
 
     /**
      * @brief Write data into the HDF5 file
@@ -77,7 +77,7 @@ public:
      * @param MatrixName        - HDF5 dataset name to write to
      * @param CompressionLevel  - Compression level for the HDF5 dataset
      */
-    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const int CompressionLevel) {};
+    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const size_t CompressionLevel) = 0;
 
 
     /// Destructor

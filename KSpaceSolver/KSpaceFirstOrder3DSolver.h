@@ -41,7 +41,7 @@
 #include <MatrixClasses/MatrixContainer.h>
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/ComplexMatrix.h>
-#include <MatrixClasses/LongMatrix.h>
+#include <MatrixClasses/IndexMatrix.h>
 #include <MatrixClasses/OutputHDF5Stream.h>
 #include <MatrixClasses/UXYZ_SGXYZMatrix.h>
 #include <MatrixClasses/FFTWComplexMatrix.h>
@@ -494,28 +494,28 @@ class TKSpaceFirstOrder3DSolver
     //-- Index matrices --//
 
     /// Get the sensor_mask_index matrix from the container
-    TLongMatrix& Get_sensor_mask_index()
+    TIndexMatrix& Get_sensor_mask_index()
     {
       return MatrixContainer.GetLongMatrix(sensor_mask_index);
     };
     /// Get the sensor_mask_corners matrix from the container
-    TLongMatrix& Get_sensor_mask_corners()
+    TIndexMatrix& Get_sensor_mask_corners()
     {
       return MatrixContainer.GetLongMatrix(sensor_mask_corners);
     };
 
     /// Get the u_source_index matrix from the container
-    TLongMatrix& Get_u_source_index()
+    TIndexMatrix& Get_u_source_index()
     {
       return MatrixContainer.GetLongMatrix(u_source_index);
     };
     /// Get the p_source_index matrix from the container
-    TLongMatrix& Get_p_source_index()
+    TIndexMatrix& Get_p_source_index()
     {
       return MatrixContainer.GetLongMatrix(p_source_index);
     };
     /// Get the delay_mask matrix from the container
-    TLongMatrix& Get_delay_mask()
+    TIndexMatrix& Get_delay_mask()
     {
       return MatrixContainer.GetLongMatrix(delay_mask);
     }
@@ -607,7 +607,7 @@ class TKSpaceFirstOrder3DSolver
     TOutputStreamContainer OutputStreamContainer;
 
     /// Percentage of the simulation done
-    int                ActPercent;
+    size_t             ActPercent;
 
     /// Global parameters of the simulation
     TParameters *      Parameters;

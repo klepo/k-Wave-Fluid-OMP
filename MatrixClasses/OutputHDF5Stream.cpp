@@ -10,8 +10,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        11 July     2012, 10:30      (created) \n
- *              30 August   2014, 15:00      (revised)
+ * @date        11 July      2012, 10:30      (created) \n
+ *              01 September 2014, 13:27      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -176,7 +176,7 @@ void TBaseOutputHDF5Stream::FreeMemory()
 TIndexOutputHDF5Stream::TIndexOutputHDF5Stream(THDF5_File &             HDF5_File,
                                                const char *             HDF5_ObjectName,
                                                const TRealMatrix &      SourceMatrix,
-                                               const TLongMatrix &      SensorMask,
+                                               const TIndexMatrix &     SensorMask,
                                                const TReductionOperator ReductionOp,
                                                float *                  BufferToReuse)
         : TBaseOutputHDF5Stream(HDF5_File, HDF5_ObjectName, SourceMatrix, ReductionOp, BufferToReuse),
@@ -301,8 +301,8 @@ void TIndexOutputHDF5Stream::Reopen()
 void TIndexOutputHDF5Stream::Sample()
 {
 
-  const float * SourceData = SourceMatrix.GetRawData();
-  const long  * SensorData = SensorMask.GetRawData();
+  const float  * SourceData = SourceMatrix.GetRawData();
+  const size_t * SensorData = SensorMask.GetRawData();
 
   switch (ReductionOp)
   {
@@ -443,7 +443,7 @@ void TIndexOutputHDF5Stream::FlushBufferToFile()
 TCuboidOutputHDF5Stream::TCuboidOutputHDF5Stream(THDF5_File &             HDF5_File,
                                                  const char *             HDF5_GroupName,
                                                  const TRealMatrix &      SourceMatrix,
-                                                 const TLongMatrix &      SensorMask,
+                                                 const TIndexMatrix &     SensorMask,
                                                  const TReductionOperator ReductionOp,
                                                  float *                  BufferToReuse)
         : TBaseOutputHDF5Stream(HDF5_File, HDF5_GroupName, SourceMatrix, ReductionOp, BufferToReuse),
