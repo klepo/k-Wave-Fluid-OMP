@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        26 July      2011, 14:17 (created) \n
- *              01 September 2014, 15:35 (revised)
+ *              01 September 2014, 15:55 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org). .\n
@@ -34,8 +34,7 @@
 
 
 #include <string.h>
-#include <malloc.h>
-
+#include <immintrin.h>
 #include <MatrixClasses/BaseIndexMatrix.h>
 
 #include <Utils/DimensionSizes.h>
@@ -85,7 +84,7 @@ void TBaseIndexMatrix::AllocateMemory()
 {
   /* No memory allocated before this function*/
 
-  pMatrixData = (size_t *) memalign(DATA_ALIGNMENT,pTotalAllocatedElementCount * sizeof (size_t));
+  pMatrixData = (size_t *) _mm_malloc(pTotalAllocatedElementCount * sizeof (size_t), DATA_ALIGNMENT);
 
   if (!pMatrixData)
   {
@@ -102,7 +101,7 @@ void TBaseIndexMatrix::AllocateMemory()
  */
 void TBaseIndexMatrix::FreeMemory()
 {
-  if (pMatrixData) free(pMatrixData);
+  if (pMatrixData) _mm_free(pMatrixData);
   pMatrixData = NULL;
 }// end of MemoryDealocation
 //------------------------------------------------------------------------------

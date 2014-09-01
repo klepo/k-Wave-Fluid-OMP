@@ -10,8 +10,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        11 July 2011, 12:13      (created) \n
- *              17 September 2012, 15:35 (revised)
+ * @date        11 July      2011, 12:13 (created) \n
+ *              01 September 2014, 16:56 (revised)
  *
  * @section license
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -34,7 +34,7 @@
 
 
 #include <string.h>
-#include <malloc.h>
+#include <immintrin.h>
 #include <assert.h>
 
 #include <MatrixClasses/BaseFloatMatrix.h>
@@ -118,7 +118,7 @@ void TBaseFloatMatrix::AllocateMemory(){
     /* No memory allocated before this function*/
     assert(pMatrixData == NULL);
 
-    pMatrixData = ( float *) memalign(DATA_ALIGNMENT,pTotalAllocatedElementCount * sizeof (float));
+    pMatrixData = ( float *) _mm_malloc(pTotalAllocatedElementCount * sizeof (float), DATA_ALIGNMENT);
 
     if (!pMatrixData) {
         fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseFloatMatrix");
@@ -135,7 +135,7 @@ void TBaseFloatMatrix::AllocateMemory(){
  */
  void TBaseFloatMatrix::FreeMemory(){
 
-    if (pMatrixData) free(pMatrixData);
+    if (pMatrixData) _mm_free(pMatrixData);
 
     pMatrixData = NULL;
 

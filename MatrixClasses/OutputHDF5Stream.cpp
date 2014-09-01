@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July      2012, 10:30      (created) \n
- *              01 September 2014, 13:27      (revised)
+ *              01 September 2014, 16:55      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -34,8 +34,7 @@
 
 #include <string.h>
 #include <cmath>
-#include <malloc.h>
-
+#include <immintrin.h>
 #include <MatrixClasses/OutputHDF5Stream.h>
 
 #include <Parameters/Parameters.h>
@@ -118,7 +117,7 @@ void TBaseOutputHDF5Stream::PostProcess()
  */
 void TBaseOutputHDF5Stream::AllocateMemory()
 {
-  StoreBuffer = (float *) memalign(DATA_ALIGNMENT, BufferSize * sizeof (float));
+  StoreBuffer = (float *) _mm_malloc(BufferSize * sizeof (float), DATA_ALIGNMENT);
 
   if (!StoreBuffer)
   {
@@ -145,7 +144,7 @@ void TBaseOutputHDF5Stream::FreeMemory()
 {
   if (StoreBuffer)
   {
-    free(StoreBuffer);
+    _mm_free(StoreBuffer);
     StoreBuffer = NULL;
   }
 }// end of FreeMemory
