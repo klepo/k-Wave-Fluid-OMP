@@ -364,13 +364,13 @@ void TKSpaceFirstOrder3DSolver::SetProcessorAffinity()
     #endif
 
     #ifdef __INTEL_COMPILER
-      setenv("KMP_AFFINITY","scatter",1);
+      setenv("KMP_AFFINITY","none",1);
     #endif
   #endif
 
   // Windows build is always compiled by the Intel Compiler
   #ifdef _WIN64
-    _putenv_s("KMP_AFFINITY","scatter");
+    _putenv_s("KMP_AFFINITY","none");
   #endif
 }//end of SetProcessorAffinity
 //------------------------------------------------------------------------------

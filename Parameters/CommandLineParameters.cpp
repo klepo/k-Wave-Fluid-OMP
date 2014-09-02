@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              01 September 2014, 14:20 (revised)
+ *              02 September 2014, 19:06 (revised)
  *
  *
  * @section License
@@ -39,7 +39,7 @@
 
 //Windows build
 #ifdef _WIN64
-  #include <GetoptWin64/getopt.h>
+  #include <GetoptWin64/Getopt.h>
 #endif
 
 #include <stdio.h>
