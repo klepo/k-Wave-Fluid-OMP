@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July      2012, 10:57 (created) \n
- *              01 September 2014, 14:36 (revised)
+ *              02 September 2014, 16:13 (revised)
  *
  *
  *
@@ -707,8 +707,8 @@ int main(int argc, char** argv)
 
   // set number of threads and bind them to cores
   #ifdef _OPENMP
+    KSpaceSolver.SetProcessorAffinity();
     omp_set_num_threads(Parameters->GetNumberOfThreads());
-    setenv("OMP_PROC_BIND","TRUE",1);
   #endif
 
 

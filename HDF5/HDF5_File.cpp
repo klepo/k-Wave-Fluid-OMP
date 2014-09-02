@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        27 July      2012, 14:14      (created) \n
- *              01 Septmeber 2014, 13:07      (revised)
+ *              02 September 2014, 16:10      (revised)
  *
 
  * @section License
@@ -34,7 +34,19 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdexcept>
-#include <unistd.h>
+#include <time.h>
+
+// Linux build
+#ifdef __linux__
+  #include <unistd.h>
+#endif
+
+//Windows 64 build
+#ifdef _WIN64
+  #include<stdio.h>
+  #include<Winsock2.h>
+  #pragma comment(lib, "Ws2_32.lib")
+#endif
 
 #include <HDF5/HDF5_File.h>
 
@@ -1411,7 +1423,20 @@ void THDF5_FileHeader::SetActualCreationTime()
 void THDF5_FileHeader::SetHostName()
 {
   char   HostName[256];
-  gethostname(HostName, 256);
+
+  //Linux build
+  #ifdef __linux__
+    gethostname(HostName, 256);
+  #endif
+
+  //Windows build
+  #ifdef _WIN64
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+	  gethostname(HostName, 256);
+
+    WSACleanup();
+  #endif
 
   HDF5_FileHeaderValues[hdf5_fhi_host_name] = HostName;
 }// end of SetHostName

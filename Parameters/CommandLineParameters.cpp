@@ -31,8 +31,18 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+//Linux build
+#ifdef __linux__
+  #include <getopt.h>
+#endif
+
+//Windows build
+#ifdef _WIN64
+  #include <GetoptWin64/getopt.h>
+#endif
+
 #include <stdio.h>
-#include <getopt.h>
 #include <string.h>
 #ifdef _OPENMP
   #include <omp.h>

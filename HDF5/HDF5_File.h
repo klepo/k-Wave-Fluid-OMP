@@ -439,7 +439,15 @@ Name                            Size           Data type        Domain Type     
 #include <hdf5_hl.h>
 #include <string>
 #include <map>
-#include <unistd.h>
+
+// Linux build
+#ifdef __linux__
+  #include <unistd.h>
+#endif
+
+#ifdef _WIN64
+  #include <io.h>
+#endif
 
 #include <Utils/DimensionSizes.h>
 
@@ -496,7 +504,13 @@ class THDF5_File
      */
     static bool IsHDF5(const char * FileName)
     {
-      return (access(FileName, F_OK) == 0);
+      #ifdef __linux__
+        return (access(FileName, F_OK) == 0);
+      #endif
+
+      #ifdef _WIN64
+        return (_access_s(FileName, 0) == 0 );
+      #endif
     };
 
     /// Close file

@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        12 July      2012, 10:27  (created)\n
- *              01 September 2014, 13:53  (revised)
+ *              02 September 2014, 16:10  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,17 +30,32 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Linux build
+#ifdef __linux__
+  #include <sys/resource.h>
+  #include <cmath>
+#endif
 
-#include <iostream>
+// Windows build
+#ifdef _WIN64
+  #define _USE_MATH_DEFINES
+  #include <cmath>
+  #include <Windows.h>
+  #include <Psapi.h>
+  #pragma comment(lib, "Psapi.lib")
+#endif
+
 #ifdef _OPENMP
   #include <omp.h>
 #endif
-#include <sys/resource.h>
-#include <immintrin.h>
-#include <cmath>
-#include <time.h>
+
+#include <iostream>
 #include <sstream>
 #include <cstdio>
+#include <limits>
+
+#include <immintrin.h>
+#include <time.h>
 
 #include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
 
@@ -282,14 +297,30 @@ void TKSpaceFirstOrder3DSolver::PrintParametersOfSimulation(FILE * file){
  * @return Peak memory usage in MBs.
  *
  */
-size_t TKSpaceFirstOrder3DSolver::ShowMemoryUsageInMB(){
+size_t TKSpaceFirstOrder3DSolver::ShowMemoryUsageInMB()
+{
+  // Linux build
+  #ifdef __linux__
+    struct rusage mem_usage;
+    getrusage(RUSAGE_SELF, &mem_usage);
 
-  struct rusage mem_usage;
-  getrusage(RUSAGE_SELF, &mem_usage);
+    return mem_usage.ru_maxrss >> 10;
+  #endif
 
-  return mem_usage.ru_maxrss >> 10;
+  // Windows build
+  #ifdef _WIN64
+    HANDLE hProcess;
+    PROCESS_MEMORY_COUNTERS pmc;
 
+    hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                           FALSE,
+                           GetCurrentProcessId());
 
+    GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc));
+    CloseHandle(hProcess);
+
+    return pmc.PeakWorkingSetSize >> 20;
+  #endif
 }// end of ShowMemoryUsageInMB
 //------------------------------------------------------------------------------
 
@@ -304,7 +335,14 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
     fprintf(file,"\n");
     fprintf(file,"+--------------------------------------------------+\n");
     fprintf(file,"| Build Number:     kspaceFirstOrder3D v2.15       |\n");
-    fprintf(file,"| Operating System: Linux x64                      |\n");
+
+    #ifdef __linux__
+      fprintf(file,"| Operating System: Linux x64                      |\n");
+    #endif
+    #ifdef _WIN64
+      fprintf(file,"| Operating System: Windows x64                    |\n");
+    #endif
+
     fprintf(file,"|                                                  |\n");
     fprintf(file,"| Copyright (C) 2014 Jiri Jaros and Bradley Treeby |\n");
     fprintf(file,"| http://www.k-wave.org                            |\n");
@@ -313,6 +351,29 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
 }// end of GetFullCodeAndLincence
 //------------------------------------------------------------------------------
 
+/**
+ * Set processor affinity
+ */
+void TKSpaceFirstOrder3DSolver::SetProcessorAffinity()
+{
+  // Linux Build
+  #ifdef __linux__
+    //GNU compiler
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+      setenv("OMP_PROC_BIND","TRUE",1);
+    #endif
+
+    #ifdef __INTEL_COMPILER
+      setenv("KMP_AFFINITY","scatter",1);
+    #endif
+  #endif
+
+  // Windows build is always compiled by the Intel Compiler
+  #ifdef _WIN64
+    _putenv_s("KMP_AFFINITY","scatter");
+  #endif
+}//end of SetProcessorAffinity
+//------------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------//
@@ -569,8 +630,8 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2()
 
           kappa[i]         =  (c_ref_k == 0.0f) ? 1.0f : sin(c_ref_k)/c_ref_k;
 
-          if (absorb_nabla1[i] == INFINITY) absorb_nabla1[i] = 0.0f;
-          if (absorb_nabla2[i] == INFINITY) absorb_nabla2[i] = 0.0f;
+          if (absorb_nabla1[i] ==  std::numeric_limits<float>::infinity()) absorb_nabla1[i] = 0.0f;
+          if (absorb_nabla2[i] ==  std::numeric_limits<float>::infinity()) absorb_nabla2[i] = 0.0f;
 
           i++;
         }//x

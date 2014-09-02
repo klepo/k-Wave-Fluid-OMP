@@ -90,6 +90,9 @@ class TKSpaceFirstOrder3DSolver
     /// Print the code name and license
     void   PrintFullNameCodeAndLicense(FILE * file);
 
+    /// Set processor affinity
+    void   SetProcessorAffinity();
+
     /// Get total simulation time
     double GetTotalTime()          const { return TotalTime.GetElapsedTime();         };
 
