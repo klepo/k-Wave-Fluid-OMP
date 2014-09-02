@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July      2012, 10:57 (created) \n
- *              02 September 2014, 16:13 (revised)
+ *              02 September 2014, 16:49 (revised)
  *
  *
  *
@@ -219,7 +219,7 @@ Optional parameters:
   -t <num_threads>                : Number of CPU threads (default = MAX)
   -r <interval_in_%>              : Progress print interval (default = 5%)
   -c <comp_level>                 : Output file compression level <0,9>
-                                      (default = 3)
+                                      (default = 0)
   --benchmark <steps>             : Run a specified number of time steps
 
   --checkpoint_file <file_name>   : HDF5 checkpoint file

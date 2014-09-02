@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        29 August 2012, 11:25 (created) \n
- *              28 August 2014, 14:38 (revised)
+ *              02 August 2014, 16:49 (revised)
  *
  * @section Params Command Line Parameters
  *
@@ -68,7 +68,7 @@ Optional parameters:
   -t <num_threads>                : Number of CPU threads (default = MAX)
   -r <interval_in_%>              : Progress print interval (default = 5%)
   -c <comp_level>                 : Output file compression level <0,9>
-                                      (default = 3)
+                                      (default = 0)
   --benchmark <steps>             : Run a specified number of time steps
 
   --checkpoint_file <file_name>   : HDF5 checkpoint file
@@ -296,7 +296,7 @@ class TCommandLineParameters
 
 
     /// Default compression level
-    static const size_t DefaultCompressionLevel = 3;
+    static const size_t DefaultCompressionLevel = 0;
     /// Default verbose interval
     static const size_t DefaultVerboseInterval  = 5;
 
