@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        11 July     2012, 10:57 (created) \n
- *              28 August   2014, 15:45 (revised)
+ * @date        11 July      2012, 10:57 (created) \n
+ *              02 September 2014, 16:49 (revised)
  *
  *
  *
@@ -219,7 +219,7 @@ Optional parameters:
   -t <num_threads>                : Number of CPU threads (default = MAX)
   -r <interval_in_%>              : Progress print interval (default = 5%)
   -c <comp_level>                 : Output file compression level <0,9>
-                                      (default = 3)
+                                      (default = 0)
   --benchmark <steps>             : Run a specified number of time steps
 
   --checkpoint_file <file_name>   : HDF5 checkpoint file
@@ -707,12 +707,12 @@ int main(int argc, char** argv)
 
   // set number of threads and bind them to cores
   #ifdef _OPENMP
+    KSpaceSolver.SetProcessorAffinity();
     omp_set_num_threads(Parameters->GetNumberOfThreads());
-    setenv("OMP_PROC_BIND","TRUE",1);
   #endif
 
 
-  fprintf(stdout, "Number of CPU threads:    %6d\n", Parameters->GetNumberOfThreads());
+  fprintf(stdout, "Number of CPU threads:    %6ld\n", Parameters->GetNumberOfThreads());
   KSpaceSolver.PrintParametersOfSimulation(stdout);
 
 

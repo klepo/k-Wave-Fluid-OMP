@@ -1,5 +1,5 @@
 /**
- * @file        LongMatrix.h
+ * @file        IndexMatrix.h
  * @author      Jiri Jaros              \n
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n
@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        26 July     2011, 15:16 (created) \n
- *              20 June     2014, 15:37 (revised)
+ * @date        26 July      2011, 15:16 (created) \n
+ *              01 September 2014, 13:30 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,28 +30,31 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LONGMATRIXDATA_H
-#define	LONGMATRIXDATA_H
+#ifndef INDEXMATRIXDATA_H
+#define	INDEXMATRIXDATA_H
 
 
-#include <MatrixClasses/BaseLongMatrix.h>
+#include <MatrixClasses/BaseIndexMatrix.h>
 
 #include <Utils/DimensionSizes.h>
 
 /**
- * @class TLongMatrix
- * @brief The class for 64b integers. It is used for sensor_mask_index or sensor_corners_mask
- * to get the address of sampled voxels.
+ * @class TIndexMatrix
+ * @brief The class for 64b unsigned integers (indices). It is used for
+ *  sensor_mask_index or sensor_corners_mask to get the address of sampled voxels.
  */
-class TLongMatrix : public TBaseLongMatrix
+class TIndexMatrix : public TBaseIndexMatrix
 {
   public:
 
     /// Constructor
-    TLongMatrix(struct TDimensionSizes DimensionSizes);
+    TIndexMatrix(struct TDimensionSizes DimensionSizes);
 
     /// Destructor
-    virtual ~TLongMatrix() { FreeMemory(); };
+    virtual ~TIndexMatrix()
+    {
+      FreeMemory();
+    };
 
     /// Read data from the HDF5 file
     virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File,
@@ -59,14 +62,14 @@ class TLongMatrix : public TBaseLongMatrix
     /// Write data into the HDF5 file
     virtual void WriteDataToHDF5File(THDF5_File & HDF5_File,
                                      const char * MatrixName,
-                                     const int CompressionLevel);
+                                     const size_t CompressionLevel);
 
     /**
      * Operator []
      * @param index - 1D index into the matrix
      * @return  Value of the index
      */
-    long& operator [](const size_t& index)
+    size_t& operator [](const size_t& index)
     {
       return pMatrixData[index];
     };
@@ -76,7 +79,7 @@ class TLongMatrix : public TBaseLongMatrix
      * @param index - 1D index into the matrix
      * @return  Value of the index
      */
-    const long & operator [](const size_t& index) const
+    const size_t & operator [](const size_t& index) const
     {
       return pMatrixData[index];
     };
@@ -122,13 +125,13 @@ class TLongMatrix : public TBaseLongMatrix
 
   protected:
     /// Default constructor not allowed for public
-    TLongMatrix()  : TBaseLongMatrix() {};
+    TIndexMatrix()  : TBaseIndexMatrix() {};
 
     /// Copy constructor not allowed for public
-    TLongMatrix(const TLongMatrix& src);
+    TIndexMatrix(const TIndexMatrix& src);
 
     /// Operator =  not allowed for public
-    TLongMatrix& operator = (const TLongMatrix& src);
+    TIndexMatrix& operator = (const TIndexMatrix& src);
 
   private:
 
@@ -139,7 +142,7 @@ class TLongMatrix : public TBaseLongMatrix
     /// Number of elements to get 256KB block of data
     static const size_t ChunkSize_1D_256KB =   65536; //(256KB)
 
-};// end of TLongMatrixData
+};// end of TIndexMatrixData
 //------------------------------------------------------------------------------
-#endif	/* LONGMATRIXDATA_H */
+#endif	/* INDEXMATRIXDATA_H */
 

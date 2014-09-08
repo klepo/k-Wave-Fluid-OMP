@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        09 August 2012,   13:39 (created) \n
- *              07 July   2014,   16:38 (revised)
+ * @date        09 August    2012,   13:39 (created) \n
+ *              01 September 2014,   13:28 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -111,10 +111,10 @@ void TParameters::ParseCommandLine(int argc, char** argv)
     Nt = CommandLinesParameters.GetBenchmarkTimeStepsCount();
   }
 
-  if ((Nt <= CommandLinesParameters.GetStartTimeIndex()) ||
+  if ((Nt <= (size_t) CommandLinesParameters.GetStartTimeIndex()) ||
       ( 0 > CommandLinesParameters.GetStartTimeIndex()) )
   {
-    fprintf(stderr,Parameters_ERR_FMT_Illegal_StartTime_value, (long) 1, Nt);
+    fprintf(stderr,Parameters_ERR_FMT_Illegal_StartTime_value, (size_t) 1, Nt);
     CommandLinesParameters.PrintUsageAndExit();
   }
 }// end of ParseCommandLine
@@ -189,7 +189,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   HDF5_InputFile.ReadCompleteDataset(HDF5RootGroup, pml_y_alpha_Name, ScalarSizes, &pml_y_alpha);
   HDF5_InputFile.ReadCompleteDataset(HDF5RootGroup, pml_z_alpha_Name, ScalarSizes, &pml_z_alpha);
 
-  long X, Y, Z;
+  size_t X, Y, Z;
   HDF5_InputFile.ReadCompleteDataset(HDF5RootGroup, Nx_Name, ScalarSizes, &X);
   HDF5_InputFile.ReadCompleteDataset(HDF5RootGroup, Ny_Name, ScalarSizes, &Y);
   HDF5_InputFile.ReadCompleteDataset(HDF5RootGroup, Nz_Name, ScalarSizes, &Z);
@@ -218,12 +218,12 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_11)
   {
 
-    // read sensor mask type as a long value to enum
-    long SensorMaskTypeLongValue = 0;
-    HDF5_InputFile.ReadCompleteDataset(HDF5RootGroup, sensor_mask_type_Name, ScalarSizes, &SensorMaskTypeLongValue);
+    // read sensor mask type as a size_t value to enum
+    size_t SensorMaskTypeNumericalue = 0;
+    HDF5_InputFile.ReadCompleteDataset(HDF5RootGroup, sensor_mask_type_Name, ScalarSizes, &SensorMaskTypeNumericalue);
 
-    // convert the long value on
-    switch (SensorMaskTypeLongValue)
+    // convert the size_t value to enum
+    switch (SensorMaskTypeNumericalue)
     {
       case 0: sensor_mask_type = smt_index;
         break;
@@ -366,11 +366,11 @@ void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
   const hid_t HDF5RootGroup = HDF5_OutputFile.GetRootGroup();
 
   // Write dimension sizes
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nx_Name, (long) FullDimensionSizes.X);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Ny_Name, (long) FullDimensionSizes.Y);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nz_Name, (long) FullDimensionSizes.Z);
+  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nx_Name, FullDimensionSizes.X);
+  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Ny_Name, FullDimensionSizes.Y);
+  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nz_Name, FullDimensionSizes.Z);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nt_Name, (long) Nt);
+  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nt_Name, Nt);
 
   HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, dt_Name, dt);
   HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, dx_Name, dx);
@@ -423,17 +423,17 @@ void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
   // if copy sensor mask, then copy the mask type
   if (IsCopySensorMask())
   {
-    long SensorMaskTypeLongValue = 0;
+    size_t SensorMaskTypeNumericValue = 0;
 
     switch (sensor_mask_type)
     {
-      case smt_index: SensorMaskTypeLongValue = 0;
+      case smt_index: SensorMaskTypeNumericValue = 0;
         break;
-      case smt_corners: SensorMaskTypeLongValue = 1;
+      case smt_corners: SensorMaskTypeNumericValue = 1;
         break;
     }//case
 
-    HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, sensor_mask_type_Name, SensorMaskTypeLongValue);
+    HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, sensor_mask_type_Name, SensorMaskTypeNumericValue);
   }
 
 }// end of SaveScalarsToHDF5File

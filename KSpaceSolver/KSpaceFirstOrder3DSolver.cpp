@@ -9,8 +9,8 @@
  *              responsible for the entire simulation.
  *
  * @version     kspaceFirstOrder3D 2.15
- * @date        12 July     2012, 10:27  (created)\n
- *              28 August   2014, 16:50  (revised)
+ * @date        12 July      2012, 10:27  (created)\n
+ *              02 September 2014, 16:10  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,17 +30,32 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Linux build
+#ifdef __linux__
+  #include <sys/resource.h>
+  #include <cmath>
+#endif
 
-#include <iostream>
+// Windows build
+#ifdef _WIN64
+  #define _USE_MATH_DEFINES
+  #include <cmath>
+  #include <Windows.h>
+  #include <Psapi.h>
+  #pragma comment(lib, "Psapi.lib")
+#endif
+
 #ifdef _OPENMP
   #include <omp.h>
 #endif
-#include <sys/resource.h>
-#include <immintrin.h>
-#include <cmath>
-#include <time.h>
+
+#include <iostream>
 #include <sstream>
 #include <cstdio>
+#include <limits>
+
+#include <immintrin.h>
+#include <time.h>
 
 #include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
 
@@ -145,7 +160,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     HDF5_CheckpointFile.Open(Parameters->GetCheckpointFileName().c_str());
 
     // read the actual value of t_index
-    long new_t_index;
+    size_t new_t_index;
     HDF5_CheckpointFile.ReadCompleteDataset(HDF5_CheckpointFile.GetRootGroup(),
                                             t_index_Name,
                                             TDimensionSizes(1,1,1),
@@ -282,14 +297,30 @@ void TKSpaceFirstOrder3DSolver::PrintParametersOfSimulation(FILE * file){
  * @return Peak memory usage in MBs.
  *
  */
-size_t TKSpaceFirstOrder3DSolver::ShowMemoryUsageInMB(){
+size_t TKSpaceFirstOrder3DSolver::ShowMemoryUsageInMB()
+{
+  // Linux build
+  #ifdef __linux__
+    struct rusage mem_usage;
+    getrusage(RUSAGE_SELF, &mem_usage);
 
-  struct rusage mem_usage;
-  getrusage(RUSAGE_SELF, &mem_usage);
+    return mem_usage.ru_maxrss >> 10;
+  #endif
 
-  return mem_usage.ru_maxrss >> 10;
+  // Windows build
+  #ifdef _WIN64
+    HANDLE hProcess;
+    PROCESS_MEMORY_COUNTERS pmc;
 
+    hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+                           FALSE,
+                           GetCurrentProcessId());
 
+    GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc));
+    CloseHandle(hProcess);
+
+    return pmc.PeakWorkingSetSize >> 20;
+  #endif
 }// end of ShowMemoryUsageInMB
 //------------------------------------------------------------------------------
 
@@ -304,7 +335,14 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
     fprintf(file,"\n");
     fprintf(file,"+--------------------------------------------------+\n");
     fprintf(file,"| Build Number:     kspaceFirstOrder3D v2.15       |\n");
-    fprintf(file,"| Operating System: Linux x64                      |\n");
+
+    #ifdef __linux__
+      fprintf(file,"| Operating System: Linux x64                      |\n");
+    #endif
+    #ifdef _WIN64
+      fprintf(file,"| Operating System: Windows x64                    |\n");
+    #endif
+
     fprintf(file,"|                                                  |\n");
     fprintf(file,"| Copyright (C) 2014 Jiri Jaros and Bradley Treeby |\n");
     fprintf(file,"| http://www.k-wave.org                            |\n");
@@ -313,6 +351,29 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
 }// end of GetFullCodeAndLincence
 //------------------------------------------------------------------------------
 
+/**
+ * Set processor affinity
+ */
+void TKSpaceFirstOrder3DSolver::SetProcessorAffinity()
+{
+  // Linux Build
+  #ifdef __linux__
+    //GNU compiler
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+      setenv("OMP_PROC_BIND","TRUE",1);
+    #endif
+
+    #ifdef __INTEL_COMPILER
+      setenv("KMP_AFFINITY","none",1);
+    #endif
+  #endif
+
+  // Windows build is always compiled by the Intel Compiler
+  #ifdef _WIN64
+    _putenv_s("KMP_AFFINITY","none");
+  #endif
+}//end of SetProcessorAffinity
+//------------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------//
@@ -569,8 +630,8 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2()
 
           kappa[i]         =  (c_ref_k == 0.0f) ? 1.0f : sin(c_ref_k)/c_ref_k;
 
-          if (absorb_nabla1[i] == INFINITY) absorb_nabla1[i] = 0.0f;
-          if (absorb_nabla2[i] == INFINITY) absorb_nabla2[i] = 0.0f;
+          if (absorb_nabla1[i] ==  std::numeric_limits<float>::infinity()) absorb_nabla1[i] = 0.0f;
+          if (absorb_nabla2[i] ==  std::numeric_limits<float>::infinity()) absorb_nabla2[i] = 0.0f;
 
           i++;
         }//x
@@ -2139,7 +2200,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear(){
  */
 void TKSpaceFirstOrder3DSolver::Add_u_source()
 {
-  const long t_index = Parameters->Get_t_index();
+  const size_t t_index = Parameters->Get_t_index();
 
   if (Parameters->Get_ux_source_flag() > t_index)
   {
@@ -2172,7 +2233,7 @@ void TKSpaceFirstOrder3DSolver::Add_u_source()
 void TKSpaceFirstOrder3DSolver::Add_p_source()
 {
 
-  const long t_index = Parameters->Get_t_index();
+  const size_t t_index = Parameters->Get_t_index();
 
   if (Parameters->Get_p_source_flag() > t_index)
   {
@@ -2181,8 +2242,8 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
     float * rhoy = Get_rhoy().GetRawData();
     float * rhoz = Get_rhoz().GetRawData();
 
-    float * p_source_input = Get_p_source_input().GetRawData();
-    long * p_source_index = Get_p_source_index().GetRawData();
+    float  * p_source_input = Get_p_source_input().GetRawData();
+    size_t * p_source_index = Get_p_source_index().GetRawData();
 
 
     size_t index2D = t_index;
@@ -2253,15 +2314,13 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   const float DividerY = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
   const float DividerZ = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
 
-  size_t i;
-
   //-------------------------- ux_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
 
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < XShiftDims.Z; z++)
   {
-    i = z *  XShiftDims.Y * XShiftDims.X;
+    register size_t i = z *  XShiftDims.Y * XShiftDims.X;
     for (size_t y = 0; y < XShiftDims.Y; y++)
     {
       for (size_t x = 0; x < XShiftDims.X; x++)
@@ -2292,7 +2351,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < YShiftDims.Z; z++)
   {
-    i = z *  YShiftDims.Y * YShiftDims.X;
+    register size_t i = z *  YShiftDims.Y * YShiftDims.X;
     for (size_t y = 0; y < YShiftDims.Y; y++)
     {
       for (size_t x = 0; x < YShiftDims.X; x++)
@@ -2322,7 +2381,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < ZShiftDims.Z; z++)
   {
-    i = z *  ZShiftDims.Y * ZShiftDims.X;
+    register size_t i = z *  ZShiftDims.Y * ZShiftDims.X;
     for (size_t y = 0; y < ZShiftDims.Y; y++)
     {
       for (size_t x = 0; x < ZShiftDims.X; x++)
@@ -2371,7 +2430,7 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
 
   while (Parameters->Get_t_index() < Parameters->Get_Nt() && (!IsTimeToCheckpoint()))
   {
-    const long t_index = Parameters->Get_t_index();
+    const size_t t_index = Parameters->Get_t_index();
 
     Compute_uxyz();
     // add in the velocity u source term
@@ -2419,8 +2478,8 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
 void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
 {
 
-  const float Nt = (float) Parameters->Get_Nt();
-  const long t_index = Parameters->Get_t_index();
+  const float  Nt = (float) Parameters->Get_Nt();
+  const size_t t_index = Parameters->Get_t_index();
 
 
   if (t_index > (ActPercent * Nt * 0.01f) )
@@ -2439,8 +2498,8 @@ void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
     now += ToGo;
     current = localtime(&now);
 
-    fprintf(stdout, "%5i%c      %9.3fs      %9.3fs      %02i/%02i/%02i %02i:%02i:%02i\n",
-            (int) ((t_index) / (Nt * 0.01f)),'%',
+    fprintf(stdout, "%5li%c      %9.3fs      %9.3fs      %02i/%02i/%02i %02i:%02i:%02i\n",
+            (size_t) ((t_index) / (Nt * 0.01f)),'%',
             ElTime, ToGo,
             current->tm_mday, current->tm_mon+1, current->tm_year-100,
             current->tm_hour, current->tm_min, current->tm_sec

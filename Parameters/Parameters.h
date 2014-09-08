@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        08 December 2011, 16:34 (created)      \n
- *              28 August   2014, 15:35 (revised)
+ * @date        08 December  2011, 16:34 (created)      \n
+ *              01 September 2014, 14:35 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -84,34 +84,34 @@ class TParameters {
     TDimensionSizes GetReducedDimensionSizes() const {return ReducedDimensionSizes; };
 
     /// Get Nt value
-    long  Get_Nt()               const {return Nt;};
+    size_t Get_Nt()               const {return Nt;};
     /// Get simulation time step
-    long  Get_t_index()          const {return t_index;};
+    size_t Get_t_index()          const {return t_index;};
     /// Set simulation time step -- should be used only when recovering from checkpoint
-    void  Set_t_index(const long new_t_index)  {t_index = new_t_index;};
+    void   Set_t_index(const size_t new_t_index)  {t_index = new_t_index;};
     /// Increment simulation time step
-    void  Increment_t_index()          {t_index++;};
+    void   Increment_t_index()          {t_index++;};
 
     /// Get dt value
-    float Get_dt()               const {return dt;};
+    float  Get_dt()               const {return dt;};
     /// Get dx value
-    float Get_dx()               const {return dx;};
+    float  Get_dx()               const {return dx;};
     /// Get dy value
-    float Get_dy()               const {return dy;};
+    float  Get_dy()               const {return dy;};
     /// Get dz value
-    float Get_dz()               const {return dz;};
+    float  Get_dz()               const {return dz;};
 
     /// Get c_ref value
-    float Get_c_ref()            const {return c_ref;};
+    float  Get_c_ref()            const {return c_ref;};
     /// Get alpha_power value
-    float Get_alpha_power()      const {return alpha_power; };
+    float  Get_alpha_power()      const {return alpha_power; };
 
     /// Get pml_x_size value
-    long  Get_pml_x_size()       const {return pml_x_size;};
+    size_t Get_pml_x_size()       const {return pml_x_size;};
     /// Get pml_y_size value
-    long  Get_pml_y_size()       const {return pml_y_size;};
+    size_t Get_pml_y_size()       const {return pml_y_size;};
     /// Get pml_z_size value
-    long  Get_pml_z_size()       const {return pml_z_size;};
+    size_t Get_pml_z_size()       const {return pml_z_size;};
 
     /// Get pml_x_alpha_size value
     float Get_pml_x_alpha_size() const {return pml_x_alpha;};
@@ -122,47 +122,47 @@ class TParameters {
 
 
     /// Get ux_source_flag value
-    long  Get_ux_source_flag()   const {return ux_source_flag;};
+    size_t Get_ux_source_flag()   const {return ux_source_flag;};
     /// Get uy_source_flag value
-    long  Get_uy_source_flag()   const {return uy_source_flag;};
+    size_t Get_uy_source_flag()   const {return uy_source_flag;};
     /// Get uz_source_flag value
-    long  Get_uz_source_flag()   const {return uz_source_flag;};
+    size_t Get_uz_source_flag()   const {return uz_source_flag;};
     /// Get u_source_many value
-    long  Get_u_source_many()    const {return u_source_many;};
+    size_t Get_u_source_many()    const {return u_source_many;};
     /// Get u_source_mode value
-    long  Get_u_source_mode()    const {return u_source_mode;};
+    size_t Get_u_source_mode()    const {return u_source_mode;};
 
     /// Get p_source_flag value
-    long  Get_p_source_flag()    const {return p_source_flag; };
+    size_t Get_p_source_flag()    const {return p_source_flag; };
     /// Get p0_source_flag value
-    long  Get_p0_source_flag()   const {return p0_source_flag;};
+    size_t Get_p0_source_flag()   const {return p0_source_flag;};
     /// Get p_source_many value
-    long  Get_p_source_many()    const {return p_source_many;};
+    size_t Get_p_source_many()    const {return p_source_many;};
     /// Get p_source_mode value
-    long  Get_p_source_mode()    const {return p_source_mode;};
+    size_t Get_p_source_mode()    const {return p_source_mode;};
 
     /// Get nonuniform_grid_flag value
-    long  Get_nonuniform_grid_flag()         const { return nonuniform_grid_flag;};
+    size_t Get_nonuniform_grid_flag()       const { return nonuniform_grid_flag;};
     /// Get absorbing_flag value
-    long  Get_absorbing_flag()               const { return absorbing_flag; };
+    size_t Get_absorbing_flag()             const { return absorbing_flag; };
     /// Get nonlinear_flag value
-    long  Get_nonlinear_flag()               const { return nonlinear_flag; };
+    size_t Get_nonlinear_flag()             const { return nonlinear_flag; };
     /// Get transducer_source_flag value
-    long  Get_transducer_source_flag()       const {return transducer_source_flag;};
+    size_t Get_transducer_source_flag()     const {return transducer_source_flag;};
 
     /// Get sensor mask type (linear or corners)
-    TSenosrMaskType Get_sensor_mask_type()   const {return sensor_mask_type;};
+    TSenosrMaskType Get_sensor_mask_type()  const {return sensor_mask_type;};
     /// Get sensor_mask_index_size value
-    long  Get_sensor_mask_index_size()       const {return sensor_mask_ind_size;}
+    size_t Get_sensor_mask_index_size()     const {return sensor_mask_ind_size;}
     /// Get number of cubes in the mask
-    long  Get_sensor_mask_corners_size()      const {return sensor_mask_corners_size;};
+    size_t Get_sensor_mask_corners_size()   const {return sensor_mask_corners_size;};
 
     /// Get u_source_index_size value
-    long  Get_u_source_index_size()          const { return u_source_index_size;}
+    size_t Get_u_source_index_size()          const { return u_source_index_size;}
     /// Get p_source_index_size value
-    long  Get_p_source_index_size()          const { return p_source_index_size;}
+    size_t Get_p_source_index_size()          const { return p_source_index_size;}
     /// Get transducer_source_input_size value
-    long  Get_transducer_source_input_size() const { return transducer_source_input_size;}
+    size_t Get_transducer_source_input_size() const { return transducer_source_input_size;}
 
     /// Get alpha_coeff_scallar_flag value
     bool   Get_alpha_coeff_scallar_flag()   const { return alpha_coeff_scalar_flag;};
@@ -203,19 +203,19 @@ class TParameters {
     string GetCheckpointFileName() const {return CommandLinesParameters.GetCheckpointFileName();};
 
     /// Get compression level
-    int GetCompressionLevel()      const {return CommandLinesParameters.GetCompressionLevel();};
+    size_t GetCompressionLevel()   const {return CommandLinesParameters.GetCompressionLevel();};
     /// Get number of threads
-    int GetNumberOfThreads()       const {return CommandLinesParameters.GetNumberOfThreads();};
+    size_t GetNumberOfThreads()    const {return CommandLinesParameters.GetNumberOfThreads();};
     /// Get verbose interval
-    int GetVerboseInterval()       const {return CommandLinesParameters.GetVerboseInterval();};
+    size_t GetVerboseInterval()    const {return CommandLinesParameters.GetVerboseInterval();};
 
     /// Get start time index for sensor recording
-    int GetStartTimeIndex()        const {return CommandLinesParameters.GetStartTimeIndex();};
+    size_t GetStartTimeIndex()     const {return CommandLinesParameters.GetStartTimeIndex();};
 
     /// Is checkpoint enabled
-    bool IsCheckpointEnabled()     const {return CommandLinesParameters.IsCheckpointEnabled(); };
+    bool   IsCheckpointEnabled()   const {return CommandLinesParameters.IsCheckpointEnabled(); };
     /// Get checkpoint interval
-    int  GetCheckpointInterval()   const {return CommandLinesParameters.GetCheckpointInterval(); };
+    size_t GetCheckpointInterval() const {return CommandLinesParameters.GetCheckpointInterval(); };
 
     /// Is --version specified at the command line
     bool IsVersion()                    const {return CommandLinesParameters.IsVersion();};
@@ -282,9 +282,9 @@ class TParameters {
 
 
     /// Nt value
-    long  Nt;
+    size_t Nt;
     /// actual time index (time step of the simulation)
-    long  t_index;
+    size_t t_index;
 
     /// dt value
     float dt;
@@ -308,55 +308,55 @@ class TParameters {
     /// sensor mask type (0 = index, 1 = corners)
     TSenosrMaskType sensor_mask_type;
     /// sensor_mask_ind_size value
-    long sensor_mask_ind_size;
+    size_t sensor_mask_ind_size;
     /// sensor_mask_corners_size - how many cuboids is in the mask.
-    long sensor_mask_corners_size;
+    size_t sensor_mask_corners_size;
 
     /// u_source_index_size value
-    long u_source_index_size;
+    size_t u_source_index_size;
     /// p_source_index_size value
-    long p_source_index_size;
+    size_t p_source_index_size;
     /// transducer_source_input_size value
-    long transducer_source_input_size;
+    size_t transducer_source_input_size;
 
 
     /// ux_source_flag value
-    long ux_source_flag;
+    size_t ux_source_flag;
     /// uy_source_flag value
-    long uy_source_flag;
+    size_t uy_source_flag;
     /// uz_source_flag value
-    long uz_source_flag;
+    size_t uz_source_flag;
 
     /// p_source_flag value
-    long p_source_flag;
+    size_t p_source_flag;
     /// p0_source_flag value
-    long p0_source_flag;
+    size_t p0_source_flag;
     /// transducer_source_flag value
-    long transducer_source_flag;
+    size_t transducer_source_flag;
 
     /// u_source_many value
-    long u_source_many;
+    size_t u_source_many;
     /// u_source_mode value
-    long u_source_mode;
+    size_t u_source_mode;
 
     /// p_source_mode value
-    long p_source_mode;
+    size_t p_source_mode;
     /// p_source_many value
-    long p_source_many;
+    size_t p_source_many;
 
     /// nonuniform_grid_flag value
-    long nonuniform_grid_flag;
+    size_t nonuniform_grid_flag;
     /// absorbing_flag value
-    long absorbing_flag;
+    size_t absorbing_flag;
     /// nonlinear_flag value
-    long nonlinear_flag;
+    size_t nonlinear_flag;
 
     /// pml_x_size value
-    long pml_x_size;
+    size_t pml_x_size;
     /// pml_y_size value
-    long pml_y_size;
+    size_t pml_y_size;
     /// pml_z_size value
-    long pml_z_size;
+    size_t pml_z_size;
 
     /// pml_x_alpha value
     float pml_x_alpha;

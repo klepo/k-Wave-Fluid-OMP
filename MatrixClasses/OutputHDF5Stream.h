@@ -10,8 +10,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        11 July   2012, 10:30 (created) \n
- *              20 August 2014, 14:15 (revised)
+ * @date        11 July      2012, 10:30 (created) \n
+ *              01 September 2014, 13:14 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -40,7 +40,7 @@
 #include <stdexcept>
 
 #include <MatrixClasses/RealMatrix.h>
-#include <MatrixClasses/LongMatrix.h>
+#include <MatrixClasses/IndexMatrix.h>
 
 #include <HDF5/HDF5_File.h>
 
@@ -181,7 +181,7 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
     TIndexOutputHDF5Stream(THDF5_File &             HDF5_File,
                            const char *             HDF5_ObjectName,
                            const TRealMatrix &      SourceMatrix,
-                           const TLongMatrix &      SensorMask,
+                           const TIndexMatrix &     SensorMask,
                            const TReductionOperator ReductionOp,
                            float *                  BufferToReuse = NULL);
 
@@ -213,7 +213,7 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
     virtual void FlushBufferToFile();
 
     /// Sensor mask to sample data
-    const TLongMatrix & SensorMask;
+    const TIndexMatrix & SensorMask;
     /// Handle to a HDF5 dataset
     hid_t               HDF5_DatasetId;
 
@@ -238,7 +238,7 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
     TCuboidOutputHDF5Stream(THDF5_File &             HDF5_File,
                             const char *             HDF5_GroupName,
                             const TRealMatrix &      SourceMatrix,
-                            const TLongMatrix &      SensorMask,
+                            const TIndexMatrix &     SensorMask,
                             const TReductionOperator ReductionOp,
                             float *                  BufferToReuse = NULL);
 
@@ -282,7 +282,7 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
     virtual void FlushBufferToFile();
 
     /// Sensor mask to sample data
-    const TLongMatrix &      SensorMask;
+    const TIndexMatrix &     SensorMask;
 
     /// Handle to a HDF5 dataset
     hid_t                    HDF5_GroupId;

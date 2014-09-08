@@ -140,7 +140,7 @@ void TComplexMatrix::InitDimensions(struct TDimensionSizes DimensionSizes)
  */
 void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                          const char * MatrixName,
-                                         const int CompressionLevel)
+                                         const size_t CompressionLevel)
 {
 
   TDimensionSizes ComplexDims = pDimensionSizes;

@@ -1,17 +1,17 @@
 /**
- * @file        BaseLongMatrix.cpp
+ * @file        BaseIndexMatrix.cpp
  * @author      Jiri Jaros              \n
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The implementation file containing the base class for
- *              64b-wide integers (long for Linux/ size_t for Windows)
+ * @brief       The implementation file containing the base class for index
+ *              matrices (based on the size_t datatype)
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        26 July 2011, 14:17 (created) \n
- *              17 September 2012, 15:35 (revised)
+ * @date        26 July      2011, 14:17 (created) \n
+ *              01 September 2014, 15:55 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org). .\n
@@ -34,9 +34,8 @@
 
 
 #include <string.h>
-#include <malloc.h>
-
-#include <MatrixClasses/BaseLongMatrix.h>
+#include <immintrin.h>
+#include <MatrixClasses/BaseIndexMatrix.h>
 
 #include <Utils/DimensionSizes.h>
 #include <Utils/ErrorMessages.h>
@@ -59,13 +58,13 @@
 //----------------------------------------------------------------------------//
 
 /**
- *  * Zero all allocated elements.
+ *  Zero all allocated elements.
  *
  */
-void TBaseLongMatrix::ZeroMatrix(){
-    ///@TODO: This breaks the first touch policy!
-    memset(pMatrixData,0,pTotalAllocatedElementCount*sizeof(long));
-
+void TBaseIndexMatrix::ZeroMatrix()
+{
+  ///@TODO: This breaks the first touch policy! - however we don't know the distribution
+  memset(pMatrixData, 0, pTotalAllocatedElementCount*sizeof(size_t));
 }// end of ZeroMatrix
 //------------------------------------------------------------------------------
 
@@ -81,29 +80,29 @@ void TBaseLongMatrix::ZeroMatrix(){
  * Memory allocation based on the total number of elements. \n
  * Memory is aligned by the SSE_ALIGNMENT and all elements are zeroed.
  */
-void TBaseLongMatrix::AllocateMemory(){
-    /* No memory allocated before this function*/
+void TBaseIndexMatrix::AllocateMemory()
+{
+  /* No memory allocated before this function*/
 
-    pMatrixData = (long *) memalign(DATA_ALIGNMENT,pTotalAllocatedElementCount * sizeof (long));
+  pMatrixData = (size_t *) _mm_malloc(pTotalAllocatedElementCount * sizeof (size_t), DATA_ALIGNMENT);
 
-    if (!pMatrixData) {
-        fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseLongMatrix");
-        throw bad_alloc();
-    }
+  if (!pMatrixData)
+  {
+    fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseIndexMatrix");
+    throw bad_alloc();
+  }
 
-    ZeroMatrix();
-
+  ZeroMatrix();
 }// end of AllocateMemory
 //------------------------------------------------------------------------------
 
 /**
  * Free memory
  */
- void TBaseLongMatrix::FreeMemory(){
-
-    if (pMatrixData) free(pMatrixData);
-    pMatrixData = NULL;
-
+void TBaseIndexMatrix::FreeMemory()
+{
+  if (pMatrixData) _mm_free(pMatrixData);
+  pMatrixData = NULL;
 }// end of MemoryDealocation
 //------------------------------------------------------------------------------
 

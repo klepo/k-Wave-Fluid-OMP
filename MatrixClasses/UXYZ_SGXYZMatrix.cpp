@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        28 July 2011, 11:37             (created) \n
- *              17 September 2012, 15:25        (revised)
+ * @date        28 July      2011, 11:37        (created) \n
+ *              01 September 2014, 13:26        (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -597,11 +597,11 @@ void Tuxyz_sgxyzMatrix::Compute_uz_sgz_normalize_scalar_nonuniform(TRealMatrix& 
 
 /**
  * Add transducer data to X dimension
- * @param [in] u_source_index      - long index matrix
- * @param [in, out] delay_mask     - long index matrix   - modified inside (+1)
+ * @param [in] u_source_index      - Index matrix
+ * @param [in, out] delay_mask     - Index matrix   - modified inside (+1)
  * @param [in] transducer_signal   - transducer signal
  */
-void Tuxyz_sgxyzMatrix::AddTransducerSource(TLongMatrix& u_source_index, TLongMatrix& delay_mask, TRealMatrix& transducer_signal){
+void Tuxyz_sgxyzMatrix::AddTransducerSource(TIndexMatrix& u_source_index, TIndexMatrix& delay_mask, TRealMatrix& transducer_signal){
 
     #pragma omp parallel for schedule (static)  if (u_source_index.GetTotalElementCount() > 1e5)
     for (size_t i = 0; i < u_source_index.GetTotalElementCount(); i++){
@@ -618,13 +618,13 @@ void Tuxyz_sgxyzMatrix::AddTransducerSource(TLongMatrix& u_source_index, TLongMa
  * Add in velocity source terms
  *
  * @param [in] u_source_input       - Source input to add
- * @param [in] u_source_index       - long index matrix
+ * @param [in] u_source_index       - Index matrix
  * @param [in] t_index              - actual time step
  * @param [in] u_source_mode        - Mode 0 = dirichlet boundary, 1 = add in
  * @param [in] u_source_many        - 0 = One series, 1 = multiple series
  *
  */
-void Tuxyz_sgxyzMatrix::Add_u_source(TRealMatrix &u_source_input, TLongMatrix & u_source_index, int t_index, long u_source_mode, long u_source_many){
+void Tuxyz_sgxyzMatrix::Add_u_source(TRealMatrix &u_source_input, TIndexMatrix & u_source_index, size_t t_index, size_t u_source_mode, size_t u_source_many){
 
 
     size_t index2D = t_index;

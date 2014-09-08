@@ -109,7 +109,7 @@ void TRealMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
  * @param [in] MatrixName       - HDF5 Matrix name
  * @param [in] CompressionLevel - Compression level
  */
-void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const int CompressionLevel)
+void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const size_t CompressionLevel)
 {
 
   TDimensionSizes Chunks = pDimensionSizes;

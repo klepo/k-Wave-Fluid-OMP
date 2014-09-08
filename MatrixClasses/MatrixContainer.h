@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              28 August    2014, 15:40 (revised)
+ *              01 Septmeber 2014, 15:40 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -42,7 +42,7 @@
 #include <MatrixClasses/ComplexMatrix.h>
 #include <MatrixClasses/FFTWComplexMatrix.h>
 #include <MatrixClasses/UXYZ_SGXYZMatrix.h>
-#include <MatrixClasses/LongMatrix.h>
+#include <MatrixClasses/IndexMatrix.h>
 #include <MatrixClasses/OutputHDF5Stream.h>
 
 #include <Utils/MatrixNames.h>
@@ -289,9 +289,9 @@ class TMatrixContainer
      * @param [in] MatrixID - Matrix identifier
      * @return LongMatrix
      */
-    TLongMatrix& GetLongMatrix(const TMatrixID MatrixID)
+    TIndexMatrix& GetLongMatrix(const TMatrixID MatrixID)
     {
-      return static_cast<TLongMatrix &>(*(MatrixContainer[MatrixID].MatrixPtr));
+      return static_cast<TIndexMatrix &>(*(MatrixContainer[MatrixID].MatrixPtr));
     };
 
 

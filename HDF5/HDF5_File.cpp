@@ -8,8 +8,8 @@
  * @brief       The implementation file containing the HDF5 related classes
  *
  * @version     kspaceFirstOrder3D 2.15
- * @date        27 July     2012, 14:14      (created) \n
- *              10 July     2014, 12:54      (revised)
+ * @date        27 July      2012, 14:14      (created) \n
+ *              02 September 2014, 16:10      (revised)
  *
 
  * @section License
@@ -34,7 +34,19 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdexcept>
-#include <unistd.h>
+#include <time.h>
+
+// Linux build
+#ifdef __linux__
+  #include <unistd.h>
+#endif
+
+//Windows 64 build
+#ifdef _WIN64
+  #include<stdio.h>
+  #include<Winsock2.h>
+  #pragma comment(lib, "Ws2_32.lib")
+#endif
 
 #include <HDF5/HDF5_File.h>
 
@@ -278,7 +290,7 @@ hid_t THDF5_File::CreateFloatDataset(const hid_t ParentGroup,
                                      const char * DatasetName,
                                      const TDimensionSizes & DimensionSizes,
                                      const TDimensionSizes & ChunkSizes,
-                                     const int CompressionLevel)
+                                     const size_t CompressionLevel)
 {
   const int RANK = (DimensionSizes.Is3D()) ? 3 : 4;
 
@@ -363,11 +375,11 @@ hid_t THDF5_File::CreateFloatDataset(const hid_t ParentGroup,
  * @param [in] CompressionLevel  - Compression level
  * @return a handle to the new dataset
  */
-hid_t THDF5_File::CreateLongDataset(const hid_t ParentGroup,
+hid_t THDF5_File::CreateIndexDataset(const hid_t ParentGroup,
                                     const char * DatasetName,
                                     const TDimensionSizes & DimensionSizes,
                                     const TDimensionSizes & ChunkSizes,
-                                    const int CompressionLevel)
+                                    const size_t CompressionLevel)
 {
 
   const int RANK = 3;
@@ -421,7 +433,7 @@ hid_t THDF5_File::CreateLongDataset(const hid_t ParentGroup,
 
   return HDF5_dataset_id;
 
-}// end of CreateLongDataset
+}// end of CreateIndexDataset
 //------------------------------------------------------------------------------
 
 
@@ -527,7 +539,7 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
 void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
                                 const TDimensionSizes & Position,
                                 const TDimensionSizes & Size,
-                                const long * Data)
+                                const size_t * Data)
 {
 
   herr_t status;
@@ -694,8 +706,8 @@ void THDF5_File::WriteCuboidToHyperSlab(const hid_t HDF5_Dataset_id,
  */
 void THDF5_File::WriteSensorByMaskToHyperSlab(const hid_t HDF5_Dataset_id,
                                               const TDimensionSizes & HyperslabPosition,
-                                              const size_t IndexSensorSize,
-                                              const long * IndexSensorData,
+                                              const size_t   IndexSensorSize,
+                                              const size_t * IndexSensorData,
                                               const TDimensionSizes & MatrixDimensions,
                                               const float * MatrixData)
 {
@@ -836,7 +848,7 @@ void THDF5_File::WriteScalarValue(const hid_t ParentGroup,
  */
 void THDF5_File::WriteScalarValue(const hid_t ParentGroup,
                                   const char * DatasetName,
-                                  const long Value)
+                                  const size_t Value)
 {
   const int     Rank = 3;
   const hsize_t Dims[] = {1,1,1};
@@ -940,7 +952,7 @@ void THDF5_File::ReadCompleteDataset (const hid_t ParentGroup,
 void THDF5_File::ReadCompleteDataset (const hid_t ParentGroup,
                                       const char * DatasetName,
                                       const TDimensionSizes & DimensionSizes,
-                                      long * Data)
+                                      size_t * Data)
 {
   if (GetDatasetDimensionSizes(ParentGroup, DatasetName).GetElementCount() !=
       DimensionSizes.GetElementCount())
@@ -1411,7 +1423,20 @@ void THDF5_FileHeader::SetActualCreationTime()
 void THDF5_FileHeader::SetHostName()
 {
   char   HostName[256];
-  gethostname(HostName, 256);
+
+  //Linux build
+  #ifdef __linux__
+    gethostname(HostName, 256);
+  #endif
+
+  //Windows build
+  #ifdef _WIN64
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+	  gethostname(HostName, 256);
+
+    WSACleanup();
+  #endif
 
   HDF5_FileHeaderValues[hdf5_fhi_host_name] = HostName;
 }// end of SetHostName
@@ -1491,7 +1516,7 @@ void THDF5_FileHeader::GetExecutionTimes(double& TotalTime,
 void THDF5_FileHeader::SetNumberOfCores()
 {
   char Text[12] = "";
-  sprintf(Text, "%d",TParameters::GetInstance()->GetNumberOfThreads());
+  sprintf(Text, "%ld",TParameters::GetInstance()->GetNumberOfThreads());
 
   HDF5_FileHeaderValues[hdf5_fhi_number_of_cores] = Text;
 }// end of SetNumberOfCores
