@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        09 August    2011, 13:10 (created) \n
- *              28 August    2014, 15:35 (revised)
+ *              03 September 2014, 13:44 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -154,7 +154,9 @@ void TFFTWComplexMatrix::Create_FFT_Plan_3D_C2R(TRealMatrix& OutMatrix)
 
 
 /**
- * Create an FFTW plan for 1D Real-to-Complex in the X dimension
+ * Create an FFTW plan for 1D Real-to-Complex in the X dimension.
+ * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
+ * The FFTW version processes the whole matrix at one while the MKL slab by slab
  * @param [in,out] InMatrix  - RealMatrix of which to create the plan
  * @warning Unless FFTW_ESTIMATE flag is specified, the content of the InMatrix is destroyed!
  *
@@ -176,20 +178,33 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_R2C(TRealMatrix& InMatrix)
   fft_dims[0].n  = X;
   fft_dims[0].os = 1;
 
+  // GNU Compiler + FFTW
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    // How many definition - other dims
+    const int  fft_howmany_rank = 2;
+    fftw_iodim fft_howmany_dims[2];
 
-  // How many definition - other dims
-  const int  fft_howmany_rank = 2;
-  fftw_iodim fft_howmany_dims[2];
+    // Z dim
+    fft_howmany_dims[0].is = X * Y;
+    fft_howmany_dims[0].n  = Z;
+    fft_howmany_dims[0].os = X_2 * Y;
 
-  // Z dim
-  fft_howmany_dims[0].is = X * Y;
-  fft_howmany_dims[0].n  = Z;
-  fft_howmany_dims[0].os = X_2 * Y;
+    // Y dim
+    fft_howmany_dims[1].is = X;
+    fft_howmany_dims[1].n  = Y;
+    fft_howmany_dims[1].os = X_2;
+  #endif
 
-  // Y dim
-  fft_howmany_dims[1].is = X;
-  fft_howmany_dims[1].n  = Y;
-  fft_howmany_dims[1].os = X_2;
+  // Intel Compiler + MKL
+  #if (defined(__INTEL_COMPILER))
+    const int  fft_howmany_rank = 1;
+    fftw_iodim fft_howmany_dims[1];
+
+    // Y dim
+    fft_howmany_dims[0].is = X;
+    fft_howmany_dims[0].n  = Y;
+    fft_howmany_dims[0].os = X_2;
+  #endif
 
   fftw_plan_1DX_R2C = fftwf_plan_guru_dft_r2c(fft_rank,                         // 1D FFT rank
                                               fft_dims,                         // 1D FFT dimensions of X
@@ -198,7 +213,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_R2C(TRealMatrix& InMatrix)
                                               fft_howmany_dims,                 // Dims and strides in Y and Z
 
                                               InMatrix.GetRawData(),            // input data
-                                              (fftwf_complex *) pMatrixData,    //output data
+                                              (fftwf_complex *) pMatrixData,    // output data
                                               TFFTWComplexMatrix_FFT_FLAG);
 
   if (!fftw_plan_1DX_R2C)
@@ -213,6 +228,8 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_R2C(TRealMatrix& InMatrix)
 
 /**
  * Create an FFTW plan for 1D Real-to-Complex in the Y dimension
+ * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
+ * The FFTW version processes the whole matrix at one while the MKL slab by slab
  * @param [in,out] InMatrix  - RealMatrix of which to create the plan
  * @warning Unless FFTW_ESTIMATE flag is specified, the content of the InMatrix
  *          is destroyed!
@@ -236,21 +253,33 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_R2C(TRealMatrix& InMatrix)
   fft_dims[0].n  = Y;
   fft_dims[0].os = X;
 
-  // How many definition - other dims
-  const int  fft_howmany_rank = 2;
-  fftw_iodim fft_howmany_dims[2];
+  // GNU Compiler + FFTW
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    // How many definition - other dims
+    const int  fft_howmany_rank = 2;
+    fftw_iodim fft_howmany_dims[2];
 
-  // Z dim
-  fft_howmany_dims[0].is = X * Y;
-  fft_howmany_dims[0].n  = Z;
-  fft_howmany_dims[0].os = X * Y_2 ;
+    // Z dim
+    fft_howmany_dims[0].is = X * Y;
+    fft_howmany_dims[0].n  = Z;
+    fft_howmany_dims[0].os = X * Y_2 ;
 
-  // X dim
-  fft_howmany_dims[1].is = 1;
-  fft_howmany_dims[1].n  = X;
-  fft_howmany_dims[1].os = 1;
+    // X dim
+    fft_howmany_dims[1].is = 1;
+    fft_howmany_dims[1].n  = X;
+    fft_howmany_dims[1].os = 1;
+  #endif
 
+    // Intel Compiler + MKL
+  #if (defined(__INTEL_COMPILER))
+    const int  fft_howmany_rank = 1;
+    fftw_iodim fft_howmany_dims[1];
 
+    // X dim
+    fft_howmany_dims[0].is = 1;
+    fft_howmany_dims[0].n  = X;
+    fft_howmany_dims[0].os = 1;
+  #endif
 
   fftw_plan_1DY_R2C = fftwf_plan_guru_dft_r2c(fft_rank,                         // 1D FFT rank
                                               fft_dims,                         // 1D FFT dimensions of Y
@@ -259,7 +288,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_R2C(TRealMatrix& InMatrix)
                                               fft_howmany_dims,                 // Dims and strides in X and Z
 
                                               InMatrix.GetRawData(),            // input data
-                                              (fftwf_complex *) pMatrixData,    //output data
+                                              (fftwf_complex *) pMatrixData,    // output data
                                               TFFTWComplexMatrix_FFT_FLAG);
 
   if (!fftw_plan_1DY_R2C)
@@ -274,6 +303,8 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_R2C(TRealMatrix& InMatrix)
 
 /**
  * Create an FFTW plan for 1D Real-to-Complex in the Z dimension
+ * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
+ * The FFTW version processes the whole matrix at one while the MKL slab by slab
  * @param [in,out] InMatrix  - RealMatrix of which to create the plan
  * @warning Unless FFTW_ESTIMATE flag is specified, the content of the InMatrix
  *          is destroyed!
@@ -297,19 +328,33 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DZ_R2C(TRealMatrix& InMatrix)
   fft_dims[0].n  = Z;
   fft_dims[0].os = X * Y;
 
-  // How many definition - other dims
-  const int  fft_howmany_rank = 2;
-  fftw_iodim fft_howmany_dims[2];
+  // GNU Compiler + FFTW
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    // How many definition - other dims
+    const int  fft_howmany_rank = 2;
+    fftw_iodim fft_howmany_dims[2];
 
-  // Y dim
-  fft_howmany_dims[0].is = X;
-  fft_howmany_dims[0].n  = Y;
-  fft_howmany_dims[0].os = X;
+    // Y dim
+    fft_howmany_dims[0].is = X;
+    fft_howmany_dims[0].n  = Y;
+    fft_howmany_dims[0].os = X;
 
-  // X dim
-  fft_howmany_dims[1].is = 1;
-  fft_howmany_dims[1].n  = X;
-  fft_howmany_dims[1].os = 1;
+    // X dim
+    fft_howmany_dims[1].is = 1;
+    fft_howmany_dims[1].n  = X;
+    fft_howmany_dims[1].os = 1;
+  #endif
+
+  // Intel Compiler + MKL
+  #if (defined(__INTEL_COMPILER))
+    const int  fft_howmany_rank = 1;
+    fftw_iodim fft_howmany_dims[1];
+
+    // X dim
+    fft_howmany_dims[0].is = 1;
+    fft_howmany_dims[0].n  = X;
+    fft_howmany_dims[0].os = 1;
+  #endif
 
   fftw_plan_1DZ_R2C = fftwf_plan_guru_dft_r2c(fft_rank,                         // 1D FFT rank
                                               fft_dims,                         // 1D FFT dimensions of Y
@@ -333,6 +378,8 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DZ_R2C(TRealMatrix& InMatrix)
 
 /**
  * Create FFTW plan for Complex-to-Real in the X dimension.
+ * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
+ * The FFTW version processes the whole matrix at one while the MKL slab by slab
  * @param [in, out] OutMatrix - RealMatrix of which to create the plan.
  * @warning Unless FFTW_ESTIMATE flag is specified, the content of the InMatrix
  *          is destroyed!
@@ -355,20 +402,33 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_C2R(TRealMatrix& OutMatrix)
   fft_dims[0].n  = X;
   fft_dims[0].os = 1;
 
+  // GNU Compiler + FFTW
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    // How many definition - other dims
+    const int  fft_howmany_rank = 2;
+    fftw_iodim fft_howmany_dims[2];
 
-  // How many definition - other dims
-  const int  fft_howmany_rank = 2;
-  fftw_iodim fft_howmany_dims[2];
+    // Z dim
+    fft_howmany_dims[0].is = X_2 * Y;
+    fft_howmany_dims[0].n  = Z;
+    fft_howmany_dims[0].os = X * Y;
 
-  // Z dim
-  fft_howmany_dims[0].is = X_2 * Y;
-  fft_howmany_dims[0].n  = Z;
-  fft_howmany_dims[0].os = X * Y;
+    // Y dim
+    fft_howmany_dims[1].is = X_2;
+    fft_howmany_dims[1].n  = Y;
+    fft_howmany_dims[1].os = X;
+  #endif
 
-  // Y dim
-  fft_howmany_dims[1].is = X_2;
-  fft_howmany_dims[1].n  = Y;
-  fft_howmany_dims[1].os = X;
+  // Intel Compiler + MKL
+  #if (defined(__INTEL_COMPILER))
+    const int  fft_howmany_rank = 1;
+    fftw_iodim fft_howmany_dims[1];
+
+    // Y dim
+    fft_howmany_dims[0].is = X_2;
+    fft_howmany_dims[0].n  = Y;
+    fft_howmany_dims[0].os = X;
+  #endif
 
   fftw_plan_1DX_C2R = fftwf_plan_guru_dft_c2r(fft_rank,                         // 1D FFT rank
                                               fft_dims,                         // 1D FFT dimensions of X
@@ -393,6 +453,8 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_C2R(TRealMatrix& OutMatrix)
 
 /**
  * Create FFTW plan for Complex-to-Real in the Y dimension.
+ * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
+ * The FFTW version processes the whole matrix at one while the MKL slab by slab
  * @param [in, out] OutMatrix - RealMatrix of which to create the plan.
  * @warning Unless FFTW_ESTIMATE flag is specified, the content of the InMatrix is destroyed!
  */
@@ -413,19 +475,33 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_C2R(TRealMatrix& OutMatrix)
   fft_dims[0].n  = Y;
   fft_dims[0].os = X;
 
-  // How many definition - other dims
-  const int  fft_howmany_rank = 2;
-  fftw_iodim fft_howmany_dims[2];
+  // GNU Compiler + FFTW
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    // How many definition - other dims
+    const int  fft_howmany_rank = 2;
+    fftw_iodim fft_howmany_dims[2];
 
-  // Z dim
-  fft_howmany_dims[0].is = X * Y_2;
-  fft_howmany_dims[0].n  = Z;
-  fft_howmany_dims[0].os = X * Y;
+    // Z dim
+    fft_howmany_dims[0].is = X * Y_2;
+    fft_howmany_dims[0].n  = Z;
+    fft_howmany_dims[0].os = X * Y;
 
-  // X dim
-  fft_howmany_dims[1].is = 1;
-  fft_howmany_dims[1].n  = X;
-  fft_howmany_dims[1].os = 1;
+    // X dim
+    fft_howmany_dims[1].is = 1;
+    fft_howmany_dims[1].n  = X;
+    fft_howmany_dims[1].os = 1;
+  #endif
+
+// Intel Compiler + MKL
+  #if (defined(__INTEL_COMPILER))
+    const int  fft_howmany_rank = 1;
+    fftw_iodim fft_howmany_dims[1];
+
+    // X dim
+    fft_howmany_dims[0].is = 1;
+    fft_howmany_dims[0].n  = X;
+    fft_howmany_dims[0].os = 1;
+  #endif
 
   fftw_plan_1DY_C2R = fftwf_plan_guru_dft_c2r(fft_rank,                         // 1D FFT rank
                                               fft_dims,                         // 1D FFT dimensions of Y
@@ -449,6 +525,8 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_C2R(TRealMatrix& OutMatrix)
 
 /**
  * Create FFTW plan for Complex-to-Real in the Z dimension.
+ * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
+ * The FFTW version processes the whole matrix at one while the MKL slab by slab
  * @param [in, out] OutMatrix - RealMatrix of which to create the plan.
  * @warning Unless FFTW_ESTIMATE flag is specified, the content of the InMatrix is destroyed!
  */
@@ -468,19 +546,33 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DZ_C2R(TRealMatrix& OutMatrix)
   fft_dims[0].n  = Z;
   fft_dims[0].os = X * Y;
 
-  // How many definition - other dims
-  const int  fft_howmany_rank = 2;
-  fftw_iodim fft_howmany_dims[2];
+  // GNU Compiler + FFTW
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    // How many definition - other dims
+    const int  fft_howmany_rank = 2;
+    fftw_iodim fft_howmany_dims[2];
 
-  // Y dim
-  fft_howmany_dims[0].is = X;
-  fft_howmany_dims[0].n  = Y;
-  fft_howmany_dims[0].os = X;
+    // Y dim
+    fft_howmany_dims[0].is = X;
+    fft_howmany_dims[0].n  = Y;
+    fft_howmany_dims[0].os = X;
 
-  // X dim
-  fft_howmany_dims[1].is = 1;
-  fft_howmany_dims[1].n  = X;
-  fft_howmany_dims[1].os = 1;
+    // X dim
+    fft_howmany_dims[1].is = 1;
+    fft_howmany_dims[1].n  = X;
+    fft_howmany_dims[1].os = 1;
+  #endif
+
+    // Intel Compiler + MKL
+  #if (defined(__INTEL_COMPILER))
+    const int fft_howmany_rank = 1;
+    fftw_iodim fft_howmany_dims[1];
+
+    // X dim
+    fft_howmany_dims[0].is = 1;
+    fft_howmany_dims[0].n  = X;
+    fft_howmany_dims[0].os = 1;
+  #endif
 
   fftw_plan_1DZ_C2R = fftwf_plan_guru_dft_c2r(fft_rank,                         // 1D FFT rank
                                               fft_dims,                         // 1D FFT dimensions of Y
@@ -544,13 +636,31 @@ void TFFTWComplexMatrix::Compute_FFT_3D_C2R(TRealMatrix & OutMatrix)
 
 /**
  * Compute 1D out-of-place Real-to-Complex FFT in the X dimension
+ * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
+ * The FFTW version processes the whole matrix at one while the MKL slab by slab
  * @param [in] InMatrix
  */
 void TFFTWComplexMatrix::Compute_FFT_1DX_R2C(TRealMatrix& InMatrix)
 {
   if (fftw_plan_1DX_R2C)
   {
-    fftwf_execute_dft_r2c(fftw_plan_1DX_R2C, InMatrix.GetRawData(), (fftwf_complex *) pMatrixData);
+    // GNU Compiler + FFTW
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+      fftwf_execute_dft_r2c(fftw_plan_1DX_R2C,
+                            InMatrix.GetRawData(),
+                            (fftwf_complex *) pMatrixData);
+    #endif
+
+    // Intel Compiler + MKL
+    #if (defined(__INTEL_COMPILER))
+      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
+      {
+        fftwf_execute_dft_r2c(fftw_plan_1DX_R2C,
+                              &InMatrix.GetRawData()[slab_id * Dims.X * Dims.Y],
+                              (fftwf_complex *) &pMatrixData[slab_id * 2 * (Dims.X/2 + 1) * Dims.Y]);
+      }
+    #endif
   }
   else //error
   {
@@ -569,7 +679,23 @@ void TFFTWComplexMatrix::Compute_FFT_1DY_R2C(TRealMatrix& InMatrix)
 {
   if (fftw_plan_1DY_R2C)
   {
-    fftwf_execute_dft_r2c(fftw_plan_1DY_R2C, InMatrix.GetRawData(), (fftwf_complex *) pMatrixData);
+    // GNU Compiler + FFTW
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+      fftwf_execute_dft_r2c(fftw_plan_1DY_R2C,
+                            InMatrix.GetRawData(),
+                            (fftwf_complex *) pMatrixData);
+    #endif
+
+    // Intel Compiler + MKL
+    #if (defined(__INTEL_COMPILER))
+      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
+      {
+        fftwf_execute_dft_r2c(fftw_plan_1DY_R2C,
+                              &InMatrix.GetRawData()[slab_id * Dims.X * Dims.Y],
+                              (fftwf_complex *) &pMatrixData[slab_id * Dims.X * 2 * (Dims.Y/2 + 1)]);
+      }
+    #endif
   }
   else //error
   {
@@ -588,7 +714,23 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_R2C(TRealMatrix& InMatrix)
 {
   if (fftw_plan_1DZ_R2C)
   {
-    fftwf_execute_dft_r2c(fftw_plan_1DZ_R2C, InMatrix.GetRawData(), (fftwf_complex *) pMatrixData);
+    // GNU Compiler + FFTW
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    fftwf_execute_dft_r2c(fftw_plan_1DZ_R2C,
+                          InMatrix.GetRawData(),
+                          (fftwf_complex *) pMatrixData);
+    #endif
+
+    // Intel Compiler + MKL
+    #if (defined(__INTEL_COMPILER))
+      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      for (size_t slab_id = 0; slab_id < Dims.Y; slab_id++)
+      {
+        fftwf_execute_dft_r2c(fftw_plan_1DZ_R2C,
+                              &InMatrix.GetRawData()[slab_id * Dims.X],
+                              (fftwf_complex *) &pMatrixData[slab_id * 2 * Dims.X]);
+      }
+    #endif
   }
   else //error
   {
@@ -608,7 +750,23 @@ void TFFTWComplexMatrix::Compute_FFT_1DX_C2R(TRealMatrix& OutMatrix)
 {
   if (fftw_plan_1DX_C2R)
   {
-    fftwf_execute_dft_c2r(fftw_plan_1DX_C2R, (fftwf_complex *) pMatrixData, OutMatrix.GetRawData());
+    // GNU Compiler + FFTW
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    fftwf_execute_dft_c2r(fftw_plan_1DX_C2R,
+                          (fftwf_complex *) pMatrixData,
+                          OutMatrix.GetRawData());
+    #endif
+
+    // Intel Compiler + MKL
+    #if (defined(__INTEL_COMPILER))
+      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
+      {
+        fftwf_execute_dft_c2r(fftw_plan_1DX_C2R,
+                              (fftwf_complex *) &pMatrixData[slab_id * 2 * (Dims.X/2 + 1) * Dims.Y],
+                              &OutMatrix.GetRawData()[slab_id * Dims.X * Dims.Y]);
+      }
+    #endif
   }
   else //error
   {
@@ -627,7 +785,23 @@ void TFFTWComplexMatrix::Compute_FFT_1DY_C2R(TRealMatrix& OutMatrix)
 {
   if (fftw_plan_1DY_C2R)
   {
-    fftwf_execute_dft_c2r(fftw_plan_1DY_C2R, (fftwf_complex *) pMatrixData, OutMatrix.GetRawData());
+    // GNU Compiler + FFTW
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    fftwf_execute_dft_c2r(fftw_plan_1DY_C2R,
+                          (fftwf_complex *) pMatrixData,
+                          OutMatrix.GetRawData());
+    #endif
+
+    // Intel Compiler + MKL
+    #if (defined(__INTEL_COMPILER))
+      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
+      {
+        fftwf_execute_dft_c2r(fftw_plan_1DY_C2R,
+                              (fftwf_complex *) &pMatrixData[slab_id * Dims.X * 2 * (Dims.Y/2 + 1) ],
+                              &OutMatrix.GetRawData()[slab_id * Dims.X * Dims.Y]);
+      }
+    #endif
   }
   else //error
   {
@@ -646,7 +820,23 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_C2R(TRealMatrix& OutMatrix)
 {
   if (fftw_plan_1DZ_C2R)
   {
-    fftwf_execute_dft_c2r(fftw_plan_1DZ_C2R, (fftwf_complex *) pMatrixData, OutMatrix.GetRawData());
+    // GNU Compiler + FFTW
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+      fftwf_execute_dft_c2r(fftw_plan_1DZ_C2R,
+                            (fftwf_complex *) pMatrixData,
+                            OutMatrix.GetRawData());
+    #endif
+
+    // Intel Compiler + MKL
+    #if (defined(__INTEL_COMPILER))
+      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      for (size_t slab_id = 0; slab_id < Dims.Y; slab_id++)
+      {
+        fftwf_execute_dft_c2r(fftw_plan_1DZ_C2R,
+                              (fftwf_complex *) &pMatrixData[slab_id * 2 * Dims.X ],
+                              &OutMatrix.GetRawData()[slab_id * Dims.X]);
+      }
+    #endif
   }
   else //error
   {
