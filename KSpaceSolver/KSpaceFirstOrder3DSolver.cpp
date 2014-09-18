@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        12 July      2012, 10:27  (created)\n
- *              02 September 2014, 16:10  (revised)
+ *              17 September 2014, 15:26  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -333,20 +333,50 @@ size_t TKSpaceFirstOrder3DSolver::ShowMemoryUsageInMB()
 
 void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file){
     fprintf(file,"\n");
-    fprintf(file,"+--------------------------------------------------+\n");
-    fprintf(file,"| Build Number:     kspaceFirstOrder3D v2.15       |\n");
+    fprintf(file,"+----------------------------------------------------+\n");
+    fprintf(file,"| Build name:       kspaceFirstOrder3D v2.15         |\n");
+    fprintf(file,"| Build date:       %*.*s                      |\n", 10,11,__DATE__);
+    fprintf(file,"| Build time:       %*.*s                         |\n", 8,8,__TIME__);
+    #if (defined (__KWAVE_GIT_HASH__))
+      fprintf(file,"| Git hash: %s |\n",__KWAVE_GIT_HASH__);
+    #endif
+    fprintf(file,"|                                                    |\n");
 
+    // OS detection
     #ifdef __linux__
-      fprintf(file,"| Operating System: Linux x64                      |\n");
+      fprintf(file,"| Operating system: Linux x64                        |\n");
     #endif
     #ifdef _WIN64
-      fprintf(file,"| Operating System: Windows x64                    |\n");
+      fprintf(file,"| Operating system: Windows x64                      |\n");
     #endif
 
-    fprintf(file,"|                                                  |\n");
-    fprintf(file,"| Copyright (C) 2014 Jiri Jaros and Bradley Treeby |\n");
-    fprintf(file,"| http://www.k-wave.org                            |\n");
-    fprintf(file,"+--------------------------------------------------+\n");
+    // Compiler detections
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+      fprintf(file,"| Compiler name:    GNU C++ %.19s                    |\n", __VERSION__);
+    #endif
+    #ifdef __INTEL_COMPILER
+      fprintf(file,"| Compiler name:    Intel C++ %d                   |\n", __INTEL_COMPILER);
+    #endif
+
+    // instruction set
+    #if (defined (__AVX2__))
+      fprintf(file,"| Instruction set:  Intel AVX 2                      |\n");
+    #elif (defined (__AVX__))
+      fprintf(file,"| Instruction set:  Intel AVX                        |\n");
+    #elif (defined (__SSE4_2__))
+      fprintf(file,"| Instruction set:  Intel SSE 4.2                    |\n");
+    #elif (defined (__SSE4_1__))
+      fprintf(file,"| Instruction set:  Intel SSE 4.1                    |\n");
+    #elif (defined (__SSE3__))
+      fprintf(file,"| Instruction set:  Intel SSE 3                      |\n");
+    #elif (defined (__SSE2__))
+      fprintf(file,"| Instruction set:  Intel SSE 2                      |\n");
+    #endif
+
+    fprintf(file,"|                                                    |\n");
+    fprintf(file,"| Copyright (C) 2014 Jiri Jaros and Bradley Treeby   |\n");
+    fprintf(file,"| http://www.k-wave.org                              |\n");
+    fprintf(file,"+----------------------------------------------------+\n");
     fprintf(file,"\n");
 }// end of GetFullCodeAndLincence
 //------------------------------------------------------------------------------
