@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        27 July      2012, 14:14 (created) \n
- *              01 September 2014, 13:07 (revised)
+ *              19 September 2014, 16:15 (revised)
  *
  *
  *
@@ -594,7 +594,17 @@ class THDF5_File
                           const char * DatasetName,
                           const size_t Value);
 
-    /// Read data from the dataset under a specified group - float dataset
+    /// Read the scalar value under a specified group - float value
+    void ReadScalarValue(const hid_t ParentGroup,
+                         const char * DatasetName,
+                         float      & Value);
+
+    /// Read the scalar value under a specified group - Index value
+    void ReadScalarValue(const hid_t ParentGroup,
+                         const char * DatasetName,
+                         size_t & Value);
+
+    /// Read data from the dataset under a specified group - float dataset.
     void ReadCompleteDataset(const hid_t ParentGroup,
                              const char * DatasetName,
                              const TDimensionSizes & DimensionSizes,
@@ -738,10 +748,15 @@ class THDF5_FileHeader
 
     /// Read header from the input file
     void ReadHeaderFromInputFile(THDF5_File & InputFile);
-    /// Read Header from output file (necessary for checkpointing)
+    /// Read Header from output file (necessary for checkpoint-restart)
     void ReadHeaderFromOutputFile(THDF5_File & OutputFile);
+    /// Read Header from checkpoint file (necessary for checkpoint-restart)
+    void ReadHeaderFromCheckpointFile(THDF5_File & CheckpointFile);
+
     /// Write header to the output file
     void WriteHeaderToOutputFile(THDF5_File & OutputFile);
+    /// Write header to the output file
+    void WriteHeaderToCheckpointFile(THDF5_File & CheckpointFile);
 
     /**
      * Set code name

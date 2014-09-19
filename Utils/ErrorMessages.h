@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        09 August    2011, 12:34      (created) \n
- *              01 September 2014, 14:40      (revised)
+ *              19 September 2014, 16:14      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -68,6 +68,12 @@ const char * const HDF5_ERR_FMT_CouldNotReadFromAttribute = "Error: Could not re
 const char * const HDF5_ERR_FMT_GroupNotCreated          = "Error: Could not create group \"%s\" in file \"%s\"!\n";
 /// HDF5 error message
 const char * const HDF5_ERR_FMT_GroupNotOpened           = "Error: Could not open group \"%s\" in file \"%s\"!\n";
+/// HDF5 error message
+const char * const HDF5_ERR_FMT_BadInputFileType         = "Error: The input file has not a valid format!\n";
+/// HDF5 error message
+const char * const HDF5_ERR_FMT_BadOutputFileType        = "Error: The output file has not a valid format!\n";
+/// HDF5 error message
+const char * const HDF5_ERR_FMT_BadCheckpointFileType    = "Error: The checkpoint file has not a valid format!\n";
 
 //---------------------------------- Matrix Classes  -------------------------//
 
@@ -128,7 +134,7 @@ const char * const Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion = "Error: In
 const char * const Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion = "Error: Incorrect minor version of the HDF5 file %s (expected is %s)!\n";
 /// Command line parameters error message
 const char * const Parameters_ERR_FMT_WrongSensorMaskType = "Error: The sensor mask type specified in the input file is not supported! \n";
-
+/// Command line parameters error message
 const char * const Parameters_ERR_FMT_UNonStaggeredNotSupportedForFile10 = "Error: --u_non_staggered_raw is not supported along with the input file of the version 1.0! \n";
 
 //---------------------------------- FFTW Classes  -------------------------//
@@ -140,6 +146,25 @@ const char * const FFTWComplexMatrix_ERR_FMT_InvalidPlan    = "Error: Invalid pl
 const char * const  FFTW_WARNING_FMT_WisdomNotExported = "Warning: Wisdom could not be exported!\n";
 /// FFTW error message
 const char * const  FFTW_WARNING_FMT_WisdomNotImported = "Warning: Wisdom could not be imported!\n";
+
+
+//------------------------- KSpaceFirstOrder3DSolver Classes  ----------------//
+
+/// KSpaceFirstOrder3DSolver error message
+const char * const KSpaceFirstOrder3DSolver_ERR_FMT_IncorrectCheckpointFileFormat
+  = "Error: Incorrect checkpoint file \"%s\" format!\n";
+
+/// KSpaceFirstOrder3DSolver error message
+const char * const KSpaceFirstOrder3DSolver_ERR_FMT_IncorrectOutputFileFormat
+  = "Error: Incorrect output file \"%s\" format!\n";
+
+/// KSpaceFirstOrder3DSolver error message
+const char * const KSpaceFirstOrder3DSolver_ERR_FMT_CheckpointDimensionsDoNotMatch
+  = "Error: The dimensions [%ld, %ld, %ld] of the checkpoint file don't match the simulation dimensions [%ld, %ld, %ld] \n";
+
+/// KSpaceFirstOrder3DSolver error message
+const char * const KSpaceFirstOrder3DSolver_ERR_FMT_OutputDimensionsDoNotMatch
+  = "Error: The dimensions [%ld, %ld, %ld] of the output file don't match the simulation dimensions [%ld, %ld, %ld] \n";
 
 
 #endif	/* ERRORMESSAGES_H */

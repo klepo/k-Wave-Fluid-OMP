@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        27 July      2012, 14:14      (created) \n
- *              02 September 2014, 16:10      (revised)
+ *              19 September 2014, 16:15      (revised)
  *
 
  * @section License
@@ -906,6 +906,35 @@ void THDF5_File::WriteScalarValue(const hid_t ParentGroup,
 
 
 /**
+ * Read the scalar value under a specified group - float value
+ * @param[in]  ParentGroup
+ * @param[in]  DatasetName
+ * @param[out] Value
+ */
+void THDF5_File::ReadScalarValue(const hid_t ParentGroup,
+                                 const char * DatasetName,
+                                 float      & Value)
+{
+  ReadCompleteDataset(ParentGroup, DatasetName, TDimensionSizes(1,1,1), &Value);
+} // end of ReadScalarValue
+//------------------------------------------------------------------------------
+
+
+/**
+ * Read the scalar value under a specified group - Index value
+ * @param[in] ParentGroup
+ * @param[in] DatasetName
+ * @param[out] Value
+ */
+void THDF5_File::ReadScalarValue(const hid_t ParentGroup,
+                                 const char * DatasetName,
+                                 size_t & Value)
+{
+ ReadCompleteDataset(ParentGroup, DatasetName, TDimensionSizes(1,1,1), &Value);
+}// end of ReadScalarValue
+//------------------------------------------------------------------------------
+
+/**
  * Read data from the dataset at a specified place in the file tree..
  *
  * @param [in] ParentGroup
@@ -1287,14 +1316,18 @@ void THDF5_FileHeader::ReadHeaderFromInputFile(THDF5_File & InputFile)
     HDF5_FileHeaderValues[hdf5_fhi_major_version]
             = InputFile.ReadStringAttribute(FileRootHandle, "/", HDF5_FileHeaderNames[hdf5_fhi_major_version].c_str());
     HDF5_FileHeaderValues[hdf5_fhi_minor_version]
-            = InputFile.ReadStringAttribute(FileRootHandle,"/", HDF5_FileHeaderNames[hdf5_fhi_minor_version].c_str());
+            = InputFile.ReadStringAttribute(FileRootHandle, "/", HDF5_FileHeaderNames[hdf5_fhi_minor_version].c_str());
+  }
+  else
+  {
+    throw ios::failure(HDF5_ERR_FMT_BadInputFileType);
   }
 }// end of ReadHeaderFromInputFile
 //------------------------------------------------------------------------------
 
 
 /**
- * Read Header from output file (necessary for checkpointing)
+ * Read Header from output file (necessary for checkpoint-restart)
  * Read only execution times (the others are read from the input file, or
  * calculated based on the very last leg of the simulation)
  * This function is called only if checkpoint-restart is enabled
@@ -1321,9 +1354,45 @@ void THDF5_FileHeader::ReadHeaderFromOutputFile(THDF5_File & OutputFile)
     HDF5_FileHeaderValues[hdf5_fhi_postprocessing_time]
             = OutputFile.ReadStringAttribute(FileRootHandle, "/",HDF5_FileHeaderNames[hdf5_fhi_postprocessing_time].c_str());
   }
+  else
+  {
+    throw ios::failure(HDF5_ERR_FMT_BadOutputFileType);
+  }
 }// end of ReadHeaderFromOutputFile
 //------------------------------------------------------------------------------
 
+/**
+ * Read the file header form the checkpoint file. We need the header to verify
+ * the file version and type
+ * @param [in] CheckpointFile
+ */
+void THDF5_FileHeader::ReadHeaderFromCheckpointFile(THDF5_File & CheckpointFile)
+{
+  // Get file root handle
+  hid_t FileRootHandle = CheckpointFile.GetRootGroup();
+  // read file type
+  HDF5_FileHeaderValues[hdf5_fhi_file_type] =
+          CheckpointFile.ReadStringAttribute(FileRootHandle,"/", HDF5_FileHeaderNames[hdf5_fhi_file_type].c_str());
+
+  if (GetFileType() == hdf5_ft_checkpoint)
+  {
+    HDF5_FileHeaderValues[hdf5_fhi_created_by]
+            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/", HDF5_FileHeaderNames[hdf5_fhi_created_by].c_str());
+    HDF5_FileHeaderValues[hdf5_fhi_creation_date]
+            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/", HDF5_FileHeaderNames[hdf5_fhi_creation_date].c_str());
+    HDF5_FileHeaderValues[hdf5_fhi_file_description]
+            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/", HDF5_FileHeaderNames[hdf5_fhi_file_description].c_str());
+    HDF5_FileHeaderValues[hdf5_fhi_major_version]
+            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/", HDF5_FileHeaderNames[hdf5_fhi_major_version].c_str());
+    HDF5_FileHeaderValues[hdf5_fhi_minor_version]
+            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/", HDF5_FileHeaderNames[hdf5_fhi_minor_version].c_str());
+  }
+  else
+  {
+    throw ios::failure(HDF5_ERR_FMT_BadCheckpointFileType);
+  }
+}// end of ReadHeaderFromCheckpointFile
+//------------------------------------------------------------------------------
 
 /**
  * Write header into the output file.
@@ -1343,6 +1412,47 @@ void THDF5_FileHeader::WriteHeaderToOutputFile(THDF5_File & OutputFile)
 }// end of WriteHeaderToOutputFile
 //------------------------------------------------------------------------------
 
+
+/**
+ * Write header to the output file (only a subset of all possible fields are written)
+ * @param [in] CheckpointFile
+ */
+void THDF5_FileHeader::WriteHeaderToCheckpointFile(THDF5_File & CheckpointFile)
+{
+  // Get file root handle
+  hid_t FileRootHandle = CheckpointFile.GetRootGroup();
+
+  // Write header
+  CheckpointFile.WriteStringAttribute(FileRootHandle,
+                                      "/",
+                                      HDF5_FileHeaderNames [hdf5_fhi_file_type].c_str(),
+                                      HDF5_FileHeaderValues[hdf5_fhi_file_type].c_str());
+
+  CheckpointFile.WriteStringAttribute(FileRootHandle,
+                                      "/",
+                                      HDF5_FileHeaderNames [hdf5_fhi_created_by].c_str(),
+                                      HDF5_FileHeaderValues[hdf5_fhi_created_by].c_str());
+
+  CheckpointFile.WriteStringAttribute(FileRootHandle,
+                                      "/",
+                                      HDF5_FileHeaderNames [hdf5_fhi_creation_date].c_str(),
+                                      HDF5_FileHeaderValues[hdf5_fhi_creation_date].c_str());
+  CheckpointFile.WriteStringAttribute(FileRootHandle,
+                                      "/",
+                                      HDF5_FileHeaderNames [hdf5_fhi_file_description].c_str(),
+                                      HDF5_FileHeaderValues[hdf5_fhi_file_description].c_str());
+
+  CheckpointFile.WriteStringAttribute(FileRootHandle,
+                                      "/",
+                                      HDF5_FileHeaderNames [hdf5_fhi_major_version].c_str(),
+                                      HDF5_FileHeaderValues[hdf5_fhi_major_version].c_str());
+  CheckpointFile.WriteStringAttribute(FileRootHandle,
+                                      "/",
+                                      HDF5_FileHeaderNames [hdf5_fhi_minor_version].c_str(),
+                                      HDF5_FileHeaderValues[hdf5_fhi_minor_version].c_str());
+
+}// end of WriteHeaderToCheckpointFile
+//------------------------------------------------------------------------------
 
 /**
  * Get File type.

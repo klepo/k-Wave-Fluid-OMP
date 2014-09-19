@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  * @date        12 July      2012, 10:27  (created)\n
- *              17 September 2014, 15:26  (revised)
+ *              19 September 2014, 16:15  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -91,6 +91,9 @@ TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver():
 {
   TotalTime.Start();
   Parameters = TParameters::GetInstance();
+
+  //Switch off HDF5 error messages
+  H5Eset_auto( H5E_DEFAULT, NULL, NULL);
 }// end of TKSpace3DSolver
 //------------------------------------------------------------------------------
 
@@ -159,12 +162,14 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     // Open checkpoint file
     HDF5_CheckpointFile.Open(Parameters->GetCheckpointFileName().c_str());
 
+    // Check the checkpoint file
+    CheckCheckpointFile();
+
     // read the actual value of t_index
     size_t new_t_index;
-    HDF5_CheckpointFile.ReadCompleteDataset(HDF5_CheckpointFile.GetRootGroup(),
-                                            t_index_Name,
-                                            TDimensionSizes(1,1,1),
-                                            &new_t_index);
+    HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+                                        t_index_Name,
+                                        new_t_index);
     Parameters->Set_t_index(new_t_index);
 
     // Read necessary matrices from the checkpoint file
@@ -172,11 +177,17 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
 
     HDF5_CheckpointFile.Close();
 
+
     //------------- Read data from the output file -------------------------//
+
     // Reopen output file for RW access
     HDF5_OutputFile.Open(Parameters->GetOutputFileName().c_str(), H5F_ACC_RDWR);
+    //Read file header of the output file
+    Parameters->HDF5_FileHeader.ReadHeaderFromOutputFile(HDF5_OutputFile);
+    // Check the checkpoint file
+    CheckOutputFile();
     // Restore elapsed time
-    RestoreCumulatedElapsedFromOutputFile(HDF5_OutputFile);
+    RestoreCumulatedElapsedFromOutputFile();
 
     OutputStreamContainer.ReopenStreams();
   }
@@ -2653,15 +2664,34 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
 
   // Store all necessary matrices in Checkpoint file
   MatrixContainer.StoreDataIntoCheckpointHDF5File(HDF5_CheckpointFile);
+
   // Write t_index
   HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
                                        t_index_Name,
                                        Parameters->Get_t_index());
+  // store basic dimension sizes (Nx, Ny, Nz) - Nt is not necessary
+  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+                                       Nx_Name,
+                                       Parameters->GetFullDimensionSizes().X);
+  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+                                       Ny_Name,
+                                       Parameters->GetFullDimensionSizes().Y);
+  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+                                       Nz_Name,
+                                       Parameters->GetFullDimensionSizes().Z);
+
+
+  // Write checkpoint file header
+  THDF5_FileHeader CheckpointFileHeader = Parameters->HDF5_FileHeader;
+
+  CheckpointFileHeader.SetFileType(THDF5_FileHeader::hdf5_ft_checkpoint);
+  CheckpointFileHeader.SetCodeName(GetCodeName());
+  CheckpointFileHeader.SetActualCreationTime();
+
+  CheckpointFileHeader.WriteHeaderToCheckpointFile(HDF5_CheckpointFile);
+
+  // Close the checkpoint file
   HDF5_CheckpointFile.Close();
-
-  //--------------------- Store Scalars ------------------------------//
-  //-- These are stored into the output file!                         //
-
 
   // checkpoint only if necessary (t_index >= start_index)
   if (Parameters->Get_t_index() >= Parameters->GetStartTimeIndex())
@@ -2714,16 +2744,11 @@ void TKSpaceFirstOrder3DSolver::WriteOutputDataInfo()
 
 /**
  *
- * Restore cumulated elapsed time form Output file
+ * Restore cumulated elapsed time form Output file (header stored in TParameters)
  * Open the header, read this and store into TMPI_Time classes
- * @param [in] OutputFile
  */
-void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile(THDF5_File& HDF5_OutputFile)
+void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
 {
-  //Read times from the output file header
-  Parameters->HDF5_FileHeader.ReadHeaderFromOutputFile(HDF5_OutputFile);
-
-
   double ElapsedTotalTime, ElapsedDataLoadTime, ElapsedPreProcessingTime,
          ElapsedSimulationTime, ElapsedPostProcessingTime;
 
@@ -2741,6 +2766,160 @@ void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile(THDF5_File
   PostProcessingTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedPostProcessingTime);
 
 }// end of RestoreCumulatedElapsedFromOutputFile
+//------------------------------------------------------------------------------
+
+
+/**
+ * Check the output file has the correct format and version
+ */
+void TKSpaceFirstOrder3DSolver::CheckOutputFile()
+{
+
+  // The header has already been read
+  THDF5_FileHeader & OutputFileHeader = Parameters->HDF5_FileHeader;
+  THDF5_File       & OutputFile       = Parameters->HDF5_OutputFile;
+
+  // test file type
+  if (OutputFileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_output)
+  {
+    char ErrorMessage[256] = "";
+    sprintf(ErrorMessage,
+            KSpaceFirstOrder3DSolver_ERR_FMT_IncorrectOutputFileFormat,
+            Parameters->GetOutputFileName().c_str());
+    throw ios::failure(ErrorMessage);
+  }
+
+  // test file major version
+  if (!OutputFileHeader.CheckMajorFileVersion())
+  {
+    char ErrorMessage[256] = "";
+    sprintf(ErrorMessage,
+            Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion,
+            Parameters->GetCheckpointFileName().c_str(),
+            OutputFileHeader.GetCurrentHDF5_MajorVersion().c_str());
+    throw ios::failure(ErrorMessage);
+  }
+
+  // test file minor version
+  if (!OutputFileHeader.CheckMinorFileVersion())
+  {
+    char ErrorMessage[256] = "";
+    sprintf(ErrorMessage,
+            Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion,
+            Parameters->GetCheckpointFileName().c_str(),
+            OutputFileHeader.GetCurrentHDF5_MinorVersion().c_str());
+    throw ios::failure(ErrorMessage);
+  }
+
+
+  // Check dimension sizes
+  TDimensionSizes OutputDimSizes;
+  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
+                             Nx_Name,
+                             OutputDimSizes.X);
+
+  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
+                             Ny_Name,
+                             OutputDimSizes.Y);
+
+  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
+                             Nz_Name,
+                             OutputDimSizes.Z);
+
+ if (Parameters->GetFullDimensionSizes() != OutputDimSizes)
+ {
+    char ErrorMessage[256] = "";
+    sprintf(ErrorMessage,
+            KSpaceFirstOrder3DSolver_ERR_FMT_OutputDimensionsDoNotMatch,
+            OutputDimSizes.X,
+            OutputDimSizes.Y,
+            OutputDimSizes.Z,
+            Parameters->GetFullDimensionSizes().X,
+            Parameters->GetFullDimensionSizes().Y,
+            Parameters->GetFullDimensionSizes().Z);
+
+   throw ios::failure(ErrorMessage);
+ }
+
+
+}// end of CheckOutputFile
+//------------------------------------------------------------------------------
+
+
+/**
+ * Check the file type and the version of the checkpoint file
+ *
+ */
+void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
+{
+  // read the header and check the file version
+  THDF5_FileHeader CheckpointFileHeader;
+  THDF5_File &     HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+
+  CheckpointFileHeader.ReadHeaderFromCheckpointFile(HDF5_CheckpointFile);
+
+  // test file type
+  if (CheckpointFileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_checkpoint)
+  {
+    char ErrorMessage[256] = "";
+    sprintf(ErrorMessage,
+            KSpaceFirstOrder3DSolver_ERR_FMT_IncorrectCheckpointFileFormat,
+            Parameters->GetCheckpointFileName().c_str());
+    throw ios::failure(ErrorMessage);
+  }
+
+  // test file major version
+  if (!CheckpointFileHeader.CheckMajorFileVersion())
+  {
+    char ErrorMessage[256] = "";
+    sprintf(ErrorMessage,
+            Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion,
+            Parameters->GetCheckpointFileName().c_str(),
+            CheckpointFileHeader.GetCurrentHDF5_MajorVersion().c_str());
+    throw ios::failure(ErrorMessage);
+  }
+
+  // test file minor version
+  if (!CheckpointFileHeader.CheckMinorFileVersion())
+  {
+    char ErrorMessage[256] = "";
+    sprintf(ErrorMessage,
+            Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion,
+            Parameters->GetCheckpointFileName().c_str(),
+            CheckpointFileHeader.GetCurrentHDF5_MinorVersion().c_str());
+    throw ios::failure(ErrorMessage);
+  }
+
+
+  // Check dimension sizes
+  TDimensionSizes CheckpointDimSizes;
+  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+                                      Nx_Name,
+                                      CheckpointDimSizes.X);
+
+  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+                                      Ny_Name,
+                                      CheckpointDimSizes.Y);
+
+  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+                                      Nz_Name,
+                                      CheckpointDimSizes.Z);
+
+ if (Parameters->GetFullDimensionSizes() != CheckpointDimSizes)
+ {
+    char ErrorMessage[256] = "";
+    sprintf(ErrorMessage,
+            KSpaceFirstOrder3DSolver_ERR_FMT_CheckpointDimensionsDoNotMatch,
+            CheckpointDimSizes.X,
+            CheckpointDimSizes.Y,
+            CheckpointDimSizes.Z,
+            Parameters->GetFullDimensionSizes().X,
+            Parameters->GetFullDimensionSizes().Y,
+            Parameters->GetFullDimensionSizes().Z);
+
+   throw ios::failure(ErrorMessage);
+ }
+}// end of CheckCheckpointFile
 //------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------//

@@ -10,8 +10,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        12 July     2012, 10:27   (created)\n
- *              28 August   2014, 15:45   (revised)
+ * @date        12 July      2012, 10:27   (created)\n
+ *              19 September 2014, 16:15   (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -246,8 +246,13 @@ class TKSpaceFirstOrder3DSolver
       return (Parameters->Get_t_index() != Parameters->Get_Nt());
     };
 
+    /// Check the output file has the correct format and version
+    void CheckOutputFile();
     /// Reads the header of the output file and sets the cumulative elapsed time from the first log
-    void RestoreCumulatedElapsedFromOutputFile(THDF5_File& HDF5_OutputFile);
+    void RestoreCumulatedElapsedFromOutputFile();
+
+    /// Check the checkpoint file has the correct format and version
+    void CheckCheckpointFile();
 
 
      //------------------------- Get matrices --------------------------------//
