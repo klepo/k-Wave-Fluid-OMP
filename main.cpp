@@ -5,7 +5,7 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The main file
+ * @brief       The main file of kspaceFirstOrder3D-OMP
  *
  * @version     kspaceFirstOrder3D 2.15
  *
@@ -37,36 +37,46 @@
  *
  * @section Overview 1 Overview
  *
- * k-Wave is an open source MATLAB toolbox designed for the time-domain simulation of propagating acoustic waves in
- * 1D, 2D, or 3D. The toolbox has a wide range of functionality, but at its heart is an advanced numerical model that
- * can account for both linear or nonlinear wave propagation, an arbitrary distribution of weakly heterogeneous material
- * parameters, and power law acoustic absorption (http://www.k-wave.org).
+ * k-Wave is an open source MATLAB toolbox designed for the time-domain simulation
+ * of propagating acoustic waves in 1D, 2D, or 3D. The toolbox has a wide range of
+ * functionality, but at its heart is an advanced numerical model that can account
+ * for both linear or nonlinear wave propagation, an arbitrary distribution of weakly
+ * heterogeneous material  * parameters, and power law acoustic absorption
+ * (http://www.k-wave.org).
  *
- * This project is a part of the k-Wave toolbox accelerating 3D simulations using an optimized C++ implementation to run moderate to big grid sizes.
- * Compiled binaries of the C++ code for x86 architectures are available from (http://www.k-wave.org/download). Both 64-bit Linux (Ubuntu / Debian) and 64-bit Windows
- * versions are provided. This Doxygen documentation was created based on the Linux version and provides details on the implementation of the C++ code.
+ * This project is a part of the k-Wave toolbox accelerating 3D simulations using
+ * an optimized C++ implementation to run moderate to big grid sizes.
+ * Compiled binaries of the C++ code for x86 architectures are available from
+ * (http://www.k-wave.org/download). Both 64-bit Linux (Ubuntu / Debian) and 64-bit Windows
+ * versions are provided.
  *
  *
  *
  * @section Compilation 2 Compilation
  *
  *
- * The source codes of <tt>kpsaceFirstOrder3D-OMP</tt> are written using the C++03 standard and the OpenMP 2.0 library.
- * There are variety of different C++ compilers that can be used to compile the source codes. We recommend using either the GNU C++ compiler (gcc/g++)
- * version 4.3 and higher, or the Intel C++ compiler version 11.0 and higher. The codes can be compiled on 64-bit Linux and Windows.
- * 32-bit systems are not supported. This section describes the compilation procedure using GNU and Intel compilers on Linux.
- * (The Windows users are encouraged to download the Visual Studio 2010 project and compile it using Intel Compiler from within Visual Studio.)
+ * The source codes of <tt>kpsaceFirstOrder3D-OMP</tt> are written using the C++
+ * 2003 standard and the OpenMP 3.0 library. There are variety of different C++
+ * compilers that can be used to compile the source codes. We recommend using either
+ * the GNU C++ compiler (gcc/g++) version 4.4 and higher, or the Intel C++ compiler
+ * version 11.0 and higher. The codes can be compiled on 64-bit Linux and Windows.
+ * 32-bit systems are not supported!
+ * This section describes the compilation procedure using GNU and Intel compilers on Linux.
+ * (The Windows users are encouraged to download the Visual Studio 2012 project
+ * and compile it using Intel Compiler from within Visual Studio.)
  *
- * Before compiling the code, it is necessary to install a C++ compiler and several libraries.  The GNU compiler is usually part of
- * Linux distributions and distributed as open source.  It can be downloaded from http://gcc.gnu.org/ if necessary. The Intel compiler can be downloaded from
- * http://software.intel.com/en-us/intel-composer-xe/. This package also includes the Intel MKL (Math Kernel Library) library that contains FFT. The Intel compiler
- *  is only free for non-commercial use.
+ * Before compiling the code, it is necessary to install a C++ compiler and several
+ * libraries.  The GNU compiler is usually part of Linux distributions and distributed
+ * as open source.  It can be downloaded from http://gcc.gnu.org/ if necessary.
+ * The Intel compiler can be downloaded from  http://software.intel.com/en-us/intel-composer-xe/.
+ * This package also includes the Intel MKL (Math Kernel Library) library that contains FFT.
+ * The Intel compiler is only free for non-commercial use.
  *
- * The code also relies on several libraries that is to be installed before compiling:
+ * The code also relies on several libraries that are to be installed before compiling:
  *
  * \li HDF5 library - Mandatory I/O library, version 1.8 or higher (http://www.hdfgroup.org/HDF5/).
  * \li FFTW library - Optional library for FFT, version 3.0 or higher (http://www.fftw.org/).
- * \li MKLlibrary - Optional library for FFT, version 11.0 or higher (http://software.intel.com/en-us/intel-composer-xe/).
+ * \li MKL library  - Optional library for FFT, version 11.0 or higher (http://software.intel.com/en-us/intel-composer-xe/).
 
  *
  * Although it is possible to use any combination of the FFT library and the compiler,
@@ -74,19 +84,20 @@
 
  * <b> 2.1 The HDF5 library installation procedure </b>
 
- * 1. Download the 64-bit HDF5 library  package for your platform (http://www.hdfgroup.org/HDF5/release/obtain5.html).
+ * 1. Download a 64-bit HDF5 library package for your platform (http://www.hdfgroup.org/HDF5/release/obtain5.html).
  *
- * 2. Configure the HDF5 distribution. Enable the high-level library and specify an installation folder by typing:
-\verbatim
-        ./configure --enable-hl --prefix=folder_to_install
+ * 2. Configure the HDF5 distribution. Enable the high-level library and specify
+ * an installation folder by typing:
+ \verbatim
+  ./configure --enable-hl --prefix=folder_to_install
 \endverbatim
  * 3. Make the HDF library by typing:
 \verbatim
-        make
+  make
 \endverbatim
  * 4. Install the HDF library by typing:
 \verbatim
-	make install
+  make install
 \endverbatim
  *
  *
@@ -95,16 +106,22 @@
  *
  * 1. Download the FFTW library  package for your platform (http://www.fftw.org/download.html).
  *
- * 2. Configure the FFTW distribution. Enable OpenMP support, SSE instruction set, single precision data type, and specify an installation folder:
+ * 2. Configure the FFTW distribution. Enable OpenMP support, SSE instruction set,
+ * single precision floating point arithmetic, and specify an installation folder:
 \verbatim
-        ./configure --enable-single --enable-sse --enable-openmp --enable-shared --prefix=folder_to_install
+  ./configure --enable-single --enable-sse --enable-openmp --enable-shared --prefix=folder_to_install
 \endverbatim
-     if you intend to use the FFTW library (and the C++ code) only on a selected machine and want to get the best possible performance, you may also add processor specific optimisations and AVX instructions set. Note, the compiled binary code is not likely to be portable on different CPUs (e.g. even from Intel Sandy Bridge to Intel Nehalem).
+ *    if you intend to use the FFTW library (and the C++ code) only on a selected
+ *    machine and want to get the best possible performance, you may also add processor
+ *    specific optimisations and AVX instructions set. Note, the compiled binary
+ *    code is not likely to be portable on different CPUs (e.g. even from Intel
+ *    Sandy Bridge to Intel Nehalem).
 \verbatim
-        ./configure --enable-single --enable-avx --enable-openmp  --enable-shared --with-gcc-arch=<arch> --prefix=folder_to_install
+  ./configure --enable-single --enable-avx --enable-openmp  --enable-shared --with-gcc-arch=native --prefix=folder_to_install
 \endverbatim
  * More information about the installation and customization can be found at http://www.fftw.org/fftw3_doc/Installation-and-Customization.htm.
- *
+ * For recent CPUs based on Sandy Bridge, Ivy Bridge, Haswell and Broadwell with
+ * strongly recommend to use the AVX support.
  * 3. Make the FFTW library by typing:
 \verbatim
 	make
@@ -126,88 +143,159 @@
  *
  *
  *
- * <b> 2.4 Compiling the C++ code </b>
+ * <b> 2.4 Compiling the C++ code on Linux</b>
  *
- * When the libraries and the compiler have been installed, you are ready to compile the <tt>kspaceFirstOrder3D-OMP </tt> code.
+ * After the libraries and the compiler have been installed, you are ready to
+ * compile the <tt>kspaceFirstOrder3D-OMP </tt> code.
  *
-
+ *
  * 1. Download the <tt>kspaceFirstOrder3D-OMP </tt> souce codes.
  *
- * 2. Open the \c Makefile file.  The Makefile supports code compilation under GNU compiler and FFTW, or Intel compiler with MKL. Uncomment the desired compiler by removing the character of `<tt>#</tt>'.
+ * 2. Open the \c Makefile file.  The Makefile supports code compilation under
+ * GNU compiler and FFTW, or Intel compiler with MKL. Uncomment the desired compiler
+ * by removing character `<tt>#</tt>'.
 \verbatim
 	#COMPILER = GNU
 	#COMPILER = Intel
 \endverbatim
- *3. Select how to link the libraries. Static linking is preferred, however, on some systems (HPC clusters) it may be better to use dynamic linking and use the system specific library at runtime.
+ *
+ * 3. Select how to link the libraries. Static linking is preferred as it may be
+ * a bit faster, however, on some systems (HPC clusters) it may be better to use
+ * dynamic linking and use the system specific library at runtime.
 \verbatim
 	#LINKING = STATIC
 	#LINKING = DYNAMIC
 \endverbatim
  *
- * 4. Set installation paths of the libraries (an example is shown bellow).
+ * 4. Select the instruction set and the CPU architecture.
+ * For users who will only use the binary on the same machine as compiled, the
+ * best choice is <tt>CPU_ARCH=native</tt>.
+ * If you are about to run the same binary on different machines or you want to
+ * cross-compile the code, you are free to use any of the possible choices,
+ * where SSE 3 is the most general but slowest and AVX2 is the most recent
+ * instruction set while believed to be the fastest one
 \verbatim
-	FFT_DIR=/usr/local
-	MKL_DIR=/opt/intel/composer_xe_2011_sp1/mkl
-	HDF5_DIR=/usr/local/hdf5-1.8.9
+  CPU_ARCH = native
+  #CPU_ARCH = SSE3
+  #CPU_ARCH = SSE4
+  #CPU_ARCH = AVX
+  #CPU_ARCH = AVX2
+ \endverbatim
+ *
+ * 5. Set installation paths of the libraries (an example is shown bellow).
+\verbatim
+  FFT_DIR=/usr/local
+  MKL_DIR=/opt/intel/composer_xe_2013/mkl
+  HDF5_DIR=/usr/local/hdf5-serial
 \endverbatim
- * 5. The code will be built to work on all CPUs implementing the Streaming SSE2 instruction set (Intel Pentium IV, AMD Athlon XP 64 and newer). Higher performance may be obtained by providing more information about the target CPU (SSE 4.2 instructions, AVX instruction, architecture optimization). For more detail, check on the compiler documentation.
+ *
  *
  * 6. Compile the source code by typing:
 \verbatim
-        make
+  make
 \endverbatim
    If you want to clean the distribution, type:
 \verbatim
-        make clean
+  make clean
 \endverbatim
  *
  *
  *
  *
  * @section Parameters 3 Command Line Parameters
- The  C++ code requires two mandatory parameters and accepts a few optional parameters and flags.
- * The mandatory parameters \c -i and \c -o specify the input and output file. The file names respect the path conventions for particular operating system.
- * If any of the files is not specified, cannot be found or created, an error message is shown.
+ * The  C++ code requires two mandatory parameters and accepts a few optional parameters and flags.
+ * The mandatory parameters \c -i and \c -o specify the input and output file. The
+ * file names respect the path conventions for particular operating system.
+ * If any of the files is not specified, cannot be found or created, an error
+ * message is shown.
  *
- * The \c -t parameter sets the number of threads used, which defaults the system maximum. On CPUs with Intel Hyper-Threading (HT),
- * performance will generally be better if HT is disabled in the BIOS settings. If HT is switched on, the default will be to create
- * twice as many threads as there are physical processor cores, which might slow down the code execution. Therefore, if the HT is on,
- *  try specifying the number of threads manually for best performance (e.g., 4 for Intel Quad-Core). We recommend experimenting
- * with this parameter to find the best configuration. Note, if there are other tasks being executed on the system,
- * it might be useful to further limit the number of threads to prevent system overload.
+ * The \c -t parameter sets the number of threads used, which defaults the system maximum.
+ * On CPUs with Intel Hyper-Threading (HT), the performance is sometimes better if HT
+ * is disabled in the BIOS settings. If HT is switched on, the default will be to
+ * spawn twice as many threads as there are physical processor cores, which might
+ * or might not slow down the code execution. Therefore, if the HT is on, try specifying the
+ * number of threads manually for best performance (e.g. 4 for Intel i7). We
+ * recommend experimenting with this parameter to find the best configuration.
+ * Note, if there are other tasks being executed on the system, it might be useful
+ * to further limit the number of threads to prevent system overload.
  *
- * The \c -r parameter specifies how often information about the simulation progress is printed to the command line.
- * By default, the C++ code prints out the progress of the simulation, the elapsed time, and the estimated time of
+ * The \c -r parameter specifies how often information about the simulation progress
+ * is printed out to the command line. By default, the C++ code prints out the
+ * progress of the simulation, the elapsed time, and the estimated time of
  * completion in intervals corresponding to 5% of the total number of times steps.
  *
- * The \c -c parameter specifies the compression level used by the ZIP library to reduce the
- * size of the output file. The actual compression rate is highly dependent on the shape of
- * the sensor mask and the range of stored quantities. In general, the output data is very
- * hard to compress, and using higher compression levels can greatly increase the time to
- * save data while not having a large impact on the final file size. The default compression
- * level of 3 represents a balance between compression ratio and performance that is suitable in most cases.
+ * The \c -c parameter specifies the compression level used by the ZIP library to
+ * reduce the size of the output file. The actual compression rate is highly dependent
+ * on the shape of the sensor mask and the range of stored quantities. In general,
+ * the output data is very hard to compress, and using higher compression levels
+ * can greatly increase the time to save data while not having a large impact on
+ * the final file size. That's why we decided to disable compression in default settings.
  *
- * The \c --benchmark parameter enables the total length of simulation (i.e., the number of time steps)
- * to be overwritten by setting a new number of time steps to simulate. This is particularly useful
- * for performance evaluation and benchmarking. As the code performance is relatively stable, 50-100 time steps is
- * usually enough to predict the simulation duration. This parameter can also be used to quickly find the ideal number of CPU threads to use.
- *
- * The \c -h and \c --help parameters print all the parameters of the C++ code, while the \c --version parameter reports the code version and internal build number.
- *
- *
- * The remaining flags specify the output quantities to be recorded during the simulation and stored on disk analogous to
- * the sensor.record input. If the \c -p or \c --p raw flags are set (these are equivalent), a time series of the acoustic pressure at the
- * grid points specified by the sensor mask is recorded. If the \c --p rms and/or \c --p max flags are set, the root mean square and/or maximum values
- * of the pressure at the grid points specified by the sensor mask are recorded. Finally, if the \c --p final flag is set, the values for the entire acoustic pressure
- * field in the final time step of the simulation is stored (this will always include the PML, regardless of the setting for <tt> `PMLInside' </tt>). Flags to record the acoustic
- * particular velocity are defined in an analogous fashion.
+ * The \c <tt>--benchmark</tt> parameter enables the total length of simulation (i.e.,
+ * the number of time steps) to be overridden by setting a new number of time
+ * steps to simulate. This is particularly useful for performance evaluation and
+ * benchmarking. As the code performance is relatively stable, 50-100 time steps is
+ * usually enough to predict the simulation duration. This parameter can also be
+ * used to quickly find the ideal number of CPU threads to use.
  *
  *
- * Any combination of \c p, \c u and \c I  fags is admissible. If no output flag is set, a time-series for
- * the acoustic pressure is recorded. If it is not necessary to collect the output quantities over
- * the entire simulation, the starting time step when the collection begins can be specified
- * using the -s parameter. Note, the index for the first time step is 1 (this follows the MATLAB indexing convention).
  *
+ * For codes that are expected to run for a very long time, it may be useful to
+ * checkpoint and restart the execution. One motivation is the wall clock limit
+ * per task on clusters where jobs must fit within a given time span
+ * (e.g. 24 hours). The second motivation is a level of fault-tolerance, where
+ * you can back up the state of the simulation after a predefined period.
+ * To enable checkpoint-restart, the user is asked to specify a file to store the
+ * actual state of the simulation by  <tt>--checkpoint_file</tt> and the
+ * period in seconds after which the simulation will be interrupted by <tt>--checkpoint_interval</tt>.
+ * When running on a cluster, please allocate enough time for the checkpoint procedure
+ * that can take a non-negligible amount of time (7 matrices have to be stored in
+ * the checkpoint file and all aggregated quantities are flushed into the output file).
+ *
+ * When controlling a multi-leg simulation by a script loop, the parameters of the code
+ * remains the same in all legs. The first leg of the simulation creates a checkpoint
+ * file while the last one deletes it. If the checkpoint file is not found the
+ * simulation starts from beginning. In order to get know how many steps have been
+ * finished, please open the output file and read the variable <tt>t_index</tt>.
+ *
+ *
+ * The \c -h and \c --help parameters print all the parameters of the C++ code,
+ * The <tt> --version </tt>parameter reports detail information of the code useful for
+ * debugging and bug reports. It prints out the internal version, the build date and time, the
+ * git hash allowing us to track the version of the source code, the operating system,
+ * the compiler name and version and the instruction set used.
+ *
+ *
+ * The remaining flags specify the output quantities to be recorded during the
+ * simulation and stored on disk analogous to  the sensor.record input. If
+ * the \c -p or \c --p raw flags are set (these are equivalent), a time series of
+ * the acoustic pressure at the grid points specified by the sensor mask is
+ * recorded. If the \c --p_rms, \c --p_max, \c --p_min flags are set,
+ * the root mean square and/or maximum and/or minimum values of the pressure at
+ * the grid points specified by the sensor mask are recorded. If the
+ * \c --p_final flag is set, the values for the entire acoustic pressure field
+ * in the final time step of the simulation is stored (this will always include
+ * the PML, regardless of  the setting for <tt> `PMLInside' </tt>).
+ * The flags \c --p_max_all and \c--p_min_all allow to calculate the maximum and
+ * minimum values over the entire acoustic pressure field, regardless on the shape
+ * of the sensor mask.
+ * Flags to record the acoustic particular velocity are defined in an analogous fashion.
+ * For proper calculation of acoustic intensity, the particle velocity has to be
+ * shifted onto the same grid as the acoustic pressure. This can be done by setting
+ * \c --u_non_staggered_raw flag, that first shift the particle velocity and then
+ * sample the grid points specified by the sensor mask. Since the shift operation
+ * requires additional FFTs, the impact on the simulation time may be significant.
+ *
+ *
+ * Any combination of \c p and \c u  fags is admissible. If no output flag is set,
+ * a time-series for the acoustic pressure is recorded. If it is not necessary
+ * to collect the output quantities over the entire simulation, the starting time
+ * step when the collection begins can be specified using the -s parameter.
+ * Note, the index for the first time step is 1 (this follows the MATLAB indexing convention).
+ *
+ * The \c --copy_sensor_mask will copy the sensor from the input file to the output
+ * one at the end of the simulation. This helps in post-processing and visualisation of
+ * the outputs.
  *
 \verbatim
 ---------------------------------- Usage ---------------------------------
@@ -216,13 +304,15 @@ Mandatory parameters:
   -o <output_file_name>           : HDF5 output file
 
 Optional parameters:
-  -t <num_threads>                : Number of CPU threads (default = MAX)
-  -r <interval_in_%>              : Progress print interval (default = 5%)
+  -t <num_threads>                : Number of CPU threads
+                                      (default = 4)
+  -r <interval_in_%>              : Progress print interval
+                                      (default = 5%)
   -c <comp_level>                 : Output file compression level <0,9>
                                       (default = 0)
   --benchmark <steps>             : Run a specified number of time steps
 
-  --checkpoint_file <file_name>   : HDF5 checkpoint file
+  --checkpoint_file <file_name>   : HDF5 Checkpoint file
   --checkpoint_interval <seconds> : Stop after a given number of seconds and
                                       store the actual state
 
@@ -250,8 +340,8 @@ Output flags:
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
   --u_min                         : Store min of ux, uy, uz
-  --u_max_all                     : Store max of ux ,uy, yz (whole domain)
-  --u_min_all                     : Store max of ux ,uy, yz (whole domain)
+  --u_max_all                     : Store max of ux, uy, uz (whole domain)
+  --u_min_all                     : Store min of ux, uy, uz (whole domain)
   --u_final                       : Store final acoustic velocity
 
   --copy_sensor_mask              : Copy sensor mask to the output file
@@ -268,13 +358,16 @@ Output flags:
  *
  * @section HDF5Files 4 HDF5 File Structure
  *
-   * The C++ code has been designed as a standalone application which is not dependent on MATLAB libraries or a MEX interface.
- * This is of particular importance when using servers and supercomputers without MATLAB support.
- * For this reason, simulation data must be transferred between the C++ code and MATLAB using external input and output files.
- * These files are stored using the Hierarchical Data Format HDF5 (http://www.hdfgroup.org/HDF5/). This is a data model,
- * library, and file format for storing and managing data. It supports a variety of datatypes, and is designed for
- *  flexible and efficient I/O and for high volume and complex data. The HDF5 technology suite includes tools and applications for
- * managing, manipulating, viewing, and analysing data in the HDF5 format.
+ * The C++ code has been designed as a standalone application which is not dependent
+ * on MATLAB libraries or a MEX interface. This is of particular importance when
+ * using servers and supercomputers without MATLAB support. For this reason, simulation
+ * data must be transferred between the C++ code and MATLAB using external input
+ * and output files. These files are stored using the Hierarchical Data Format
+ * HDF5 (http://www.hdfgroup.org/HDF5/). This is a data model, library, and file
+ * format for storing and managing data. It supports a variety of datatypes, and
+ * is designed for flexible and efficient I/O and for high volume and complex data.
+ * The HDF5 technology suite includes tools and applications for managing,
+ * manipulating, viewing, and analysing data in the HDF5 format.
  *
  *
  *
@@ -286,25 +379,37 @@ Output flags:
  * disk file. Any HDF5 group or dataset may also have an associated attribute list. A
  * HDF5 attribute is a user-defined HDF5 structure that provides extra information about a
  * HDF5 object. More information can be obtained from the HDF5 documentation (http://www.hdfgroup.org/HDF5/doc/index.html).
-
  *
- * The HDF5 input file for the C++ simulation code contains a file header with brief description of the simulation
- * stored in string attributes, and the root group `/' which stores all the simulation properties in the form of 3D datasets
- * (a complete list of input datasets is given in Appendix B). The HDF5 output file contains a file header with the simulation
- * description as well as performance statistics, such as the simulation time and memory consumption, stored in string attributes.
+ *
+ * kspaceFirstOrder3D-OMP v1.1 introduces a new version of the HDF5 input and
+ * output file format. The code is happy to work with both versions (1.0 and 1.1), however when
+ * working with an input file of version 1.0, some features are not supported,
+ * namely the cuboid sensor mask, and u_non_staggered_raw.
+ * When running from within the actual K-Wave Toolbox, the files will be generated
+ * in version 1.1
+ *
+ * The HDF5 input file for the C++ simulation code contains a file header with
+ * brief description of the simulation stored in string attributes,
+ * and the root group `/' which stores all the simulation properties in the form
+ * of 3D datasets (a complete list of input datasets is given in Appendix B).
+ * THe HDF5 checkpoint file contains the same file header as the input file and
+ * and the root group `/' with a few datasets keeping the actual simulation state
+ * The HDF5 output file contains a file header with the simulation description
+ * as well as performance statistics, such as the simulation time and memory
+ * consumption, stored in string attributes.
  * The results of the simulation are stored in the root group `/' in the form of 3D datasets.
  *
  *
  * \verbatim
 ==============================================================================================================
-                                        Input File Header
+                                        Input File/Checkpoint File Header
 =============================================================================================================
 created_by                              Short description of the tool that created this file
 creation_date                           Date when the file was created
 file_description                        Short description of the content of the file (e.g. simulation name)
 file_type                               Type of the file (input)
 major_version                           Major version of the file definition (1)
-minor_version                           Minor version of the file definition (0)
+minor_version                           Minor version of the file definition (1)
 ==============================================================================================================
  \endverbatim
  *
@@ -317,7 +422,7 @@ creation_date                           Date when the file was created
 file_description                        Short description of the content of the file (e.g. simulation name)
 file_type                               Type of the file (output)
 major_version                           Major version of the file definition (1)
-minor_version                           Minor version of the file definition (0)
+minor_version                           Minor version of the file definition (1)
 -------------------------------------------------------------------------------------------------------------
 host_names                              List of hosts (computer names) the simulation was executed on
 number_of_cpu_cores                     Number of CPU cores used for the simulation
@@ -333,21 +438,39 @@ total_memory_in_use Total               Peak memory in use
  *
  *
  *
- * All input and output parameters are stored as three dimensional datasets with dimension sizes designed by <tt>(Nx, Ny, Nz)</tt>. In order to support scalars and 1D and 2D arrays,
- * the unused dimensions are set to 1 . For example, scalar variables are stored with a dimension size of <tt>(1,1,1)</tt>, 1D vectors oriented in y-direction are stored with a dimension
- * size of <tt>(1, Ny, 1)</tt>, and so on. If the dataset stores a complex variable, the real and
- * imaginary parts are stored in an interleaved layout and the lowest used dimension size is
+ * The input and checkpoint file stores all quantities as three dimensional datasets with
+ * dimension sizes designed by <tt>(Nx, Ny, Nz)</tt>. In order to support scalars
+ * and 1D and 2D arrays, the unused dimensions are set to 1.
+ * For example, scalar variables are stored with a dimension size of <tt>(1,1,1)</tt>,
+ * 1D vectors oriented in y-direction are stored with a dimension  size of <tt>(1, Ny, 1)</tt>,
+ * and so on. If the dataset stores a complex variable, the real and imaginary parts
+ * are stored in an interleaved layout and the lowest used dimension size is
  * doubled (i.e., Nx for a 3D matrix, Ny for a 1D vector oriented in the y-direction). The
  * datasets are physically stored in row-major order (in contrast to column-major order used
  * by MATLAB) using either the <tt> `H5T_IEEE_F32LE' </tt> data type for floating point datasets or
  * <tt> `H5T_STD_U64LE' </tt> for integer based datasets.
+ * All the datasets are store under the root group.
  *
- * In order to enable compression of big datasets (3D variables, output time series), selected
- * datasets are not stored as monolithic blocks but broken into chunks that are compressed
- * by the ZIP library and stored separately. The chunk size is defined as follows:
  *
- * \li <tt> (Nx, Ny, 1) </tt> in the case of 3D variables (one 2D slab).
+ * The output file of version 1.0 could only store recorded quantities as 3D datasets
+ * under the root group. However, with version 1.1 and the new cuboid corner sensor
+ * mask, the sampled quantities may be laid out as 4D quantities stored under specific
+ * groups. The dimensions are always <tt> (Nx, Ny, Nz, Nt)>, every sampled cuboid
+ * is stored as a distinct dataset and the datasets are grouped under a group named
+ * by the quantity stored. This makes the file clearly readable and easy to parse.
+ *
+ *
+ *
+ * In order to enable compression and more efficient processing of big datasets
+ * are not stored as monolithic blocks
+ * but broken into chunks that are compressed by the ZIP library  and stored
+ * separately. The chunk size is defined as follows:
+ *
+ * \li <tt> (1M elements, 1, 1) </tt> in the case of 1D variables - index sensor mask (8MB blocks).
+ * \li <tt> (Nx, Ny, 1)         </tt> in the case of 3D variables (one 2D slab).
+ * \li <tt> (Nx, Ny, Nz, 1)     </tt> in the case of 4D variables (one times tep).
  * \li <tt> (N_sensor_points, 1, 1) </tt> in the case of the output time series (one time step of the simulation).
+ *
  *
  * All datasets have two attributes that specify the content of the dataset. The \c `data_type'
  * attribute specifies the data type of the dataset. The admissible values are either \c `float' or
@@ -365,42 +488,44 @@ Name                            Size           Data type       Domain Type      
 ==============================================================================================================
   1. Simulation Flags
 --------------------------------------------------------------------------------------------------------------
-  ux_source_flag                (1, 1, 1)       long            real
-  uy_source_flag                (1, 1, 1)       long            real
-  uz_source_flag                (1, 1, 1)       long            real
-  p_source_flag                 (1, 1, 1)       long            real
-  p0_source_flag                (1, 1, 1)       long            real
-  transducer_source_flag        (1, 1, 1)       long            real
-  nonuniform_grid_flag          (1, 1, 1)       long            real            must be set to 0
-  nonlinear_flag                (1, 1, 1)       long            real
-  absorbing_flag                (1, 1, 1)       long            real
+  ux_source_flag                (1, 1, 1)       long           real
+  uy_source_flag                (1, 1, 1)       long           real
+  uz_source_flag                (1, 1, 1)       long           real
+  p_source_flag                 (1, 1, 1)       long           real
+  p0_source_flag                (1, 1, 1)       long           real
+  transducer_source_flag        (1, 1, 1)       long           real
+  nonuniform_grid_flag          (1, 1, 1)       long           real             must be set to 0
+  nonlinear_flag                (1, 1, 1)       long           real
+  absorbing_flag                (1, 1, 1)       long           real
 --------------------------------------------------------------------------------------------------------------
   2. Grid Properties
 --------------------------------------------------------------------------------------------------------------
-  Nx                            (1, 1, 1)       long            real
-  Ny                            (1, 1, 1)       long            real
-  Nz                            (1, 1, 1)       long            real
-  Nt                            (1, 1, 1)       long            real
-  t_index                       (1, 1, 1)       long            real            File version 1.1
-  dt                            (1, 1, 1)       float           real
-  dx                            (1, 1, 1)       float           real
-  dy                            (1, 1, 1)       float           real
-  dz                            (1, 1, 1)       float           real
+  Nx                            (1, 1, 1)       long           real
+  Ny                            (1, 1, 1)       long           real
+  Nz                            (1, 1, 1)       long           real
+  Nt                            (1, 1, 1)       long           real
+  dt                            (1, 1, 1)       float          real
+  dx                            (1, 1, 1)       float          real
+  dy                            (1, 1, 1)       float          real
+  dz                            (1, 1, 1)       float          real
+  x_shift_neg_r                 (Nx/2+1, 1, 1)  float          complex          File version 1.1
+  y_shift_neg_r                 (1, Ny/2+1, 1)  float          complex          File version 1.1
+  z_shift_neg_r                 (1, 1, Nz/2+1)  float          complex          File version 1.1
 --------------------------------------------------------------------------------------------------------------
   3 Medium Properties
 --------------------------------------------------------------------------------------------------------------
   3.1 Regular Medium Properties
 
   rho0                          (Nx, Ny, Nz)    float         real              heterogenous
-  		                         	(1, 1, 1)       float         real              homogenous
+                                (1, 1, 1)       float         real              homogenous
   rho0_sgx                      (Nx, Ny, Nz)    float         real              heterogenous
                                 (1, 1, 1)       float         real              homogenous
   rho0_sgy                      (Nx, Ny, Nz)    float         real              heterogenous
                                 (1, 1, 1)       float         real              homogenous
   rho0_sgz                      (Nx, Ny, Nz)    float         real              heterogenous
-				                        (1, 1, 1)       float         real              homogenous
+                                (1, 1, 1)       float         real              homogenous
   c0                            (Nx, Ny, Nz)    float         real              heterogenous
-  		       		                (1, 1, 1)       float         real              homogenous
+                                (1, 1, 1)       float         real              homogenous
   c_ref                         (1, 1, 1)       float         real
 
   3.2 Nonlinear Medium Properties (defined if (nonlinear_flag == 1))
@@ -444,9 +569,9 @@ Name                            Size           Data type       Domain Type      
 
   5.3 Transducer Source Terms (defined if (transducer_source_flag == 1))
 
-  u_source_index        	      (Nsrc, 1, 1)       long       real
+  u_source_index                (Nsrc, 1, 1)       long       real
   transducer_source_input       (Nt_src, 1, 1)     float      real
-  delay_mask			              (Nsrc, 1, 1)       float      real
+  delay_mask                    (Nsrc, 1, 1)       float      real
 
   5.4 IVP Source Terms (defined if ( p0_source_flag ==1)
 
@@ -455,7 +580,7 @@ Name                            Size           Data type       Domain Type      
 --------------------------------------------------------------------------------------------------------------
   6. K-space and Shift Variables
 --------------------------------------------------------------------------------------------------------------
-  ddx_k_shift_pos_r     	      (Nx/2 + 1, 1, 1)  float       complex
+  ddx_k_shift_pos_r             (Nx/2 + 1, 1, 1)  float       complex
   ddx_k_shift_neg_r             (Nx/2 + 1, 1, 1)  float       complex
   ddy_k_shift_pos               (1, Ny, 1)        float       complex
   ddy_k_shift_neg               (1, Ny, 1)        float       complex
@@ -480,6 +605,31 @@ Name                            Size           Data type       Domain Type      
 ==============================================================================================================
  \endverbatim
 
+\verbatim
+==============================================================================================================
+                                        Checkpoint File Datasets
+==============================================================================================================
+Name                            Size           Data type       Domain Type      Condition of Presence
+==============================================================================================================
+  1. Grid Properties
+--------------------------------------------------------------------------------------------------------------
+  Nx                            (1, 1, 1)       long           real
+  Ny                            (1, 1, 1)       long           real
+  Nz                            (1, 1, 1)       long           real
+  Nt                            (1, 1, 1)       long           real
+  t_index                       (1, 1, 1)       long           real
+--------------------------------------------------------------------------------------------------------------
+  2. Simulation state
+--------------------------------------------------------------------------------------------------------------
+  p                            (Nx, Ny, Nz)    float           real
+  ux_sgx                       (Nx, Ny, Nz)    float           real
+  uy_sgy                       (Nx, Ny, Nz)    float           real
+  uz_sgz                       (Nx, Ny, Nz)    float           real
+  rhox                         (Nx, Ny, Nz)    float           real
+  rhoy                         (Nx, Ny, Nz)    float           real
+  rhoz                         (Nx, Ny, Nz)    float           real
+--------------------------------------------------------------------------------------------------------------
+\endverbatim
 
 
  \verbatim
@@ -497,8 +647,8 @@ Name                            Size           Data type        Domain Type     
   p0_source_flag                (1, 1, 1)       long          real
   transducer_source_flag        (1, 1, 1)       long          real
   nonuniform_grid_flag          (1, 1, 1)       long          real
-  nonlinear_flag		            (1, 1, 1)       long          real
-  absorbing_flag		            (1, 1, 1)       long          real
+  nonlinear_flag                (1, 1, 1)       long          real
+  absorbing_flag                (1, 1, 1)       long          real
   u_source_mode                 (1, 1, 1)       long          real              if u_source
   u_source_many                 (1, 1, 1)       long          real              if u_source
   p_source_mode                 (1, 1, 1)       long          real              if p_source
@@ -540,7 +690,6 @@ Name                            Size           Data type        Domain Type     
 --------------------------------------------------------------------------------------------------------------
   5a. Simulation Results: if sensor_mask_type == 0 (index), or File version == 1.0
 --------------------------------------------------------------------------------------------------------------
-
   p                             (Nsens, Nt - s, 1) float      real              -p or --p_raw
   p_rms                         (Nsens, 1, 1)      float      real              --p_rms
   p_max                         (Nsens, 1, 1)      float      real              --p_max
@@ -581,13 +730,10 @@ Name                            Size           Data type        Domain Type     
   ux_final                      (Nx, Ny, Nz)       float      real              --u_final
   uy_final                      (Nx, Ny, Nz)       float      real              --u_final
   uz_final                      (Nx, Ny, Nz)       float      real              --u_final
-
-
- --------------------------------------------------------------------------------------------------------------
-  5b. Simulation Results: if sensor_mask_type == 1 (corners) and or File version == 1.1
 --------------------------------------------------------------------------------------------------------------
-
-  /p                            group of datasets, one per cuboid                -p or --p_raw
+  5b. Simulation Results: if sensor_mask_type == 1 (corners) and File version == 1.1
+--------------------------------------------------------------------------------------------------------------
+  /p                            group of datasets, one per cuboid               -p or --p_raw
   /p/1                          (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
   /p/2                          (Cx, Cy, Cz, Nt-s) float      real              2nd sampled cuboid, etc.
 
@@ -606,39 +752,39 @@ Name                            Size           Data type        Domain Type     
 
 
   /ux                           group of datasets, one per cuboid               -u or --u_raw
-  /ux/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux/1                         (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
   /uy                           group of datasets, one per cuboid               -u or --u_raw
-  /uy/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uy/1                         (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
   /uz                           group of datasets, one per cuboid               -u or --u_raw
-  /uz/1                         (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uz/1                         (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
 
-  /ux_non_staggered              group of datasets, one per cuboid               --u_non_staggered_raw
-  /ux_non_staggered/1            (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
-  /uy_non_staggered              group of datasets, one per cuboid               --u_non_staggered_raw
-  /uy_non_staggered/1            (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
-  /uz_non_staggered              group of datasets, one per cuboid               --u_non_staggered_raw
-  /uz_non_staggered/1            (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
+  /ux_non_staggered/1           (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /uy_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
+  /uy_non_staggered/1           (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /uz_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
+  /uz_non_staggered/1           (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
 
   /ux_rms                       group of datasets, one per cuboid               --u_rms
-  /ux_rms/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux_rms/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
   /uy_rms                       group of datasets, one per cuboid               --u_rms
-  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
   /uz_rms                       group of datasets, one per cuboid               --u_rms
-  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
 
   /ux_max                       group of datasets, one per cuboid               --u_max
-  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
   /uy_max                       group of datasets, one per cuboid               --u_max
-  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
   /uz_max                       group of datasets, one per cuboid               --u_max
-  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
 
   /ux_min                       group of datasets, one per cuboid               --u_min
-  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
   /uy_min                       group of datasets, one per cuboid               --u_min
-  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
   /uz_min                       group of datasets, one per cuboid               --u_min
-  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float     real               1st sampled cuboid
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
 
   ux_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
   uy_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
@@ -678,18 +824,17 @@ using namespace std;
 static const char * FMT_SmallSeparator = "--------------------------------\n";
 
 /**
- *  The main function
- * @param argc
- * @param argv
+ *  The main function of the ksppaceFirstOrder3D-OMP
+ * @param [in] argc
+ * @param [in] argv
  * @return
  */
 int main(int argc, char** argv)
 {
-
   // Create K-Space solver
   TKSpaceFirstOrder3DSolver KSpaceSolver;
 
- // print header
+  // print header
   fprintf(stdout,"%s",FMT_SmallSeparator);
   fprintf(stdout,"  %s\n",KSpaceSolver.GetCodeName().c_str());
   fprintf(stdout,"%s",FMT_SmallSeparator);
@@ -742,7 +887,8 @@ int main(int argc, char** argv)
   try
   {
     KSpaceSolver.LoadInputData();
-  }catch (ios::failure e)
+  }
+  catch (ios::failure e)
   {
     fprintf(stdout, "Failed!\nK-Wave panic: Data loading was not successful!\n%s\n",e.what());
     fprintf(stderr, "K-Wave panic: Data loading was not successful! \n%s\n",e.what());
@@ -780,4 +926,3 @@ int main(int argc, char** argv)
   return  EXIT_SUCCESS;
 }// end of main
 //------------------------------------------------------------------------------
-
