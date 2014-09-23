@@ -468,7 +468,7 @@ total_memory_in_use Total               Peak memory in use
  *
  * \li <tt> (1M elements, 1, 1) </tt> in the case of 1D variables - index sensor mask (8MB blocks).
  * \li <tt> (Nx, Ny, 1)         </tt> in the case of 3D variables (one 2D slab).
- * \li <tt> (Nx, Ny, Nz, 1)     </tt> in the case of 4D variables (one times tep).
+ * \li <tt> (Nx, Ny, Nz, 1)     </tt> in the case of 4D variables (one time step).
  * \li <tt> (N_sensor_points, 1, 1) </tt> in the case of the output time series (one time step of the simulation).
  *
  *
@@ -548,7 +548,6 @@ Name                            Size           Data type       Domain Type      
   5 Source Properties
 --------------------------------------------------------------------------------------------------------------
   5.1 Velocity Source Terms (defined if (ux_source_flag == 1 || uy_source_flag == 1 || uz_source_flag == 1))
-
   u_source_mode                 (1, 1, 1)          long       real
   u_source_many                 (1, 1, 1)          long       real
   u_source_index                (Nsrc, 1, 1)       long       real
@@ -560,7 +559,6 @@ Name                            Size           Data type       Domain Type      
                                 (Nt_src, Nsrc, 1)  float      real              u_source_many == 1
 
   5.2 Pressure Source Terms (defined if p_source_flag == 1))
-
   p_source_mode                 (1, 1, 1)          long       real
   p_source_many                 (1, 1, 1)          long       real
   p_source_index                (Nsrc, 1, 1)       long       real
@@ -568,15 +566,12 @@ Name                            Size           Data type       Domain Type      
                                 (1, Nt_src, 1)     float      real              p_source_many == 0
 
   5.3 Transducer Source Terms (defined if (transducer_source_flag == 1))
-
   u_source_index                (Nsrc, 1, 1)       long       real
   transducer_source_input       (Nt_src, 1, 1)     float      real
   delay_mask                    (Nsrc, 1, 1)       float      real
 
-  5.4 IVP Source Terms (defined if ( p0_source_flag ==1)
-
+  5.4 IVP Source Terms (defined if ( p0_source_flag ==1))
   p0_source_input               (Nx, Ny, Nz)        float     real
-
 --------------------------------------------------------------------------------------------------------------
   6. K-space and Shift Variables
 --------------------------------------------------------------------------------------------------------------

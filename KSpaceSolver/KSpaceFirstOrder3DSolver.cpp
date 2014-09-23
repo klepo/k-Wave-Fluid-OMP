@@ -154,7 +154,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
 
   // The simulation does not use checkpointing or this is the first turn
   bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               THDF5_File::IsHDF5(Parameters->GetCheckpointFileName().c_str()));
+                               THDF5_File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
 
   //-------------------- Read data from the checkpoint file -----------------//
   if (RecoverFromPrevState)
@@ -436,7 +436,7 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
 
   // The simulation does not use checkpointing or this is the first turn
   bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               THDF5_File::IsHDF5(Parameters->GetCheckpointFileName().c_str()));
+                               THDF5_File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
 
   // import FFTW wisdom if it is here
   if (RecoverFromPrevState)
