@@ -246,7 +246,7 @@ hid_t THDF5_File::OpenGroup(const hid_t ParentGroup,
 
 /**
  * Close a group.
- * @param[in] Group
+ * @param[in] HDF5_group_id
  */
 void THDF5_File::CloseGroup(const hid_t HDF5_group_id)
 {

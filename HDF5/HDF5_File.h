@@ -15,7 +15,7 @@
  *
  * @section HDF HDF5 File Structure
  *
-* The C++ code has been designed as a standalone application which is not dependent
+ * The C++ code has been designed as a standalone application which is not dependent
  * on MATLAB libraries or a MEX interface. This is of particular importance when
  * using servers and supercomputers without MATLAB support. For this reason, simulation
  * data must be transferred between the C++ code and MATLAB using external input
@@ -471,6 +471,7 @@ Name                            Size           Data type        Domain Type     
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #ifndef THDF5_FILE_H
@@ -870,7 +871,7 @@ class THDF5_FileHeader
     };
     /**
      * @brief   Check minor file version.
-     * @deatail Check minor file version.
+     * @details Check minor file version.
      * @return true if ok
      */
     bool CheckMinorFileVersion()

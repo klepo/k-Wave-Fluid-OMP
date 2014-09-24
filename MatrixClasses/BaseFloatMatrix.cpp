@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July      2011, 12:13 (created) \n
- *              01 September 2014, 16:56 (revised)
+ *              24 September 2014, 14:54 (revised)
  *
  * @section license
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -58,16 +58,14 @@
 
 
 /**
- *
  * Copy data from another matrix with same size.
  *
  * @param [in] src - source matrix
  *
  */
-void TBaseFloatMatrix::CopyData(TBaseFloatMatrix & src){
-
-    memcpy(pMatrixData,src.pMatrixData,sizeof(float)*pTotalAllocatedElementCount);
-
+void TBaseFloatMatrix::CopyData(const TBaseFloatMatrix & src)
+{
+  memcpy(pMatrixData, src.pMatrixData, sizeof(float) * pTotalAllocatedElementCount);
 }// end of CopyDataSameSize
 //------------------------------------------------------------------------------
 
@@ -77,13 +75,13 @@ void TBaseFloatMatrix::CopyData(TBaseFloatMatrix & src){
  * Also work as the first touch strategy on NUMA machines
  *
  */
-void TBaseFloatMatrix::ZeroMatrix(){
-
-    #pragma omp parallel for schedule (static)
-    for (size_t i=0; i < pTotalAllocatedElementCount; i++){
-        pMatrixData[i] = 0.0f;
-    }
-
+void TBaseFloatMatrix::ZeroMatrix()
+{
+  #pragma omp parallel for schedule (static)
+  for (size_t i=0; i < pTotalAllocatedElementCount; i++)
+  {
+    pMatrixData[i] = 0.0f;
+  }
 }// end of ZeroMatrix
 //------------------------------------------------------------------------------
 
@@ -93,13 +91,13 @@ void TBaseFloatMatrix::ZeroMatrix(){
  * @param [in] scalar - scalar to be divided
  *
  */
-void TBaseFloatMatrix::ScalarDividedBy(const float  scalar){
-
-    #pragma omp parallel for schedule (static)
-    for (size_t i=0; i < pTotalAllocatedElementCount; i++){
-        pMatrixData[i] = scalar / pMatrixData[i];
-
-    }
+void TBaseFloatMatrix::ScalarDividedBy(const float  scalar)
+{
+  #pragma omp parallel for schedule (static)
+  for (size_t i=0; i < pTotalAllocatedElementCount; i++)
+  {
+    pMatrixData[i] = scalar / pMatrixData[i];
+  }
 }// end of ScalarDividedBy
 //------------------------------------------------------------------------------
 
@@ -112,33 +110,33 @@ void TBaseFloatMatrix::ScalarDividedBy(const float  scalar){
 
 /**
  * Memory allocation based on the total number of elements. \n
- * Memory is aligned by the SSE_ALIGNMENT and all elements are zeroed.
+ * Memory is aligned by the DATA_ALIGNMENT and all elements are zeroed.
  */
-void TBaseFloatMatrix::AllocateMemory(){
-    /* No memory allocated before this function*/
-    assert(pMatrixData == NULL);
+void TBaseFloatMatrix::AllocateMemory()
+{
+  /* No memory allocated before this function*/
+  assert(pMatrixData == NULL);
 
-    pMatrixData = ( float *) _mm_malloc(pTotalAllocatedElementCount * sizeof (float), DATA_ALIGNMENT);
+  pMatrixData = (float *) _mm_malloc(pTotalAllocatedElementCount * sizeof (float), DATA_ALIGNMENT);
 
-    if (!pMatrixData) {
-        fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseFloatMatrix");
-        throw bad_alloc();
-    }
+  if (!pMatrixData)
+  {
+    fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseFloatMatrix");
+    throw bad_alloc();
+  }
 
-    ZeroMatrix();
-
+  ZeroMatrix();
 }// end of AllocateMemory
 //------------------------------------------------------------------------------
 
 /**
- * Free memory
+ * Free memory.
  */
- void TBaseFloatMatrix::FreeMemory(){
+ void TBaseFloatMatrix::FreeMemory()
+ {
+  if (pMatrixData) _mm_free(pMatrixData);
 
-    if (pMatrixData) _mm_free(pMatrixData);
-
-    pMatrixData = NULL;
-
+  pMatrixData = NULL;
 }// end of MemoryDealocation
 //------------------------------------------------------------------------------
 

@@ -6,12 +6,12 @@
  *              jarosjir@fit.vutbr.cz
  *
  * @brief       The implementation file containing the base class for index
- *              matrices (based on the size_t datatype)
+ *              matrices (based on the size_t datatype).
  *
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        26 July      2011, 14:17 (created) \n
- *              01 September 2014, 15:55 (revised)
+ *              24 September 2014, 14:58 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org). .\n
@@ -32,9 +32,10 @@
  */
 
 
-
 #include <string.h>
 #include <immintrin.h>
+#include <assert.h>
+
 #include <MatrixClasses/BaseIndexMatrix.h>
 
 #include <Utils/DimensionSizes.h>
@@ -63,8 +64,8 @@
  */
 void TBaseIndexMatrix::ZeroMatrix()
 {
-  ///@TODO: This breaks the first touch policy! - however we don't know the distribution
-  memset(pMatrixData, 0, pTotalAllocatedElementCount*sizeof(size_t));
+  ///@todo: This breaks the first touch policy! - however we don't know the distribution
+  memset(pMatrixData, 0, pTotalAllocatedElementCount * sizeof(size_t));
 }// end of ZeroMatrix
 //------------------------------------------------------------------------------
 
@@ -78,11 +79,12 @@ void TBaseIndexMatrix::ZeroMatrix()
 
 /**
  * Memory allocation based on the total number of elements. \n
- * Memory is aligned by the SSE_ALIGNMENT and all elements are zeroed.
+ * Memory is aligned by the DATA_ALIGNMENT and all elements are zeroed.
  */
 void TBaseIndexMatrix::AllocateMemory()
 {
   /* No memory allocated before this function*/
+  assert(pMatrixData == NULL);
 
   pMatrixData = (size_t *) _mm_malloc(pTotalAllocatedElementCount * sizeof (size_t), DATA_ALIGNMENT);
 
@@ -97,7 +99,7 @@ void TBaseIndexMatrix::AllocateMemory()
 //------------------------------------------------------------------------------
 
 /**
- * Free memory
+ * Free memory.
  */
 void TBaseIndexMatrix::FreeMemory()
 {
