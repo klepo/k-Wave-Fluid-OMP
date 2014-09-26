@@ -6,12 +6,12 @@
  *              jarosjir@fit.vutbr.cz
  *
  * @brief       The header file of classes responsible for storing output
- *              quantities into the output HDF5 file
+ *              quantities into the output HDF5 file.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              01 September 2014, 13:14 (revised)
+ *              26 September 2014, 18:33 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -48,8 +48,8 @@ using namespace std;
 
 /**
  * @class TBaseOutputHDF5Stream
- * @brief Abstract base class for output data streams (sampled data)
- *
+ * @brief   Abstract base class for output data streams (sampled data).
+ * @details Abstract base class for output data streams (sampled data).
  *
  */
 class TBaseOutputHDF5Stream
@@ -57,12 +57,13 @@ class TBaseOutputHDF5Stream
   public:
 
     /**
-     * @enum TOutputHDF5StreamReductionOperator
-     * @brief How to aggregate data \n
-     *        roNONE - store actual data (time series)
-     *        roRMS  - calculate root mean square \n
-     *        roMAX  - store maximum
-     *        roMIN  - store minimum
+     * @enum TReductionOperator
+     * @brief How to aggregate data
+     * @details How to aggregate data \n
+     *           roNONE - store actual data (time series)
+     *           roRMS  - calculate root mean square \n
+     *           roMAX  - store maximum
+     *           roMIN  - store minimum
      */
     enum TReductionOperator
     {
@@ -70,7 +71,8 @@ class TBaseOutputHDF5Stream
     };
 
     /**
-     * Constructor - there is no sensor mask by default!
+     * @brief   Constructor - there is no sensor mask by default!
+     * @details Constructor - there is no sensor mask by default!
      * it links the HDF5 dataset, source (sampled matrix) and the reduction
      * operator together. The constructor DOES NOT allocate memory because the
      * size of the sensor mask is not known at the time the instance of
@@ -103,81 +105,84 @@ class TBaseOutputHDF5Stream
       strcpy(this->HDF5_RootObjectName, HDF5_RootObjectName);
     };
 
-    /// Destructor
+    /**
+     * @brief Destructor.
+     * @details Destructor.
+     */
     virtual ~TBaseOutputHDF5Stream()
     {
       delete [] HDF5_RootObjectName;
     };
 
-
-    /// Create a HDF5 stream and allocate data for it - a virtual method
+    /// Create a HDF5 stream and allocate data for it.
     virtual void Create() = 0;
 
-    /// Reopen the output stream after restart
+    /// Reopen the output stream after restart.
     virtual void Reopen() = 0;
 
-    /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask
+    /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask.
     virtual void Sample() = 0;
 
-    /// Apply post-processing on the buffer and flush it to the file
+    /// Apply post-processing on the buffer and flush it to the file.
     virtual void PostProcess();
 
-    /// Checkpoint the stream
+    /// Checkpoint the stream.
     virtual void Checkpoint() = 0;
 
-    /// Close stream (apply post-processing if necessary, flush data and close)
+    /// Close stream (apply post-processing if necessary, flush data and close).
     virtual void Close() = 0;
 
   protected:
-    /// Default constructor not allowed
+    /// Default constructor not allowed.
     TBaseOutputHDF5Stream();
-    /// Copy constructor not allowed
+    /// Copy constructor not allowed.
     TBaseOutputHDF5Stream(const TBaseOutputHDF5Stream & src);
-    /// Operator = not allowed (we don't want any data movements)
+    /// Operator = not allowed (we don't want any data movements).
     TBaseOutputHDF5Stream & operator = (const TBaseOutputHDF5Stream & src);
 
-    /// A generic function to allocate memory - not used in the base class
+    /// A generic function to allocate memory - not used in the base class.
     virtual void AllocateMemory();
-    /// A generic function to free memory - not used in the base class
+    /// A generic function to free memory - not used in the base class.
     virtual void FreeMemory();
 
-    /// HDF5 file handle
+    /// HDF5 file handle.
     THDF5_File &             HDF5_File;
-    /// Dataset name
+    /// Dataset name.
     char *                   HDF5_RootObjectName;
-    /// Source matrix to be sampled
+    /// Source matrix to be sampled.
     const TRealMatrix&       SourceMatrix;
-    /// Reduction operator
+    /// Reduction operator.
     const TReductionOperator ReductionOp;
 
-    /// if true, the container reuses e.g. Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D
+    /// if true, the container reuses e.g. Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D.
     bool    BufferReuse;
-    /// Buffer size
+    /// Buffer size.
     size_t  BufferSize;
     /// Temporary buffer for store - only if Buffer Reuse = false!
     float * StoreBuffer;
 
-    /// chunk size of 4MB in number of float elements
+    /// chunk size of 4MB in number of float elements.
     static const size_t ChunkSize_4MB = 1048576;
 
-    /// The minimum number of elements to start sampling in parallel (4MB)
+    /// The minimum number of elements to start sampling in parallel (4MB).
     static const size_t MinGridpointsToSampleInParallel = 1048576;
 };// end of TOutputHDF5Stream
 //------------------------------------------------------------------------------
 
 
 /**
- * @class TIndexOutputHDF5Stream
- * @brief Output stream for quantities sampled by an index sensor mask.
+ * @class TIndexOutputHDF5Stream.
+ * @brief   Output stream for quantities sampled by an index sensor mask.
+ * @details Output stream for quantities sampled by an index sensor mask.
  *        This class writes data to a single dataset in a root group of the HDF5
- *        file (time-series as well as aggregations)
+ *        file (time-series as well as aggregations).
  *
  */
 class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
 {
   public:
 
-    /// Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together
+    /// Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together.
     TIndexOutputHDF5Stream(THDF5_File &             HDF5_File,
                            const char *             HDF5_ObjectName,
                            const TRealMatrix &      SourceMatrix,
@@ -186,55 +191,55 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
                            float *                  BufferToReuse = NULL);
 
 
-    /// Destructor
+    /// Destructor.
     virtual ~TIndexOutputHDF5Stream();
 
-    /// Create a HDF5 stream and allocate data for it
+    /// Create a HDF5 stream and allocate data for it.
     virtual void Create();
 
-    /// Reopen the output stream after restart and reload data
+    /// Reopen the output stream after restart and reload data.
     virtual void Reopen();
 
-    /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask
+    /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask.
     virtual void Sample();
 
-    /// Apply post-processing on the buffer and flush it to the file
+    /// Apply post-processing on the buffer and flush it to the file.
     virtual void PostProcess();
 
-    /// Checkpoint the stream
+    /// Checkpoint the stream.
     virtual void Checkpoint();
 
-    /// Close stream (apply post-processing if necessary, flush data and close)
+    /// Close stream (apply post-processing if necessary, flush data and close).
     virtual void Close();
 
   protected:
 
-    /// Flush the buffer to the file
+    /// Flush the buffer to the file.
     virtual void FlushBufferToFile();
 
-    /// Sensor mask to sample data
+    /// Sensor mask to sample data.
     const TIndexMatrix & SensorMask;
-    /// Handle to a HDF5 dataset
-    hid_t               HDF5_DatasetId;
+    /// Handle to a HDF5 dataset.
+    hid_t  HDF5_DatasetId;
 
-    /// Time step to store (N/A for aggregated)
+    /// Time step to store (N/A for aggregated).
     size_t SampledTimeStep;
-
-} ; // end of TIndexOutputHDF5Stream
+}; // end of TIndexOutputHDF5Stream
 //------------------------------------------------------------------------------
 
 
 /**
  * @class TCuboidOutputHDF5Stream
- * @brief Output stream for quantities sampled by a cuboid cormer sensor mask.
- *        This class writes data into separated datasets (one per cuboid) under
- *        a given dataset in the HDF5 file (time-series as well as aggregations)
+ * @brief Output stream for quantities sampled by a cuboid corner sensor mask.
+ * @details Output stream for quantities sampled by a cuboid corner sensor mask.
+ *          This class writes data into separated datasets (one per cuboid) under
+ *          a given dataset in the HDF5 file (time-series as well as aggregations).
  *
  */
 class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
 {
   public:
-    /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together
+    /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together.
     TCuboidOutputHDF5Stream(THDF5_File &             HDF5_File,
                             const char *             HDF5_GroupName,
                             const TRealMatrix &      SourceMatrix,
@@ -242,54 +247,57 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
                             const TReductionOperator ReductionOp,
                             float *                  BufferToReuse = NULL);
 
-    /// Destructor
+    /// Destructor.
     virtual ~TCuboidOutputHDF5Stream();
 
-    /// Create a HDF5 stream and allocate data for it
+    /// Create a HDF5 stream and allocate data for it.
     virtual void Create();
 
-    /// Reopen the output stream after restart and reload data
+    /// Reopen the output stream after restart and reload data.
     virtual void Reopen();
 
-    /// Sample data into buffer and apply reduction, or flush to disk - based on a sensor mask
+    /// Sample data into buffer and apply reduction, or flush to disk - based on a sensor mask.
     virtual void Sample();
 
-    /// Apply post-processing on the buffer and flush it to the file
+    /// Apply post-processing on the buffer and flush it to the file.
     virtual void PostProcess();
 
-    /// Checkpoint the stream and close
+    /// Checkpoint the stream and close.
     virtual void Checkpoint();
 
-    /// Close stream (apply post-processing if necessary, flush data and close)
+    /// Close stream (apply post-processing if necessary, flush data and close).
     virtual void Close();
 
   protected:
     /**
-     * @struct
-     * @brief This structure information about a HDF5 dataset (one cuboid)
-     * Namely it a HDF5_ID, Starting position in a lineup buffer
+     * @struct TCuboidInfo
+     * @brief This structure information about a HDF5 dataset (one cuboid).
+     * Namely, its HDF5_ID, Starting position in a lineup buffer.
      */
     struct TCuboidInfo
     {
+      /// ID of the dataset storing the given cuboid.
       hid_t  HDF5_CuboidId;
+      /// Having a single buffer for all cuboids, where this one starts.
       size_t StartingPossitionInBuffer;
     };
 
-    /// Create a new dataset for a given cuboid specified by index (order)
+    /// Create a new dataset for a given cuboid specified by index (order).
     virtual hid_t CreateCuboidDataset(const size_t Index);
 
-    /// Flush the buffer to the file
+    /// Flush the buffer to the file.
     virtual void FlushBufferToFile();
 
-    /// Sensor mask to sample data
+    /// Sensor mask to sample data.
     const TIndexMatrix &     SensorMask;
 
-    /// Handle to a HDF5 dataset
+    /// Handle to a HDF5 dataset.
     hid_t                    HDF5_GroupId;
 
+    /// vector keeping handles and positions of all cuboids
     std::vector<TCuboidInfo> CuboidsInfo;
 
-    /// Timestep to store (N/A for aggregated)
+    /// Timestep to store (N/A for aggregated).
     size_t                   SampledTimeStep;
 
 };// end of TCubodiOutputHDF5Stream
@@ -301,55 +309,51 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
 /**
  * @class TWholeDomainOutputHDF5Stream
  * @brief Output stream for quantities sampled in the whole domain.
- *        The data is stored in a single dataset (aggregated quantities only)
+ * @details Output stream for quantities sampled in the whole domain.
+ *          The data is stored in a single dataset (aggregated quantities only).
  */
 class TWholeDomainOutputHDF5Stream : public TBaseOutputHDF5Stream
 {
 
   public:
-    /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together
+    /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together.
     TWholeDomainOutputHDF5Stream(THDF5_File &             HDF5_File,
                                  const char *             HDF5_DatasetName,
                                  const TRealMatrix &      SourceMatrix,
                                  const TReductionOperator ReductionOp,
                                  float *                  BufferToReuse = NULL);
 
-    /// Destructor
+    /// Destructor.
     virtual ~TWholeDomainOutputHDF5Stream();
 
-    /// Create a HDF5 stream and allocate data for it
+    /// Create a HDF5 stream and allocate data for it.
     virtual void Create();
 
-    /// Reopen the output stream after restart and reload data
+    /// Reopen the output stream after restart and reload data.
     virtual void Reopen();
 
-    /// Sample data into buffer and apply reduction, or flush to disk - based on a sensor mask
+    /// Sample data into buffer and apply reduction, or flush to disk (no sensor mask here).
     virtual void Sample();
 
-    /// Apply post-processing on the buffer and flush it to the file
+    /// Apply post-processing on the buffer and flush it to the file.
     virtual void PostProcess();
 
-    //Checkpoint the stream and close
+    ///Checkpoint the stream and close.
     virtual void Checkpoint();
 
-    /// Close stream (apply post-processing if necessary, flush data and close)
+    /// Close stream (apply post-processing if necessary, flush data and close).
     virtual void Close();
 
   protected:
-      /// Flush the buffer to the file
+    /// Flush the buffer to the file.
     virtual void FlushBufferToFile();
 
-    /// Handle to a HDF5 dataset
+    /// Handle to a HDF5 dataset.
     hid_t  HDF5_DatasetId;
 
-    /// Time step to store (N/A for aggregated)
+    /// Time step to store (N/A for aggregated).
     size_t SampledTimeStep;
 };// end of TWholeDomainOutputHDF5Stream
 //------------------------------------------------------------------------------
 
-
-
-
-
 #endif	/* OUTPUTREALSTREAM_H */
-

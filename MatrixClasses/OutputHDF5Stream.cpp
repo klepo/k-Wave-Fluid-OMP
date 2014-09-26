@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July      2012, 10:30      (created) \n
- *              01 September 2014, 16:55      (revised)
+ *              26 September 2014, 18:36      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -61,7 +61,7 @@ using namespace std;
 
 
 /**
- * Apply post-processing on the buffer. It supposes the elements are independent
+ * Apply post-processing on the buffer. It supposes the elements are independent.
  *
  */
 void TBaseOutputHDF5Stream::PostProcess()
@@ -112,8 +112,8 @@ void TBaseOutputHDF5Stream::PostProcess()
 
 /**
  * Allocate memory using a proper memory alignment.
- * @warning - This can routine is not used in the base class (should be used in
- *            derived ones
+ * @warning This can routine is not used in the base class (should be used in
+ *          derived ones).
  */
 void TBaseOutputHDF5Stream::AllocateMemory()
 {
@@ -137,8 +137,8 @@ void TBaseOutputHDF5Stream::AllocateMemory()
 
 /**
  * Free memory.
- * @warning - This can routine is not used in the base class (should be used in
- *            derived ones
+ * @warning This can routine is not used in the base class (should be used in
+ *          derived ones).
  */
 void TBaseOutputHDF5Stream::FreeMemory()
 {
@@ -189,9 +189,9 @@ TIndexOutputHDF5Stream::TIndexOutputHDF5Stream(THDF5_File &             HDF5_Fil
 
 
 /**
- * Destructor
+ * Destructor.
  * if the file is still opened, it applies the post processing and flush the data.
- * Then, the object memory is freed and the object destroyed
+ * Then, the object memory is freed and the object destroyed.
  */
 TIndexOutputHDF5Stream::~TIndexOutputHDF5Stream()
 {
@@ -204,11 +204,10 @@ TIndexOutputHDF5Stream::~TIndexOutputHDF5Stream()
 
 
 /**
- * Create a HDF5 stream, create a dataset, and allocate data for it
+ * Create a HDF5 stream, create a dataset, and allocate data for it.
  */
 void TIndexOutputHDF5Stream::Create()
 {
-
   size_t NumberOfSampledElementsPerStep = SensorMask.GetTotalElementCount();
 
   TParameters * Params = TParameters::GetInstance();
@@ -250,12 +249,11 @@ void TIndexOutputHDF5Stream::Create()
 
   // Allocate memory if needed
   if (!BufferReuse) AllocateMemory();
-
 }// end of Create
 //------------------------------------------------------------------------------
 
 /**
- * Reopen the output stream after restart
+ * Reopen the output stream after restart.
  */
 void TIndexOutputHDF5Stream::Reopen()
 {
@@ -295,11 +293,10 @@ void TIndexOutputHDF5Stream::Reopen()
 
 /**
  * Sample grid points, line them up in the buffer an flush to the disk unless a
- * reduction operator is applied
+ * reduction operator is applied.
  */
 void TIndexOutputHDF5Stream::Sample()
 {
-
   const float  * SourceData = SourceMatrix.GetRawData();
   const size_t * SensorData = SensorMask.GetRawData();
 
@@ -362,7 +359,7 @@ void TIndexOutputHDF5Stream::Sample()
 //------------------------------------------------------------------------------
 
 /**
- * Apply post-processing on the buffer and flush it to the file
+ * Apply post-processing on the buffer and flush it to the file.
  */
 void TIndexOutputHDF5Stream::PostProcess()
 {
@@ -375,7 +372,7 @@ void TIndexOutputHDF5Stream::PostProcess()
 
 
 /**
- * Checkpoint the stream and close
+ * Checkpoint the stream and close.
  */
 void TIndexOutputHDF5Stream::Checkpoint()
 {
@@ -386,7 +383,7 @@ void TIndexOutputHDF5Stream::Checkpoint()
 //------------------------------------------------------------------------------
 
 /**
- * Close stream (apply post-processing if necessary, flush data and close)
+ * Close stream (apply post-processing if necessary, flush data and close).
  */
 void TIndexOutputHDF5Stream::Close()
 {
@@ -407,7 +404,7 @@ void TIndexOutputHDF5Stream::Close()
 
 
 /**
- * Flush the buffer down to the file at the actual position
+ * Flush the buffer down to the file at the actual position.
  */
 void TIndexOutputHDF5Stream::FlushBufferToFile()
 {
@@ -431,13 +428,13 @@ void TIndexOutputHDF5Stream::FlushBufferToFile()
 
 
 /**
- * Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together
- * @param HDF5_File       - HDF5 file to write the output to
- * @param HDF5_GroupName  - The name of the HDF5 group. This group contains datasets for particular cuboids
- * @param SourceMatrix    - Source matrix to be sampled
- * @param SensorMask      - Sensor mask with the cuboid coordinates
- * @param ReductionOp     - Reduction operator
- * @param BufferToReuse   - If there is a memory space to be reused, provide a pointer
+ * Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together.
+ * @param [in] HDF5_File       - HDF5 file to write the output to
+ * @param [in] HDF5_GroupName  - The name of the HDF5 group. This group contains datasets for particular cuboids
+ * @param [in] SourceMatrix    - Source matrix to be sampled
+ * @param [in] SensorMask      - Sensor mask with the cuboid coordinates
+ * @param [in] ReductionOp     - Reduction operator
+ * @param [in] BufferToReuse   - If there is a memory space to be reused, provide a pointer
  */
 TCuboidOutputHDF5Stream::TCuboidOutputHDF5Stream(THDF5_File &             HDF5_File,
                                                  const char *             HDF5_GroupName,
@@ -456,9 +453,9 @@ TCuboidOutputHDF5Stream::TCuboidOutputHDF5Stream(THDF5_File &             HDF5_F
 
 
 /**
- * Destructor
+ * Destructor.
  * if the file is still opened, it applies the post processing and flush the data.
- * Then, the object memory is freed and the object destroyed
+ * Then, the object memory is freed and the object destroyed.
  */
 TCuboidOutputHDF5Stream::~TCuboidOutputHDF5Stream()
 {
@@ -472,13 +469,12 @@ TCuboidOutputHDF5Stream::~TCuboidOutputHDF5Stream()
 
 /**
  * Create a HDF5 stream and allocate data for it. It also creates a HDF5 group
- * with particular datasets (one per cuboid)
+ * with particular datasets (one per cuboid).
  */
 void TCuboidOutputHDF5Stream::Create()
 {
   // Create the HDF5 group and open it
   HDF5_GroupId = HDF5_File.CreateGroup(HDF5_File.GetRootGroup(), HDF5_RootObjectName);
-
 
   // Create all datasets (sizes, chunks, and attributes)
   size_t NumberOfCuboids        = SensorMask.GetDimensionSizes().Y;
@@ -504,13 +500,12 @@ void TCuboidOutputHDF5Stream::Create()
 
   // Allocate memory if needed
   if (!BufferReuse) AllocateMemory();
-
 }// end of Create
 //------------------------------------------------------------------------------
 
 
 /**
- * Reopen the output stream after restart and reload data
+ * Reopen the output stream after restart and reload data.
  */
 void TCuboidOutputHDF5Stream::Reopen()
 {
@@ -543,7 +538,7 @@ void TCuboidOutputHDF5Stream::Reopen()
   {
     TCuboidInfo CuboidInfo;
 
-    // @TODO: Can be done easily with std::to_string and c++0x or c++-11
+    // @todo: Can be done easily with std::to_string and c++0x or c++-11
     char HDF5_DatasetName[32] = "";
     // Indexed from 1
     sprintf(HDF5_DatasetName, "%ld",CuboidIndex + 1);
@@ -569,16 +564,14 @@ void TCuboidOutputHDF5Stream::Reopen()
     ActualPositionInBuffer += (SensorMask.GetBottomRightCorner(CuboidIndex) -
                                SensorMask.GetTopLeftCorner(CuboidIndex)).GetElementCount();
   }
-
 }// end of Reopen
 //------------------------------------------------------------------------------
 
 /**
- * Sample data into buffer and apply reduction, or flush to disk - based on a sensor mask
+ * Sample data into buffer and apply reduction, or flush to disk - based on a sensor mask.
  */
 void TCuboidOutputHDF5Stream::Sample()
 {
-
   const size_t XY_Size = SourceMatrix.GetDimensionSizes().Y * SourceMatrix.GetDimensionSizes().X;
   const size_t X_Size  = SourceMatrix.GetDimensionSizes().X;
 
@@ -590,7 +583,7 @@ void TCuboidOutputHDF5Stream::Sample()
     {
       /* We use here direct HDF5 offload using MEMSPACE - seems to be faster for bigger datasets*/
       TDimensionSizes DatasetPosition(0,0,0,0); //4D position in the dataset
-      TDimensionSizes CuboidSize(0,0,0,0);       // Size of the cuboid
+      TDimensionSizes CuboidSize(0,0,0,0);      // Size of the cuboid
 
       DatasetPosition.T = SampledTimeStep;
       const float * MatrixData = SourceMatrix.GetRawData();
@@ -683,7 +676,7 @@ void TCuboidOutputHDF5Stream::Sample()
     {
       size_t CuboidInBufferStart = 0;
 
-      // Parallelise within the cuboid - Since a typical number of cuboids is 1, than we have to paralelise inside
+      // Parallelise within the cuboid - Since a typical number of cuboids is 1, than we have to paralelise inside.
       for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
       {
         const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
@@ -721,7 +714,7 @@ void TCuboidOutputHDF5Stream::Sample()
     {
       size_t CuboidInBufferStart = 0;
 
-      // Parallelise within the cuboid - Since a typical number of cuboids is 1, than we have to paralelise inside
+      // Parallelise within the cuboid - Since a typical number of cuboids is 1, than we have to paralelise inside.
       for (size_t CuboidIdx = 0; CuboidIdx < SensorMask.GetDimensionSizes().Y; CuboidIdx++)
       {
         const TDimensionSizes TopLeftCorner     = SensorMask.GetTopLeftCorner(CuboidIdx);
@@ -755,13 +748,12 @@ void TCuboidOutputHDF5Stream::Sample()
       break;
     }// case roMIN
   }// switch
-
 }// end of Sample
 //------------------------------------------------------------------------------
 
 
 /**
- * Apply post-processing on the buffer and flush it to the file
+ * Apply post-processing on the buffer and flush it to the file.
  */
 void TCuboidOutputHDF5Stream::PostProcess()
 {
@@ -773,7 +765,7 @@ void TCuboidOutputHDF5Stream::PostProcess()
 //------------------------------------------------------------------------------
 
 /**
- * Checkpoint the stream
+ * Checkpoint the stream.
  */
 void TCuboidOutputHDF5Stream::Checkpoint()
 {
@@ -785,7 +777,7 @@ void TCuboidOutputHDF5Stream::Checkpoint()
 
 /**
  * Close stream (apply post-processing if necessary, flush data, close datasets
- * and the group )
+ * and the group).
  */
 void TCuboidOutputHDF5Stream::Close()
 {
@@ -813,9 +805,9 @@ void TCuboidOutputHDF5Stream::Close()
 //----------------------------------------------------------------------------//
 
 /**
- *  Create a new dataset for a given cuboid specified by index (order)
- * @param Index - Index of the cuboid in the sensor mask
- * @return HDF5 handle to the dataset
+ *  Create a new dataset for a given cuboid specified by index (order).
+ * @param [in] Index - Index of the cuboid in the sensor mask
+ * @return HDF5 handle to the dataset.
  */
 hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
 {
@@ -843,7 +835,7 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
     CuboidChunkSize.Z = NumberOfSlabs;
   }
 
-  // @TODO: Can be done easily with std::to_string and c++0x or c++-11
+  // @todo: Can be done easily with std::to_string and c++0x or c++-11
   char HDF5_DatasetName[32] = "";
   // Indexed from 1
   sprintf(HDF5_DatasetName, "%ld",Index+1);
@@ -862,20 +854,17 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
                                   HDF5_DatasetName,
                                   THDF5_File::hdf5_mdt_float);
 
-
   return HDF5_DatasetId;
-
 }//end of CreateCuboidDatasets
 //------------------------------------------------------------------------------
 
 
 
 /**
- * Flush the buffer to the file (to multiple datasets if necessary)
+ * Flush the buffer to the file (to multiple datasets if necessary).
  */
 void TCuboidOutputHDF5Stream::FlushBufferToFile()
 {
-
   TDimensionSizes Position (0,0,0,0);
   TDimensionSizes BlockSize(0,0,0,0);
 
@@ -907,12 +896,12 @@ void TCuboidOutputHDF5Stream::FlushBufferToFile()
 //----------------------------------------------------------------------------//
 
 /**
- * Constructor - links the HDF5 dataset and SourceMatrix
- * @param HDF5_File        - HDF5 file to write the output to
- * @param HDF5_DatasetName - The name of the HDF5 group. This group contains datasets for particular cuboids
- * @param SourceMatrix     - Source matrix to be sampled
- * @param ReductionOp      - Reduction operator
- * @param BufferToReuse    - If there is a memory space to be reused, provide a pointer
+ * Constructor - links the HDF5 dataset and SourceMatrix.
+ * @param [in] HDF5_File        - HDF5 file to write the output to
+ * @param [in] HDF5_DatasetName - The name of the HDF5 group. This group contains datasets for particular cuboids
+ * @param [in] SourceMatrix     - Source matrix to be sampled
+ * @param [in] ReductionOp      - Reduction operator
+ * @param [in] BufferToReuse    - If there is a memory space to be reused, provide a pointer
  */
 TWholeDomainOutputHDF5Stream::TWholeDomainOutputHDF5Stream(THDF5_File &             HDF5_File,
                                                            const char *             HDF5_DatasetName,
@@ -927,11 +916,10 @@ TWholeDomainOutputHDF5Stream::TWholeDomainOutputHDF5Stream(THDF5_File &         
 }// end of TWholeDomainOutputHDF5Stream
 //------------------------------------------------------------------------------
 
-
 /**
- * Destructor
+ * Destructor.
  * if the file is still opened, it applies the post processing and flush the data.
- * Then, the object memory is freed and the object destroyed
+ * Then, the object memory is freed and the object destroyed.
  */
 TWholeDomainOutputHDF5Stream::~TWholeDomainOutputHDF5Stream()
 {
@@ -941,14 +929,11 @@ TWholeDomainOutputHDF5Stream::~TWholeDomainOutputHDF5Stream()
 }// end of Destructor
 //------------------------------------------------------------------------------
 
-
-
 /**
- * Create a HDF5 stream for the whole domain and allocate data for it
+ * Create a HDF5 stream for the whole domain and allocate data for it.
  */
 void TWholeDomainOutputHDF5Stream::Create()
 {
-
   TDimensionSizes ChunkSize(SourceMatrix.GetDimensionSizes().X, SourceMatrix.GetDimensionSizes().Y, 1);
 
   // Create a dataset under the root group
@@ -971,13 +956,12 @@ void TWholeDomainOutputHDF5Stream::Create()
 
   // Allocate memory if needed
   if (!BufferReuse) AllocateMemory();
-
 }//end of Create
 //------------------------------------------------------------------------------
 
 
 /**
- * Reopen the output stream after restart and reload data
+ * Reopen the output stream after restart and reload data.
  */
 void TWholeDomainOutputHDF5Stream::Reopen()
 {
@@ -1012,11 +996,10 @@ void TWholeDomainOutputHDF5Stream::Reopen()
 
 /**
  * Sample all grid points, line them up in the buffer an flush to the disk unless
- * a reduction operator is applied
+ * a reduction operator is applied.
  */
 void TWholeDomainOutputHDF5Stream::Sample()
 {
-
   const float * SourceData = SourceMatrix.GetRawData();
 
   switch (ReductionOp)
@@ -1089,7 +1072,7 @@ void TWholeDomainOutputHDF5Stream::Sample()
 
 
 /**
- * Apply post-processing on the buffer and flush it to the file
+ * Apply post-processing on the buffer and flush it to the file.
  */
 void TWholeDomainOutputHDF5Stream::PostProcess()
 {
@@ -1105,13 +1088,13 @@ void TWholeDomainOutputHDF5Stream::PostProcess()
  */
 void TWholeDomainOutputHDF5Stream::Checkpoint()
 {
-  // raw data has already been flushed, others has to be fushed here
+  // raw data has already been flushed, others has to be flushed here.
   if (ReductionOp != roNONE) FlushBufferToFile();
 }// end of Checkpoint
 //------------------------------------------------------------------------------
 
 /**
- * Close stream (apply post-processing if necessary, flush data and close)
+ * Close stream (apply post-processing if necessary, flush data and close).
  */
 void TWholeDomainOutputHDF5Stream::Close()
 {
@@ -1133,7 +1116,7 @@ void TWholeDomainOutputHDF5Stream::Close()
 
 
 /**
- * Flush the buffer down to the file at the actual position
+ * Flush the buffer down to the file at the actual position.
  */
 void TWholeDomainOutputHDF5Stream::FlushBufferToFile()
 {
