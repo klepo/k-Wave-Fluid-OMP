@@ -283,13 +283,19 @@ class TOutputStreamContainer
     /// Destructor.
     virtual ~TOutputStreamContainer();
 
-    /// Get size of the container.
+    /**
+     * @brief Get size of the container.
+     * @details Get size of the container.
+     */
     size_t size() const
     {
       return OutputStreamContainer.size();
     };
 
-    /// Is the container empty?
+    /**
+     * @brief  Is the container empty?
+     * @details  Is the container empty?
+     */
     bool empty() const
     {
       return OutputStreamContainer.empty();
