@@ -5,12 +5,12 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The header file containing the particle velocity matrix
+ * @brief       The header file containing the particle velocity matrix.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        28 July      2011, 11:37             (created) \n
- *              01 September 2014, 15:25        (revised)
+ * @date        28 July      2011, 11:37 (created) \n
+ *              26 September 2014, 14:15 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -40,73 +40,117 @@
 #include <MatrixClasses/IndexMatrix.h>
 
 /**
- * @class Tuxyz_sgxyzMatrix
+ * @class Tuxyz_sgxyzMatrix.
  * @brief The velocity matrix
+ * @details The velocity matrix. This class implements a couple of kernels that
+ *          modify the particle velocity.
  */
-class Tuxyz_sgxyzMatrix : public TRealMatrix {
-public:
+class Tuxyz_sgxyzMatrix : public TRealMatrix
+{
+  public:
 
     /**
-     * @brief Constructor
+     * @brief Constructor.
+     * @details Constructor allocating memory.
      * @param [in] DimensionSizes
      */
     Tuxyz_sgxyzMatrix(struct TDimensionSizes DimensionSizes) :
-                       TRealMatrix(DimensionSizes) {};
+            TRealMatrix(DimensionSizes)
+    {};
 
 
+   /// Compute dt ./ rho0_sgx .* ifft (FFT).
+   void Compute_dt_rho_sg_mul_ifft_div_2(const TRealMatrix & dt_rho_0_sgx,
+                                         TFFTWComplexMatrix& FFT);
+   /// Compute dt ./ rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, uniform grid.
+   void Compute_dt_rho_sg_mul_ifft_div_2(const float dt_rho_0_sgx,
+                                         TFFTWComplexMatrix& FFT);
 
-   /// compute this formula dt./rho0_sgx .* ifft (FFT)
-   void Compute_dt_rho_sg_mul_ifft_div_2(TRealMatrix& dt_rho_0_sgx, TFFTWComplexMatrix& FFT);
-   /// compute this formula dt./rho0_sgx .* ifft (FFT),  if rho0_sgx is scalar, uniform grid
-   void Compute_dt_rho_sg_mul_ifft_div_2(float dt_rho_0_sgx, TFFTWComplexMatrix& FFT);
-   /// compute this formula dt./rho0_sgx .* ifft (FFT),  if rho0_sgx is scalar, non uniform grid, x component
-   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x(float dt_rho_0_sgx, TRealMatrix & dxudxn_sgx, TFFTWComplexMatrix& FFT);
-   /// compute this formula dt./rho0_sgx .* ifft (FFT),  if rho0_sgx is scalar, non uniform grid, y component
-   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(float dt_rho_0_sgy, TRealMatrix & dyudyn_sgy, TFFTWComplexMatrix& FFT);
-   /// compute this formula dt./rho0_sgx .* ifft (FFT),  if rho0_sgx is scalar, non uniform grid, z component
-   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z(float dt_rho_0_sgz, TRealMatrix & dzudzn_sgz, TFFTWComplexMatrix& FFT);
+   /// Compute dt ./ rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, x component.
+   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x(const float         dt_rho_0_sgx,
+                                                             const TRealMatrix & dxudxn_sgx,
+                                                             TFFTWComplexMatrix& FFT);
+   /// Compute dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, y component.
+   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(const float          dt_rho_0_sgy,
+                                                             const TRealMatrix & dyudyn_sgy,
+                                                             TFFTWComplexMatrix& FFT);
+   /// Compute dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, z component.
+   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z(const float         dt_rho_0_sgz,
+                                                             const TRealMatrix & dzudzn_sgz,
+                                                             TFFTWComplexMatrix& FFT);
 
-   /// Compute new value of ux_sgx, default case
-   void Compute_ux_sgx_normalize(TRealMatrix& FFT_p, TRealMatrix& dt_rho0, TRealMatrix& pml);
-   /// Compute new value of ux_sgx, scalar, uniform case
-   void Compute_ux_sgx_normalize_scalar_uniform(TRealMatrix& FFT_p, float dt_rho0, TRealMatrix& pml);
-   /// Compute new value of ux_sgx, scalar, non-uniform case
-   void Compute_ux_sgx_normalize_scalar_nonuniform(TRealMatrix& FFT_p, float dt_rho0, TRealMatrix & dxudxn_sgx, TRealMatrix& pml);
+   //------------------------- X dimension -----------------------------------//
+   /// Compute a new value of ux_sgx, default case
+   void Compute_ux_sgx_normalize(const TRealMatrix& FFT_p,
+                                 const TRealMatrix& dt_rho0,
+                                 const TRealMatrix& pml);
+   /// Compute a new value of ux_sgx, scalar, uniform case
+   void Compute_ux_sgx_normalize_scalar_uniform(const TRealMatrix& FFT_p,
+                                                const float        dt_rho0,
+                                                const TRealMatrix& pml);
+   /// Compute a new value of ux_sgx, scalar, non-uniform case
+   void Compute_ux_sgx_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
+                                                   const float        dt_rho0,
+                                                   const TRealMatrix& dxudxn_sgx,
+                                                   const TRealMatrix& pml);
 
-   /// Compute new value of uy_sgy, default case
-   void Compute_uy_sgy_normalize(TRealMatrix& FFT_p, TRealMatrix& dt_rho0, TRealMatrix& pml);
-   /// Compute new value of uy_sgy, scalar, uniform case
-   void Compute_uy_sgy_normalize_scalar_uniform(TRealMatrix& FFT_p, float dt_rho0, TRealMatrix& pml);
-   /// Compute new value of uy_sgy, scalar, non-uniform case
-   void Compute_uy_sgy_normalize_scalar_nonuniform(TRealMatrix& FFT_p, float dt_rho0,TRealMatrix & dyudyn_sgy, TRealMatrix& pml);
+  //------------------------- Y dimension ------------------------------------//
+   /// Compute a new value of uy_sgy, default case
+   void Compute_uy_sgy_normalize(const TRealMatrix& FFT_p,
+                                 const TRealMatrix& dt_rho0,
+                                 const TRealMatrix& pml);
+   /// Compute a new value of uy_sgy, scalar, uniform case
+   void Compute_uy_sgy_normalize_scalar_uniform(const TRealMatrix& FFT_p,
+                                                const float        dt_rho0,
+                                                const TRealMatrix& pml);
+   /// Compute a new value of uy_sgy, scalar, non-uniform case
+   void Compute_uy_sgy_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
+                                                   const float        dt_rho0,
+                                                   const TRealMatrix& dyudyn_sgy,
+                                                   const TRealMatrix& pml);
 
-   /// Compute new value for uz_sgz, default case
-   void Compute_uz_sgz_normalize(TRealMatrix& FFT_p, TRealMatrix& dt_rho0, TRealMatrix& pml);
-   /// Compute new value for uz_sgz, scalar, uniform case
-   void Compute_uz_sgz_normalize_scalar_uniform(TRealMatrix& FFT_p, float& dt_rho0, TRealMatrix& pml);
-   /// Compute new value for uz_sgz, scalar, non-uniform case
-   void Compute_uz_sgz_normalize_scalar_nonuniform(TRealMatrix& FFT_p, float& dt_rho0,TRealMatrix & dzudzn_sgz, TRealMatrix& pml);
+   //------------------------- Z dimension -----------------------------------//
+   /// Compute a new value for uz_sgz, default case.
+   void Compute_uz_sgz_normalize(const TRealMatrix& FFT_p,
+                                 const TRealMatrix& dt_rho0,
+                                 const TRealMatrix& pml);
+   /// Compute a new value for uz_sgz, scalar, uniform case.
+   void Compute_uz_sgz_normalize_scalar_uniform(const TRealMatrix& FFT_p,
+                                                const float        dt_rho0,
+                                                const TRealMatrix& pml);
+   /// Compute a new value for uz_sgz, scalar, non-uniform case.
+   void Compute_uz_sgz_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
+                                                   const float        dt_rho0,
+                                                   const TRealMatrix& dzudzn_sgz,
+                                                   const TRealMatrix& pml);
 
 
-   /// Add transducer data  source to X component
-   void AddTransducerSource(TIndexMatrix& u_source_index, TIndexMatrix& delay_mask, TRealMatrix& transducer_signal);
+   /// Add transducer data  source to X component.
+   void AddTransducerSource(const TIndexMatrix& u_source_index,
+                                  TIndexMatrix& delay_mask,
+                            const TRealMatrix & transducer_signal);
 
-   /// Add in velocity source terms
-   void Add_u_source(TRealMatrix &u_source_input, TIndexMatrix & u_source_index, size_t t_index, size_t u_source_mode, size_t u_source_many);
+   /// Add in velocity source terms.
+   void Add_u_source(const TRealMatrix & u_source_input,
+                     const TIndexMatrix& u_source_index,
+                     const size_t        t_index,
+                     const size_t        u_source_mode,
+                     const size_t        u_source_many);
 
    /// Destructor
    virtual ~Tuxyz_sgxyzMatrix() {};
 
 protected:
-    // Default constructor not allowed for public
+    // Default constructor not allowed for public.
     Tuxyz_sgxyzMatrix() : TRealMatrix() {};
+
     /**
-     * Copy constructor not allowed for public
+     * Copy constructor not allowed for public.
      * @param src
      */
     Tuxyz_sgxyzMatrix(const Tuxyz_sgxyzMatrix& src);
 
-    /// operator = not allowed for public
+    /// operator = not allowed for public.
     Tuxyz_sgxyzMatrix& operator = (const Tuxyz_sgxyzMatrix& src);
 private:
 

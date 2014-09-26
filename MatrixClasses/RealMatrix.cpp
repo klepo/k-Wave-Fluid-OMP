@@ -5,12 +5,12 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The implementation file containing the class for real matrices
+ * @brief       The implementation file containing the class for real matrices.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        11 July 2011, 10:30      (created) \n
- *              20 JUne 2014, 15:13 (revised)
+ * @date        11 July      2011, 10:30 (created) \n
+ *              25 September 2014, 15:13 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -54,11 +54,11 @@
 //----------------------------------------------------------------------------//
 
 /**
- * Constructor
+ * Constructor.
  * @param [in] DimensionSizes - Dimension sizes
  */
-TRealMatrix::TRealMatrix(struct TDimensionSizes DimensionSizes)
-                : TBaseFloatMatrix()
+TRealMatrix::TRealMatrix(const TDimensionSizes & DimensionSizes)
+                    : TBaseFloatMatrix()
 {
   InitDimensions(DimensionSizes);
 
@@ -67,11 +67,12 @@ TRealMatrix::TRealMatrix(struct TDimensionSizes DimensionSizes)
 //-----------------------------------------------------------------------------
 
 /**
- * Read data data from HDF5 file (only from the root group)
- * @throw ios::failure if error occurred
+ * Read data data from HDF5 file (only from the root group).
  *
- * @param [in] HDF5_File - HDF5 file
- * @param [in] MatrixName  - HDF5 dataset name
+ * @param [in] HDF5_File  - HDF5 file
+ * @param [in] MatrixName - HDF5 dataset name
+ *
+ * @throw ios::failure if error occurred.
  */
 void TRealMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
                                        const char * MatrixName)
@@ -103,15 +104,17 @@ void TRealMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
 
 /**
  * Write data to HDF5 file (only from the root group)
- * @throw ios::failure if an error occurred
  *
  * @param [in] HDF5_File        - HDF5 file
  * @param [in] MatrixName       - HDF5 Matrix name
  * @param [in] CompressionLevel - Compression level
+ *
+ * @throw ios::failure if an error occurred
  */
-void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File, const char * MatrixName, const size_t CompressionLevel)
+void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
+                                      const char * MatrixName,
+                                      const size_t CompressionLevel)
 {
-
   TDimensionSizes Chunks = pDimensionSizes;
   Chunks.Z = 1;
 
@@ -146,8 +149,13 @@ void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File, const char * Matri
 
   HDF5_File.CloseDataset(HDF5_Dataset_id);
 
-  HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(), MatrixName, THDF5_File::hdf5_mdt_float);
-  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName, THDF5_File::hdf5_mdt_real);
+  // Write data and domain type
+  HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(),
+                                  MatrixName,
+                                  THDF5_File::hdf5_mdt_float);
+  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
+                                  MatrixName,
+                                  THDF5_File::hdf5_mdt_real);
 }// end of WriteDataToHDF5File
 //------------------------------------------------------------------------------
 
@@ -157,12 +165,11 @@ void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File, const char * Matri
 //----------------------------------------------------------------------------//
 
 /**
- * Set necessary dimensions and auxiliary variables
- * @param DimensionSizes - 3D Dimension sizes
+ * Set necessary dimensions and auxiliary variables.
+ * @param [in] DimensionSizes - 3D Dimension sizes
  */
-void TRealMatrix::InitDimensions(struct TDimensionSizes DimensionSizes)
+void TRealMatrix::InitDimensions(const TDimensionSizes & DimensionSizes)
 {
-
   pDimensionSizes = DimensionSizes;
 
   pTotalElementCount = pDimensionSizes.X *

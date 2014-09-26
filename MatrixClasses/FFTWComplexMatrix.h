@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        09 August    2011, 13:10 (created) \n
- *              21 August    2014, 15:45 (revised)
+ *              25 September 2014, 12:45 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -42,109 +42,111 @@
 /**
  * @class TFFTWComplexMatrix
  * @brief Class implementing 3D Real-To-Complex and Complex-To-Real transforms
- *      using FFTW interface
+ *      using FFTW interface.
+ * @details Class implementing 3D Real-To-Complex and Complex-To-Real transforms
+ *      using FFTW interface.
  *
  */
 class TFFTWComplexMatrix : public TComplexMatrix
 {
   public:
-    /// Constructor
-    TFFTWComplexMatrix(struct TDimensionSizes DimensionSizes);
-    /// Destructor
+    /// Constructor.
+    TFFTWComplexMatrix(const TDimensionSizes& DimensionSizes);
+    /// Destructor.
     virtual ~TFFTWComplexMatrix();
 
-    /// Create FFTW plan for Real-to-Complex
+    /// Create FFTW plan for Real-to-Complex.
     void Create_FFT_Plan_3D_R2C(TRealMatrix& InMatrix);
-    /// Create FFTW plan for Complex-to-Real
+    /// Create FFTW plan for Complex-to-Real.
     void Create_FFT_Plan_3D_C2R(TRealMatrix& OutMatrix);
 
-    /// Create FFTW plan for Real-to-Complex in the X dimension
+    /// Create FFTW plan for Real-to-Complex in the X dimension.
     void Create_FFT_Plan_1DX_R2C(TRealMatrix& InMatrix);
-    /// Create FFTW plan for Real-to-Complex in the Y dimension
+    /// Create FFTW plan for Real-to-Complex in the Y dimension.
     void Create_FFT_Plan_1DY_R2C(TRealMatrix& InMatrix);
-    /// Create FFTW plan for Real-to-Complex in the Z dimension
+    /// Create FFTW plan for Real-to-Complex in the Z dimension.
     void Create_FFT_Plan_1DZ_R2C(TRealMatrix& InMatrix);
 
-    /// Create FFTW plan for Complex-to-Real in the X dimension
+    /// Create FFTW plan for Complex-to-Real in the X dimension.
     void Create_FFT_Plan_1DX_C2R(TRealMatrix& OutMatrix);
-    /// Create FFTW plan for Complex-to-Real in the Y dimension
+    /// Create FFTW plan for Complex-to-Real in the Y dimension.
     void Create_FFT_Plan_1DY_C2R(TRealMatrix& OutMatrix);
-    /// Create FFTW plan for Complex-to-Real in the Z dimension
+    /// Create FFTW plan for Complex-to-Real in the Z dimension.
     void Create_FFT_Plan_1DZ_C2R(TRealMatrix& OutMatrix);
 
 
 
-    /// Compute 3D out-of-place Real-to-Complex FFT
+    /// Compute 3D out-of-place Real-to-Complex FFT.
     void Compute_FFT_3D_R2C(TRealMatrix& InMatrix);
-    /// Compute 3D out-of-place Complex-to-Real FFT
+    /// Compute 3D out-of-place Complex-to-Real FFT.
     void Compute_FFT_3D_C2R(TRealMatrix& OutMatrix);
 
-    /// Compute 1D out-of-place Real-to-Complex FFT in the X dimension
+    /// Compute 1D out-of-place Real-to-Complex FFT in the X dimension.
     void Compute_FFT_1DX_R2C(TRealMatrix& InMatrix);
-    /// Compute 1D out-of-place Real-to-Complex FFT in the Y dimension
+    /// Compute 1D out-of-place Real-to-Complex FFT in the Y dimension.
     void Compute_FFT_1DY_R2C(TRealMatrix& InMatrix);
-    /// Compute 1D out-of-place Real-to-Complex FFT in the Z dimension
+    /// Compute 1D out-of-place Real-to-Complex FFT in the Z dimension.
     void Compute_FFT_1DZ_R2C(TRealMatrix& InMatrix);
 
-     /// Compute 1D out-of-place Complex-to-Real FFT in the X dimension
+     /// Compute 1D out-of-place Complex-to-Real FFT in the X dimension.
     void Compute_FFT_1DX_C2R(TRealMatrix& OutMatrix);
-    /// Compute 1D out-of-place Complex-to-Real FFT in the Y dimension
+    /// Compute 1D out-of-place Complex-to-Real FFT in the Y dimension.
     void Compute_FFT_1DY_C2R(TRealMatrix& OutMatrix);
-    /// Compute 1D out-of-place Complex-to-Real FFT in the Z dimension
+    /// Compute 1D out-of-place Complex-to-Real FFT in the Z dimension.
     void Compute_FFT_1DZ_C2R(TRealMatrix& OutMatrix);
 
-    /// Export wisdom to the file
+    /// Export wisdom to the file.
     static void ExportWisdom();
-    /// Import wisdom from the file
+    /// Import wisdom from the file.
     static void ImportWisdom();
-    /// Destroy wisdom in the file (delete it)
+    /// Destroy wisdom in the file (delete it).
     static void DeleteStoredWisdom();
 
 protected:
     /// Default constructor not allowed for public
     TFFTWComplexMatrix() :
-                 TComplexMatrix(),
-                 fftw_plan_3D_R2C(NULL),  fftw_plan_3D_C2R(NULL),
-                 fftw_plan_1DX_R2C(NULL), fftw_plan_1DY_R2C(NULL), fftw_plan_1DZ_R2C(NULL),
-                 fftw_plan_1DX_C2R(NULL), fftw_plan_1DY_C2R(NULL), fftw_plan_1DZ_C2R(NULL)
+              TComplexMatrix(),
+              fftw_plan_3D_R2C(NULL),  fftw_plan_3D_C2R(NULL),
+              fftw_plan_1DX_R2C(NULL), fftw_plan_1DY_R2C(NULL), fftw_plan_1DZ_R2C(NULL),
+              fftw_plan_1DX_C2R(NULL), fftw_plan_1DY_C2R(NULL), fftw_plan_1DZ_C2R(NULL)
     {};
 
-    /// Copy constructor not allowed for public
+    /// Copy constructor not allowed for public.
     TFFTWComplexMatrix(const TFFTWComplexMatrix& src);
 
-    /// Operator = not allowed for public
+    /// Operator = not allowed for public.
     TFFTWComplexMatrix & operator = (const TFFTWComplexMatrix& src);
 
-    /// Get Wisdom file name, base on the checkpoint filename
+    /// Get Wisdom file name, base on the checkpoint filename.
     static string GetWisdomFileName();
 
-    /// Allocate memory for the FFTW matrix
+    /// Allocate memory for the FFTW matrix.
     virtual void AllocateMemory();
-    /// Free memory of the FFTW matrix
+    /// Free memory of the FFTW matrix.
     virtual void FreeMemory();
 
-    /// FFTW plan flag
+    /// FFTW plan flag.
     static const unsigned TFFTWComplexMatrix_FFT_FLAG  = FFTW_MEASURE;
-
+    /// The file extension for FFTW wisdom.
     static const string FFTW_Wisdom_FileName_Extension;// = "FFTW_Wisdom";
 
-    /// FFTW plan for the 3D Real-to-Complex transform
+    /// FFTW plan for the 3D Real-to-Complex transform.
     fftwf_plan fftw_plan_3D_R2C;
-    /// FFTW plan for the 3D Complex-to-Real transform
+    /// FFTW plan for the 3D Complex-to-Real transform.
     fftwf_plan fftw_plan_3D_C2R;
 
-    /// FFTW plan for the 1D Real-to-Complex transform in the X dimension
+    /// FFTW plan for the 1D Real-to-Complex transform in the X dimension.
     fftwf_plan fftw_plan_1DX_R2C;
-    /// FFTW plan for the 3D Real-to-Complex transform in the Y dimension
+    /// FFTW plan for the 3D Real-to-Complex transform in the Y dimension.
     fftwf_plan fftw_plan_1DY_R2C;
-    /// FFTW plan for the 3D Real-to-Complex transform in the Z dimension
+    /// FFTW plan for the 3D Real-to-Complex transform in the Z dimension.
     fftwf_plan fftw_plan_1DZ_R2C;
 
-    /// FFTW plan for the 3D Complex-to-Real transform in the X dimension
+    /// FFTW plan for the 3D Complex-to-Real transform in the X dimension.
     fftwf_plan fftw_plan_1DX_C2R;
-    /// FFTW plan for the 3D Complex-to-Real transform in the Y dimension
+    /// FFTW plan for the 3D Complex-to-Real transform in the Y dimension.
     fftwf_plan fftw_plan_1DY_C2R;
-    /// FFTW plan for the 3Z Complex-to-Real transform in the Z dimension
+    /// FFTW plan for the 3Z Complex-to-Real transform in the Z dimension.
     fftwf_plan fftw_plan_1DZ_C2R;
 
 private:
