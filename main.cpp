@@ -149,7 +149,7 @@
  * compile the <tt>kspaceFirstOrder3D-OMP </tt> code.
  *
  *
- * 1. Download the <tt>kspaceFirstOrder3D-OMP </tt> souce codes.
+ * 1. Download the <tt>kspaceFirstOrder3D-OMP</tt> source codes.
  *
  * 2. Open the \c Makefile file.  The Makefile supports code compilation under
  * GNU compiler and FFTW, or Intel compiler with MKL. Uncomment the desired compiler
@@ -275,8 +275,8 @@
  * the grid points specified by the sensor mask are recorded. If the
  * \c --p_final flag is set, the values for the entire acoustic pressure field
  * in the final time step of the simulation is stored (this will always include
- * the PML, regardless of  the setting for <tt> `PMLInside' </tt>).
- * The flags \c --p_max_all and \c--p_min_all allow to calculate the maximum and
+ * the PML, regardless of  the setting for <tt> `PMLInside'</tt>).
+ * The flags \c --p_max_all and \c --p_min_all allow to calculate the maximum and
  * minimum values over the entire acoustic pressure field, regardless on the shape
  * of the sensor mask.
  * Flags to record the acoustic particular velocity are defined in an analogous fashion.
@@ -286,8 +286,7 @@
  * sample the grid points specified by the sensor mask. Since the shift operation
  * requires additional FFTs, the impact on the simulation time may be significant.
  *
- *
- * Any combination of \c p and \c u  fags is admissible. If no output flag is set,
+ * Any combination of <tt>p</tt> and <tt>u</tt> flags is admissible. If no output flag is set,
  * a time-series for the acoustic pressure is recorded. If it is not necessary
  * to collect the output quantities over the entire simulation, the starting time
  * step when the collection begins can be specified using the -s parameter.
@@ -447,18 +446,17 @@ total_memory_in_use Total               Peak memory in use
  * are stored in an interleaved layout and the lowest used dimension size is
  * doubled (i.e., Nx for a 3D matrix, Ny for a 1D vector oriented in the y-direction). The
  * datasets are physically stored in row-major order (in contrast to column-major order used
- * by MATLAB) using either the <tt> `H5T_IEEE_F32LE' </tt> data type for floating point datasets or
- * <tt> `H5T_STD_U64LE' </tt> for integer based datasets.
+ * by MATLAB) using either the <tt>`H5T_IEEE_F32LE'</tt> data type for floating point datasets or
+ * <tt>`H5T_STD_U64LE'</tt> for integer based datasets.
  * All the datasets are store under the root group.
  *
  *
  * The output file of version 1.0 could only store recorded quantities as 3D datasets
  * under the root group. However, with version 1.1 and the new cuboid corner sensor
  * mask, the sampled quantities may be laid out as 4D quantities stored under specific
- * groups. The dimensions are always <tt> (Nx, Ny, Nz, Nt)>, every sampled cuboid
+ * groups. The dimensions are always <tt>(Nx, Ny, Nz, Nt)</tt>, every sampled cuboid
  * is stored as a distinct dataset and the datasets are grouped under a group named
  * by the quantity stored. This makes the file clearly readable and easy to parse.
- *
  *
  *
  * In order to enable compression and more efficient processing of big datasets
@@ -796,8 +794,8 @@ Name                            Size           Data type        Domain Type     
 \endverbatim
  *
  *
- *
  */
+
 
 
 

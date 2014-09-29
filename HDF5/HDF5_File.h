@@ -112,7 +112,7 @@ total_memory_in_use Total               Peak memory in use
  * The output file of version 1.0 could only store recorded quantities as 3D datasets
  * under the root group. However, with version 1.1 and the new cuboid corner sensor
  * mask, the sampled quantities may be laid out as 4D quantities stored under specific
- * groups. The dimensions are always <tt> (Nx, Ny, Nz, Nt)>, every sampled cuboid
+ * groups. The dimensions are always <tt> (Nx, Ny, Nz, Nt)</tt>, every sampled cuboid
  * is stored as a distinct dataset and the datasets are grouped under a group named
  * by the quantity stored. This makes the file clearly readable and easy to parse.
  *

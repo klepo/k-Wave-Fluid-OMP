@@ -237,10 +237,10 @@ class TKSpaceFirstOrder3DSolver
     /// Print the header of the progress statistics.
     void PrintOtputHeader();
 
-    /// Is time to checkpoint (save actual state on disk).
+    /// Is time to checkpoint (save actual state on disk)?
     bool IsTimeToCheckpoint();
 
-    /// Was the loop interrupted to checkpoint.
+    /// Was the loop interrupted to checkpoint?
     bool IsCheckpointInterruption() const
     {
       return (Parameters->Get_t_index() != Parameters->Get_Nt());
