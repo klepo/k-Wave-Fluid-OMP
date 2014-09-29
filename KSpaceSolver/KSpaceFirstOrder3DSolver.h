@@ -109,15 +109,15 @@ class TKSpaceFirstOrder3DSolver
     double GetPostProcessingTime() const { return PostProcessingTime.GetElapsedTime();};
 
     /// Get total simulation time cumulated over all legs
-    double GetCumulatedTotalTime()          const { return TotalTime.GetComulatedElaspedTimeOverAllLegs();          };
+    double GetCumulatedTotalTime()          const { return TotalTime.GetCumulatedElapsedTimeOverAllLegs();          };
     /// Get pre-processing time cumulated over all legs
-    double GetCumulatedPreProcessingTime()  const { return PreProcessingTime.GetComulatedElaspedTimeOverAllLegs();  };
+    double GetCumulatedPreProcessingTime()  const { return PreProcessingTime.GetCumulatedElapsedTimeOverAllLegs();  };
     /// Get data load time cumulated over all legs
-    double GetCumulatedDataLoadTime()       const { return DataLoadTime.GetComulatedElaspedTimeOverAllLegs();       };
+    double GetCumulatedDataLoadTime()       const { return DataLoadTime.GetCumulatedElapsedTimeOverAllLegs();       };
     /// Get simulation time (time loop) cumulated over all legs
-    double GetCumulatedSimulationTime()     const { return SimulationTime.GetComulatedElaspedTimeOverAllLegs();     };
+    double GetCumulatedSimulationTime()     const { return SimulationTime.GetCumulatedElapsedTimeOverAllLegs();     };
     /// Get post-processing time cumulated over all legs
-    double GetCumulatedPostProcessingTime() const { return PostProcessingTime.GetComulatedElaspedTimeOverAllLegs(); };
+    double GetCumulatedPostProcessingTime() const { return PostProcessingTime.GetCumulatedElapsedTimeOverAllLegs(); };
 
   protected:
 
@@ -621,17 +621,17 @@ class TKSpaceFirstOrder3DSolver
     TParameters *      Parameters;
 
     /// Total time of the simulation
-    TTimeMesssure       TotalTime;
+    TTimeMeasure       TotalTime;
     /// Pre-processing time of the simulation
-    TTimeMesssure       PreProcessingTime;
+    TTimeMeasure       PreProcessingTime;
     /// Data load time of the simulation
-    TTimeMesssure       DataLoadTime;
+    TTimeMeasure       DataLoadTime;
     /// Simulation time of the simulation
-    TTimeMesssure       SimulationTime;
+    TTimeMeasure       SimulationTime;
     /// Post-processing time of the simulation
-    TTimeMesssure       PostProcessingTime;
+    TTimeMeasure       PostProcessingTime;
     /// Iteration time of the simulation
-    TTimeMesssure       IterationTime;
+    TTimeMeasure       IterationTime;
 
 
 };// end of  TKSpace3DSolver

@@ -2530,7 +2530,7 @@ void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
     IterationTime.Stop();
 
     const double ElTime = IterationTime.GetElapsedTime();
-    const double ElTimeWithLegs = IterationTime.GetElapsedTime() + SimulationTime.GetComulatedElaspedTimePreviousAllLegs();
+    const double ElTimeWithLegs = IterationTime.GetElapsedTime() + SimulationTime.GetCumulatedElapsedTimeOverPreviousLegs();
     const double ToGo   = ((ElTimeWithLegs / (float) (t_index + 1)) *  Nt) - ElTimeWithLegs;
 
     struct tm *current;
@@ -2759,11 +2759,11 @@ void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
                                                 ElapsedSimulationTime,
                                                 ElapsedPostProcessingTime);
 
-  TotalTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedTotalTime);
-  DataLoadTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedDataLoadTime);
-  PreProcessingTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedPreProcessingTime);
-  SimulationTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedSimulationTime);
-  PostProcessingTime.SetCumulatedElapsedTimeOverPreviousLefs(ElapsedPostProcessingTime);
+  TotalTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedTotalTime);
+  DataLoadTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedDataLoadTime);
+  PreProcessingTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedPreProcessingTime);
+  SimulationTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedSimulationTime);
+  PostProcessingTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedPostProcessingTime);
 
 }// end of RestoreCumulatedElapsedFromOutputFile
 //------------------------------------------------------------------------------

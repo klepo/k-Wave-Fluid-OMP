@@ -5,12 +5,12 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The header file containing all error messages of the project
+ * @brief       The header file containing all error messages of the project.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        09 August    2011, 12:34      (created) \n
- *              19 September 2014, 16:14      (revised)
+ *              29 September 2014, 14:09      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n

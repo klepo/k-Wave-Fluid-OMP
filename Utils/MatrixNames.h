@@ -5,11 +5,11 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The header file storing names of all variables
+ * @brief       The header file storing names of all variables.
  *
  * @version     kspaceFirstOrder3D 2.15
- * @date        14 September 2012, 14:33      (created) \n
- *              28 August    2014, 15:35      (revised)
+ * @date        14 September 2012, 14:33 (created) \n
+ *              29 September 2014, 14:09 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -36,9 +36,6 @@
 //----------------------------------------------------------------------------//
 //                              Constants                                     //
 //----------------------------------------------------------------------------//
-
-
-
 
 /// Nt variable name
 const char * const  Nt_Name                     = "Nt";
