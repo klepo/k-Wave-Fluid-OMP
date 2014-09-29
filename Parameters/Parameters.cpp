@@ -5,12 +5,12 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The implementation file containing parameters of the simulation
+ * @brief       The implementation file containing parameters of the simulation.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        09 August    2012,   13:39 (created) \n
- *              19 September 2014,   16:14 (revised)
+ * @date        09 August    2012, 13:39 (created) \n
+ *              29 September 2014, 12:43 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -58,10 +58,6 @@ using namespace std;
 //                              Definitions                                   //
 //----------------------------------------------------------------------------//
 
-
-
-
-
 bool TParameters::ParametersInstanceFlag = false;
 
 TParameters* TParameters::ParametersSingleInstance = NULL;
@@ -91,13 +87,13 @@ TParameters* TParameters::GetInstance()
 //------------------------------------------------------------------------------
 
 /**
- * Parse command line
+ * Parse command line.
  * @param [in] argc
  * @param [in] argv
  */
 void TParameters::ParseCommandLine(int argc, char** argv)
 {
- CommandLinesParameters.ParseCommandLine(argc, argv);
+  CommandLinesParameters.ParseCommandLine(argc, argv);
 
   if (CommandLinesParameters.IsVersion())
   {
@@ -124,11 +120,11 @@ void TParameters::ParseCommandLine(int argc, char** argv)
 /**
  * Read scalar values from the input HDF5 file.
  *
- * @param [in] HDF5_InputFile - Handle to an opened input file
+ * @param [in] HDF5_InputFile - Handle to an opened input file.
+ * @throw ios:failure if the file cannot be open or is of a wrong type or version.
  */
 void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
 {
-
   TDimensionSizes ScalarSizes(1, 1, 1);
 
   if (!HDF5_InputFile.IsOpened())
@@ -147,6 +143,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
 
   HDF5_FileHeader.ReadHeaderFromInputFile(HDF5_InputFile);
 
+  // check file type
   if (HDF5_FileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_input)
   {
     char ErrorMessage[256] = "";
@@ -154,6 +151,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
     throw ios::failure(ErrorMessage);
   }
 
+  // check version
   if (!HDF5_FileHeader.CheckMajorFileVersion())
   {
     char ErrorMessage[256] = "";
@@ -254,7 +252,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   }// version 1.1
 
 
-  // flags
+  // flags.
   HDF5_InputFile.ReadScalarValue(HDF5RootGroup, ux_source_flag_Name, ux_source_flag);
   HDF5_InputFile.ReadScalarValue(HDF5RootGroup, uy_source_flag_Name, uy_source_flag);
   HDF5_InputFile.ReadScalarValue(HDF5RootGroup, uz_source_flag_Name, uz_source_flag);
@@ -269,7 +267,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
 
 
 
-  // Vector sizes
+  // Vector sizes.
   if (transducer_source_flag == 0)
   {
    transducer_source_input_size = 0;
@@ -400,14 +398,14 @@ void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
   HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, nonlinear_flag_Name, nonlinear_flag);
 
 
-  //-- uxyz_source_flags --//
+  // uxyz_source_flags
   if ((ux_source_flag > 0) || (uy_source_flag > 0) || (uz_source_flag > 0))
   {
     HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, u_source_many_Name, u_source_many);
     HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, u_source_mode_Name, u_source_mode);
   }
 
-  //-- p_source_flag --//
+  // p_source_flag
   if (p_source_flag != 0)
   {
     HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, p_source_many_Name, p_source_many);
@@ -431,11 +429,10 @@ void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
         break;
       case smt_corners: SensorMaskTypeNumericValue = 1;
         break;
-    }//case
+    }// switch
 
     HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, sensor_mask_type_Name, SensorMaskTypeNumericValue);
   }
-
 }// end of SaveScalarsToHDF5File
 //------------------------------------------------------------------------------
 
@@ -448,7 +445,7 @@ void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
 
 
 /**
- * Constructor
+ * Constructor.
  */
 TParameters::TParameters() :
         HDF5_InputFile(), HDF5_OutputFile(), HDF5_CheckpointFile(), HDF5_FileHeader(),
@@ -482,7 +479,7 @@ TParameters::TParameters() :
 //----------------------------------------------------------------------------//
 
 /**
- * print usage end exit
+ * Print usage end exit.
  */
 void TParameters::PrintUsageAndExit()
 {

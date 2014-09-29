@@ -5,58 +5,107 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The header file containing the command line parameters
+ * @brief       The header file containing the command line parameters.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        29 August 2012, 11:25 (created) \n
- *              02 August 2014, 16:49 (revised)
+ * @date        29 August    2012, 11:25 (created) \n
+ *              29 September 2014, 12:15 (revised)
  *
  * @section Params Command Line Parameters
  *
  * The  C++ code requires two mandatory parameters and accepts a few optional parameters and flags.
- * The mandatory parameters \c -i and \c -o specify the input and output file. The file names respect the path conventions for particular operating system.
- * If any of the files is not specified, cannot be found or created, an error message is shown.
+ * The mandatory parameters \c -i and \c -o specify the input and output file. The
+ * file names respect the path conventions for particular operating system.
+ * If any of the files is not specified, cannot be found or created, an error
+ * message is shown.
  *
- * The \c -t parameter sets the number of threads used, which defaults the system maximum. On CPUs with Intel Hyper-Threading (HT),
- * performance will generally be better if HT is disabled in the BIOS settings. If HT is switched on, the default will be to create
- * twice as many threads as there are physical processor cores, which might slow down the code execution. Therefore, if the HT is on,
- *  try specifying the number of threads manually for best performance (e.g., 4 for Intel Quad-Core). We recommend experimenting
- * with this parameter to find the best configuration. Note, if there are other tasks being executed on the system,
- * it might be useful to further limit the number of threads to prevent system overload.
+ * The \c -t parameter sets the number of threads used, which defaults the system maximum.
+ * On CPUs with Intel Hyper-Threading (HT), the performance is sometimes better if HT
+ * is disabled in the BIOS settings. If HT is switched on, the default will be to
+ * spawn twice as many threads as there are physical processor cores, which might
+ * or might not slow down the code execution. Therefore, if the HT is on, try specifying the
+ * number of threads manually for best performance (e.g. 4 for Intel i7). We
+ * recommend experimenting with this parameter to find the best configuration.
+ * Note, if there are other tasks being executed on the system, it might be useful
+ * to further limit the number of threads to prevent system overload.
  *
- * The \c -r parameter specifies how often information about the simulation progress is printed to the command line.
- * By default, the C++ code prints out the progress of the simulation, the elapsed time, and the estimated time of
+ * The \c -r parameter specifies how often information about the simulation progress
+ * is printed out to the command line. By default, the C++ code prints out the
+ * progress of the simulation, the elapsed time, and the estimated time of
  * completion in intervals corresponding to 5% of the total number of times steps.
  *
- * The \c -c parameter specifies the compression level used by the ZIP library to reduce the
- * size of the output file. The actual compression rate is highly dependent on the shape of
- * the sensor mask and the range of stored quantities. In general, the output data is very
- * hard to compress, and using higher compression levels can greatly increase the time to
- * save data while not having a large impact on the final file size. The default compression
- * level of 3 represents a balance between compression ratio and performance that is suitable in most cases.
+ * The \c -c parameter specifies the compression level used by the ZIP library to
+ * reduce the size of the output file. The actual compression rate is highly dependent
+ * on the shape of the sensor mask and the range of stored quantities. In general,
+ * the output data is very hard to compress, and using higher compression levels
+ * can greatly increase the time to save data while not having a large impact on
+ * the final file size. That's why we decided to disable compression in default settings.
  *
- * The \c --benchmark parameter enables the total length of simulation (i.e., the number of time steps)
- * to be overwritten by setting a new number of time steps to simulate. This is particularly useful
- * for performance evaluation and benchmarking. As the code performance is relatively stable, 50-100 time steps is
- * usually enough to predict the simulation duration. This parameter can also be used to quickly find the ideal number of CPU threads to use.
- *
- * The \c -h and \c --help parameters print all the parameters of the C++ code, while the \c --version parameter reports the code version and internal build number.
- *
- *
- * The remaining flags specify the output quantities to be recorded during the simulation and stored on disk analogous to
- * the sensor.record input. If the \c -p or \c --p raw flags are set (these are equivalent), a time series of the acoustic pressure at the
- * grid points specified by the sensor mask is recorded. If the \c --p rms and/or \c --p max flags are set, the root mean square and/or maximum values
- * of the pressure at the grid points specified by the sensor mask are recorded. Finally, if the \c --p final flag is set, the values for the entire acoustic pressure
- * field in the final time step of the simulation is stored (this will always include the PML, regardless of the setting for <tt> `PMLInside' </tt>). Flags to record the acoustic
- * particular velocity are defined in an analogous fashion.
+ * The \c <tt>--benchmark</tt> parameter enables the total length of simulation (i.e.,
+ * the number of time steps) to be overridden by setting a new number of time
+ * steps to simulate. This is particularly useful for performance evaluation and
+ * benchmarking. As the code performance is relatively stable, 50-100 time steps is
+ * usually enough to predict the simulation duration. This parameter can also be
+ * used to quickly find the ideal number of CPU threads to use.
  *
  *
- * Any combination of \c p, \c u and \c I fags is admissible. If no output flag is set, a time-series for
- * the acoustic pressure is recorded. If it is not necessary to collect the output quantities over
- * the entire simulation, the starting time step when the collection begins can be specified
- * using the -s parameter. Note, the index for the first time step is 1 (this follows the MATLAB indexing convention).
+ * For codes that are expected to run for a very long time, it may be useful to
+ * checkpoint and restart the execution. One motivation is the wall clock limit
+ * per task on clusters where jobs must fit within a given time span
+ * (e.g. 24 hours). The second motivation is a level of fault-tolerance, where
+ * you can back up the state of the simulation after a predefined period.
+ * To enable checkpoint-restart, the user is asked to specify a file to store the
+ * actual state of the simulation by  <tt>--checkpoint_file</tt> and the
+ * period in seconds after which the simulation will be interrupted by <tt>--checkpoint_interval</tt>.
+ * When running on a cluster, please allocate enough time for the checkpoint procedure
+ * that can take a non-negligible amount of time (7 matrices have to be stored in
+ * the checkpoint file and all aggregated quantities are flushed into the output file).
  *
+ * When controlling a multi-leg simulation by a script loop, the parameters of the code
+ * remains the same in all legs. The first leg of the simulation creates a checkpoint
+ * file while the last one deletes it. If the checkpoint file is not found the
+ * simulation starts from beginning. In order to get know how many steps have been
+ * finished, please open the output file and read the variable <tt>t_index</tt>.
+ *
+ *
+ * The \c -h and \c --help parameters print all the parameters of the C++ code,
+ * The <tt> --version </tt>parameter reports detail information of the code useful for
+ * debugging and bug reports. It prints out the internal version, the build date and time, the
+ * git hash allowing us to track the version of the source code, the operating system,
+ * the compiler name and version and the instruction set used.
+ *
+ *
+ * The remaining flags specify the output quantities to be recorded during the
+ * simulation and stored on disk analogous to  the sensor.record input. If
+ * the \c -p or \c --p raw flags are set (these are equivalent), a time series of
+ * the acoustic pressure at the grid points specified by the sensor mask is
+ * recorded. If the \c --p_rms, \c --p_max, \c --p_min flags are set,
+ * the root mean square and/or maximum and/or minimum values of the pressure at
+ * the grid points specified by the sensor mask are recorded. If the
+ * \c --p_final flag is set, the values for the entire acoustic pressure field
+ * in the final time step of the simulation is stored (this will always include
+ * the PML, regardless of  the setting for <tt> `PMLInside'</tt>).
+ * The flags \c --p_max_all and \c --p_min_all allow to calculate the maximum and
+ * minimum values over the entire acoustic pressure field, regardless on the shape
+ * of the sensor mask.
+ *
+ * Flags to record the acoustic particular velocity are defined in an analogous fashion.
+ * For proper calculation of acoustic intensity, the particle velocity has to be
+ * shifted onto the same grid as the acoustic pressure. This can be done by setting
+ * \c --u_non_staggered_raw flag, that first shift the particle velocity and then
+ * sample the grid points specified by the sensor mask. Since the shift operation
+ * requires additional FFTs, the impact on the simulation time may be significant.
+ *
+ * Any combination of <tt>p</tt> and <tt>u</tt> flags is admissible. If no output flag is set,
+ * a time-series for the acoustic pressure is recorded. If it is not necessary
+ * to collect the output quantities over the entire simulation, the starting time
+ * step when the collection begins can be specified using the -s parameter.
+ * Note, the index for the first time step is 1 (this follows the MATLAB indexing convention).
+ *
+ * The \c --copy_sensor_mask will copy the sensor from the input file to the output
+ * one at the end of the simulation. This helps in post-processing and visualisation of
+ * the outputs.
  *
 \verbatim
 ---------------------------------- Usage ---------------------------------
@@ -65,15 +114,17 @@ Mandatory parameters:
   -o <output_file_name>           : HDF5 output file
 
 Optional parameters:
-  -t <num_threads>                : Number of CPU threads (default = MAX)
-  -r <interval_in_%>              : Progress print interval (default = 5%)
+  -t <num_threads>                : Number of CPU threads
+                                      (default = 4)
+  -r <interval_in_%>              : Progress print interval
+                                      (default = 5%)
   -c <comp_level>                 : Output file compression level <0,9>
                                       (default = 0)
   --benchmark <steps>             : Run a specified number of time steps
 
-  --checkpoint_file <file_name>   : HDF5 checkpoint file
+  --checkpoint_file <file_name>   : HDF5 Checkpoint file
   --checkpoint_interval <seconds> : Stop after a given number of seconds and
-                                       store the actual state
+                                      store the actual state
 
   -h                              : Print help
   --help                          : Print help
@@ -99,8 +150,8 @@ Output flags:
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
   --u_min                         : Store min of ux, uy, uz
-  --u_max_all                     : Store max of ux ,uy, yz (whole domain)
-  --u_min_all                     : Store max of ux ,uy, yz (whole domain)
+  --u_max_all                     : Store max of ux, uy, uz (whole domain)
+  --u_min_all                     : Store min of ux, uy, uz (whole domain)
   --u_final                       : Store final acoustic velocity
 
   --copy_sensor_mask              : Copy sensor mask to the output file
@@ -141,43 +192,44 @@ Output flags:
 
 /**
  * @class TCommandLineParameters
- * @brief The class to parse and store command line parameters
+ * @brief The class to parse and store command line parameters.
+ * @details The class to parse and store command line parameters.
  */
 class TCommandLineParameters
 {
   public:
 
-    /// Constructor
+    /// Constructor.
     TCommandLineParameters();
-    /// Destructor
+    /// Destructor.
     virtual ~TCommandLineParameters() {};
 
-    /// Get input file name
+    /// Get input file name.
     std::string GetInputFileName()      const {return InputFileName;};
-    /// Get output file name
+    /// Get output file name.
     std::string GetOutputFileName()     const {return OutputFileName;};
-    /// Get Checkpoint file name
+    /// Get Checkpoint file name.
     std::string GetCheckpointFileName() const {return CheckpointFileName;};
 
     /// Is --benchmark flag set?
     bool IsBenchmarkFlag()              const {return BenchmarkFlag;};
-    /// Is --version flag set
+    /// Is --version flag set?
     bool IsVersion()                    const {return PrintVersion; };
-    /// Get benchmark time step count
+    /// Get benchmark time step count.
     size_t GetBenchmarkTimeStepsCount() const {return BenchmarkTimeStepsCount;};
 
-    /// Get compression level
+    /// Get compression level.
     size_t GetCompressionLevel()        const {return CompressionLevel;};
-    /// Get number of threads
+    /// Get number of threads.
     size_t GetNumberOfThreads()         const {return NumberOfThreads;};
-    /// Get verbose interval
+    /// Get verbose interval.
     size_t GetVerboseInterval()         const {return VerboseInterval;};
-    /// Get start time index when sensor data collection begins
+    /// Get start time index when sensor data collection begins.
     size_t GetStartTimeIndex()          const {return StartTimeStep;};
 
-    /// Is checkpoint enabled
-    bool IsCheckpointEnabled()          const {return (CheckpointInterval > 0); };
-    /// Get checkpoint interval
+    /// Is checkpoint enabled?
+    bool IsCheckpointEnabled()          const {return (CheckpointInterval > 0);};
+    /// Get checkpoint interval.
     size_t  GetCheckpointInterval()     const {return CheckpointInterval; };
 
     /// Is --p_raw set?
@@ -216,91 +268,88 @@ class TCommandLineParameters
     /// is --copy_mask set
     bool IsCopySensorMask()             const {return CopySensorMask;};
 
-    /// Print usage and exit
+    /// Print usage and exit.
     void PrintUsageAndExit();
-    /// Print setup
+    /// Print setup.
     void PrintSetup();
-    /// Parse command line
+    /// Parse command line.
     void ParseCommandLine(int argc, char** argv);
 
 
   protected:
-    /// Copy constructor not allowed for public
+    /// Copy constructor not allowed for public.
     TCommandLineParameters(const TCommandLineParameters& src);
 
-    /// operator = not allowed for public
+    /// operator = not allowed for public.
     TCommandLineParameters& operator = (const TCommandLineParameters& src);
 
   private:
-    /// Input file name
+    /// Input file name.
     std::string InputFileName;
-    /// Output file name
+    /// Output file name.
     std::string OutputFileName;
-    /// Checkpoint file name
+    /// Checkpoint file name.
     std::string CheckpointFileName;
 
-    /// NumberOfThreads value
+    /// NumberOfThreads value.
     size_t      NumberOfThreads;
-    /// VerboseInterval value
+    /// VerboseInterval value.
     size_t      VerboseInterval;
-    /// CompressionLevel value
+    /// CompressionLevel value.
     size_t      CompressionLevel;
 
-    /// BenchmarkFlag value
+    /// BenchmarkFlag value.
     bool        BenchmarkFlag;
-    /// BenchmarkTimeStepsCount value
+    /// BenchmarkTimeStepsCount value.
     size_t      BenchmarkTimeStepsCount;
-    /// Checkpoint interval in seconds
+    /// Checkpoint interval in seconds.
     size_t      CheckpointInterval;
 
-    /// PrintVersion value
+    /// PrintVersion value.
     bool        PrintVersion;
 
-    /// Store_p_raw value
+    /// Store_p_raw value.
     bool        Store_p_raw;
-    /// Store_p_rms value
+    /// Store_p_rms value.
     bool        Store_p_rms;
-    /// Store_p_max value
+    /// Store_p_max value.
     bool        Store_p_max;
-    /// Store_p_min value
+    /// Store_p_min value.
     bool        Store_p_min;
-    /// Store_p_max_all value
+    /// Store_p_max_all value.
     bool        Store_p_max_all;
-    /// Store_p_min_all value
+    /// Store_p_min_all value.
     bool        Store_p_min_all;
-    /// Store_p_final value
+    /// Store_p_final value.
     bool        Store_p_final;
 
-    /// Store_u_raw value
+    /// Store_u_raw value.
     bool        Store_u_raw;
-    /// Store_u_non_staggered_raw value
+    /// Store_u_non_staggered_raw value.
     bool        Store_u_non_staggered_raw;
-    /// Store_u_rms value
+    /// Store_u_rms value.
     bool        Store_u_rms;
-    /// Store_u_max value
+    /// Store_u_max value.
     bool        Store_u_max;
-    /// Store_u_min value
+    /// Store_u_min value.
     bool        Store_u_min;
-    /// Store_u_max_all value
+    /// Store_u_max_all value.
     bool        Store_u_max_all;
-    /// Store_u_min_all value
+    /// Store_u_min_all value.
     bool        Store_u_min_all;
-    /// Store_u_final value
+    /// Store_u_final value.
     bool        Store_u_final;
 
-    /// Copy sensor mask to the output file
+    /// Copy sensor mask to the output file.
     bool        CopySensorMask;
-    /// StartTimeStep value
+    /// StartTimeStep value.
     size_t      StartTimeStep;
 
 
-
-    /// Default compression level
+    /// Default compression level.
     static const size_t DefaultCompressionLevel = 0;
-    /// Default verbose interval
+    /// Default verbose interval.
     static const size_t DefaultVerboseInterval  = 5;
-
-
 };// end of class TCommandLineParameters
 
 #endif	/* TCOMMANDLINESPARAMETERS_H */
