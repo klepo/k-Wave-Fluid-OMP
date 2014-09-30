@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        26 July      2011, 15:16   (created) \n
- *              01 September 2014, 13:00   (revised)
+ *              25 September 2014, 17:29   (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -55,10 +55,10 @@
 //----------------------------------------------------------------------------//
 
 /**
- * Constructor
+ * Constructor allocating memory.
  * @param [in] DimensionSizes - Dimension sizes
  */
-TIndexMatrix::TIndexMatrix(struct TDimensionSizes DimensionSizes)
+TIndexMatrix::TIndexMatrix(const TDimensionSizes & DimensionSizes)
               : TBaseIndexMatrix()
 {
   pDimensionSizes = DimensionSizes;
@@ -81,15 +81,16 @@ TIndexMatrix::TIndexMatrix(struct TDimensionSizes DimensionSizes)
 
 
 /**
- * Read data from HDF5 file (only from the root group)
- * @throw ios:failure if there's an error
+ * Read data from HDF5 file (only from the root group).
+ * @param [in] HDF5_File  - HDF5 file handle
+ * @param [in] MatrixName - HDF5 dataset name
  *
- * @param HDF5_File - HDF5 file handle
- * @param MatrixName  - HDF5 dataset name
+ * @throw ios:failure if there's an error
  */
 void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
                                         const char * MatrixName)
 {
+  // check the datatype
   if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(),MatrixName) != THDF5_File::hdf5_mdt_long)
   {
     char ErrorMessage[256];
@@ -97,6 +98,7 @@ void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
     throw ios::failure(ErrorMessage);
   }
 
+  // check the domain type
   if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_real)
   {
     char ErrorMessage[256];
@@ -104,6 +106,7 @@ void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
     throw ios::failure(ErrorMessage);
   }
 
+  // read data
   HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
                                 MatrixName,
                                 pDimensionSizes,
@@ -116,7 +119,7 @@ void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
 
 
 /**
- * Recompute indeces, MATLAB -> C++
+ * Recompute indeces, MATLAB -> C++.
  */
 void TIndexMatrix::RecomputeIndicesToCPP()
 {
@@ -129,7 +132,7 @@ void TIndexMatrix::RecomputeIndicesToCPP()
 //------------------------------------------------------------------------------
 
 /**
- * Recompute indeces, C++ -> MATLAB
+ * Recompute indeces, C++ -> MATLAB.
  */
 void TIndexMatrix::RecomputeIndicesToMatlab()
 {
@@ -143,8 +146,8 @@ void TIndexMatrix::RecomputeIndicesToMatlab()
 
 
 /**
- * Get total number of elements in all cuboids to be able to allocate output file
- * @return - total sampled gridpoints
+ * Get total number of elements in all cuboids to be able to allocate output file.
+ * @return Total sampled grid points
  */
 size_t TIndexMatrix::GetTotalNumberOfElementsInAllCuboids() const
 {
@@ -160,11 +163,12 @@ size_t TIndexMatrix::GetTotalNumberOfElementsInAllCuboids() const
 
 /**
  * Write data to HDF5 file
- * @throw ios:failure
  *
- * @param [in] HDF5_File - HDF5 file handle
- * @param [in] MatrixName  - HDF5 Dataset name
+ * @param [in] HDF5_File        - HDF5 file handle
+ * @param [in] MatrixName       - HDF5 Dataset name
  * @param [in] CompressionLevel - Compression level
+ *
+ * @throw ios:failure if there's an error
  */
 void TIndexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                       const char * MatrixName,
@@ -205,7 +209,7 @@ void TIndexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
 
   HDF5_File.CloseDataset(HDF5_Dataset_id);
 
-
+  // write data and domain types
   HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(),
                                   MatrixName,
                                   THDF5_File::hdf5_mdt_long);

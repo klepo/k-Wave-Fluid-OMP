@@ -5,12 +5,12 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The header file containing the matrix container
+ * @brief       The header file containing the matrix container.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              01 Septmeber 2014, 15:40 (revised)
+ *              26 September 2014, 17:10 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -65,7 +65,6 @@ enum TMatrixID
     rhox, rhoy, rhoz, rho0,
     dt_rho0_sgx, dt_rho0_sgy, dt_rho0_sgz,
 
-
     p0_source_input, sensor_mask_index, sensor_mask_corners,
     ddx_k_shift_pos, ddy_k_shift_pos, ddz_k_shift_pos,
     ddx_k_shift_neg, ddy_k_shift_neg, ddz_k_shift_neg,
@@ -105,51 +104,52 @@ enum TMatrixID
  * @struct TMatrixRecord
  * @brief  A structure storing details about the matrix. The matrix container
  * stores this structures.
+ * @details A structure storing details about the matrix. The matrix container
+ * stores the list of these records with the data.
  */
 struct TMatrixRecord
 {
-    /**
-     * @enum TMatrixDataType
-     * @brief All possible types of the matrix
-     */
-    enum TMatrixDataType {mdtReal, mdtComplex, mdtIndex, mdtFFTW, mdtUxyz};
+  /**
+   * @enum TMatrixDataType
+   * @brief All possible types of the matrix.
+   */
+  enum TMatrixDataType {mdtReal, mdtComplex, mdtIndex, mdtFFTW, mdtUxyz};
 
-    /// Pointer to the matrix object
-    TBaseMatrix   * MatrixPtr;
-    /// Matrix data type
-    TMatrixDataType MatrixDataType;
-    /// Matrix dimension sizes
-    TDimensionSizes DimensionSizes;
-    /// Is the matrix content loaded from the HDF5 file
-    bool            LoadData;
-    /// Is the matrix necessary to be preserver when checkpoint is enabled
-    bool            Checkpoint;
-    /// HDF5 matrix name
-    string          HDF5MatrixName;
+  /// Pointer to the matrix object.
+  TBaseMatrix   * MatrixPtr;
+  /// Matrix data type.
+  TMatrixDataType MatrixDataType;
+  /// Matrix dimension sizes.
+  TDimensionSizes DimensionSizes;
+  /// Is the matrix content loaded from the HDF5 file.
+  bool            LoadData;
+  /// Is the matrix necessary to be preserver when checkpoint is enabled.
+  bool            Checkpoint;
+  /// HDF5 matrix name.
+  string          HDF5MatrixName;
 
-    /// Default constructor
-    TMatrixRecord() : MatrixPtr(NULL), MatrixDataType(mdtReal),
-                      DimensionSizes(), LoadData(false), Checkpoint(false),
-                      HDF5MatrixName("")
-                      {};
+  /// Default constructor.
+  TMatrixRecord() : MatrixPtr(NULL), MatrixDataType(mdtReal),
+          DimensionSizes(), LoadData(false), Checkpoint(false),
+          HDF5MatrixName("")
+  {};
 
-    /// Copy constructor
-    TMatrixRecord(const TMatrixRecord& src);
+  /// Copy constructor.
+  TMatrixRecord(const TMatrixRecord& src);
 
-    /// operator =
-    TMatrixRecord& operator = (const TMatrixRecord& src);
+  /// operator =
+  TMatrixRecord& operator = (const TMatrixRecord& src);
 
-    /// Set all values of the record
-    void SetAllValues(TBaseMatrix *          MatrixPtr,
-                      const TMatrixDataType  MatrixDataType,
-                      const TDimensionSizes  DimensionSizes,
-                      const bool             LoadData,
-                      const bool             Checkpoint,
-                      const string           HDF5MatrixName);
+  /// Set all values of the record.
+  void SetAllValues(TBaseMatrix *          MatrixPtr,
+                    const TMatrixDataType  MatrixDataType,
+                    const TDimensionSizes  DimensionSizes,
+                    const bool             LoadData,
+                    const bool             Checkpoint,
+                    const string           HDF5MatrixName);
 
-    virtual ~TMatrixRecord() {};
-
-
+  // Destructor.
+  virtual ~TMatrixRecord() {};
 };// end of TMatrixRecord
 //------------------------------------------------------------------------------
 
@@ -157,7 +157,10 @@ struct TMatrixRecord
 
 /**
  * @class TMatrixContainer
- * @brief Class implementing the matrix container
+ * @brief Class implementing the matrix container.
+ * @details This container is responsible to maintain all the matrices in the
+ *          code except the output streams. The matrices are allocated, freed, loaded
+ *          stored and checkpointed from here.
  */
 class TMatrixContainer
 {
@@ -165,154 +168,98 @@ class TMatrixContainer
 
     /// Constructor
     TMatrixContainer() {}
-    /// Destructor
+    /// Destructor.
     virtual ~TMatrixContainer();
 
     /**
-     * Get number of matrices in the container
-     * @return number of matrices in the container
+     * @brief Get number of matrices in the container.
+     * @details Get number of matrices in the container.
+     * @return number of matrices in the container.
      */
-    size_t size()
+    size_t size() const
     {
       return MatrixContainer.size();
     };
 
     /**
-     * Is the container empty?
+     * @brief Is the container empty?
+     * @details Is the container empty?
      * @return true if the container is empty
      */
-    bool empty()
+    bool empty() const
     {
       return MatrixContainer.empty();
     };
 
-
-    /// Create instances of all objects in the container
+    /// Create instances of all objects in the container.
     void CreateAllObjects();
-    /// Load all matrices from the HDF5 file
+
+    /// Load all matrices from the HDF5 file.
     void LoadDataFromInputHDF5File(THDF5_File & HDF5_File);
-    /// Load all matrices from the HDF5 file
+    /// Load all matrices from the HDF5 file.
     void LoadDataFromCheckpointHDF5File(THDF5_File & HDF5_File);
-    /// Store selected matrices into the checkpoint file
+    /// Store selected matrices into the checkpoint file.
     void StoreDataIntoCheckpointHDF5File(THDF5_File & HDF5_File);
 
-    /// Free all matrices - destroy them
+    /// Free all matrices - destroy them.
     void FreeAllMatrices();
-
 
     /// Set all matrices recored - populate the container
     void AddMatricesIntoContainer();
 
     /**
-     * Get matrix record
+     * @brief Get matrix record (data and information).
+     * @details Get matrix record (data and information).
      * @param [in] MatrixID - Matrix identifier
-     * @return the matrix record
+     * @return the matrix record.
      */
     TMatrixRecord& GetMatrixRecord(const TMatrixID MatrixID)
     {
-     return MatrixContainer[MatrixID];
+      return MatrixContainer[MatrixID];
     };
 
     /**
-     * operator []
+     * @brief operator [].
+     * @details operator [].
      * @param [in]  MatrixID - Matrix identifier
-     * @return the matrix record
+     * @return the matrix record.
      */
     TMatrixRecord& operator [] (const TMatrixID MatrixID)
     {
       return MatrixContainer[MatrixID];
     };
 
-
     /**
-     * Get BaseMatrix from the container
+     * @brief Get the matrix with a specific type from the container.
+     * @details This template routine returns the reference to the matrix recasted to
+     * the specific class.
      * @param [in] MatrixID - Matrix identifier
      * @return Base Matrix
      */
-    TBaseMatrix& GetBaseMatrix(const TMatrixID MatrixID)
+    template <typename T>
+    inline T& GetMatrix(const TMatrixID MatrixID)
     {
-      return static_cast<TBaseMatrix &> (*(MatrixContainer[MatrixID].MatrixPtr));
+      return static_cast<T &> (*(MatrixContainer[MatrixID].MatrixPtr));
     };
-
-    /**
-     * Get BaseFloatMatrix from the container
-     * @param [in] MatrixID - Matrix identifier
-     * @return BaseFloatMatrix
-     */
-    TBaseFloatMatrix& GetBaseFloatMatrix(const TMatrixID MatrixID)
-    {
-      return static_cast<TBaseFloatMatrix &> (*(MatrixContainer[MatrixID].MatrixPtr));
-    };
-
-    /**
-     * Get RealMatrix from the container
-     * @param [in] MatrixID - Matrix identifier
-     * @return RealMatrix
-     */
-    TRealMatrix& GetRealMatrix(const TMatrixID MatrixID)
-    {
-      return static_cast<TRealMatrix &> (*(MatrixContainer[MatrixID].MatrixPtr));
-    };
-
-    /**
-     * Get Uxyz_sgzMatrix from the container
-     * @param [in] MatrixID - Matrix identifier
-     * @return  Uxyz_sgzMatrix
-     */
-    Tuxyz_sgxyzMatrix& GetUxyz_sgxyzMatrix(const TMatrixID MatrixID)
-    {
-      return static_cast<Tuxyz_sgxyzMatrix &>(*(MatrixContainer[MatrixID].MatrixPtr));
-    };
-
-    /**
-     * Get ComplexMatrix from the container
-     * @param [in] MatrixID - Matrix identifier
-     * @return ComplexMatrix
-     */
-    TComplexMatrix& GetComplexMatrix(const TMatrixID MatrixID)
-    {
-      return static_cast<TComplexMatrix &>(*(MatrixContainer[MatrixID].MatrixPtr));
-    };
-
-    /**
-     * GetFFTWComplexMatrix from the container
-     * @param [in] MatrixID - Matrix identifier
-     * @return FFTWComplexMatrix
-     */
-    TFFTWComplexMatrix& GetFFTWComplexMatrix(const TMatrixID MatrixID)
-    {
-      return static_cast<TFFTWComplexMatrix &>  (*(MatrixContainer[MatrixID].MatrixPtr));
-    };
-
-    /**
-     * Get LongMatrix matrix from the container
-     * @param [in] MatrixID - Matrix identifier
-     * @return LongMatrix
-     */
-    TIndexMatrix& GetLongMatrix(const TMatrixID MatrixID)
-    {
-      return static_cast<TIndexMatrix &>(*(MatrixContainer[MatrixID].MatrixPtr));
-    };
-
 
   protected:
 
 
   private:
 
-    /// Datatype for map associating the matrix ID enum and matrix record
+    /// Datatype for map associating the matrix ID enum and matrix record.
     typedef map<TMatrixID, TMatrixRecord> TMatrixRecordContainer;
 
-    /// Map holding the container
+    /// Map holding the container.
     TMatrixRecordContainer MatrixContainer;
 
-    /// Copy constructor is not allowed for public
+    /// Copy constructor is not allowed for public.
     TMatrixContainer(const TMatrixContainer& src);
 
-    /// Operator = is not allowed for public
+    /// Operator = is not allowed for public.
     TMatrixContainer & operator = (const TMatrixContainer& src);
 
-    /// Print error and throw an exception
+    /// Print error and throw an exception.
     void PrintErrorAndThrowException(const char * FMT,
                                      const string HDF5MatrixName,
                                      const char * File,
@@ -324,82 +271,88 @@ class TMatrixContainer
 
 /**
  * @class TOutputStreamContainer
- * @brief A container for output streams
+ * @brief A container for output streams.
+ * @details The output stream container maintains matrices used for sampling data.
+ * These may or may not require some scratch place or reuse temp matrices.
  */
 class TOutputStreamContainer
 {
   public:
-    /// Constructor
+    /// Constructor.
     TOutputStreamContainer() {};
-    /// Destructor
+    /// Destructor.
     virtual ~TOutputStreamContainer();
 
-    /// Get size of the container
+    /**
+     * @brief Get size of the container.
+     * @details Get size of the container.
+     */
     size_t size() const
     {
       return OutputStreamContainer.size();
     };
 
-    /// Is the container empty?
+    /**
+     * @brief  Is the container empty?
+     * @details  Is the container empty?
+     */
     bool empty() const
     {
       return OutputStreamContainer.empty();
     };
 
     /**
-     * @brief Operator []
-     * @details Operator []
-     * @param MatrixID
-     * @return
+     * @brief Operator [].
+     * @details Operator [].
+     * @param [in] MatrixID
+     * @return Ouptut stream
      */
     TBaseOutputHDF5Stream & operator [] (const TMatrixID MatrixID)
     {
       return (* (OutputStreamContainer[MatrixID]));
     };
 
-    /// Create all streams
+    /// Create all streams in container (no file manipulation).
     void AddStreamsIntoContainer(TMatrixContainer & MatrixContainer);
 
-    /// Create all streams
+    /// Create all streams - opens the datasets.
     void CreateStreams();
-    /// Reopen streams after checkpoint file
+    /// Reopen streams after checkpoint file (datasets).
     void ReopenStreams();
 
-    /// Sample all streams
+    /// Sample all streams.
     void SampleStreams();
-    /// Post-process all streams and flush them to the file
+    /// Post-process all streams and flush them to the file.
     void PostProcessStreams();
-    /// Checkpoint streams
+    /// Checkpoint streams.
     void CheckpointStreams();
 
-    /// Close all streams
+    /// Close all streams.
     void CloseStreams();
 
-    /// Free all streams - destroy them
+    /// Free all streams - destroy them.
     void FreeAllStreams();
 
   protected:
-    // Create a new output stream
-    TBaseOutputHDF5Stream * CreateNewOutputStream(TMatrixContainer &       MatrixContainer,
-                                                  const TMatrixID          SampledMatrixID,
-                                                  const char *             HDF5_DatasetName,
+    // Create a new output stream.
+    TBaseOutputHDF5Stream * CreateNewOutputStream(TMatrixContainer & MatrixContainer,
+                                                  const TMatrixID    SampledMatrixID,
+                                                  const char *       HDF5_DatasetName,
                                                   const TBaseOutputHDF5Stream::TReductionOperator ReductionOp,
-                                                  float *                  BufferToReuse = NULL);
+                                                  float *            BufferToReuse = NULL);
 
-
-    /// Copy constructor not allowed for public
+    /// Copy constructor not allowed for public.
     TOutputStreamContainer(const TOutputStreamContainer &);
-    /// Operator = not allowed for public
+    /// Operator = not allowed for public.
     TOutputStreamContainer & operator = (TOutputStreamContainer &);
 
   private:
-    /// Output stream map
+    /// Output stream map.
     typedef map < TMatrixID, TBaseOutputHDF5Stream * > TOutputStreamMap;
-    /// Map with output streams
+    /// Map with output streams.
     TOutputStreamMap OutputStreamContainer;
 
 }; // end of TOutputStreamContainer
 //------------------------------------------------------------------------------
 
 #endif	/* MATRIXCONTAINER_H */
-

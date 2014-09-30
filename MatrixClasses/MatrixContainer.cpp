@@ -5,11 +5,11 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The implementation file containing the matrix container
+ * @brief       The implementation file containing the matrix container.
  *
  * @version     kspaceFirstOrder3D 2.15
- * @date        12 July     2012, 10:27  (created) \n
- *              26 August   2014, 17:45  (revised)
+ * @date        12 July      2012, 10:27  (created) \n
+ *              26 September 2014, 17:09  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -54,7 +54,7 @@
 
 
 /**
- * Copy constructor of TMatrixRecord
+ * Copy constructor of TMatrixRecord.
  * @param [in] src
  */
 TMatrixRecord::TMatrixRecord(const TMatrixRecord& src) :
@@ -109,12 +109,12 @@ void TMatrixRecord::SetAllValues(TBaseMatrix *          MatrixPtr,
                                  const bool             Checkpoint,
                                  const string           HDF5MatrixName)
 {
-  this->MatrixPtr        = MatrixPtr;
-  this->MatrixDataType   = MatrixDataType;
-  this->DimensionSizes   = DimensionSizes;
-  this->LoadData         = LoadData;
-  this->Checkpoint       = Checkpoint;
-  this->HDF5MatrixName   = HDF5MatrixName;
+  this->MatrixPtr       = MatrixPtr;
+  this->MatrixDataType  = MatrixDataType;
+  this->DimensionSizes  = DimensionSizes;
+  this->LoadData        = LoadData;
+  this->Checkpoint      = Checkpoint;
+  this->HDF5MatrixName  = HDF5MatrixName;
 }// end of SetAllValues
 //------------------------------------------------------------------------------
 
@@ -138,9 +138,8 @@ void TMatrixRecord::SetAllValues(TBaseMatrix *          MatrixPtr,
 //----------------------------------------------------------------------------//
 
 
-
 /**
- * Destructor of TMatrixContainer
+ * Destructor of TMatrixContainer.
  */
 TMatrixContainer::~TMatrixContainer()
 {
@@ -151,7 +150,7 @@ TMatrixContainer::~TMatrixContainer()
 
 /**
  * Create all matrix objects in the container.
- * \throw errors cause an exception bad_alloc.
+ * @throw errors cause an exception bad_alloc.
  */
 void TMatrixContainer::CreateAllObjects()
 {
@@ -209,7 +208,6 @@ void TMatrixContainer::CreateAllObjects()
 //-----------------------------------------------------------------------------
 
 
-
 /**
  * Load all marked matrices from the HDF5 file.
  * @param [in] HDF5_File - HDF5 file handle
@@ -228,7 +226,7 @@ void TMatrixContainer::LoadDataFromInputHDF5File(THDF5_File & HDF5_File)
 
 
 /**
- * Load selected matrices from checkpoint HDF5 file
+ * Load selected matrices from checkpoint HDF5 file.
  * @param [in] HDF5_File - HDF5 file handle
  */
 void TMatrixContainer::LoadDataFromCheckpointHDF5File(THDF5_File & HDF5_File)
@@ -244,7 +242,7 @@ void TMatrixContainer::LoadDataFromCheckpointHDF5File(THDF5_File & HDF5_File)
 //------------------------------------------------------------------------------
 
 /**
- * Store selected matrices into the checkpoint file
+ * Store selected matrices into the checkpoint file.
  * @param [in] HDF5_File
  */
 void TMatrixContainer::StoreDataIntoCheckpointHDF5File(THDF5_File & HDF5_File)
@@ -253,8 +251,9 @@ void TMatrixContainer::StoreDataIntoCheckpointHDF5File(THDF5_File & HDF5_File)
   {
     if (it->second.Checkpoint)
     {
-      it->second.MatrixPtr->WriteDataToHDF5File(HDF5_File, it->second.HDF5MatrixName.c_str(),TParameters::GetInstance()->GetCompressionLevel());
-
+      it->second.MatrixPtr->WriteDataToHDF5File(HDF5_File,
+                                                it->second.HDF5MatrixName.c_str(),
+                                                TParameters::GetInstance()->GetCompressionLevel());
     }
   }
 }// end of StoreDataIntoCheckpointHDF5File
@@ -358,8 +357,8 @@ void TMatrixContainer::AddMatricesIntoContainer()
   {
     if (!((Params->Get_c0_scalar_flag()) && (Params->Get_alpha_coeff_scallar_flag())))
     {
-      MatrixContainer[absorb_tau].SetAllValues   (NULL,TMatrixRecord::mdtReal, FullDims , NOLOAD, NOCHECKPOINT, absorb_tau_Name);
-      MatrixContainer[absorb_eta].SetAllValues   (NULL,TMatrixRecord::mdtReal, FullDims , NOLOAD, NOCHECKPOINT, absorb_eta_Name);
+      MatrixContainer[absorb_tau].SetAllValues (NULL,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, absorb_tau_Name);
+      MatrixContainer[absorb_eta].SetAllValues (NULL,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, absorb_eta_Name);
     }
     MatrixContainer[absorb_nabla1].SetAllValues(NULL,TMatrixRecord::mdtReal, ReducedDims, NOLOAD, NOCHECKPOINT, absorb_nabla1_r_Name);
     MatrixContainer[absorb_nabla2].SetAllValues(NULL,TMatrixRecord::mdtReal, ReducedDims, NOLOAD, NOCHECKPOINT, absorb_nabla2_r_Name);
@@ -574,7 +573,7 @@ void TMatrixContainer::AddMatricesIntoContainer()
 
 
 /**
- * Print error and and throw an exception
+ * Print error and and throw an exception.
  * @throw bad_alloc
  *
  * @param [in] FMT - format of error
@@ -615,7 +614,7 @@ TOutputStreamContainer::~TOutputStreamContainer()
 
 /**
  * Add all streams in simulation in the container, set all streams records here!
- * Please note, the Matrixcontainer has to be populated before calling this routine
+ * Please note, the Matrixcontainer has to be populated before calling this routine.
  *
  * @param [in] MatrixContainer - matrix container to link the steams with
  *                               sampled matrices and sensor masks
@@ -625,10 +624,9 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
 
   TParameters * Params = TParameters::GetInstance();
 
-  float * TempBufferX = MatrixContainer.GetRealMatrix(Temp_1_RS3D).GetRawData();
-  float * TempBufferY = MatrixContainer.GetRealMatrix(Temp_2_RS3D).GetRawData();
-  float * TempBufferZ = MatrixContainer.GetRealMatrix(Temp_3_RS3D).GetRawData();
-
+  float * TempBufferX = MatrixContainer.GetMatrix<TRealMatrix>(Temp_1_RS3D).GetRawData();
+  float * TempBufferY = MatrixContainer.GetMatrix<TRealMatrix>(Temp_2_RS3D).GetRawData();
+  float * TempBufferZ = MatrixContainer.GetMatrix<TRealMatrix>(Temp_3_RS3D).GetRawData();
 
   //--------------------- Pressure ------------------/
   if (Params->IsStore_p_raw())
@@ -669,7 +667,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
     OutputStreamContainer[p_sensor_max_all] =
             new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
                                              p_max_all_Name,
-                                             MatrixContainer.GetRealMatrix(p),
+                                             MatrixContainer.GetMatrix<TRealMatrix>(p),
                                              TBaseOutputHDF5Stream::roMAX);
   }
 
@@ -678,7 +676,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
     OutputStreamContainer[p_sensor_min_all] =
             new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
                                              p_min_all_Name,
-                                             MatrixContainer.GetRealMatrix(p),
+                                             MatrixContainer.GetMatrix<TRealMatrix>(p),
                                              TBaseOutputHDF5Stream::roMIN);
   }
 
@@ -774,17 +772,17 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
     OutputStreamContainer[ux_sensor_max_all] =
             new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
                                              ux_max_all_Name,
-                                             MatrixContainer.GetRealMatrix(ux_sgx),
+                                             MatrixContainer.GetMatrix<TRealMatrix>(ux_sgx),
                                              TBaseOutputHDF5Stream::roMAX);
     OutputStreamContainer[uy_sensor_max_all] =
             new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
                                              uy_max_all_Name,
-                                             MatrixContainer.GetRealMatrix(uy_sgy),
+                                             MatrixContainer.GetMatrix<TRealMatrix>(uy_sgy),
                                              TBaseOutputHDF5Stream::roMAX);
     OutputStreamContainer[uz_sensor_max_all] =
             new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
                                              uz_max_all_Name,
-                                             MatrixContainer.GetRealMatrix(uz_sgz),
+                                             MatrixContainer.GetMatrix<TRealMatrix>(uz_sgz),
                                              TBaseOutputHDF5Stream::roMAX);
   }
 
@@ -793,20 +791,19 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
     OutputStreamContainer[ux_sensor_min_all] =
             new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
                                              ux_min_all_Name,
-                                             MatrixContainer.GetRealMatrix(ux_sgx),
+                                             MatrixContainer.GetMatrix<TRealMatrix>(ux_sgx),
                                              TBaseOutputHDF5Stream::roMIN);
     OutputStreamContainer[uy_sensor_min_all] =
             new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
                                              uy_min_all_Name,
-                                             MatrixContainer.GetRealMatrix(uy_sgy),
+                                             MatrixContainer.GetMatrix<TRealMatrix>(uy_sgy),
                                              TBaseOutputHDF5Stream::roMIN);
     OutputStreamContainer[uz_sensor_min_all] =
             new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
                                              uz_min_all_Name,
-                                             MatrixContainer.GetRealMatrix(uz_sgz),
+                                             MatrixContainer.GetMatrix<TRealMatrix>(uz_sgz),
                                              TBaseOutputHDF5Stream::roMIN);
   }
-
 }// end of AddStreamsdIntoContainer
 //------------------------------------------------------------------------------
 
@@ -858,7 +855,7 @@ void TOutputStreamContainer::SampleStreams()
 
 
 /**
- * Checkpoint streams without post-processing (flush to the file)
+ * Checkpoint streams without post-processing (flush to the file).
  */
 void TOutputStreamContainer::CheckpointStreams()
 {
@@ -873,7 +870,7 @@ void TOutputStreamContainer::CheckpointStreams()
 //------------------------------------------------------------------------------
 
 /**
- * /// Post-process all streams and flush them to the file
+ * /// Post-process all streams and flush them to the file.
  */
 void TOutputStreamContainer::PostProcessStreams()
 {
@@ -926,51 +923,46 @@ void TOutputStreamContainer::FreeAllStreams()
 
 
 /**
- * Create a new output stream
+ * Create a new output stream.
  * @param [in] MatrixContainer  - name of the HDF5 dataset or group
  * @param [in] SampledMatrixID  - code id of the matrix
  * @param [in] HDF5_DatasetName - name of the HDF5 dataset or group
  * @param [in] ReductionOp      - reduction operator
  * @param [in] BufferToReuse   - buffer to reuse
- * @return - new output stream with defined links
+ * @return new output stream with defined links.
  */
 TBaseOutputHDF5Stream * TOutputStreamContainer::CreateNewOutputStream(TMatrixContainer & MatrixContainer,
-                                                                      const TMatrixID       SampledMatrixID,
-                                                                      const char *          HDF5_DatasetName,
+                                                                      const TMatrixID    SampledMatrixID,
+                                                                      const char *       HDF5_DatasetName,
                                                                       const TBaseOutputHDF5Stream::TReductionOperator  ReductionOp,
-                                                                      float *               BufferToReuse)
+                                                                      float *            BufferToReuse)
 {
-
   TParameters * Params = TParameters::GetInstance();
 
   TBaseOutputHDF5Stream * Stream = NULL;
 
   if (Params->Get_sensor_mask_type() == TParameters::smt_index)
   {
-
     Stream = new TIndexOutputHDF5Stream(Params->HDF5_OutputFile,
-                                      HDF5_DatasetName,
-                                      MatrixContainer.GetRealMatrix(SampledMatrixID),
-                                      MatrixContainer.GetLongMatrix(sensor_mask_index),
-                                      ReductionOp,
-                                      BufferToReuse);
+                                        HDF5_DatasetName,
+                                        MatrixContainer.GetMatrix<TRealMatrix>(SampledMatrixID),
+                                        MatrixContainer.GetMatrix<TIndexMatrix>(sensor_mask_index),
+                                        ReductionOp,
+                                        BufferToReuse);
   }
   else
   {
     Stream = new TCuboidOutputHDF5Stream(Params->HDF5_OutputFile,
-                                      HDF5_DatasetName,
-                                      MatrixContainer.GetRealMatrix(SampledMatrixID),
-                                      MatrixContainer.GetLongMatrix(sensor_mask_corners),
-                                      ReductionOp,
-                                      BufferToReuse);
+                                         HDF5_DatasetName,
+                                         MatrixContainer.GetMatrix<TRealMatrix>(SampledMatrixID),
+                                         MatrixContainer.GetMatrix<TIndexMatrix>(sensor_mask_corners),
+                                         ReductionOp,
+                                         BufferToReuse);
   }
 
   return Stream;
 }// end of CreateNewOutputStream
-
-
-
-
+//------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------//
 //--------------------------- Private methods --------------------------------//

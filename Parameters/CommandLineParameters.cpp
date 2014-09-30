@@ -5,12 +5,12 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The implementation file containing the command line parameters
+ * @brief       The implementation file containing the command line parameters.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              02 September 2014, 19:06 (revised)
+ *              29 September 2014, 12:23 (revised)
  *
  *
  * @section License
@@ -62,7 +62,7 @@
 
 
 /**
- * Constructor
+ * Constructor.
  */
 TCommandLineParameters::TCommandLineParameters() :
         InputFileName(""), OutputFileName (""), CheckpointFileName(""),

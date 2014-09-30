@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July      2011, 10:30 (created) \n
- *              01 September 2014, 13:12 (revised)
+ *              25 September 2014, 17:34 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -43,85 +43,88 @@ class TComplexMatrix;
 /**
  * @class TRealMatrix
  * @brief The class for real matrices
+ * @details The class for real matrices (floats)
  */
 class TRealMatrix : public TBaseFloatMatrix
 {
   public:
 
     /// Constructor
-    TRealMatrix(struct TDimensionSizes DimensionSizes);
+    TRealMatrix(const TDimensionSizes & DimensionSizes);
 
-     /// Destructor
+     /// Destructor.
     virtual ~TRealMatrix()
     {
       FreeMemory();
     };
 
-    /// Read data from the HDF5 file - only from the root group
+    /// Read data from the HDF5 file - only from the root group.
     virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File,
                                       const char * MatrixName);
 
-    /// Write data into the HDF5 file
+    /// Write data into the HDF5 file.
     virtual void WriteDataToHDF5File(THDF5_File & HDF5_File,
                                      const char * MatrixName,
                                      const size_t CompressionLevel);
 
     /**
-     * @brief operator []
-     * @param index - 1D index
+     * @brief operator [].
+     * @details operator [].
+     * @param [in] index - 1D index
      * @return an element
      */
     float& operator [](const size_t& index)
     {
-        return pMatrixData[index];
+      return pMatrixData[index];
     };
 
 
     /**
-     * @brief operator [] const
-     * @param index - 1D index
+     * @brief operator [], constant version.
+     * @details operator [], constant version.
+     * @param [in] index - 1D index
      * @return an element
      */
-    const float & operator [](const size_t& index) const
+    const float& operator [](const size_t& index) const
     {
-        return pMatrixData[index];
+      return pMatrixData[index];
     };
 
     /**
-     * @brief Get element from 3D matrix
-     * @param X - X dimension
-     * @param Y - Y dimension
-     * @param Z - Z dimension
+     * @brief Get element from 3D matrix.
+     * @details Get element from 3D matrix.
+     * @param [in] X - X dimension
+     * @param [in] Y - Y dimension
+     * @param [in] Z - Z dimension
      * @return  an element
      */
-    float&  GetElementFrom3D(const size_t X, const size_t Y, const size_t Z)
+    float& GetElementFrom3D(const size_t X, const size_t Y, const size_t Z)
     {
-        return pMatrixData[Z * p2DDataSliceSize + Y * pDataRowSize +  X];
+      return pMatrixData[Z * p2DDataSliceSize + Y * pDataRowSize +  X];
     };
 
 
 protected:
 
-  /// Init dimension
-    virtual void InitDimensions(struct TDimensionSizes DimensionSizes);
-
-    /// Default constructor is not allowed for public
+    /// Default constructor is not allowed for public.
     TRealMatrix() : TBaseFloatMatrix() {};
 
-    /// Copy constructor not allowed for public
+    /// Copy constructor not allowed for public.
     TRealMatrix(const TRealMatrix& src);
 
-    /// Operator = is not allowed for public
+    /// Operator = is not allowed for public.
     TRealMatrix& operator = (const TRealMatrix& src);
 
+    /// Init dimension.
+    virtual void InitDimensions(const TDimensionSizes & DimensionSizes);
 
 private:
 
-   /// Number of elements to get 4MB block of data
+   /// Number of elements to get 4MB block of data.
    static const size_t ChunkSize_1D_4MB   = 1048576; //(4MB)
-   /// Number of elements to get 1MB block of data
+   /// Number of elements to get 1MB block of data.
    static const size_t ChunkSize_1D_1MB   =  262144; //(1MB)
-   /// Number of elements to get 256KB block of data
+   /// Number of elements to get 256KB block of data.
    static const size_t ChunkSize_1D_256KB =   65536; //(256KB)
 };// end of class TRealMatrix
 //------------------------------------------------------------------------------

@@ -10,8 +10,8 @@
  *
  * @version     kspaceFirstOrder3D 2.15
  *
- * @date        11 July 2011, 12:13      (created) \n
- *              17 September 2012, 15:35 (revised)
+ * @date        11 July      2011, 12:13 (created) \n
+ *              24 September 2014, 14:07 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -36,63 +36,65 @@
 #define	BASEFLOATMATRIXDATA_H
 
 #include <MatrixClasses/BaseMatrix.h>
-
 #include <Utils/DimensionSizes.h>
 
-
-
 using namespace std;
-
 
 /**
  * @class TBaseFloatMatrix
  * @brief Abstract base class for float based matrices defining basic interface.
  *        Higher dimensional matrices stored as 1D arrays, row-major order.
+ *
+ * @details Abstract base class for float based matrices defining basic interface.
+ *          Higher dimensional matrices stored as 1D arrays, row-major order.
+ *
  */
-class TBaseFloatMatrix : public TBaseMatrix{
-public:
+class TBaseFloatMatrix : public TBaseMatrix
+{
+  public:
 
-    /// Default constructor
-    TBaseFloatMatrix() : TBaseMatrix(), pTotalElementCount(0), pTotalAllocatedElementCount(0),
-                         pDimensionSizes(), pDataRowSize(0),  p2DDataSliceSize (0),  pMatrixData (NULL)
+    /// Default constructor.
+    TBaseFloatMatrix() : TBaseMatrix(),
+            pTotalElementCount(0), pTotalAllocatedElementCount(0), pDimensionSizes(),
+            pDataRowSize(0), p2DDataSliceSize (0), pMatrixData (NULL)
     {};
 
 
-    /// Get dimension sizes of the matrix
-    virtual TDimensionSizes GetDimensionSizes() const {
-        return pDimensionSizes;
+    /// Get dimension sizes of the matrix.
+    virtual TDimensionSizes GetDimensionSizes() const
+    {
+      return pDimensionSizes;
     }
 
-    /// Get element count of the matrix
-    virtual size_t GetTotalElementCount() const {
-        return pTotalElementCount;
+    /// Get element count of the matrix.
+    virtual size_t GetTotalElementCount() const
+    {
+      return pTotalElementCount;
     };
 
     /// Get total allocated element count (might differ from total element count used for the simulation because of padding).
-    virtual size_t GetTotalAllocatedElementCount() const {
-        return pTotalAllocatedElementCount;
+    virtual size_t GetTotalAllocatedElementCount() const
+    {
+      return pTotalAllocatedElementCount;
     };
 
-
-    /// Destructor
+    /// Destructor.
     virtual ~TBaseFloatMatrix() {};
 
 
-
-    /// Copy data from other matrix with the same size
-    virtual void CopyData(TBaseFloatMatrix & src);
-
+    /// Copy data from other matrix with the same size.
+    virtual void CopyData(const TBaseFloatMatrix & src);
 
     /// Zero all elements of the matrix (NUMA first touch).
     virtual void ZeroMatrix();
 
-    /// divide scalar/ matrix_element[i]
+    /// Divide scalar/ matrix_element[i].
     virtual void ScalarDividedBy(const float scalar);
 
-
     /// Get raw data out of the class (for direct kernel access).
-    virtual float* GetRawData() {
-        return pMatrixData ;
+    virtual float* GetRawData()
+    {
+      return pMatrixData;
     }
 
     /// Get raw data out of the class (for direct kernel access).
@@ -101,42 +103,38 @@ public:
       return pMatrixData;
     }
 
-protected:
+  protected:
 
-    /// Total number of elements
+    /// Total number of elements.
     size_t pTotalElementCount;
-    /// Total number of allocated elements (in terms of floats)
+    /// Total number of allocated elements (in terms of floats).
     size_t pTotalAllocatedElementCount;
 
-    /// Dimension sizes
+    /// Dimension sizes.
     struct TDimensionSizes pDimensionSizes;
 
-    /// Size of 1D row in X dimension
+    /// Size of a 1D row in X dimension.
     size_t pDataRowSize;
-    /// Size of 2D slab (X,Y)
+    /// Size of a 2D slab (X,Y).
     size_t p2DDataSliceSize;
 
-    /// Raw matrix data
-    float* pMatrixData;
+    /// Raw matrix data.
+    float * pMatrixData;
 
-
-    /// Memory allocation
+    /// Memory allocation.
     virtual void AllocateMemory();
 
-    /// Memory deallocation
+    /// Memory deallocation.
     virtual void FreeMemory();
 
-
-    /// Copy constructor is not directly allowed
+    /// Copy constructor is not directly allowed.
     TBaseFloatMatrix(const TBaseFloatMatrix& src);
-    /// operator =  is not directly allowed
+    /// operator =  is not directly allowed.
     TBaseFloatMatrix & operator =(const TBaseFloatMatrix& src);
 
-
-private:
+  private:
 
 };// end of class TBaseFloatMatrix
 //-----------------------------------------------------------------------------
 
 #endif	/* TBASEMATRIXDATA_H */
-
