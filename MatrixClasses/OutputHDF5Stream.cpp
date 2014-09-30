@@ -39,6 +39,7 @@
 
 #include <Parameters/Parameters.h>
 #include <Utils/ErrorMessages.h>
+#include <limits>
 
 
 using namespace std;
@@ -125,13 +126,53 @@ void TBaseOutputHDF5Stream::AllocateMemory()
     throw bad_alloc();
   }
 
-  // zero the matrix
-  #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-  for (size_t i = 0; i < BufferSize; i++)
+  // we need different initialization for different reduction ops
+  switch (ReductionOp)
   {
-    StoreBuffer[i] = 0.0f;
-  }
+    case roNONE :
+    {
+      // zero the matrix
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        StoreBuffer[i] = 0.0f;
+      }
+      break;
+    }
 
+    case roRMS  :
+    {
+      // zero the matrix
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        StoreBuffer[i] = 0.0f;
+      }
+      break;
+    }
+
+    case roMAX  :
+    {
+      // set the values to the highest negative float value
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        StoreBuffer[i] = -1 * std::numeric_limits<float>::max();
+      }
+      break;
+    }
+
+    case roMIN  :
+    {
+      // set the values to the highest float value
+      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
+      for (size_t i = 0; i < BufferSize; i++)
+      {
+        StoreBuffer[i] = std::numeric_limits<float>::max();
+      }
+      break;
+    }
+  }// switch
 }// end of AllocateMemory
 //------------------------------------------------------------------------------
 

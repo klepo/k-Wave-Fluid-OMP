@@ -58,7 +58,7 @@ class TBaseOutputHDF5Stream
 
     /**
      * @enum TReductionOperator
-     * @brief How to aggregate data
+     * @brief How to aggregate data.
      * @details How to aggregate data \n
      *           roNONE - store actual data (time series)
      *           roRMS  - calculate root mean square \n
