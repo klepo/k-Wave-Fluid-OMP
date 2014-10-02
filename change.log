@@ -1,3 +1,16 @@
+version 2.15 (02 October 2013)
+    - removed -I output
+    - added -u_non_staggered_raw
+    - merged source bases for Windows, Linux, Intel and GNU compilers
+    - updated doxyen documentation
+    - used standard math library
+    - added git hash and other useful information to the --version report
+    - added wisdom import for checkpoint-restart
+    - changed index matrices data types to size_t (used to be long)
+    - default compression level is now 0
+    - added a header to the checkpoint file
+    - fixed aggregated values initialization
+
 version 2.14 (21 January 2013)
     - converted from Mercurial to Git
     - fixed bug with -r verbose interval
@@ -6,14 +19,9 @@ version 2.14 (21 January 2013)
     - use _OPENMP compiler flag for OpenMPI instead of __NO_OMP__    
     - added cuboid cornes sensor mask
     - Output quantities are now managed by OutputStream.
-    - Check HDF5 file version    
-    
-    @TODO: add start index into the output file
-    @TODO: make sensor sampling parallel
-    @TODO: Use proper C++ header files
-    @TODO: Proper use of namespaces
-    @TODO: Change <math.h> to <cmath> and get rid of old SP floating point routines
-    @TODO: Intensity is not accurate for high pressure (needs a different code) 
+    - Check HDF5 file version
+    - added proper alignment for SSE and AVX
+    - implemented checkpoint-restart functionality
     
 version 2.13 (19 September 2012)
     - Start index begins from 1
