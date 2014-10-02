@@ -1,16 +1,16 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a38d7abff79efba7963add8380f2bd3b3" title="Get the rhox matrix from the container." alt="" coords="395,5,627,35"/>
-<area shape="rect" id="node5" href="$class_t_base_float_matrix.html#a789f3476db3b94f488642f524859c4f7" title="Get dimension sizes of the matrix." alt="" coords="396,59,625,88"/>
-<area shape="rect" id="node7" href="$class_t_parameters.html#a2e022544f8b2654b428f22d0b0b4c67f" title="Get dt value." alt="" coords="444,112,577,141"/>
-<area shape="rect" id="node9" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="415,165,607,195"/>
-<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#ad249e0d3ce1828223a3b9a0fef70ca85" title="Get the rhoy matrix from the container." alt="" coords="395,219,627,248"/>
-<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a7a64676c2eb11fcee354ba85075557aa" title="Get the rhoz matrix from the container." alt="" coords="395,272,627,301"/>
-<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#a78238cb08b8047905ec30fe6fbccd08c" title="Get the pml_x matrix from the container." alt="" coords="389,325,632,355"/>
-<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#ab21848ed518796791e68fb0cc46a6a22" title="Get the duxdx matrix from the container." alt="" coords="389,379,632,408"/>
-<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#ab87a9bd78bc7095cee4659203727b642" title="Get the duydy matrix from the container." alt="" coords="389,432,632,461"/>
-<area shape="rect" id="node21" href="$class_t_k_space_first_order3_d_solver.html#a0506862466836035575ea30229328352" title="Get the duzdz matrix from the container." alt="" coords="389,485,632,515"/>
-<area shape="rect" id="node23" href="$class_t_parameters.html#ad22041c43be8264afc7f70cc42093e0e" title="Get rho0_scalar value." alt="" coords="416,539,605,568"/>
-<area shape="rect" id="node25" href="$class_t_k_space_first_order3_d_solver.html#a1d13e06674f08199ff25a42627a805f1" title="Get the pml_y matrix from the container." alt="" coords="389,592,632,621"/>
-<area shape="rect" id="node27" href="$class_t_k_space_first_order3_d_solver.html#a623e1b3e86cd6309f70402e8d7724d2f" title="Get the pml_z matrix from the container." alt="" coords="389,645,632,675"/>
-<area shape="rect" id="node29" href="$class_t_k_space_first_order3_d_solver.html#af3e887ee053628b5b733f7113307fa88" title="Get the rho0 matrix from the container." alt="" coords="393,699,628,728"/>
+<map id="TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear" name="TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a38d7abff79efba7963add8380f2bd3b3" title="Get the rhox matrix from the container. " alt="" coords="247,5,425,43"/>
+<area shape="rect" id="node3" href="$class_t_base_float_matrix.html#a789f3476db3b94f488642f524859c4f7" title="Get dimension sizes of the matrix. " alt="" coords="235,67,437,106"/>
+<area shape="rect" id="node4" href="$class_t_parameters.html#a2e022544f8b2654b428f22d0b0b4c67f" title="Get dt value. " alt="" coords="269,130,403,155"/>
+<area shape="rect" id="node5" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access). " alt="" coords="239,179,433,205"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#ad249e0d3ce1828223a3b9a0fef70ca85" title="Get the rhoy matrix from the container. " alt="" coords="247,229,425,267"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a7a64676c2eb11fcee354ba85075557aa" title="Get the rhoz matrix from the container. " alt="" coords="247,291,425,330"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a78238cb08b8047905ec30fe6fbccd08c" title="Get the pml_x matrix from the container. " alt="" coords="247,354,425,393"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#ab21848ed518796791e68fb0cc46a6a22" title="Get the duxdx matrix from the container. " alt="" coords="247,417,425,455"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#ab87a9bd78bc7095cee4659203727b642" title="Get the duydy matrix from the container. " alt="" coords="247,479,425,518"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a0506862466836035575ea30229328352" title="Get the duzdz matrix from the container. " alt="" coords="247,542,425,581"/>
+<area shape="rect" id="node12" href="$class_t_parameters.html#ad22041c43be8264afc7f70cc42093e0e" title="Get rho0_scalar value. " alt="" coords="261,605,411,643"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a1d13e06674f08199ff25a42627a805f1" title="Get the pml_y matrix from the container. " alt="" coords="247,667,425,706"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#a623e1b3e86cd6309f70402e8d7724d2f" title="Get the pml_z matrix from the container. " alt="" coords="247,730,425,769"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#af3e887ee053628b5b733f7113307fa88" title="Get the rho0 matrix from the container. " alt="" coords="247,793,425,831"/>
 </map>

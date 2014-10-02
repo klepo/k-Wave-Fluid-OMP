@@ -1,14 +1,14 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_parameters.html#a536bc4d6b6dfb81c2bcb5ae64b064595" title="Get dx value." alt="" coords="588,5,724,35"/>
-<area shape="rect" id="node5" href="$class_t_parameters.html#aee8d6b17ed93ee23c34c52556b894bf4" title="Get dy value." alt="" coords="588,59,724,88"/>
-<area shape="rect" id="node7" href="$class_t_parameters.html#ae80e463d5bf7ffd506f935d9aee08f5e" title="Get dz value." alt="" coords="588,112,724,141"/>
-<area shape="rect" id="node9" href="$class_t_parameters.html#aba98612535cb8e05bffdb652ddd2027c" title="Get c_ref value." alt="" coords="581,165,731,195"/>
-<area shape="rect" id="node11" href="$class_t_parameters.html#a2e022544f8b2654b428f22d0b0b4c67f" title="Get dt value." alt="" coords="589,219,723,248"/>
-<area shape="rect" id="node13" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real clases)" alt="" coords="543,272,769,301"/>
-<area shape="rect" id="node15" href="$class_t_parameters.html#a69baec575728cf0d01c079e385f6d209" title="Reduced dimension sizes of the simulation (complex clases)" alt="" coords="528,325,784,355"/>
-<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a6b7cd21433d5e6996d405da3ed42cffb" title="Get the kappa matrix from the container." alt="" coords="535,379,777,408"/>
-<area shape="rect" id="node19" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="560,432,752,461"/>
-<area shape="rect" id="node21" href="$class_t_k_space_first_order3_d_solver.html#aa18cd21bdcff3a3fcbe8430369952d62" title="Get the absorb_nabla1 matrix from the container." alt="" coords="511,485,801,515"/>
-<area shape="rect" id="node23" href="$class_t_k_space_first_order3_d_solver.html#adf81b7def5cacdeb39dcbaacd1a1b0fe" title="Get the absorb_nabla2 matrix from the container." alt="" coords="511,539,801,568"/>
-<area shape="rect" id="node25" href="$class_t_parameters.html#a32818cdb7aa3929d2c32cdbdbcd46cee" title="Get alpha_power value." alt="" coords="559,592,753,621"/>
+<map id="TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2" name="TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2">
+<area shape="rect" id="node2" href="$class_t_parameters.html#a536bc4d6b6dfb81c2bcb5ae64b064595" title="Get dx value. " alt="" coords="277,5,414,30"/>
+<area shape="rect" id="node3" href="$class_t_parameters.html#aee8d6b17ed93ee23c34c52556b894bf4" title="Get dy value. " alt="" coords="277,54,414,79"/>
+<area shape="rect" id="node4" href="$class_t_parameters.html#ae80e463d5bf7ffd506f935d9aee08f5e" title="Get dz value. " alt="" coords="277,103,414,129"/>
+<area shape="rect" id="node5" href="$class_t_parameters.html#aba98612535cb8e05bffdb652ddd2027c" title="Get c_ref value. " alt="" coords="270,153,421,178"/>
+<area shape="rect" id="node6" href="$class_t_parameters.html#a2e022544f8b2654b428f22d0b0b4c67f" title="Get dt value. " alt="" coords="278,202,413,227"/>
+<area shape="rect" id="node7" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real classes). " alt="" coords="247,251,443,290"/>
+<area shape="rect" id="node8" href="$class_t_parameters.html#a69baec575728cf0d01c079e385f6d209" title="Reduced dimension sizes of the simulation (complex classes). " alt="" coords="232,314,459,353"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a6b7cd21433d5e6996d405da3ed42cffb" title="Get the kappa matrix from the container. " alt="" coords="257,377,434,415"/>
+<area shape="rect" id="node10" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access). " alt="" coords="249,439,442,465"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#aa18cd21bdcff3a3fcbe8430369952d62" title="Get the absorb_nabla1 matrix from the container. " alt="" coords="257,489,434,527"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#adf81b7def5cacdeb39dcbaacd1a1b0fe" title="Get the absorb_nabla2 matrix from the container. " alt="" coords="257,551,434,590"/>
+<area shape="rect" id="node13" href="$class_t_parameters.html#a32818cdb7aa3929d2c32cdbdbcd46cee" title="Get alpha_power value. " alt="" coords="268,614,423,653"/>
 </map>

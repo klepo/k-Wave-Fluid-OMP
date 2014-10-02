@@ -1,0 +1,9 @@
+<map id="TFFTWComplexMatrix::GetWisdomFileName" name="TFFTWComplexMatrix::GetWisdomFileName">
+<area shape="rect" id="node2" href="$class_t_f_f_t_w_complex_matrix.html#ac16c81999a0b6eb14094b208ffe95c05" title="Export wisdom to the file. " alt="" coords="198,5,341,43"/>
+<area shape="rect" id="node6" href="$class_t_f_f_t_w_complex_matrix.html#acf3b47b1649c4f7a9780cfd3f0e1d8e9" title="Import wisdom from the file. " alt="" coords="198,67,341,106"/>
+<area shape="rect" id="node8" href="$class_t_f_f_t_w_complex_matrix.html#a7b66a79b004f5d6c5894a78a1754fda3" title="Destroy wisdom in the file (delete it). " alt="" coords="407,130,551,169"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="390,5,567,43"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="617,67,794,106"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="843,74,893,99"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#ab11cbf74a1e06cfd258270cef3daa12f" title="Initialize FFT plans. " alt="" coords="390,67,567,106"/>
+</map>

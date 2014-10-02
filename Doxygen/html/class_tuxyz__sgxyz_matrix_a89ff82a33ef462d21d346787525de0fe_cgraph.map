@@ -1,0 +1,4 @@
+<map id="Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z" name="Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z">
+<area shape="rect" id="node2" href="$class_t_f_f_t_w_complex_matrix.html#abde628c727c983a17652ed74018da623" title="Compute 3D out&#45;of&#45;place Complex&#45;to&#45;Real FFT. " alt="" coords="254,11,415,50"/>
+<area shape="rect" id="node3" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access). " alt="" coords="465,18,658,43"/>
+</map>

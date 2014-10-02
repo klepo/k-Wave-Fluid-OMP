@@ -1,6 +1,6 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#aa18cd21bdcff3a3fcbe8430369952d62" title="Get the absorb_nabla1 matrix from the container." alt="" coords="431,5,721,35"/>
-<area shape="rect" id="node5" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="480,59,672,88"/>
-<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#adf81b7def5cacdeb39dcbaacd1a1b0fe" title="Get the absorb_nabla2 matrix from the container." alt="" coords="431,112,721,141"/>
-<area shape="rect" id="node9" href="$class_t_base_float_matrix.html#ab3907d95cf9560d68dbdb1f3bdecc643" title="Get element count of the matrix." alt="" coords="453,165,699,195"/>
+<map id="TKSpaceFirstOrder3DSolver::Compute_Absorb_nabla1_2_SSE2" name="TKSpaceFirstOrder3DSolver::Compute_Absorb_nabla1_2_SSE2">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#aa18cd21bdcff3a3fcbe8430369952d62" title="Get the absorb_nabla1 matrix from the container. " alt="" coords="283,5,461,43"/>
+<area shape="rect" id="node3" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access). " alt="" coords="275,67,469,93"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#adf81b7def5cacdeb39dcbaacd1a1b0fe" title="Get the absorb_nabla2 matrix from the container. " alt="" coords="283,117,461,155"/>
+<area shape="rect" id="node5" href="$class_t_base_float_matrix.html#ab3907d95cf9560d68dbdb1f3bdecc643" title="Get element count of the matrix. " alt="" coords="287,179,457,218"/>
 </map>

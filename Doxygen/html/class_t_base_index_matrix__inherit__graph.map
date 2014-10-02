@@ -1,0 +1,4 @@
+<map id="TBaseIndexMatrix" name="TBaseIndexMatrix">
+<area shape="rect" id="node3" href="$class_t_index_matrix.html" title="The class for 64b unsigned integers (indices). It is used for sensor_mask_index or sensor_corners_mas..." alt="" coords="19,155,111,181"/>
+<area shape="rect" id="node2" href="$class_t_base_matrix.html" title="Abstract base class, the common ancestor defining the common interface and allowing derived classes t..." alt="" coords="20,6,111,31"/>
+</map>

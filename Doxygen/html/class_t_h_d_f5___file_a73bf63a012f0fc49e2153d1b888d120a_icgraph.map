@@ -1,0 +1,5 @@
+<map id="THDF5_File::ReadMatrixDataType" name="THDF5_File::ReadMatrixDataType">
+<area shape="rect" id="node2" href="$class_t_complex_matrix.html#aa30e6faa34b5456c563f8b03b9a5ab50" title="Load data from the HDF5_File. " alt="" coords="269,5,443,43"/>
+<area shape="rect" id="node3" href="$class_t_index_matrix.html#a2383918d8e21fe7ca8eacebbe60b30b6" title="Read data from the HDF5 file. " alt="" coords="265,67,447,106"/>
+<area shape="rect" id="node4" href="$class_t_real_matrix.html#a0f64e66a4d984d259a0120557dfbfbb7" title="Read data from the HDF5 file &#45; only from the root group. " alt="" coords="267,130,445,169"/>
+</map>

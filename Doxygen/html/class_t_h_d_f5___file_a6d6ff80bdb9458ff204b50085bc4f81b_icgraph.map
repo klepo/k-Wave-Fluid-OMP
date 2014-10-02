@@ -1,0 +1,6 @@
+<map id="THDF5_File::IsAccessible" name="THDF5_File::IsAccessible">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a3669de8b5aa4c8847a11039357b9b281" title="Load simulation data from the input file. " alt="" coords="443,5,621,43"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#ab11cbf74a1e06cfd258270cef3daa12f" title="Initialize FFT plans. " alt="" coords="217,65,394,103"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="670,43,719,69"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="443,67,621,106"/>
+</map>

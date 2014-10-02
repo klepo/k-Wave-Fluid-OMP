@@ -1,0 +1,6 @@
+<map id="TCuboidOutputHDF5Stream::~TCuboidOutputHDF5Stream" name="TCuboidOutputHDF5Stream::~TCuboidOutputHDF5Stream">
+<area shape="rect" id="node2" href="$class_t_cuboid_output_h_d_f5_stream.html#a8b811355977cef6c72d91b96e7440e75" title="Close stream (apply post&#45;processing if necessary, flush data and close). " alt="" coords="243,22,419,61"/>
+<area shape="rect" id="node5" href="$class_t_base_output_h_d_f5_stream.html#a799715ad08177224f4878e83fb12e096" title="A generic function to free memory &#45; not used in the base class. " alt="" coords="249,85,413,123"/>
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file.html#ab045efd6ad34395d3111edad34e21fcc" title="Close the HDF5 dataset. " alt="" coords="467,5,635,30"/>
+<area shape="rect" id="node4" href="$class_t_h_d_f5___file.html#a4a99b191b4d2e8ee14255e1f1d3247bb" title="Close HDF5 group. " alt="" coords="471,54,631,79"/>
+</map>

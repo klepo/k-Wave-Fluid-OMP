@@ -1,7 +1,18 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_complex_matrix.html#ac1b8be396841f9c9992d8c0f89fba168" title="Write data into the HDF5_File." alt="" coords="235,5,472,35"/>
-<area shape="rect" id="node5" href="$class_t_real_matrix.html#a95567180fe78e9c9ebd88d58b7029fe3" title="Write data into the HDF5 file." alt="" coords="247,59,460,88"/>
-<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams." alt="" coords="521,59,788,88"/>
-<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation." alt="" coords="839,59,1071,88"/>
-<area shape="rect" id="node11" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1121,59,1169,88"/>
+<map id="THDF5_File::WriteHyperSlab" name="THDF5_File::WriteHyperSlab">
+<area shape="rect" id="node2" href="$class_t_complex_matrix.html#a67d9e0a8e003ca1bd01ef9aa54185feb" title="Write data into the HDF5_File. " alt="" coords="257,5,428,43"/>
+<area shape="rect" id="node3" href="$class_t_index_matrix.html#aa0bf79dfe6a049d4b23cc9977d261881" title="Write data into the HDF5 file. " alt="" coords="259,67,426,106"/>
+<area shape="rect" id="node7" href="$class_t_index_output_h_d_f5_stream.html#a5509168caed8159bf4fdc6e6b2b10e73" title="Flush the buffer to the file. " alt="" coords="259,193,426,231"/>
+<area shape="rect" id="node11" href="$class_t_cuboid_output_h_d_f5_stream.html#a384417be107b8ab18bce8836de1f2364" title="Flush the buffer to the file. " alt="" coords="255,318,431,357"/>
+<area shape="rect" id="node14" href="$class_t_whole_domain_output_h_d_f5_stream.html#a00039c4003bdda0c00769a99b125a21a" title="Flush the buffer to the file. " alt="" coords="235,443,450,482"/>
+<area shape="rect" id="node17" href="$class_t_real_matrix.html#afded978e8e7b5379195a1bb346b91f1f" title="Write data into the HDF5 file. " alt="" coords="261,130,424,169"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="518,67,695,106"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="763,67,941,106"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="990,74,1039,99"/>
+<area shape="rect" id="node8" href="$class_t_index_output_h_d_f5_stream.html#ab9e976c155a113d0c3872123d1b74bec" title="Sample data into buffer, apply reduction or flush to disk &#45; based on a sensor mask. " alt="" coords="523,130,690,169"/>
+<area shape="rect" id="node9" href="$class_t_index_output_h_d_f5_stream.html#a7342efe72c0e6fcaeb9134904c5af590" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="523,193,690,231"/>
+<area shape="rect" id="node10" href="$class_t_index_output_h_d_f5_stream.html#a81e82037623c84682b0bf9232094b9de" title="Checkpoint the stream. " alt="" coords="523,255,690,294"/>
+<area shape="rect" id="node12" href="$class_t_cuboid_output_h_d_f5_stream.html#ac2c704c5a81c154a5d8ead0d9f93bc00" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="519,318,695,357"/>
+<area shape="rect" id="node13" href="$class_t_cuboid_output_h_d_f5_stream.html#ac7f04644dc9309dbbb97693cc267b1dc" title="Checkpoint the stream and close. " alt="" coords="519,381,695,419"/>
+<area shape="rect" id="node15" href="$class_t_whole_domain_output_h_d_f5_stream.html#a567b784ea3474013c73827214daae779" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="499,443,714,482"/>
+<area shape="rect" id="node16" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0d57ac1b9475d2204cf60ce9b85887f0" title="Checkpoint the stream and close. " alt="" coords="499,506,714,545"/>
 </map>

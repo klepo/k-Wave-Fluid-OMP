@@ -1,0 +1,5 @@
+<map id="TRealMatrix::TRealMatrix" name="TRealMatrix::TRealMatrix">
+<area shape="rect" id="node2" href="$class_t_real_matrix.html#ac6344b800587fbb397359da15db577aa" title="Init dimension. " alt="" coords="214,5,389,30"/>
+<area shape="rect" id="node3" href="$class_t_base_float_matrix.html#ace873006962b353a092d966587f5762c" title="Memory allocation. " alt="" coords="218,54,385,93"/>
+<area shape="rect" id="node4" href="$class_t_base_float_matrix.html#a64df114982d08357c2c6d70c4475b5ad" title="Zero all elements of the matrix (NUMA first touch). " alt="" coords="437,61,619,86"/>
+</map>

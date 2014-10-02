@@ -1,0 +1,5 @@
+<map id="TIndexOutputHDF5Stream::FlushBufferToFile" name="TIndexOutputHDF5Stream::FlushBufferToFile">
+<area shape="rect" id="node2" href="$class_t_index_output_h_d_f5_stream.html#ab9e976c155a113d0c3872123d1b74bec" title="Sample data into buffer, apply reduction or flush to disk &#45; based on a sensor mask. " alt="" coords="222,5,389,43"/>
+<area shape="rect" id="node3" href="$class_t_index_output_h_d_f5_stream.html#a7342efe72c0e6fcaeb9134904c5af590" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="222,67,389,106"/>
+<area shape="rect" id="node4" href="$class_t_index_output_h_d_f5_stream.html#a81e82037623c84682b0bf9232094b9de" title="Checkpoint the stream. " alt="" coords="222,130,389,169"/>
+</map>

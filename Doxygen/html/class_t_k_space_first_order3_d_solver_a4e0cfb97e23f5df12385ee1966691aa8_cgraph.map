@@ -1,0 +1,9 @@
+<map id="TKSpaceFirstOrder3DSolver::PrintStatisitcs" name="TKSpaceFirstOrder3DSolver::PrintStatisitcs">
+<area shape="rect" id="node2" href="$class_t_parameters.html#aa5ec6369f65a8593d8a724f2fc985809" title="Get Nt value. " alt="" coords="265,5,401,30"/>
+<area shape="rect" id="node3" href="$class_t_parameters.html#ac259bffd62d48d841d05a0e1f1ec2efe" title="Get simulation time step. " alt="" coords="270,54,397,93"/>
+<area shape="rect" id="node4" href="$class_t_parameters.html#a5d73ab99a12da0baa94d331a920af590" title="Get verbose interval. " alt="" coords="232,117,435,142"/>
+<area shape="rect" id="node6" href="$class_t_time_measure.html#a5e6fbbcafaf03bc17e9dc055fd735970" title="Get stop timestamp. " alt="" coords="266,166,401,191"/>
+<area shape="rect" id="node7" href="$class_t_time_measure.html#accdd6358f7664ff9b39cd80f224b35fe" title="Get elapsed time. " alt="" coords="233,215,434,241"/>
+<area shape="rect" id="node8" href="$class_t_time_measure.html#a5f6d3867b8126c39cdfeaf26495c8628" title="Get time spent in previous legs. " alt="" coords="236,265,431,303"/>
+<area shape="rect" id="node5" href="$class_t_command_line_parameters.html#a549b2a2aa4a8c381d0b14a88d3157a64" title="Get verbose interval. " alt="" coords="483,110,656,149"/>
+</map>

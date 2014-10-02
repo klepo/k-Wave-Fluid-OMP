@@ -1,51 +1,51 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_time_messsure.html#afa5f8eb788891fa81a44864dbfc748e1" title="Get start timestamp." alt="" coords="724,1168,863,1197"/>
-<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#ab11cbf74a1e06cfd258270cef3daa12f" title="Initialize FFT plans." alt="" coords="648,192,939,221"/>
-<area shape="rect" id="node21" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase." alt="" coords="644,1272,943,1301"/>
-<area shape="rect" id="node81" href="$class_t_k_space_first_order3_d_solver.html#a1336ec3fde2534021a7a7fc2ef0e6654" title="Get memory usage in MB." alt="" coords="632,1637,955,1667"/>
-<area shape="rect" id="node83" href="$class_t_time_messsure.html#a13ba6edba530d724cd75e5801230615d" title="Get stop timestamp." alt="" coords="724,1691,863,1720"/>
-<area shape="rect" id="node85" href="$class_t_time_messsure.html#a9c9a1793afbe6102cb7e918268ff37a1" title="TTimeMesssure::GetElapsedTime" alt="" coords="333,1571,539,1600"/>
-<area shape="rect" id="node87" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D." alt="" coords="289,1363,583,1392"/>
-<area shape="rect" id="node123" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams." alt="" coords="303,825,569,855"/>
-<area shape="rect" id="node130" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file." alt="" coords="289,1467,583,1496"/>
-<area shape="rect" id="node134" href="$class_t_h_d_f5___file.html#a9a10b5f6d9763abeeee9eb24ef0cfd9d" title="Close file." alt="" coords="373,1624,499,1653"/>
-<area shape="rect" id="node7" href="$class_t_parameters.html#a6fd4a538674b37821378b8ba64f81802" title="Get number of threads." alt="" coords="1121,59,1340,88"/>
-<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a9114f72450c5e5f307a9a6b5bd332200" title="Get the FFT_X_temp from the container." alt="" coords="1092,165,1369,195"/>
-<area shape="rect" id="node11" href="$class_t_f_f_t_w_complex_matrix.html#a86cb5ee5dc0afe109d8b9c57018bf9c2" title="Create FFTW plan for Real&#45;to&#45;Complex." alt="" coords="1091,112,1371,141"/>
-<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a42ccdc05ba68365b687d3c4a358fdcca" title="Get the p matrix from the container." alt="" coords="1123,219,1339,248"/>
-<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#aef8925544ee69b5c53b1cc03377eb207" title="Get the FFT_Y_temp from the container." alt="" coords="1092,272,1369,301"/>
-<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a6a15acf2e312fbfb9fcbd1dbc9c9c96d" title="Get the FFT_Z_temp from the container." alt="" coords="1092,325,1369,355"/>
-<area shape="rect" id="node19" href="$class_t_f_f_t_w_complex_matrix.html#acefb6f369cfb341fb13ef8cc6d0b697e" title="Create FFTW plan for Complex&#45;to&#45;Real." alt="" coords="1091,5,1371,35"/>
-<area shape="rect" id="node23" href="$class_t_k_space_first_order3_d_solver.html#a121e9eb5ea8bbff0ed8b0d019050523e" title="Get the sensor_mask_ind matrix from the container." alt="" coords="1077,851,1384,880"/>
-<area shape="rect" id="node25" href="$class_t_long_matrix.html#a7f9ae690e7a57186353958d13f570a66" title="Recompute indices MATALAB&#45;&gt;C++." alt="" coords="1132,1059,1329,1088"/>
-<area shape="rect" id="node27" href="$class_t_parameters.html#a1f03b9fbacdeed302f4aae8a79d3cff1" title="Get transducer_source_flag value." alt="" coords="1104,1693,1357,1723"/>
-<area shape="rect" id="node29" href="$class_t_parameters.html#a01fdb42ffc3e8c20d3740865185f1fd3" title="Get ux_source_flag value." alt="" coords="1127,1853,1335,1883"/>
-<area shape="rect" id="node31" href="$class_t_parameters.html#a8b6566739f41d080ed60cb2d7349d998" title="Get uy_source_flag value." alt="" coords="1127,1747,1335,1776"/>
-<area shape="rect" id="node33" href="$class_t_parameters.html#a48f863cbb28ce1cb40a36fe0a455fd52" title="Get uz_source_flag value." alt="" coords="1127,1800,1335,1829"/>
-<area shape="rect" id="node35" href="$class_t_k_space_first_order3_d_solver.html#ae1d782a3d851dc46b8d96a3b24ef7fc6" title="Get the u_source_index matrix from the container." alt="" coords="1083,1907,1379,1936"/>
-<area shape="rect" id="node37" href="$class_t_k_space_first_order3_d_solver.html#a61290eb657b5bd70432c44a62325e464" title="Get the delay_mask matrix from the container." alt="" coords="1093,1640,1368,1669"/>
-<area shape="rect" id="node39" href="$class_t_parameters.html#a8900909cbc594871728c6239e329b1e6" title="Get p_source_flag value." alt="" coords="1129,1112,1332,1141"/>
-<area shape="rect" id="node41" href="$class_t_k_space_first_order3_d_solver.html#a3664cdd2bfe3670518a4c18658a7885f" title="Get the p_source_index matrix from the container." alt="" coords="1083,1165,1379,1195"/>
-<area shape="rect" id="node43" href="$class_t_parameters.html#adea93c1a39730803fd81837eb029a8a6" title="Get rho0_scalar_flag value." alt="" coords="1123,691,1339,720"/>
-<area shape="rect" id="node45" href="$class_t_parameters.html#a0b47233c0f42c77754280695fd64ea9d" title="Get rho0_sgx_scalar value." alt="" coords="1124,744,1337,773"/>
-<area shape="rect" id="node47" href="$class_t_parameters.html#a2e022544f8b2654b428f22d0b0b4c67f" title="Get dt value." alt="" coords="1579,1455,1712,1484"/>
-<area shape="rect" id="node49" href="$class_t_parameters.html#a542674a9017c622d455deb99d98a82db" title="Get rho0_sgy_scalar value." alt="" coords="1124,531,1337,560"/>
-<area shape="rect" id="node51" href="$class_t_parameters.html#a123685fc015f419ec6a66ad8ea89210c" title="Get rho0_sgz_scalar value." alt="" coords="1124,584,1337,613"/>
-<area shape="rect" id="node53" href="$class_t_parameters.html#a9bd4e19e37f793e2c40c75a6ceef663d" title="Get nonuniform_grid_flag value." alt="" coords="1111,637,1351,667"/>
-<area shape="rect" id="node55" href="$class_t_k_space_first_order3_d_solver.html#ac06817190bf0ce339ea1506d070c1acc" title="Calculate dt ./ rho0 for non&#45;uniform grids." alt="" coords="1048,1325,1413,1355"/>
-<area shape="rect" id="node57" href="$class_t_k_space_first_order3_d_solver.html#a8b9f651852c4ad55740192cfeb3c6df4" title="Get the dt.*rho0_sgx matrix from the container." alt="" coords="1507,1007,1784,1036"/>
-<area shape="rect" id="node59" href="$class_t_k_space_first_order3_d_solver.html#a9887a350e439828c55a9dc7e01b22134" title="Get the dt.*rho0_sgy matrix from the container." alt="" coords="1507,1325,1784,1355"/>
-<area shape="rect" id="node61" href="$class_t_k_space_first_order3_d_solver.html#a833ed823e608875855724a05eab4d139" title="Get the dt.*rho0_sgz matrix from the container." alt="" coords="1507,903,1784,932"/>
-<area shape="rect" id="node65" href="$class_t_base_float_matrix.html#a3df29a54e64068450058360c25eb3631" title="divide scalar/ matrix_element[i]" alt="" coords="1124,1219,1337,1248"/>
-<area shape="rect" id="node69" href="$class_t_parameters.html#ac1ebab673b7d4d5d1568fbc8c971b75a" title="Get absorbing_flag value." alt="" coords="1128,1272,1333,1301"/>
-<area shape="rect" id="node71" href="$class_t_k_space_first_order3_d_solver.html#acf40f82dab3d9d6d5b285d9d612ef602" title="Generate kappa matrix, absorb_nabla1, absorb_nabla2 for absorbing media." alt="" coords="1004,1480,1457,1509"/>
-<area shape="rect" id="node74" href="$class_t_k_space_first_order3_d_solver.html#a259167541c80e5a9bf29ebc24a329e46" title="Generate absorb_tau, absorb_eta for heterogenous media." alt="" coords="1025,1533,1436,1563"/>
-<area shape="rect" id="node76" href="$class_t_k_space_first_order3_d_solver.html#a5d71b23c9eb8bc6a68e4d07a4a727ce7" title="Generate kappa matrix for non&#45;absorbing media." alt="" coords="1093,1587,1368,1616"/>
-<area shape="rect" id="node79" href="$class_t_k_space_first_order3_d_solver.html#a48f3f37994e1f75f12926a9d1cd62576" title="Calculate c^2." alt="" coords="1104,955,1357,984"/>
-<area shape="rect" id="node89" href="$class_t_k_space_first_order3_d_solver.html#aa34e3cee9d9d7d6b53fc40ee85d9548b" title="Print the header of the progress statistics." alt="" coords="655,1427,932,1456"/>
-<area shape="rect" id="node92" href="$class_t_parameters.html#a1baa12f2da59d58f2ab415b547881028" title="Get Nt value." alt="" coords="725,1008,861,1037"/>
-<area shape="rect" id="node94" href="$class_t_k_space_first_order3_d_solver.html#a196ebd95f9c91f815c3c15d3e4736416" title="compute new values of for ux_sgx, uy_sgy, uz_sgz" alt="" coords="661,531,925,560"/>
-<area shape="rect" id="node102" href="$class_t_k_space_first_order3_d_solver.html#a7cf912613ab225e7248891d34b4456ec" title="Get the ux_sgx matrix from the container." alt="" coords="1107,797,1355,827"/>
-<area shape="rect" id="node110" href="$class_t_k_space_first_order3_d_solver.html#a9d3512ebd2bd906c2d6b12e4e2188aa9" title="Add u source to the particle velocity." alt="" coords="663,1533,924,1563"/>
-<area shape="rect" id="node119" href="$class_tuxyz__sgxyz_matrix.html#a6313509408b42d9ea1a921e5f3d0d4ea" title="Add transducer data source to X component." alt="" coords="667,1480,920,1509"/>
+<map id="TKSpaceFirstOrder3DSolver::Compute" name="TKSpaceFirstOrder3DSolver::Compute">
+<area shape="rect" id="node2" href="$class_t_time_measure.html#adc3097b6eda14f226954dce19e7b71d6" title="Get start timestamp. " alt="" coords="515,329,650,355"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#ab11cbf74a1e06cfd258270cef3daa12f" title="Initialize FFT plans. " alt="" coords="245,1731,422,1769"/>
+<area shape="rect" id="node5" href="$class_t_parameters.html#a25c0f466056da278e7945b636f75c401" title="Is checkpoint enabled. " alt="" coords="498,1431,667,1469"/>
+<area shape="rect" id="node7" href="$class_t_parameters.html#accc01ebb5841e0cf6c7482c738b260e4" title="Get checkpoint filename. " alt="" coords="493,92,672,131"/>
+<area shape="rect" id="node23" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="245,880,422,919"/>
+<area shape="rect" id="node40" href="$class_t_k_space_first_order3_d_solver.html#a1336ec3fde2534021a7a7fc2ef0e6654" title="Get memory usage in MB. " alt="" coords="494,217,671,256"/>
+<area shape="rect" id="node41" href="$class_t_time_measure.html#a5e6fbbcafaf03bc17e9dc055fd735970" title="Get stop timestamp. " alt="" coords="515,280,650,305"/>
+<area shape="rect" id="node42" href="$class_t_time_measure.html#accdd6358f7664ff9b39cd80f224b35fe" title="Get elapsed time. " alt="" coords="233,1793,434,1819"/>
+<area shape="rect" id="node43" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="245,441,422,480"/>
+<area shape="rect" id="node44" href="$class_t_parameters.html#ac259bffd62d48d841d05a0e1f1ec2efe" title="Get simulation time step. " alt="" coords="519,155,646,193"/>
+<area shape="rect" id="node45" href="$class_t_k_space_first_order3_d_solver.html#aa88ca1ea83c8642198fa6182e0e16115" title="Was the loop interrupted to checkpoint? " alt="" coords="245,1843,422,1881"/>
+<area shape="rect" id="node46" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="245,60,422,99"/>
+<area shape="rect" id="node47" href="$class_t_h_d_f5___file.html#a9a10b5f6d9763abeeee9eb24ef0cfd9d" title="Close file. " alt="" coords="519,27,646,52"/>
+<area shape="rect" id="node48" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="245,629,422,668"/>
+<area shape="rect" id="node49" href="$class_t_f_f_t_w_complex_matrix.html#a7b66a79b004f5d6c5894a78a1754fda3" title="Destroy wisdom in the file (delete it). " alt="" coords="261,1905,405,1944"/>
+<area shape="rect" id="node50" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="245,276,422,315"/>
+<area shape="rect" id="node4" href="$class_t_parameters.html#a5ae2074ae7912f178e9441676495b13a" title="Get number of threads. " alt="" coords="496,1493,669,1532"/>
+<area shape="rect" id="node6" href="$class_t_h_d_f5___file.html#a6d6ff80bdb9458ff204b50085bc4f81b" title="Does the file exist? static method. " alt="" coords="501,1556,664,1581"/>
+<area shape="rect" id="node8" href="$class_t_f_f_t_w_complex_matrix.html#acf3b47b1649c4f7a9780cfd3f0e1d8e9" title="Import wisdom from the file. " alt="" coords="511,1605,654,1644"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a9114f72450c5e5f307a9a6b5bd332200" title="Get the FFT_X_temp from the container. " alt="" coords="494,1668,671,1707"/>
+<area shape="rect" id="node10" href="$class_t_f_f_t_w_complex_matrix.html#ac1c7dc1fb45f23d31b4e2d51be8c0e71" title="Create FFTW plan for Real&#45;to&#45;Complex. " alt="" coords="493,1731,673,1769"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a42ccdc05ba68365b687d3c4a358fdcca" title="Get the p matrix from the container. " alt="" coords="494,755,671,793"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#aef8925544ee69b5c53b1cc03377eb207" title="Get the FFT_Y_temp from the container. " alt="" coords="494,1793,671,1832"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a6a15acf2e312fbfb9fcbd1dbc9c9c96d" title="Get the FFT_Z_temp from the container. " alt="" coords="494,1856,671,1895"/>
+<area shape="rect" id="node14" href="$class_t_f_f_t_w_complex_matrix.html#afbf1c3aa47548645ee6e5e6a98c9a3bc" title="Create FFTW plan for Complex&#45;to&#45;Real. " alt="" coords="493,1919,673,1957"/>
+<area shape="rect" id="node15" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class. " alt="" coords="501,1981,664,2007"/>
+<area shape="rect" id="node16" href="$class_t_k_space_first_order3_d_solver.html#a6e7f9373e007b66ecd325427e4da547a" title="Get the FFT_shift_temp the container. " alt="" coords="494,2031,671,2069"/>
+<area shape="rect" id="node17" href="$class_t_f_f_t_w_complex_matrix.html#a160388e1bfe6394d352979f641cba665" title="Create FFTW plan for Real&#45;to&#45;Complex in the X dimension. " alt="" coords="489,2093,677,2132"/>
+<area shape="rect" id="node18" href="$class_t_f_f_t_w_complex_matrix.html#a111b811b00821157294e0f0505d8f817" title="Create FFTW plan for Complex&#45;to&#45;Real in the X dimension. " alt="" coords="489,2156,677,2195"/>
+<area shape="rect" id="node19" href="$class_t_f_f_t_w_complex_matrix.html#a0fc8ca55bb571d97d040bf28ab8fd151" title="Create FFTW plan for Real&#45;to&#45;Complex in the Y dimension. " alt="" coords="489,2219,677,2257"/>
+<area shape="rect" id="node20" href="$class_t_f_f_t_w_complex_matrix.html#aa76ef42a2b86ade3b2d5d8185976c4d0" title="Create FFTW plan for Complex&#45;to&#45;Real in the Y dimension. " alt="" coords="489,2281,677,2320"/>
+<area shape="rect" id="node21" href="$class_t_f_f_t_w_complex_matrix.html#aafc670dfdfa85b4445d4ec303f9d0881" title="Create FFTW plan for Real&#45;to&#45;Complex in the Z dimension. " alt="" coords="489,2344,676,2383"/>
+<area shape="rect" id="node22" href="$class_t_f_f_t_w_complex_matrix.html#a2b2f0ee211ac2857c4cbff0ea47b0afc" title="Create FFTW plan for Complex&#45;to&#45;Real in the Z dimension. " alt="" coords="489,2407,676,2445"/>
+<area shape="rect" id="node24" href="$class_t_parameters.html#a8e4c9ba89ae57c1c21a8ee5a3675dbc0" title="Get sensor mask type (linear or corners). " alt="" coords="502,629,663,668"/>
+<area shape="rect" id="node25" href="$class_t_k_space_first_order3_d_solver.html#a323d55ce2ecc49fa5cf0358d4d1116bf" title="Get the sensor_mask_index matrix from the container. " alt="" coords="494,692,671,731"/>
+<area shape="rect" id="node26" href="$class_t_index_matrix.html#abe151db01397cec08b3e5d6efa2b9ed8" title="Recompute indices MATALAB&#45;&gt;C++. " alt="" coords="483,817,683,856"/>
+<area shape="rect" id="node27" href="$class_t_k_space_first_order3_d_solver.html#ac7400e8d3ddadb22f1de54fb1c8c31d1" title="Get the sensor_mask_corners matrix from the container. " alt="" coords="494,567,671,605"/>
+<area shape="rect" id="node28" href="$class_t_parameters.html#aa8e39a1cf735d3dfe6caee83d3794a90" title="Get transducer_source_flag value. " alt="" coords="491,379,674,417"/>
+<area shape="rect" id="node29" href="$class_t_parameters.html#a39ae7d3ccc74634529ae29108d44422d" title="Get ux_source_flag value. " alt="" coords="514,880,651,919"/>
+<area shape="rect" id="node30" href="$class_t_parameters.html#aa8004aba30999d9133038692fe420c78" title="Get uy_source_flag value. " alt="" coords="514,943,651,981"/>
+<area shape="rect" id="node31" href="$class_t_parameters.html#aa1681547234cd3da47a55f82cd801f83" title="Get uz_source_flag value. " alt="" coords="514,1005,651,1044"/>
+<area shape="rect" id="node32" href="$class_t_k_space_first_order3_d_solver.html#a6b5c1c63971a68985400d11aacb58056" title="Get the u_source_index matrix from the container. " alt="" coords="494,441,671,480"/>
+<area shape="rect" id="node33" href="$class_t_k_space_first_order3_d_solver.html#a2df8f29644c0401288941b46b94d56dd" title="Get the delay_mask matrix from the container. " alt="" coords="494,504,671,543"/>
+<area shape="rect" id="node34" href="$class_t_parameters.html#a095a96417f959c769ea5279f86857236" title="Get p_source_flag value. " alt="" coords="517,1068,648,1107"/>
+<area shape="rect" id="node35" href="$class_t_k_space_first_order3_d_solver.html#aeb2554cc536578100104e18fcd6c292f" title="Get the p_source_index matrix from the container. " alt="" coords="494,1131,671,1169"/>
+<area shape="rect" id="node36" href="$class_t_parameters.html#adea93c1a39730803fd81837eb029a8a6" title="Get rho0_scalar_flag value. " alt="" coords="508,1193,657,1232"/>
+<area shape="rect" id="node37" href="$class_t_parameters.html#a0b47233c0f42c77754280695fd64ea9d" title="Get rho0_sgx_scalar value. " alt="" coords="508,1256,657,1295"/>
+<area shape="rect" id="node38" href="$class_t_parameters.html#a2e022544f8b2654b428f22d0b0b4c67f" title="Get dt value. " alt="" coords="515,1319,650,1344"/>
+<area shape="rect" id="node39" href="$class_t_parameters.html#a542674a9017c622d455deb99d98a82db" title="Get rho0_sgy_scalar value. " alt="" coords="508,1368,657,1407"/>
 </map>

@@ -1,0 +1,5 @@
+<map id="TIndexOutputHDF5Stream::~TIndexOutputHDF5Stream" name="TIndexOutputHDF5Stream::~TIndexOutputHDF5Stream">
+<area shape="rect" id="node2" href="$class_t_index_output_h_d_f5_stream.html#ad328264560002d884a67ef4cf527db9c" title="Close stream (apply post&#45;processing if necessary, flush data and close). " alt="" coords="233,5,399,43"/>
+<area shape="rect" id="node4" href="$class_t_base_output_h_d_f5_stream.html#a799715ad08177224f4878e83fb12e096" title="A generic function to free memory &#45; not used in the base class. " alt="" coords="234,67,398,106"/>
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file.html#ab045efd6ad34395d3111edad34e21fcc" title="Close the HDF5 dataset. " alt="" coords="448,11,616,37"/>
+</map>

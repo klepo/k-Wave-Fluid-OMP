@@ -1,0 +1,18 @@
+<map id="TCuboidOutputHDF5Stream::Reopen" name="TCuboidOutputHDF5Stream::Reopen">
+<area shape="rect" id="node2" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class. " alt="" coords="251,5,413,30"/>
+<area shape="rect" id="node3" href="$class_t_parameters.html#ac259bffd62d48d841d05a0e1f1ec2efe" title="Get simulation time step. " alt="" coords="269,54,395,93"/>
+<area shape="rect" id="node4" href="$class_t_parameters.html#a3acc33472da28ca75cabef1007803d62" title="Get start time index for sensor recording. " alt="" coords="247,117,417,155"/>
+<area shape="rect" id="node6" href="$class_t_index_matrix.html#a91a4fb0971480379a0f3b37dfacfce01" title="Get the total number of elements to be sampled within all cuboids. " alt="" coords="238,231,426,270"/>
+<area shape="rect" id="node7" href="$class_t_index_matrix.html#af1b4f33bdadb27a280fa0ca70d5c391e" title="Get the bottom right corner of the index&#45;th cuboid. " alt="" coords="499,202,683,241"/>
+<area shape="rect" id="node8" href="$class_t_index_matrix.html#a4eda75a7c2bf0bb2815dbfe6df181ee3" title="Get the top left corner of the index&#45;th cuboid. " alt="" coords="511,277,670,315"/>
+<area shape="rect" id="node9" href="$class_t_base_output_h_d_f5_stream.html#a56be65e5b731702170511a07ae696b87" title="A generic function to allocate memory &#45; not used in the base class. " alt="" coords="250,346,414,385"/>
+<area shape="rect" id="node10" href="$class_t_base_index_matrix.html#ae5be5f6e90b4f757e00ce9fde7231155" title="Get dimension sizes of the matrix. " alt="" coords="230,409,434,447"/>
+<area shape="rect" id="node11" href="$class_t_h_d_f5___file.html#a2537cc9d898b2c22ba3444d5268596e5" title="Open a HDF5 group at a specified place in the file tree. " alt="" coords="253,471,411,497"/>
+<area shape="rect" id="node12" href="$class_t_h_d_f5___file.html#a48a5736c5fc8afb098f23e199a2afae2" title="Get handle to the root group. " alt="" coords="245,521,419,546"/>
+<area shape="rect" id="node13" href="$class_t_h_d_f5___file.html#ab99450ff4524e093016725f6c6f14a01" title="Open the HDF5 dataset at a specified place in the file tree. " alt="" coords="249,570,415,595"/>
+<area shape="rect" id="node14" href="$class_t_h_d_f5___file.html#a500ef4edc732c4780dd1dd5107b211fb" title="Read data from the dataset under a specified group &#45; float dataset. " alt="" coords="243,619,421,658"/>
+<area shape="rect" id="node5" href="$class_t_command_line_parameters.html#a85ed9c808411158b9499b9bf710e538a" title="Get start time index when sensor data collection begins. " alt="" coords="504,117,677,155"/>
+<area shape="rect" id="node15" href="$class_t_h_d_f5___file.html#a54cbe273921357b1670803fb174c8337" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="483,587,698,626"/>
+<area shape="rect" id="node17" href="$struct_t_dimension_sizes.html#a6b893b8f9e5b4535de4df86e9cd5a85f" title="Get element count, in 3D only spatial domain, in 4D with time. " alt="" coords="497,650,685,689"/>
+<area shape="rect" id="node16" href="$class_t_h_d_f5___file.html#a436e764c1d333f8ba5710d3cd53dce5c" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="747,587,946,626"/>
+</map>

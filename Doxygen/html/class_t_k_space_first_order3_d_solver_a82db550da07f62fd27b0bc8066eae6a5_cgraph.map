@@ -1,3 +1,4 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_matrix_container.html#aa5170a09be43148382d9f3434dc45480" title="Free all matrices &#45; destroy them." alt="" coords="308,5,513,35"/>
+<map id="TKSpaceFirstOrder3DSolver::FreeMemory" name="TKSpaceFirstOrder3DSolver::FreeMemory">
+<area shape="rect" id="node2" href="$class_t_matrix_container.html#aa5170a09be43148382d9f3434dc45480" title="Free all matrices &#45; destroy them. " alt="" coords="233,5,394,43"/>
+<area shape="rect" id="node3" href="$class_t_output_stream_container.html#ad659b03f7c3869229cd97b58f37eb125" title="Free all streams &#45; destroy them. " alt="" coords="234,67,393,106"/>
 </map>

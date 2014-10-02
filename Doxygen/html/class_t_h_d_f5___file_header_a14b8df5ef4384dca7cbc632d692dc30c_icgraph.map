@@ -1,3 +1,9 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_h_d_f5___file_header.html#ad247eb863da90a425f567a5523ef5122" title="Read header from the input file." alt="" coords="257,5,537,35"/>
+<map id="THDF5_FileHeader::GetFileType" name="THDF5_FileHeader::GetFileType">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file_header.html#ad247eb863da90a425f567a5523ef5122" title="Read header from the input file. " alt="" coords="257,5,463,43"/>
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file_header.html#a4b6afb26a173d32bbebfe624296456c8" title="Read Header from output file (necessary for checkpoint&#45;restart). " alt="" coords="513,67,719,106"/>
+<area shape="rect" id="node6" href="$class_t_h_d_f5___file_header.html#a5c4a28995489d52d9e1706b5f701a7b9" title="Read Header from checkpoint file (necessary for checkpoint&#45;restart). " alt="" coords="257,119,463,158"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#aebf7461323308eb62f861fd3c270c796" title="Check the checkpoint file has the correct format and version. " alt="" coords="527,135,705,174"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a68f38df42c3a290d1c50b339f69f0e84" title="Check the output file has the correct format and version. " alt="" coords="527,207,705,246"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a3669de8b5aa4c8847a11039357b9b281" title="Load simulation data from the input file. " alt="" coords="769,135,946,174"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="995,142,1045,167"/>
 </map>

@@ -1,0 +1,6 @@
+<map id="THDF5_File::WriteScalarValue" name="THDF5_File::WriteScalarValue">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file.html#ab99450ff4524e093016725f6c6f14a01" title="Open the HDF5 dataset at a specified place in the file tree. " alt="" coords="273,5,439,30"/>
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file.html#a8b0e2499d1d8ae9b9ef10a2ddbc268f2" title="Write matrix data type into the dataset under a specified group. " alt="" coords="252,54,460,79"/>
+<area shape="rect" id="node5" href="$class_t_h_d_f5___file.html#a8cc0cf8b36fb64366e8964d8c5baa55c" title="Write matrix domain type into the dataset under the root group. " alt="" coords="243,103,469,129"/>
+<area shape="rect" id="node4" href="$class_t_h_d_f5___file.html#ad2f80a4362f15a2517d797b26a071509" title="Write string attribute into the dataset under the root group. " alt="" coords="518,79,717,105"/>
+</map>

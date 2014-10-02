@@ -1,0 +1,12 @@
+<map id="TKSpaceFirstOrder3DSolver::Sum_new_p_linear_lossless" name="TKSpaceFirstOrder3DSolver::Sum_new_p_linear_lossless">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a38d7abff79efba7963add8380f2bd3b3" title="Get the rhox matrix from the container. " alt="" coords="250,5,427,43"/>
+<area shape="rect" id="node3" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access). " alt="" coords="242,67,435,93"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#ad249e0d3ce1828223a3b9a0fef70ca85" title="Get the rhoy matrix from the container. " alt="" coords="250,117,427,155"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a7a64676c2eb11fcee354ba85075557aa" title="Get the rhoz matrix from the container. " alt="" coords="250,179,427,218"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a42ccdc05ba68365b687d3c4a358fdcca" title="Get the p matrix from the container. " alt="" coords="250,242,427,281"/>
+<area shape="rect" id="node7" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real classes). " alt="" coords="241,305,437,343"/>
+<area shape="rect" id="node8" href="$struct_t_dimension_sizes.html#a6b893b8f9e5b4535de4df86e9cd5a85f" title="Get element count, in 3D only spatial domain, in 4D with time. " alt="" coords="245,367,433,406"/>
+<area shape="rect" id="node9" href="$class_t_parameters.html#a3c568d1f6115156dcca03778222178cd" title="Get c0_scalar_flag value. " alt="" coords="270,430,407,469"/>
+<area shape="rect" id="node10" href="$class_t_parameters.html#a58435ff22b40d83e593828b3831d406e" title="Get c0_scalar value. " alt="" coords="270,493,407,531"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a4074057aa8f95571285ce185a96918af" title="Get the c^2 matrix from the container. " alt="" coords="250,555,427,594"/>
+</map>

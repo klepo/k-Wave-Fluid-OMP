@@ -1,0 +1,16 @@
+<map id="THDF5_File::WriteMatrixDataType" name="THDF5_File::WriteMatrixDataType">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file.html#a84a426931066315591f92d012e06fa95" title="Write the scalar value under a specified group &#45; float value. " alt="" coords="275,66,464,91"/>
+<area shape="rect" id="node8" href="$class_t_complex_matrix.html#a67d9e0a8e003ca1bd01ef9aa54185feb" title="Write data into the HDF5_File. " alt="" coords="284,115,455,154"/>
+<area shape="rect" id="node9" href="$class_t_index_matrix.html#aa0bf79dfe6a049d4b23cc9977d261881" title="Write data into the HDF5 file. " alt="" coords="286,303,453,342"/>
+<area shape="rect" id="node11" href="$class_t_index_output_h_d_f5_stream.html#afc865b5d2d44387a096b085a392a10a1" title="Create a HDF5 stream and allocate data for it. " alt="" coords="286,241,453,279"/>
+<area shape="rect" id="node12" href="$class_t_cuboid_output_h_d_f5_stream.html#ad32c05893dfc36984c58a2ab511f5f95" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="281,178,457,217"/>
+<area shape="rect" id="node14" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0e177c166b45ef1501633de357defc54" title="Create a HDF5 stream and allocate data for it. " alt="" coords="262,366,477,405"/>
+<area shape="rect" id="node15" href="$class_t_real_matrix.html#afded978e8e7b5379195a1bb346b91f1f" title="Write data into the HDF5 file. " alt="" coords="288,429,451,467"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="753,121,930,159"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="753,58,930,97"/>
+<area shape="rect" id="node7" href="$class_t_parameters.html#a14b8891f838181a1d3e2af81dd094fed" title="Save scalars into the output HDF5 file. " alt="" coords="531,5,698,43"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="979,121,1157,159"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1206,127,1255,153"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="526,303,703,342"/>
+<area shape="rect" id="node13" href="$class_t_cuboid_output_h_d_f5_stream.html#aa06e50911303e33944f8bb6af2dc9a2f" title="Create a HDF5 stream and allocate data for it. " alt="" coords="527,178,703,217"/>
+</map>

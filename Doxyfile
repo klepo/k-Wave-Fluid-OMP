@@ -218,7 +218,7 @@ SEPARATE_MEMBER_PAGES  = NO
 # uses this value to replace tabs by spaces in code fragments.
 # Minimum value: 1, maximum value: 16, default value: 4.
 
-TAB_SIZE               = 3
+TAB_SIZE               = 2
 
 # This tag can be used to specify a number of aliases that act as commands in
 # the documentation. An alias has the form:
@@ -951,7 +951,7 @@ INLINE_SOURCES         = NO
 # Fortran comments will always remain visible.
 # The default value is: YES.
 
-STRIP_CODE_COMMENTS    = YES
+STRIP_CODE_COMMENTS    = NO
 
 # If the REFERENCED_BY_RELATION tag is set to YES then for each documented
 # function all documented functions referencing it will be listed.

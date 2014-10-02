@@ -1,0 +1,5 @@
+<map id="TBaseOutputHDF5Stream" name="TBaseOutputHDF5Stream">
+<area shape="rect" id="node2" href="$class_t_cuboid_output_h_d_f5_stream.html" title="Output stream for quantities sampled by a cuboid corner sensor mask. " alt="" coords="5,81,181,106"/>
+<area shape="rect" id="node3" href="$class_t_index_output_h_d_f5_stream.html" title="Output stream for quantities sampled by an index sensor mask. " alt="" coords="206,81,372,106"/>
+<area shape="rect" id="node4" href="$class_t_whole_domain_output_h_d_f5_stream.html" title="Output stream for quantities sampled in the whole domain. " alt="" coords="397,81,611,106"/>
+</map>

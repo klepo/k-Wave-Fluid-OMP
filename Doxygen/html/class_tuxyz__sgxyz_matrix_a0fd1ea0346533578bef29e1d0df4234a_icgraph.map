@@ -1,0 +1,6 @@
+<map id="Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x" name="Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#aa5597bf6aeed1124ef9f16ae3971a69b" title="Calculate p0_source. " alt="" coords="254,11,431,50"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="481,11,658,50"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="707,11,885,50"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="934,18,983,43"/>
+</map>

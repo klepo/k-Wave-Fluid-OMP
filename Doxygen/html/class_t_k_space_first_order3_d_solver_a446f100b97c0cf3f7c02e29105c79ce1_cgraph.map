@@ -1,4 +1,4 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real clases)" alt="" coords="395,5,621,35"/>
-<area shape="rect" id="node5" href="$class_t_parameters.html#a1baa12f2da59d58f2ab415b547881028" title="Get Nt value." alt="" coords="440,59,576,88"/>
+<map id="TKSpaceFirstOrder3DSolver::PrintParametersOfSimulation" name="TKSpaceFirstOrder3DSolver::PrintParametersOfSimulation">
+<area shape="rect" id="node2" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real classes). " alt="" coords="241,5,437,43"/>
+<area shape="rect" id="node3" href="$class_t_parameters.html#aa5ec6369f65a8593d8a724f2fc985809" title="Get Nt value. " alt="" coords="271,67,407,93"/>
 </map>

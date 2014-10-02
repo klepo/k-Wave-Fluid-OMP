@@ -1,27 +1,29 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_parameters.html#a14b8891f838181a1d3e2af81dd094fed" title="Save scalars into the output HDF5 file." alt="" coords="392,5,624,35"/>
-<area shape="rect" id="node16" href="$class_t_h_d_f5___file_header.html#a7fe4e469abdc1d2832d4ae81a310b42e" title="THDF5_FileHeader::SetCodeName" alt="" coords="400,59,616,88"/>
-<area shape="rect" id="node18" href="$class_t_k_space_first_order3_d_solver.html#aefdb4e41fa9663dcd229b7911a733cd7" title="Get code name." alt="" coords="376,112,640,141"/>
-<area shape="rect" id="node20" href="$class_t_h_d_f5___file_header.html#a1e397c197aea39a0c7cdc303388d4b61" title="Set major file version." alt="" coords="385,165,631,195"/>
-<area shape="rect" id="node22" href="$class_t_h_d_f5___file_header.html#aaec3c09415504e9359f172e4adb9f5d3" title="Set minor file version." alt="" coords="385,219,631,248"/>
-<area shape="rect" id="node24" href="$class_t_h_d_f5___file_header.html#a29263f40d8ce421f554ac5ddb398ce79" title="Set creation time." alt="" coords="377,272,639,301"/>
-<area shape="rect" id="node26" href="$class_t_h_d_f5___file_header.html#a183eacf4af4337ac99c8a976b057bacc" title="Set file type." alt="" coords="408,325,608,355"/>
-<area shape="rect" id="node28" href="$class_t_h_d_f5___file_header.html#a602831716e689286705c2df7fc8fb110" title="Set host name." alt="" coords="403,379,613,408"/>
-<area shape="rect" id="node30" href="$class_t_h_d_f5___file_header.html#ac9a9b6a3e1c9ba2b145c41e0414a13ed" title="Set memory consumption." alt="" coords="373,432,643,461"/>
-<area shape="rect" id="node34" href="$class_t_k_space_first_order3_d_solver.html#a1336ec3fde2534021a7a7fc2ef0e6654" title="Get memory usage in MB." alt="" coords="347,485,669,515"/>
-<area shape="rect" id="node36" href="$class_t_time_messsure.html#a13ba6edba530d724cd75e5801230615d" title="Get stop timestamp." alt="" coords="439,539,577,568"/>
-<area shape="rect" id="node38" href="$class_t_h_d_f5___file_header.html#a0906d952a4eba6161fe8136a8cd30dce" title="Set execution times." alt="" coords="388,592,628,621"/>
-<area shape="rect" id="node40" href="$class_t_k_space_first_order3_d_solver.html#a3a9456b8045d43cc24cccbd252c3fee5" title="Get total simulation time." alt="" coords="380,645,636,675"/>
-<area shape="rect" id="node42" href="$class_t_k_space_first_order3_d_solver.html#a49d61944fd729e450ef3fe122e050ae0" title="Get data load time." alt="" coords="367,699,649,728"/>
-<area shape="rect" id="node44" href="$class_t_k_space_first_order3_d_solver.html#a47050f685b4a917a59f89d89a670ee31" title="Get pre&#45;processing time." alt="" coords="353,752,663,781"/>
-<area shape="rect" id="node46" href="$class_t_k_space_first_order3_d_solver.html#aabda2f770457baedd8b7e6db9617a3ae" title="Get simulation time (time loop)" alt="" coords="365,805,651,835"/>
-<area shape="rect" id="node48" href="$class_t_k_space_first_order3_d_solver.html#ae946c38d46067f9818149b858dd27941" title="Get post&#45;processing time." alt="" coords="351,859,665,888"/>
-<area shape="rect" id="node50" href="$class_t_h_d_f5___file_header.html#a0987efedd81cd5af50564d19164498f3" title="Set number of cores." alt="" coords="387,912,629,941"/>
-<area shape="rect" id="node53" href="$class_t_h_d_f5___file_header.html#ae2fd4606e4e55e6ac3d59d8cc6feaab6" title="Write header to the output file." alt="" coords="717,725,992,755"/>
-<area shape="rect" id="node5" href="$class_t_h_d_f5___file.html#aa8ed0a3af8aab45a8c488e1f174a2561" title="Write the scalar value." alt="" coords="760,580,949,609"/>
-<area shape="rect" id="node7" href="$class_t_h_d_f5___file.html#a14420ea89898a2d1daad0461d3b058d2" title="Write data into a dataset." alt="" coords="1045,537,1261,567"/>
-<area shape="rect" id="node9" href="$class_t_h_d_f5___file.html#a0ea9771b2590d29c2fd9fabfa6b1f6dd" title="Write matrix data type into the dataset." alt="" coords="1049,591,1257,620"/>
-<area shape="rect" id="node13" href="$class_t_h_d_f5___file.html#a00315c77cfd66f664e4abf190d018e61" title="Write matrix domain type into the dataset." alt="" coords="1041,644,1265,673"/>
-<area shape="rect" id="node11" href="$class_t_h_d_f5___file.html#adadf23ca9adcf338391c295e3a755264" title="Write string attribute into the dataset." alt="" coords="1316,644,1513,673"/>
-<area shape="rect" id="node32" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class." alt="" coords="773,647,936,676"/>
+<map id="TKSpaceFirstOrder3DSolver::WriteOutputDataInfo" name="TKSpaceFirstOrder3DSolver::WriteOutputDataInfo">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file.html#a84a426931066315591f92d012e06fa95" title="Write the scalar value under a specified group &#45; float value. " alt="" coords="499,189,688,214"/>
+<area shape="rect" id="node7" href="$class_t_h_d_f5___file.html#a48a5736c5fc8afb098f23e199a2afae2" title="Get handle to the root group. " alt="" coords="507,69,680,94"/>
+<area shape="rect" id="node8" href="$class_t_parameters.html#ac259bffd62d48d841d05a0e1f1ec2efe" title="Get simulation time step. " alt="" coords="278,119,405,158"/>
+<area shape="rect" id="node9" href="$class_t_parameters.html#a14b8891f838181a1d3e2af81dd094fed" title="Save scalars into the output HDF5 file. " alt="" coords="258,182,425,221"/>
+<area shape="rect" id="node10" href="$class_t_h_d_f5___file_header.html#a04add8b4cb446c03aea6cac5460de73b" title="Set code name. " alt="" coords="233,245,449,270"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#aefdb4e41fa9663dcd229b7911a733cd7" title="Get code name. " alt="" coords="253,294,430,333"/>
+<area shape="rect" id="node12" href="$class_t_h_d_f5___file_header.html#a1e397c197aea39a0c7cdc303388d4b61" title="Set major file version. " alt="" coords="249,357,433,395"/>
+<area shape="rect" id="node13" href="$class_t_h_d_f5___file_header.html#aaec3c09415504e9359f172e4adb9f5d3" title="Set minor file version. " alt="" coords="249,419,433,458"/>
+<area shape="rect" id="node14" href="$class_t_h_d_f5___file_header.html#a29263f40d8ce421f554ac5ddb398ce79" title="Set creation time. " alt="" coords="248,482,435,521"/>
+<area shape="rect" id="node15" href="$class_t_h_d_f5___file_header.html#a183eacf4af4337ac99c8a976b057bacc" title="Set file type. " alt="" coords="241,545,441,570"/>
+<area shape="rect" id="node16" href="$class_t_h_d_f5___file_header.html#a602831716e689286705c2df7fc8fb110" title="Set host name. " alt="" coords="236,594,447,619"/>
+<area shape="rect" id="node17" href="$class_t_h_d_f5___file_header.html#ac9a9b6a3e1c9ba2b145c41e0414a13ed" title="Set memory consumption. " alt="" coords="243,1183,440,1222"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#a1336ec3fde2534021a7a7fc2ef0e6654" title="Get memory usage in MB. " alt="" coords="253,695,430,734"/>
+<area shape="rect" id="node20" href="$class_t_time_measure.html#a5e6fbbcafaf03bc17e9dc055fd735970" title="Get stop timestamp. " alt="" coords="274,758,409,783"/>
+<area shape="rect" id="node21" href="$class_t_h_d_f5___file_header.html#a0906d952a4eba6161fe8136a8cd30dce" title="Set execution times. " alt="" coords="238,807,445,846"/>
+<area shape="rect" id="node22" href="$class_t_k_space_first_order3_d_solver.html#a03232e1fdaf870bc2a2b327c3f92553d" title="Get total simulation time cumulated over all legs. " alt="" coords="253,870,430,909"/>
+<area shape="rect" id="node23" href="$class_t_k_space_first_order3_d_solver.html#af66a0ef5c81eede5361a932b04551031" title="Get data load time cumulated over all legs. " alt="" coords="247,933,435,971"/>
+<area shape="rect" id="node24" href="$class_t_k_space_first_order3_d_solver.html#a70db5ce878d81e8c451031e0e2ec5a69" title="Get pre&#45;processing time cumulated over all legs. " alt="" coords="234,995,449,1034"/>
+<area shape="rect" id="node25" href="$class_t_k_space_first_order3_d_solver.html#a0d36018f26b5e2f59616a52ab5a59394" title="Get simulation time (time loop) cumulated over all legs. " alt="" coords="245,1058,437,1097"/>
+<area shape="rect" id="node26" href="$class_t_k_space_first_order3_d_solver.html#a35143d193d7f1f17f3ded3e6c37636bd" title="Get post&#45;processing time cumulated over all legs. " alt="" coords="232,1121,451,1159"/>
+<area shape="rect" id="node27" href="$class_t_h_d_f5___file_header.html#a0987efedd81cd5af50564d19164498f3" title="Set number of cores. " alt="" coords="243,1246,440,1285"/>
+<area shape="rect" id="node28" href="$class_t_h_d_f5___file_header.html#ae2fd4606e4e55e6ac3d59d8cc6feaab6" title="Write header to the output file. " alt="" coords="239,5,443,43"/>
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file.html#ab99450ff4524e093016725f6c6f14a01" title="Open the HDF5 dataset at a specified place in the file tree. " alt="" coords="766,114,933,139"/>
+<area shape="rect" id="node4" href="$class_t_h_d_f5___file.html#a8b0e2499d1d8ae9b9ef10a2ddbc268f2" title="Write matrix data type into the dataset under a specified group. " alt="" coords="745,213,953,238"/>
+<area shape="rect" id="node6" href="$class_t_h_d_f5___file.html#a8cc0cf8b36fb64366e8964d8c5baa55c" title="Write matrix domain type into the dataset under the root group. " alt="" coords="737,163,962,189"/>
+<area shape="rect" id="node5" href="$class_t_h_d_f5___file.html#ad2f80a4362f15a2517d797b26a071509" title="Write string attribute into the dataset under the root group. " alt="" coords="1011,163,1210,189"/>
+<area shape="rect" id="node18" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class. " alt="" coords="512,1221,675,1246"/>
 </map>

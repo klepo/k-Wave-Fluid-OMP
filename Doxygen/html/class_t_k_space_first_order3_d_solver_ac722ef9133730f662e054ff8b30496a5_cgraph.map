@@ -1,4 +1,4 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_time_messsure.html#afa5f8eb788891fa81a44864dbfc748e1" title="Get start timestamp." alt="" coords="404,5,543,35"/>
-<area shape="rect" id="node5" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class." alt="" coords="392,59,555,88"/>
+<map id="TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver" name="TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver">
+<area shape="rect" id="node2" href="$class_t_time_measure.html#adc3097b6eda14f226954dce19e7b71d6" title="Get start timestamp. " alt="" coords="251,5,386,30"/>
+<area shape="rect" id="node3" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class. " alt="" coords="237,54,400,79"/>
 </map>

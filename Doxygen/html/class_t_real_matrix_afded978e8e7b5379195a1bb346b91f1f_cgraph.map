@@ -1,0 +1,10 @@
+<map id="TRealMatrix::WriteDataToHDF5File" name="TRealMatrix::WriteDataToHDF5File">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file.html#ab283f7e54f95dd47b671ea3de67eb5ff" title="Create the HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="229,5,429,30"/>
+<area shape="rect" id="node4" href="$class_t_h_d_f5___file.html#a48a5736c5fc8afb098f23e199a2afae2" title="Get handle to the root group. " alt="" coords="243,54,416,79"/>
+<area shape="rect" id="node5" href="$class_t_h_d_f5___file.html#aa613641c7c8e3a491bfc4bc2bfc2602c" title="Write a hyper&#45;slab into the dataset &#45; float dataset. " alt="" coords="239,103,419,129"/>
+<area shape="rect" id="node6" href="$class_t_h_d_f5___file.html#ab045efd6ad34395d3111edad34e21fcc" title="Close the HDF5 dataset. " alt="" coords="245,153,413,178"/>
+<area shape="rect" id="node7" href="$class_t_h_d_f5___file.html#a8b0e2499d1d8ae9b9ef10a2ddbc268f2" title="Write matrix data type into the dataset under a specified group. " alt="" coords="225,202,433,227"/>
+<area shape="rect" id="node9" href="$class_t_h_d_f5___file.html#a8cc0cf8b36fb64366e8964d8c5baa55c" title="Write matrix domain type into the dataset under the root group. " alt="" coords="217,251,442,277"/>
+<area shape="rect" id="node3" href="$struct_t_dimension_sizes.html#ade8bdae17bd89d1a8da7e22faab262d9" title="Is it a 3D object? " alt="" coords="516,5,665,30"/>
+<area shape="rect" id="node8" href="$class_t_h_d_f5___file.html#ad2f80a4362f15a2517d797b26a071509" title="Write string attribute into the dataset under the root group. " alt="" coords="491,226,690,251"/>
+</map>

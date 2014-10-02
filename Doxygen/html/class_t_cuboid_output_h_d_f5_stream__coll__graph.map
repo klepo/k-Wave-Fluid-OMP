@@ -1,0 +1,13 @@
+<map id="TCuboidOutputHDF5Stream" name="TCuboidOutputHDF5Stream">
+<area shape="rect" id="node2" href="$class_t_base_output_h_d_f5_stream.html" title="Abstract base class for output data streams (sampled data). " alt="" coords="953,130,1117,155"/>
+<area shape="rect" id="node3" href="$class_t_real_matrix.html" title="The class for real matrices. " alt="" coords="673,90,761,115"/>
+<area shape="rect" id="node4" href="$class_t_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="276,89,393,114"/>
+<area shape="rect" id="node5" href="$class_t_base_matrix.html" title="Abstract base class, the common ancestor defining the common interface and allowing derived classes t..." alt="" coords="20,77,111,102"/>
+<area shape="rect" id="node11" href="$class_t_base_index_matrix.html" title="Abstract base class for index based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="275,39,395,65"/>
+<area shape="rect" id="node6" href="$struct_t_dimension_sizes.html" title="Structure with 4D dimension sizes (3 in space and 1 in time). " alt="" coords="6,18,125,43"/>
+<area shape="rect" id="node7" href="$class_t_h_d_f5___file.html" title="Class wrapping the HDF5 routines. " alt="" coords="673,139,761,165"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="297,149,372,174"/>
+<area shape="rect" id="node9" title="STL class. " alt="" coords="7,142,124,181"/>
+<area shape="rect" id="node10" href="$class_t_index_matrix.html" title="The class for 64b unsigned integers (indices). It is used for sensor_mask_index or sensor_corners_mas..." alt="" coords="830,49,922,74"/>
+<area shape="rect" id="node13" href="$struct_t_cuboid_output_h_d_f5_stream_1_1_t_cuboid_info.html" title="This structure information about a HDF5 dataset (one cuboid). Namely, its HDF5_ID, Starting position in a lineup buffer. " alt="" coords="629,189,805,227"/>
+</map>

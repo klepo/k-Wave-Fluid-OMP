@@ -1,6 +1,6 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="$class_t_real_matrix.html" title="The class for real matrices." alt="" coords="71,181,159,211"/>
-<area shape="rect" id="node4" href="$class_t_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="56,101,173,131"/>
-<area shape="rect" id="node6" href="$class_t_base_matrix.html" title="Abstract base class, the common ancestor defining the common interface and allowing derived classes t..." alt="" coords="5,5,96,35"/>
-<area shape="rect" id="node8" href="$struct_t_dimension_sizes.html" title="Structure with 3D dimension sizes." alt="" coords="120,5,237,35"/>
+<map id="Tuxyz_sgxyzMatrix" name="Tuxyz_sgxyzMatrix">
+<area shape="rect" id="node2" href="$class_t_real_matrix.html" title="The class for real matrices. " alt="" coords="71,171,159,197"/>
+<area shape="rect" id="node3" href="$class_t_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="56,94,172,119"/>
+<area shape="rect" id="node4" href="$class_t_base_matrix.html" title="Abstract base class, the common ancestor defining the common interface and allowing derived classes t..." alt="" coords="5,6,96,31"/>
+<area shape="rect" id="node5" href="$struct_t_dimension_sizes.html" title="Structure with 4D dimension sizes (3 in space and 1 in time). " alt="" coords="121,6,239,31"/>
 </map>

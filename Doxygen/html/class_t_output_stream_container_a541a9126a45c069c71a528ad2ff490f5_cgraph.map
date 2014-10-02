@@ -1,0 +1,5 @@
+<map id="TOutputStreamContainer::CreateNewOutputStream" name="TOutputStreamContainer::CreateNewOutputStream">
+<area shape="rect" id="node2" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class. " alt="" coords="225,5,388,30"/>
+<area shape="rect" id="node3" href="$class_t_parameters.html#a8e4c9ba89ae57c1c21a8ee5a3675dbc0" title="Get sensor mask type (linear or corners). " alt="" coords="226,54,387,93"/>
+<area shape="rect" id="node4" href="$class_t_matrix_container.html#a5a5275e27478117139defb904088f24b" title="Get the matrix with a specific type from the container. " alt="" coords="219,117,394,142"/>
+</map>

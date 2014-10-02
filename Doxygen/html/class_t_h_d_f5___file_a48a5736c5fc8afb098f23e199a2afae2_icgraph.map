@@ -1,0 +1,29 @@
+<map id="THDF5_File::GetRootGroup" name="THDF5_File::GetRootGroup">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file_header.html#ad247eb863da90a425f567a5523ef5122" title="Read header from the input file. " alt="" coords="231,5,438,43"/>
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file_header.html#a4b6afb26a173d32bbebfe624296456c8" title="Read Header from output file (necessary for checkpoint&#45;restart). " alt="" coords="491,285,698,323"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a3669de8b5aa4c8847a11039357b9b281" title="Load simulation data from the input file. " alt="" coords="747,222,925,261"/>
+<area shape="rect" id="node6" href="$class_t_h_d_f5___file_header.html#a5c4a28995489d52d9e1706b5f701a7b9" title="Read Header from checkpoint file (necessary for checkpoint&#45;restart). " alt="" coords="231,119,438,158"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#aebf7461323308eb62f861fd3c270c796" title="Check the checkpoint file has the correct format and version. " alt="" coords="506,159,683,198"/>
+<area shape="rect" id="node8" href="$class_t_h_d_f5___file_header.html#ae2fd4606e4e55e6ac3d59d8cc6feaab6" title="Write header to the output file. " alt="" coords="233,449,437,487"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="506,417,683,455"/>
+<area shape="rect" id="node11" href="$class_t_h_d_f5___file_header.html#a6937a6e1509cdb0430ee58eed065d4fd" title="Write header to the output file. " alt="" coords="233,511,437,550"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="506,511,683,550"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a68f38df42c3a290d1c50b339f69f0e84" title="Check the output file has the correct format and version. " alt="" coords="506,222,683,261"/>
+<area shape="rect" id="node14" href="$class_t_complex_matrix.html#aa30e6faa34b5456c563f8b03b9a5ab50" title="Load data from the HDF5_File. " alt="" coords="248,574,421,613"/>
+<area shape="rect" id="node15" href="$class_t_complex_matrix.html#a67d9e0a8e003ca1bd01ef9aa54185feb" title="Write data into the HDF5_File. " alt="" coords="249,637,420,675"/>
+<area shape="rect" id="node16" href="$class_t_index_matrix.html#a2383918d8e21fe7ca8eacebbe60b30b6" title="Read data from the HDF5 file. " alt="" coords="243,699,426,738"/>
+<area shape="rect" id="node17" href="$class_t_index_matrix.html#aa0bf79dfe6a049d4b23cc9977d261881" title="Write data into the HDF5 file. " alt="" coords="251,1378,418,1417"/>
+<area shape="rect" id="node19" href="$class_t_index_output_h_d_f5_stream.html#afc865b5d2d44387a096b085a392a10a1" title="Create a HDF5 stream and allocate data for it. " alt="" coords="251,814,418,853"/>
+<area shape="rect" id="node20" href="$class_t_index_output_h_d_f5_stream.html#ae7beb560dd32be91c46500a43e1b1190" title="Reopen the output stream after restart and reload data. " alt="" coords="251,877,418,915"/>
+<area shape="rect" id="node21" href="$class_t_cuboid_output_h_d_f5_stream.html#aa06e50911303e33944f8bb6af2dc9a2f" title="Create a HDF5 stream and allocate data for it. " alt="" coords="247,939,423,978"/>
+<area shape="rect" id="node22" href="$class_t_cuboid_output_h_d_f5_stream.html#ac6c36acdb69dbd048eb8101e7c7d6aa8" title="Reopen the output stream after restart and reload data. " alt="" coords="247,1002,423,1041"/>
+<area shape="rect" id="node23" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0e177c166b45ef1501633de357defc54" title="Create a HDF5 stream and allocate data for it. " alt="" coords="227,1065,442,1103"/>
+<area shape="rect" id="node24" href="$class_t_whole_domain_output_h_d_f5_stream.html#a507830a4ec48323a9ef621a0bec49d6f" title="Reopen the output stream after restart and reload data. " alt="" coords="227,1127,442,1166"/>
+<area shape="rect" id="node25" href="$class_t_real_matrix.html#a0f64e66a4d984d259a0120557dfbfbb7" title="Read data from the HDF5 file &#45; only from the root group. " alt="" coords="245,1190,424,1229"/>
+<area shape="rect" id="node26" href="$class_t_real_matrix.html#afded978e8e7b5379195a1bb346b91f1f" title="Write data into the HDF5 file. " alt="" coords="253,1253,416,1291"/>
+<area shape="rect" id="node27" href="$class_t_parameters.html#af36f1cfbaf89152e7f28228ea45ac7b1" title="Read scalar values from the input HDF5 file. " alt="" coords="250,1315,419,1354"/>
+<area shape="rect" id="node28" href="$class_t_parameters.html#a14b8891f838181a1d3e2af81dd094fed" title="Save scalars into the output HDF5 file. " alt="" coords="251,386,418,425"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="974,311,1023,337"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="747,449,925,487"/>
+<area shape="rect" id="node18" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="506,1253,683,1291"/>
+</map>
