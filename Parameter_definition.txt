@@ -9,8 +9,8 @@
  * 
  * @Tool        kspaceFirstOrder3D 2.15
  *
- * @Created     29 August 2012
- * @LastModif   28 August 2014, 15:53
+ * @Created     29 August  2012
+ * @LastModif   02 October 2014, 13:27
  * 
  * @License: 
  *
@@ -35,23 +35,30 @@
 
  
  
- Mandatory parameters:
-  -i <input_file_name>            : HDF5 input file 
+---------------------------------- Usage ---------------------------------
+Mandatory parameters:
+  -i <input_file_name>            : HDF5 input file
   -o <output_file_name>           : HDF5 output file
- 
+
 Optional parameters: 
-  -t <num_threads>                : Number of CPU threads (default = MAX)
-  -r <interval_in_%>              : Progress print interval (default = 5%)
+  -t <num_threads>                : Number of CPU threads
+                                      (default = 4)
+  -r <interval_in_%>              : Progress print interval
+                                      (default = 5%)
   -c <comp_level>                 : Output file compression level <0,9>
-                                      (default = 3)
+                                      (default = 0)
   --benchmark <steps>             : Run a specified number of time steps
-   
+
+  --checkpoint_file <file_name>   : HDF5 checkpoint file
+  --checkpoint_interval <seconds> : Stop after a given number of seconds and
+                                      store the actual state
+
   -h                              : Print help
   --help                          : Print help
   --version                       : Print version
-   
-Output flags:   
-  -p                              : Store acoustic pressure
+
+Output flags:
+  -p                              : Store acoustic pressure 
                                       (default if nothing else is on)
                                       (the same as --p_raw)
   --p_raw                         : Store raw time series of p (default)
@@ -60,21 +67,22 @@ Output flags:
   --p_min                         : Store min of p
   --p_max_all                     : Store max of p (whole domain)
   --p_min_all                     : Store min of p (whole domain)
-  --p_final                       : Store final pressure field
+  --p_final                       : Store final pressure field 
 
   -u                              : Store ux, uy, uz
                                       (the same as --u_raw)
   --u_raw                         : Store raw time series of ux, uy, uz
   --u_non_staggered_raw           : Store non-staggered raw time series of
-                                      ux, uy, uz
+                                      ux, uy, uz 
   --u_rms                         : Store rms of ux, uy, uz
   --u_max                         : Store max of ux, uy, uz
   --u_min                         : Store min of ux, uy, uz
-  --u_max_all                     : Store max of ux ,uy, yz (whole domain)
-  --u_min_all                     : Store max of ux ,uy, yz (whole domain)
+  --u_max_all                     : Store max of ux, uy, uz (whole domain)
+  --u_min_all                     : Store min of ux, uy, uz (whole domain)
   --u_final                       : Store final acoustic velocity
 
   --copy_sensor_mask              : Copy sensor mask to the output file
 
   -s <timestep>                   : Time step when data collection begins
                                       (default = 1)
+--------------------------------------------------------------------------

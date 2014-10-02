@@ -1,5 +1,5 @@
 This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
-Copyright (C) 2013 Jiri Jaros and Bradley Treeby
+Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  
 This file is part of k-Wave. k-Wave is free software: you can redistribute it 
 and/or modify it under the terms of the GNU Lesser General Public License as 
@@ -18,24 +18,23 @@ along with k-Wave. If not, see http://www.gnu.org/licenses/.
 --------------------------------------------------------------------------------
 Content of the repo
 --------------------------------------------------------------------------------
-Code - C++ code
-	Doxygen - Full doxygen documentation
-	HDF5 - C++ sources of the HDF5 module
-	KSpaceSolver - the core of the C++ code
-	MatrixClasses - C++ sources of different matrices classes
-	Parameters - C++ sources of commandline and simulation parameters
-	Utils - C++ sources of useful functions and constants
-	build - NetBeans build directory
-	dist - NetBeans distribution directory
-	nbproject - NetBeans project
+Data           - Simple input data
+Doxygen        - Full doxygen documentation
+GNUMakefile    - GNU Makefiles for different systems. 
+GetoptWin64    - Windows implementation of getopt()
+HDF5           - C++ sources of the HDF5 module
+KSpaceSolver   - The core of the C++ code
+Manual         - PDF version of the k-Wave manual
+MatlabScripts  - A few scripts to compare Matlab and C++
+MatrixClasses  - C++ sources of different matrices classes
+Parameters     - C++ sources of commandline and simulation parameters
+Utils          - C++ sources of useful functions and constants
+nbproject      - NetBeans project
 
-Data    - Simple input data
-GNUMakefile - GNU Make file. If you want to use this makefile, copy it into the Code directory, and set the correct paths to HDF5, FFTW/MKL	
-Manual - PDF version of the k-Wave manual
-MatlabScripts 
-	- GenerateInputData - use saveHDF5Script.m to generate input data.
-	- ValidationTests
-		- compareH5Files.m - compares two different HDF5 files and prints differences
-		- V1p1_TEST_ALL.m - exhaustive validation tests (ensure the binary is under k-Wave Toolbox/binary) between MATLAB and C++
-k-Wave Toolbox - MATLAB version of the toolbox. If you want to use the C++ code from within MATLAB or run the validation test, copy the binary into k-Wave Toolbox/binaries
+
+
+
+
+
+
 
