@@ -1,0 +1,10 @@
+<map id="TIndexMatrix::ReadDataFromHDF5File" name="TIndexMatrix::ReadDataFromHDF5File">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file.html#a73bf63a012f0fc49e2153d1b888d120a" title="Read matrix data type from the dataset. " alt="" coords="245,5,456,30"/>
+<area shape="rect" id="node4" href="$class_t_h_d_f5___file.html#a48a5736c5fc8afb098f23e199a2afae2" title="Get handle to the root group. " alt="" coords="264,54,437,79"/>
+<area shape="rect" id="node5" href="$class_t_h_d_f5___file.html#a1dd37d3ac61b4730f204ad338da4723a" title="Read matrix domain type from the dataset under a specified group. " alt="" coords="237,103,464,129"/>
+<area shape="rect" id="node6" href="$class_t_h_d_f5___file.html#a500ef4edc732c4780dd1dd5107b211fb" title="Read data from the dataset under a specified group &#45; float dataset. " alt="" coords="262,153,439,191"/>
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file.html#acb49e25c10ecf2f3add550b7560f7056" title="Read string attribute from the dataset under the root group. " alt="" coords="519,54,721,79"/>
+<area shape="rect" id="node7" href="$class_t_h_d_f5___file.html#a54cbe273921357b1670803fb174c8337" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="513,121,727,159"/>
+<area shape="rect" id="node9" href="$struct_t_dimension_sizes.html#a6b893b8f9e5b4535de4df86e9cd5a85f" title="Get element count, in 3D only spatial domain, in 4D with time. " alt="" coords="526,183,714,222"/>
+<area shape="rect" id="node8" href="$class_t_h_d_f5___file.html#a436e764c1d333f8ba5710d3cd53dce5c" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="777,121,975,159"/>
+</map>

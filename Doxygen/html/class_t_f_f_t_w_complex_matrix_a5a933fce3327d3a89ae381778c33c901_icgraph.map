@@ -1,0 +1,7 @@
+<map id="TFFTWComplexMatrix::Compute_FFT_1DY_C2R" name="TFFTWComplexMatrix::Compute_FFT_1DY_C2R">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a21665aa1ffc35c605f47a2d136a4cb97" title="Calculate ux_shifted, uy_shifted and uz_shifted. " alt="" coords="225,5,402,43"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a153d0bb845efc85199f1f402f1a2643e" title="Store sensor data. " alt="" coords="451,5,629,43"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="678,5,855,43"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="905,5,1082,43"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1131,11,1181,37"/>
+</map>

@@ -5,12 +5,12 @@
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The main file of kspaceFirstOrder3D-OMP
+ * @brief       The main file of kspaceFirstOrder3D-OMP.
  *
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        11 July      2012, 10:57 (created) \n
- *              02 September 2014, 16:49 (revised)
+ *              02 October   2014, 10:06 (revised)
  *
  *
  *
@@ -41,7 +41,7 @@
  * of propagating acoustic waves in 1D, 2D, or 3D. The toolbox has a wide range of
  * functionality, but at its heart is an advanced numerical model that can account
  * for both linear or nonlinear wave propagation, an arbitrary distribution of weakly
- * heterogeneous material  * parameters, and power law acoustic absorption
+ * heterogeneous material parameters, and power law acoustic absorption
  * (http://www.k-wave.org).
  *
  * This project is a part of the k-Wave toolbox accelerating 3D simulations using
@@ -91,11 +91,11 @@
  \verbatim
   ./configure --enable-hl --prefix=folder_to_install
 \endverbatim
- * 3. Make the HDF library by typing:
+ * 3. Make the HDF5 library by typing:
 \verbatim
   make
 \endverbatim
- * 4. Install the HDF library by typing:
+ * 4. Install the HDF5 library by typing:
 \verbatim
   make install
 \endverbatim
@@ -146,7 +146,7 @@
  * <b> 2.4 Compiling the C++ code on Linux</b>
  *
  * After the libraries and the compiler have been installed, you are ready to
- * compile the <tt>kspaceFirstOrder3D-OMP </tt> code.
+ * compile the <tt>kspaceFirstOrder3D-OMP</tt> code.
  *
  *
  * 1. Download the <tt>kspaceFirstOrder3D-OMP</tt> source codes.
@@ -161,7 +161,7 @@
  *
  * 3. Select how to link the libraries. Static linking is preferred as it may be
  * a bit faster, however, on some systems (HPC clusters) it may be better to use
- * dynamic linking and use the system specific library at runtime.
+ * dynamic linking and use the system specific libraries at runtime.
 \verbatim
 	#LINKING = STATIC
 	#LINKING = DYNAMIC
@@ -173,7 +173,7 @@
  * If you are about to run the same binary on different machines or you want to
  * cross-compile the code, you are free to use any of the possible choices,
  * where SSE 3 is the most general but slowest and AVX2 is the most recent
- * instruction set while believed to be the fastest one
+ * instruction set while believed to be the fastest one.
 \verbatim
   CPU_ARCH = native
   #CPU_ARCH = SSE3
@@ -212,8 +212,8 @@
  * The \c -t parameter sets the number of threads used, which defaults the system maximum.
  * On CPUs with Intel Hyper-Threading (HT), the performance is sometimes better if HT
  * is disabled in the BIOS settings. If HT is switched on, the default will be to
- * spawn twice as many threads as there are physical processor cores, which might
- * or might not slow down the code execution. Therefore, if the HT is on, try specifying the
+ * spawn twice as many threads as there are physical processor cores, which may but again
+ * may not slow down the code execution. Therefore, if the HT is on, try specifying the
  * number of threads manually for best performance (e.g. 4 for Intel i7). We
  * recommend experimenting with this parameter to find the best configuration.
  * Note, if there are other tasks being executed on the system, it might be useful
@@ -240,7 +240,7 @@
  *
  *
  *
- * For codes that are expected to run for a very long time, it may be useful to
+ * For jobs that are expected to run for a very long time, it may be useful to
  * checkpoint and restart the execution. One motivation is the wall clock limit
  * per task on clusters where jobs must fit within a given time span
  * (e.g. 24 hours). The second motivation is a level of fault-tolerance, where
@@ -255,12 +255,12 @@
  * When controlling a multi-leg simulation by a script loop, the parameters of the code
  * remains the same in all legs. The first leg of the simulation creates a checkpoint
  * file while the last one deletes it. If the checkpoint file is not found the
- * simulation starts from beginning. In order to get know how many steps have been
+ * simulation starts from the beginning. In order to find out how many steps have been
  * finished, please open the output file and read the variable <tt>t_index</tt>.
  *
  *
- * The \c -h and \c --help parameters print all the parameters of the C++ code,
- * The <tt> --version </tt>parameter reports detail information of the code useful for
+ * The \c -h and \c --help parameters print all the parameters of the C++ code.
+ * The <tt> --version </tt>parameter reports detail information about the code useful for
  * debugging and bug reports. It prints out the internal version, the build date and time, the
  * git hash allowing us to track the version of the source code, the operating system,
  * the compiler name and version and the instruction set used.
@@ -268,7 +268,7 @@
  *
  * The remaining flags specify the output quantities to be recorded during the
  * simulation and stored on disk analogous to  the sensor.record input. If
- * the \c -p or \c --p raw flags are set (these are equivalent), a time series of
+ * the \c -p or \c --p\_raw flags are set (these are equivalent), a time series of
  * the acoustic pressure at the grid points specified by the sensor mask is
  * recorded. If the \c --p_rms, \c --p_max, \c --p_min flags are set,
  * the root mean square and/or maximum and/or minimum values of the pressure at
@@ -279,11 +279,11 @@
  * The flags \c --p_max_all and \c --p_min_all allow to calculate the maximum and
  * minimum values over the entire acoustic pressure field, regardless on the shape
  * of the sensor mask.
- * Flags to record the acoustic particular velocity are defined in an analogous fashion.
+ * Flags to record the acoustic particle velocity are defined in an analogous fashion.
  * For proper calculation of acoustic intensity, the particle velocity has to be
  * shifted onto the same grid as the acoustic pressure. This can be done by setting
- * \c --u_non_staggered_raw flag, that first shift the particle velocity and then
- * sample the grid points specified by the sensor mask. Since the shift operation
+ * \c --u_non_staggered_raw flag, that first shifts the particle velocity and then
+ * samples the grid points specified by the sensor mask. Since the shift operation
  * requires additional FFTs, the impact on the simulation time may be significant.
  *
  * Any combination of <tt>p</tt> and <tt>u</tt> flags is admissible. If no output flag is set,
@@ -311,7 +311,7 @@ Optional parameters:
                                       (default = 0)
   --benchmark <steps>             : Run a specified number of time steps
 
-  --checkpoint_file <file_name>   : HDF5 Checkpoint file
+  --checkpoint_file <file_name>   : HDF5 checkpoint file
   --checkpoint_interval <seconds> : Stop after a given number of seconds and
                                       store the actual state
 
@@ -384,15 +384,15 @@ Output flags:
  * output file format. The code is happy to work with both versions (1.0 and 1.1), however when
  * working with an input file of version 1.0, some features are not supported,
  * namely the cuboid sensor mask, and u_non_staggered_raw.
- * When running from within the actual K-Wave Toolbox, the files will be generated
+ * When running from within the actual K-Wave Toolbox, the files will always be generated
  * in version 1.1
  *
  * The HDF5 input file for the C++ simulation code contains a file header with
  * brief description of the simulation stored in string attributes,
  * and the root group `/' which stores all the simulation properties in the form
- * of 3D datasets (a complete list of input datasets is given in Appendix B).
- * THe HDF5 checkpoint file contains the same file header as the input file and
- * and the root group `/' with a few datasets keeping the actual simulation state
+ * of 3D datasets (a complete list of input datasets is given bellow).
+ * The HDF5 checkpoint file contains the same file header as the input file and
+ * the root group `/' with a few datasets keeping the actual simulation state
  * The HDF5 output file contains a file header with the simulation description
  * as well as performance statistics, such as the simulation time and memory
  * consumption, stored in string attributes.
@@ -459,9 +459,9 @@ total_memory_in_use Total               Peak memory in use
  * by the quantity stored. This makes the file clearly readable and easy to parse.
  *
  *
- * In order to enable compression and more efficient processing of big datasets
+ * In order to enable compression and more efficient data processing, big datasets
  * are not stored as monolithic blocks
- * but broken into chunks that are compressed by the ZIP library  and stored
+ * but broken into chunks that may be compressed by the ZIP library  and stored
  * separately. The chunk size is defined as follows:
  *
  * \li <tt> (1M elements, 1, 1) </tt> in the case of 1D variables - index sensor mask (8MB blocks).
@@ -513,88 +513,85 @@ Name                            Size           Data type       Domain Type      
   3 Medium Properties
 --------------------------------------------------------------------------------------------------------------
   3.1 Regular Medium Properties
-
-  rho0                          (Nx, Ny, Nz)    float         real              heterogenous
-                                (1, 1, 1)       float         real              homogenous
-  rho0_sgx                      (Nx, Ny, Nz)    float         real              heterogenous
-                                (1, 1, 1)       float         real              homogenous
-  rho0_sgy                      (Nx, Ny, Nz)    float         real              heterogenous
-                                (1, 1, 1)       float         real              homogenous
-  rho0_sgz                      (Nx, Ny, Nz)    float         real              heterogenous
-                                (1, 1, 1)       float         real              homogenous
-  c0                            (Nx, Ny, Nz)    float         real              heterogenous
-                                (1, 1, 1)       float         real              homogenous
-  c_ref                         (1, 1, 1)       float         real
+  rho0                          (Nx, Ny, Nz)    float          real             heterogenous
+                                (1, 1, 1)       float          real             homogenous
+  rho0_sgx                      (Nx, Ny, Nz)    float          real             heterogenous
+                                (1, 1, 1)       float          real             homogenous
+  rho0_sgy                      (Nx, Ny, Nz)    float          real             heterogenous
+                                (1, 1, 1)       float          real             homogenous
+  rho0_sgz                      (Nx, Ny, Nz)    float          real             heterogenous
+                                (1, 1, 1)       float          real             homogenous
+  c0                            (Nx, Ny, Nz)    float          real             heterogenous
+                                (1, 1, 1)       float          real             homogenous
+  c_ref                         (1, 1, 1)       float          real
 
   3.2 Nonlinear Medium Properties (defined if (nonlinear_flag == 1))
-
-  BonA                          (Nx, Ny, Nz)    float         real              heterogenous
-                                (1, 1, 1)       float         real              homogenous
+  BonA                          (Nx, Ny, Nz)    float          real             heterogenous
+                                (1, 1, 1)       float          real             homogenous
 
   3.3 Absorbing Medium Properties (defined if (absorbing_flag == 1))
-
-  alpha_coef                    (Nx, Ny, Nz)    float         real              heterogenous
-                                (1, 1, 1)       float         real              homogenous
-  alpha_power                   (1, 1, 1)       float         real
+  alpha_coef                    (Nx, Ny, Nz)    float          real             heterogenous
+                                (1, 1, 1)       float          real             homogenous
+  alpha_power                   (1, 1, 1)       float          real
 --------------------------------------------------------------------------------------------------------------
   4. Sensor Variables
 --------------------------------------------------------------------------------------------------------------
-  sensor_mask_type              (1, 1, 1)       long          real              File version 1.1 (0 = index, 1 = corners)
-  sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.0 always, File version 1.1 if sensor_mask_type == 0
-  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1, if sensor_mask_type == 1
+  sensor_mask_type              (1, 1, 1)       long           real             File version 1.1 (0 = index, 1 = corners)
+  sensor_mask_index             (Nsens, 1, 1)   long           real             File version 1.0 always, File version 1.1 if sensor_mask_type == 0
+  sensor_mask_corners           (Ncubes, 6, 1)  long           real             File version 1.1, if sensor_mask_type == 1
 --------------------------------------------------------------------------------------------------------------
   5 Source Properties
 --------------------------------------------------------------------------------------------------------------
   5.1 Velocity Source Terms (defined if (ux_source_flag == 1 || uy_source_flag == 1 || uz_source_flag == 1))
-  u_source_mode                 (1, 1, 1)          long       real
-  u_source_many                 (1, 1, 1)          long       real
-  u_source_index                (Nsrc, 1, 1)       long       real
-  ux_source_input               (1, Nt_src, 1)     float      real              u_source_many == 0
-                                (Nsrc, Nt_src, 1)  float      real              u_source_many == 1
-  uy_source_input               (1, Nt_src,  1)    float      real              u_source_many == 0
-                                (Nsrc, Nt_src, 1)  float      real              u_source_many == 1
-  uz_source_input               (1, Nt_src, 1)     float      real              u_source_many == 0
-                                (Nt_src, Nsrc, 1)  float      real              u_source_many == 1
+  u_source_mode                 (1, 1, 1)          long        real
+  u_source_many                 (1, 1, 1)          long        real
+  u_source_index                (Nsrc, 1, 1)       long        real
+  ux_source_input               (1, Nt_src, 1)     float       real             u_source_many == 0
+                                (Nsrc, Nt_src, 1)  float       real             u_source_many == 1
+  uy_source_input               (1, Nt_src,  1)    float       real             u_source_many == 0
+                                (Nsrc, Nt_src, 1)  float       real             u_source_many == 1
+  uz_source_input               (1, Nt_src, 1)     float       real             u_source_many == 0
+                                (Nt_src, Nsrc, 1)  float       real             u_source_many == 1
 
   5.2 Pressure Source Terms (defined if p_source_flag == 1))
-  p_source_mode                 (1, 1, 1)          long       real
-  p_source_many                 (1, 1, 1)          long       real
-  p_source_index                (Nsrc, 1, 1)       long       real
-  p_source_input                (Nsrc, Nt_src, 1)  float      real              p_source_many == 1
-                                (1, Nt_src, 1)     float      real              p_source_many == 0
+  p_source_mode                 (1, 1, 1)          long        real
+  p_source_many                 (1, 1, 1)          long        real
+  p_source_index                (Nsrc, 1, 1)       long        real
+  p_source_input                (Nsrc, Nt_src, 1)  float       real             p_source_many == 1
+                                (1, Nt_src, 1)     float       real             p_source_many == 0
 
   5.3 Transducer Source Terms (defined if (transducer_source_flag == 1))
-  u_source_index                (Nsrc, 1, 1)       long       real
-  transducer_source_input       (Nt_src, 1, 1)     float      real
-  delay_mask                    (Nsrc, 1, 1)       float      real
+  u_source_index                (Nsrc, 1, 1)       long        real
+  transducer_source_input       (Nt_src, 1, 1)     float       real
+  delay_mask                    (Nsrc, 1, 1)       float       real
 
   5.4 IVP Source Terms (defined if ( p0_source_flag ==1))
-  p0_source_input               (Nx, Ny, Nz)        float     real
+  p0_source_input               (Nx, Ny, Nz)        float      real
 --------------------------------------------------------------------------------------------------------------
   6. K-space and Shift Variables
 --------------------------------------------------------------------------------------------------------------
-  ddx_k_shift_pos_r             (Nx/2 + 1, 1, 1)  float       complex
-  ddx_k_shift_neg_r             (Nx/2 + 1, 1, 1)  float       complex
-  ddy_k_shift_pos               (1, Ny, 1)        float       complex
-  ddy_k_shift_neg               (1, Ny, 1)        float       complex
-  ddz_k_shift_pos               (1, 1, Nz)        float       complex
-  ddz_k_shift_neg               (1, 1, Nz)        float       complex
+  ddx_k_shift_pos_r             (Nx/2 + 1, 1, 1)  float        complex
+  ddx_k_shift_neg_r             (Nx/2 + 1, 1, 1)  float        complex
+  ddy_k_shift_pos               (1, Ny, 1)        float        complex
+  ddy_k_shift_neg               (1, Ny, 1)        float        complex
+  ddz_k_shift_pos               (1, 1, Nz)        float        complex
+  ddz_k_shift_neg               (1, 1, Nz)        float        complex
 --------------------------------------------------------------------------------------------------------------
   7. PML Variables
 --------------------------------------------------------------------------------------------------------------
-  pml_x_size                    (1, 1, 1)       long          real
-  pml_y_size                    (1, 1, 1)       long          real
-  pml_z_size                    (1, 1, 1)       long          real
-  pml_x_alpha                   (1, 1, 1)       float         real
-  pml_y_alpha                   (1, 1, 1)       float         real
-  pml_z_alpha                   (1, 1, 1)       float         real
+  pml_x_size                    (1, 1, 1)       long           real
+  pml_y_size                    (1, 1, 1)       long           real
+  pml_z_size                    (1, 1, 1)       long           real
+  pml_x_alpha                   (1, 1, 1)       float          real
+  pml_y_alpha                   (1, 1, 1)       float          real
+  pml_z_alpha                   (1, 1, 1)       float          real
 
-  pml_x                         (Nx, 1, 1)      float         real
-  pml_x_sgx                     (Nx, 1, 1)      float         real
-  pml_y                         (1, Ny, 1)      float         real
-  pml_y_sgy                     (1, Ny, 1)      float         real
-  pml_z                         (1, 1, Nz)      float         real
-  pml_z_sgz                     (1, 1, Nz)      float         real
+  pml_x                         (Nx, 1, 1)      float          real
+  pml_x_sgx                     (Nx, 1, 1)      float          real
+  pml_y                         (1, Ny, 1)      float          real
+  pml_y_sgy                     (1, Ny, 1)      float          real
+  pml_z                         (1, 1, Nz)      float          real
+  pml_z_sgz                     (1, 1, Nz)      float          real
 ==============================================================================================================
  \endverbatim
 
@@ -629,167 +626,166 @@ Name                            Size           Data type       Domain Type      
 ==============================================================================================================
                                         Output File Datasets
 ==============================================================================================================
-Name                            Size           Data type        Domain Type     Condition of Presence
+Name                            Size           Data type       Domain Type      Condition of Presence
 ==============================================================================================================
   1. Simulation Flags
 --------------------------------------------------------------------------------------------------------------
-  ux_source_flag                (1, 1, 1)       long          real
-  uy_source_flag                (1, 1, 1)       long          real
-  uz_source_flag                (1, 1, 1)       long          real
-  p_source_flag                 (1, 1, 1)       long          real
-  p0_source_flag                (1, 1, 1)       long          real
-  transducer_source_flag        (1, 1, 1)       long          real
-  nonuniform_grid_flag          (1, 1, 1)       long          real
-  nonlinear_flag                (1, 1, 1)       long          real
-  absorbing_flag                (1, 1, 1)       long          real
-  u_source_mode                 (1, 1, 1)       long          real              if u_source
-  u_source_many                 (1, 1, 1)       long          real              if u_source
-  p_source_mode                 (1, 1, 1)       long          real              if p_source
-  p_source_many                 (1, 1, 1)       long          real              if p_source
-
+  ux_source_flag                (1, 1, 1)       long           real
+  uy_source_flag                (1, 1, 1)       long           real
+  uz_source_flag                (1, 1, 1)       long           real
+  p_source_flag                 (1, 1, 1)       long           real
+  p0_source_flag                (1, 1, 1)       long           real
+  transducer_source_flag        (1, 1, 1)       long           real
+  nonuniform_grid_flag          (1, 1, 1)       long           real
+  nonlinear_flag                (1, 1, 1)       long           real
+  absorbing_flag                (1, 1, 1)       long           real
+  u_source_mode                 (1, 1, 1)       long           real             if u_source
+  u_source_many                 (1, 1, 1)       long           real             if u_source
+  p_source_mode                 (1, 1, 1)       long           real             if p_source
+  p_source_many                 (1, 1, 1)       long           real             if p_source
 --------------------------------------------------------------------------------------------------------------
   2. Grid Properties
 --------------------------------------------------------------------------------------------------------------
-  Nx                            (1, 1, 1)       long          real
-  Ny                            (1, 1, 1)       long          real
-  Nz                            (1, 1, 1)       long          real
-  Nt                            (1, 1, 1)       long          real
-  dt                            (1, 1, 1)       float         real
-  dx                            (1, 1, 1)       float         real
-  dy                            (1, 1, 1)       float         real
-  dz                            (1, 1, 1)       float         real
+  Nx                            (1, 1, 1)       long           real
+  Ny                            (1, 1, 1)       long           real
+  Nz                            (1, 1, 1)       long           real
+  Nt                            (1, 1, 1)       long           real
+  dt                            (1, 1, 1)       float          real
+  dx                            (1, 1, 1)       float          real
+  dy                            (1, 1, 1)       float          real
+  dz                            (1, 1, 1)       float          real
 -------------------------------------------------------------------------------------------------------------
   3. PML Variables
 --------------------------------------------------------------------------------------------------------------
-  pml_x_size                    (1, 1, 1)       long          real
-  pml_y_size                    (1, 1, 1)       long          real
-  pml_z_size                    (1, 1, 1)       long          real
-  pml_x_alpha                   (1, 1, 1)       float         real
-  pml_y_alpha                   (1, 1, 1)       float         real
-  pml_z_alpha                   (1, 1, 1)       float         real
+  pml_x_size                    (1, 1, 1)       long           real
+  pml_y_size                    (1, 1, 1)       long           real
+  pml_z_size                    (1, 1, 1)       long           real
+  pml_x_alpha                   (1, 1, 1)       float          real
+  pml_y_alpha                   (1, 1, 1)       float          real
+  pml_z_alpha                   (1, 1, 1)       float          real
 
-  pml_x                         (Nx, 1, 1)      float         real
-  pml_x_sgx                     (Nx, 1, 1)      float         real
-  pml_y                         (1, Ny, 1)      float         real
-  pml_y_sgy                     (1, Ny, 1)      float         real
-  pml_z                         (1, 1, Nz)      float         real
-  pml_z_sgz                     (1, 1, Nz)      float         real
+  pml_x                         (Nx, 1, 1)      float          real
+  pml_x_sgx                     (Nx, 1, 1)      float          real
+  pml_y                         (1, Ny, 1)      float          real
+  pml_y_sgy                     (1, Ny, 1)      float          real
+  pml_z                         (1, 1, Nz)      float          real
+  pml_z_sgz                     (1, 1, Nz)      float          real
 --------------------------------------------------------------------------------------------------------------
   4. Sensor Variables (present if --copy_sensor_mask)
 --------------------------------------------------------------------------------------------------------------
-  sensor_mask_type              (1, 1, 1)       long          real              File version 1.1 and --copy_sensor_mask
-  sensor_mask_index             (Nsens, 1, 1)   long          real              File version 1.1 and if sensor_mask_type == 0
-  sensor_mask_corners           (Ncubes, 6, 1)  long          real              File version 1.1 and if sensor_mask_type == 1
+  sensor_mask_type              (1, 1, 1)       long           real             File version 1.1 and --copy_sensor_mask
+  sensor_mask_index             (Nsens, 1, 1)   long           real             File version 1.1 and if sensor_mask_type == 0
+  sensor_mask_corners           (Ncubes, 6, 1)  long           real             File version 1.1 and if sensor_mask_type == 1
 --------------------------------------------------------------------------------------------------------------
   5a. Simulation Results: if sensor_mask_type == 0 (index), or File version == 1.0
 --------------------------------------------------------------------------------------------------------------
-  p                             (Nsens, Nt - s, 1) float      real              -p or --p_raw
-  p_rms                         (Nsens, 1, 1)      float      real              --p_rms
-  p_max                         (Nsens, 1, 1)      float      real              --p_max
-  p_min                         (Nsens, 1, 1)      float      real              --p_min
-  p_max_all                     (Nx, Ny, Nz)       float      real              --p_max_all
-  p_min_all                     (Nx, Ny, Nz)       float      real              --p_min_all
-  p_final                       (Nx, Ny, Nz)       float      real              --p_final
+  p                             (Nsens, Nt - s, 1) float       real             -p or --p_raw
+  p_rms                         (Nsens, 1, 1)      float       real             --p_rms
+  p_max                         (Nsens, 1, 1)      float       real             --p_max
+  p_min                         (Nsens, 1, 1)      float       real             --p_min
+  p_max_all                     (Nx, Ny, Nz)       float       real             --p_max_all
+  p_min_all                     (Nx, Ny, Nz)       float       real             --p_min_all
+  p_final                       (Nx, Ny, Nz)       float       real             --p_final
 
 
-  ux                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
-  uy                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
-  uz                            (Nsens, Nt - s, 1) float      real              -u or --u_raw
+  ux                            (Nsens, Nt - s, 1) float       real             -u or --u_raw
+  uy                            (Nsens, Nt - s, 1) float       real             -u or --u_raw
+  uz                            (Nsens, Nt - s, 1) float       real             -u or --u_raw
 
-  ux_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
-  uy_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
-  uz_non_staggered              (Nsens, Nt - s, 1) float      real              --u_non_staggered_raw
+  ux_non_staggered              (Nsens, Nt - s, 1) float       real             --u_non_staggered_raw (File version ==1.1)
+  uy_non_staggered              (Nsens, Nt - s, 1) float       real             --u_non_staggered_raw (File version ==1.1)
+  uz_non_staggered              (Nsens, Nt - s, 1) float       real             --u_non_staggered_raw (File version ==1.1)
 
-  ux_rms                        (Nsens, 1, 1)      float      real              --u_rms
-  uy_rms                        (Nsens, 1, 1)      float      real              --u_rms
-  uz_rms                        (Nsens, 1, 1)      float      real              --u_rms
+  ux_rms                        (Nsens, 1, 1)      float       real             --u_rms
+  uy_rms                        (Nsens, 1, 1)      float       real             --u_rms
+  uz_rms                        (Nsens, 1, 1)      float       real             --u_rms
 
-  ux_max                        (Nsens, 1, 1)      float      real              --u_max
-  uy_max                        (Nsens, 1, 1)      float      real              --u_max
-  uz_max                        (Nsens, 1, 1)      float      real              --u_max
+  ux_max                        (Nsens, 1, 1)      float       real             --u_max
+  uy_max                        (Nsens, 1, 1)      float       real             --u_max
+  uz_max                        (Nsens, 1, 1)      float       real             --u_max
 
-  ux_min                        (Nsens, 1, 1)      float      real              --u_min
-  uy_min                        (Nsens, 1, 1)      float      real              --u_min
-  uz_min                        (Nsens, 1, 1)      float      real              --u_min
+  ux_min                        (Nsens, 1, 1)      float       real             --u_min
+  uy_min                        (Nsens, 1, 1)      float       real             --u_min
+  uz_min                        (Nsens, 1, 1)      float       real             --u_min
 
-  ux_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
-  uy_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
-  uz_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  ux_max_all                    (Nx, Ny, Nz)       float       real             --u_max_all
+  uy_max_all                    (Nx, Ny, Nz)       float       real             --u_max_all
+  uz_max_all                    (Nx, Ny, Nz)       float       real             --u_max_all
 
-  ux_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
-  uy_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
-  uz_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+  ux_min_all                    (Nx, Ny, Nz)       float       real             --u_min_all
+  uy_min_all                    (Nx, Ny, Nz)       float       real             --u_min_all
+  uz_min_all                    (Nx, Ny, Nz)       float       real             --u_min_all
 
-  ux_final                      (Nx, Ny, Nz)       float      real              --u_final
-  uy_final                      (Nx, Ny, Nz)       float      real              --u_final
-  uz_final                      (Nx, Ny, Nz)       float      real              --u_final
+  ux_final                      (Nx, Ny, Nz)       float       real             --u_final
+  uy_final                      (Nx, Ny, Nz)       float       real             --u_final
+  uz_final                      (Nx, Ny, Nz)       float       real             --u_final
 --------------------------------------------------------------------------------------------------------------
   5b. Simulation Results: if sensor_mask_type == 1 (corners) and File version == 1.1
 --------------------------------------------------------------------------------------------------------------
   /p                            group of datasets, one per cuboid               -p or --p_raw
-  /p/1                          (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
-  /p/2                          (Cx, Cy, Cz, Nt-s) float      real              2nd sampled cuboid, etc.
+  /p/1                          (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
+  /p/2                          (Cx, Cy, Cz, Nt-s) float       real               2nd sampled cuboid, etc.
 
   /p_rms                        group of datasets, one per cuboid               --p_rms
-  /p_rms/1                      (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
+  /p_rms/1                      (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
 
   /p_max                        group of datasets, one per cuboid               --p_max
-  /p_max/1                      (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
+  /p_max/1                      (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
 
   /p_min                        group of datasets, one per cuboid               --p_min
-  /p_min/1                      (Cx, Cy, Cz, Nt-s) float      real              1st sampled cuboid
+  /p_min/1                      (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
 
-  p_max_all                     (Nx, Ny, Nz)       float      real              --p_max_all
-  p_min_all                     (Nx, Ny, Nz)       float      real              --p_min_all
-  p_final                       (Nx, Ny, Nz)       float      real              --p_final
+  p_max_all                     (Nx, Ny, Nz)       float       real             --p_max_all
+  p_min_all                     (Nx, Ny, Nz)       float       real             --p_min_all
+  p_final                       (Nx, Ny, Nz)       float       real             --p_final
 
 
   /ux                           group of datasets, one per cuboid               -u or --u_raw
-  /ux/1                         (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux/1                         (Cx, Cy, Cz, Nt-s) float       real                1st sampled cuboid
   /uy                           group of datasets, one per cuboid               -u or --u_raw
-  /uy/1                         (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /uy/1                         (Cx, Cy, Cz, Nt-s) float       real                1st sampled cuboid
   /uz                           group of datasets, one per cuboid               -u or --u_raw
-  /uz/1                         (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /uz/1                         (Cx, Cy, Cz, Nt-s) float       real                1st sampled cuboid
 
   /ux_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
-  /ux_non_staggered/1           (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux_non_staggered/1           (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
   /uy_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
-  /uy_non_staggered/1           (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /uy_non_staggered/1           (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
   /uz_non_staggered             group of datasets, one per cuboid               --u_non_staggered_raw
-  /uz_non_staggered/1           (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /uz_non_staggered/1           (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
 
   /ux_rms                       group of datasets, one per cuboid               --u_rms
-  /ux_rms/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux_rms/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
   /uy_rms                       group of datasets, one per cuboid               --u_rms
-  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
   /uz_rms                       group of datasets, one per cuboid               --u_rms
-  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /uy_rms/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
 
   /ux_max                       group of datasets, one per cuboid               --u_max
-  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
   /uy_max                       group of datasets, one per cuboid               --u_max
-  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
   /uz_max                       group of datasets, one per cuboid               --u_max
-  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux_max/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
 
   /ux_min                       group of datasets, one per cuboid               --u_min
-  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
   /uy_min                       group of datasets, one per cuboid               --u_min
-  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
   /uz_min                       group of datasets, one per cuboid               --u_min
-  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float      real               1st sampled cuboid
+  /ux_min/1                     (Cx, Cy, Cz, Nt-s) float       real               1st sampled cuboid
 
-  ux_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
-  uy_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
-  uz_max_all                    (Nx, Ny, Nz)       float      real              --u_max_all
+  ux_max_all                    (Nx, Ny, Nz)       float       real             --u_max_all
+  uy_max_all                    (Nx, Ny, Nz)       float       real             --u_max_all
+  uz_max_all                    (Nx, Ny, Nz)       float       real             --u_max_all
 
-  ux_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
-  uy_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
-  uz_min_all                    (Nx, Ny, Nz)       float      real              --u_min_all
+  ux_min_all                    (Nx, Ny, Nz)       float       real             --u_min_all
+  uy_min_all                    (Nx, Ny, Nz)       float       real             --u_min_all
+  uz_min_all                    (Nx, Ny, Nz)       float       real             --u_min_all
 
-  ux_final                      (Nx, Ny, Nz)       float      real              --u_final
-  uy_final                      (Nx, Ny, Nz)       float      real              --u_final
-  uz_final                      (Nx, Ny, Nz)       float      real              --u_final
+  ux_final                      (Nx, Ny, Nz)       float       real             --u_final
+  uy_final                      (Nx, Ny, Nz)       float       real             --u_final
+  uz_final                      (Nx, Ny, Nz)       float       real             --u_final
 ==============================================================================================================
 \endverbatim
  *

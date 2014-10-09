@@ -1,14 +1,17 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="$class_t_matrix_container.html" title="Class implementing the matrix container." alt="" coords="1455,37,1569,67"/>
-<area shape="rect" id="node6" href="$struct_t_matrix_record.html" title="A structure storing details about the matrix. The matrix container stores this structures." alt="" coords="645,41,747,71"/>
-<area shape="rect" id="node8" href="$class_t_base_matrix.html" title="Abstract base class, the common ancestor defining the common interface and allowing derived classes t..." alt="" coords="225,5,316,35"/>
-<area shape="rect" id="node10" href="$struct_t_dimension_sizes.html" title="Structure with 3D dimension sizes." alt="" coords="212,97,329,127"/>
-<area shape="rect" id="node16" href="$class_t_parameters.html" title="Class storing all parameters of the simulation." alt="" coords="1467,263,1557,292"/>
-<area shape="rect" id="node34" href="$class_t_output_h_d_f5_stream.html" title="Output stream for sensor data. It stores time series every timestep." alt="" coords="1093,127,1229,156"/>
-<area shape="rect" id="node12" title="STL class." alt="" coords="233,325,308,355"/>
-<area shape="rect" id="node19" href="$class_t_command_line_parameters.html" title="The class to parse and store command line parameters." alt="" coords="851,424,1024,453"/>
-<area shape="rect" id="node23" href="$class_t_h_d_f5___file_header.html" title="Class for HDF5 header." alt="" coords="1097,263,1225,292"/>
-<area shape="rect" id="node29" href="$class_t_h_d_f5___file.html" title="Class wrapping the HDF5 routines." alt="" coords="652,313,740,343"/>
-<area shape="rect" id="node14" title="STL class." alt="" coords="5,325,160,355"/>
-<area shape="rect" id="node32" href="$class_t_time_messsure.html" title="Class measuring elapsed time." alt="" coords="1457,317,1567,347"/>
+<map id="TKSpaceFirstOrder3DSolver" name="TKSpaceFirstOrder3DSolver">
+<area shape="rect" id="node2" href="$class_t_matrix_container.html" title="Class implementing the matrix container. " alt="" coords="1393,87,1509,113"/>
+<area shape="rect" id="node4" href="$struct_t_matrix_record.html" title="A structure storing details about the matrix. The matrix container stores this structures. " alt="" coords="501,69,603,94"/>
+<area shape="rect" id="node5" href="$class_t_base_matrix.html" title="Abstract base class, the common ancestor defining the common interface and allowing derived classes t..." alt="" coords="188,11,279,37"/>
+<area shape="rect" id="node19" href="$class_t_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="493,147,611,173"/>
+<area shape="rect" id="node6" href="$struct_t_dimension_sizes.html" title="Structure with 4D dimension sizes (3 in space and 1 in time). " alt="" coords="174,154,293,179"/>
+<area shape="rect" id="node9" href="$class_t_parameters.html" title="Class storing all parameters of the simulation. " alt="" coords="1239,303,1331,329"/>
+<area shape="rect" id="node7" title="STL class. " alt="" coords="196,343,271,369"/>
+<area shape="rect" id="node10" href="$class_t_command_line_parameters.html" title="The class to parse and store command line parameters. " alt="" coords="669,475,843,501"/>
+<area shape="rect" id="node11" href="$class_t_h_d_f5___file_header.html" title="Class for HDF5 header. " alt="" coords="879,346,1009,371"/>
+<area shape="rect" id="node13" href="$class_t_h_d_f5___file.html" title="Class wrapping the HDF5 routines. " alt="" coords="900,275,988,301"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="5,337,123,375"/>
+<area shape="rect" id="node17" href="$class_t_base_output_h_d_f5_stream.html" title="Abstract base class for output data streams (sampled data). " alt="" coords="1203,147,1367,173"/>
+<area shape="rect" id="node14" href="$class_t_time_measure.html" title="Class measuring elapsed time. " alt="" coords="1929,253,2033,278"/>
+<area shape="rect" id="node15" href="$class_t_output_stream_container.html" title="A container for output streams. " alt="" coords="1902,145,2061,170"/>
+<area shape="rect" id="node18" href="$class_t_real_matrix.html" title="The class for real matrices. " alt="" coords="900,147,988,173"/>
 </map>

@@ -109,7 +109,7 @@ void TCommandLineParameters::PrintUsageAndExit()
   printf("                                      (default = %ld)\n", DefaultCompressionLevel);
   printf("  --benchmark <steps>             : Run a specified number of time steps\n");
   printf("\n");
-  printf("  --checkpoint_file <file_name>   : HDF5 Checkpoint file\n");
+  printf("  --checkpoint_file <file_name>   : HDF5 checkpoint file\n");
   printf("  --checkpoint_interval <seconds> : Stop after a given number of seconds and\n");
   printf("                                      store the actual state\n");
   printf("\n");

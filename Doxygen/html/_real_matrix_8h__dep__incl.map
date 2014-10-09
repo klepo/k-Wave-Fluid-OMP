@@ -1,16 +1,16 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$_matrix_container_8h.html" title="The header file containing the matrix container." alt="" coords="820,315,1017,344"/>
-<area shape="rect" id="node5" href="$_k_space_first_order3_d_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="283,392,544,421"/>
-<area shape="rect" id="node14" href="$_complex_matrix_8h.html" title="The header file with the class for complex matrices." alt="" coords="696,83,891,112"/>
-<area shape="rect" id="node20" href="$_u_x_y_z___s_g_x_y_z_matrix_8h.html" title="The header file containing the particle velocity matrix." alt="" coords="413,237,637,267"/>
-<area shape="rect" id="node28" href="$_f_f_t_w_complex_matrix_8cpp.html" title="The implementation file containing the class that implements 3D FFT using the FFTW interface..." alt="" coords="864,237,1101,267"/>
-<area shape="rect" id="node34" href="$_real_matrix_8cpp.html" title="The implementation file containing the class for real matrices." alt="" coords="981,160,1165,189"/>
-<area shape="rect" id="node38" href="$_output_h_d_f5_stream_8h.html" title="The header file of the class saving RealMatrix data into the output HDF5 file." alt="" coords="100,83,319,112"/>
-<area shape="rect" id="node9" href="$_k_space_first_order3_d_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="639,469,913,499"/>
-<area shape="rect" id="node12" href="$_matrix_container_8cpp.html" title="The implementation file containing the matrix container." alt="" coords="813,392,1024,421"/>
-<area shape="rect" id="node7" href="$main_8cpp.html" title="The main file." alt="" coords="377,469,449,499"/>
-<area shape="rect" id="node17" href="$_f_f_t_w_complex_matrix_8h.html" title="The header file containing the class that implements 3D FFT using the FFTW interface." alt="" coords="680,160,907,189"/>
-<area shape="rect" id="node32" href="$_complex_matrix_8cpp.html" title="The implementation file with the class for complex matrices." alt="" coords="451,160,656,189"/>
-<area shape="rect" id="node24" href="$_u_x_y_z___s_g_x_y_z_matrix_8cpp.html" title="The implementation file containing the particle velocity matrix." alt="" coords="451,315,688,344"/>
-<area shape="rect" id="node41" href="$_output_h_d_f5_stream_8cpp.html" title="The implementation file of the class saving RealMatrix data into the output HDF5 file." alt="" coords="93,160,325,189"/>
+<map id="MatrixClasses/RealMatrix.h" name="MatrixClasses/RealMatrix.h">
+<area shape="rect" id="node2" href="$_matrix_container_8h.html" title="The header file containing the matrix container. " alt="" coords="510,338,708,363"/>
+<area shape="rect" id="node3" href="$_k_space_first_order3_d_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="178,419,347,458"/>
+<area shape="rect" id="node7" href="$_complex_matrix_8h.html" title="The header file with the class for complex matrices. " alt="" coords="431,81,625,106"/>
+<area shape="rect" id="node9" href="$_u_x_y_z___s_g_x_y_z_matrix_8h.html" title="The header file containing the particle velocity matrix. " alt="" coords="250,243,384,282"/>
+<area shape="rect" id="node11" href="$_f_f_t_w_complex_matrix_8cpp.html" title="The implementation file containing the class that implements 3D FFT using the FFTW interface..." alt="" coords="637,243,819,282"/>
+<area shape="rect" id="node13" href="$_real_matrix_8cpp.html" title="The implementation file containing the class for real matrices. " alt="" coords="633,162,817,187"/>
+<area shape="rect" id="node14" href="$_output_h_d_f5_stream_8h.html" title="The header file of classes responsible for storing output quantities into the output HDF5 file..." alt="" coords="896,243,1067,282"/>
+<area shape="rect" id="node5" href="$_k_space_first_order3_d_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="389,507,557,546"/>
+<area shape="rect" id="node6" href="$_matrix_container_8cpp.html" title="The implementation file containing the matrix container. " alt="" coords="743,426,955,451"/>
+<area shape="rect" id="node4" href="$main_8cpp.html" title="The main file of kspaceFirstOrder3D&#45;OMP. " alt="" coords="227,514,299,539"/>
+<area shape="rect" id="node8" href="$_f_f_t_w_complex_matrix_8h.html" title="The header file containing the class that implements 3D FFT using the FFTW interface. " alt="" coords="375,155,557,194"/>
+<area shape="rect" id="node12" href="$_complex_matrix_8cpp.html" title="The implementation file with the class for complex matrices. " alt="" coords="145,162,351,187"/>
+<area shape="rect" id="node10" href="$_u_x_y_z___s_g_x_y_z_matrix_8cpp.html" title="The implementation file containing the particle velocity matrix. " alt="" coords="301,331,435,370"/>
+<area shape="rect" id="node15" href="$_output_h_d_f5_stream_8cpp.html" title="The implementation file of classes responsible for storing output quantities into the output HDF5 fil..." alt="" coords="783,331,953,370"/>
 </map>

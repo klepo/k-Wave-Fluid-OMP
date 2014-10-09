@@ -1,24 +1,24 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a9114f72450c5e5f307a9a6b5bd332200" title="Get the FFT_X_temp from the container." alt="" coords="336,5,613,35"/>
-<area shape="rect" id="node5" href="$class_t_f_f_t_w_complex_matrix.html#acb9c96e1c666e4ed3bed9f9b0cb13bc7" title="Compute 3D FFT Real&#45;to&#45;Complex." alt="" coords="333,59,616,88"/>
-<area shape="rect" id="node7" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access)." alt="" coords="673,111,865,140"/>
-<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a7cf912613ab225e7248891d34b4456ec" title="Get the ux_sgx matrix from the container." alt="" coords="351,163,599,192"/>
-<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#aef8925544ee69b5c53b1cc03377eb207" title="Get the FFT_Y_temp from the container." alt="" coords="336,216,613,245"/>
-<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a68975a172579fb20115b5e671251b964" title="Get the uy_sgy matrix from the container." alt="" coords="351,269,599,299"/>
-<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#a6a15acf2e312fbfb9fcbd1dbc9c9c96d" title="Get the FFT_Z_temp from the container." alt="" coords="336,323,613,352"/>
-<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a159852c13711b796b583b40478285b46" title="Get the uz_sgz matrix from the container." alt="" coords="351,376,599,405"/>
-<area shape="rect" id="node20" href="$class_t_k_space_first_order3_d_solver.html#a6b7cd21433d5e6996d405da3ed42cffb" title="Get the kappa matrix from the container." alt="" coords="353,429,596,459"/>
-<area shape="rect" id="node22" href="$class_t_base_float_matrix.html#a789f3476db3b94f488642f524859c4f7" title="Get dimension sizes of the matrix." alt="" coords="360,483,589,512"/>
-<area shape="rect" id="node24" href="$class_t_base_float_matrix.html#ab3907d95cf9560d68dbdb1f3bdecc643" title="Get element count of the matrix." alt="" coords="352,536,597,565"/>
-<area shape="rect" id="node26" href="$class_t_k_space_first_order3_d_solver.html#a0710a626163b92d8b1d842fd86619f27" title="Get the ddx_k_shift_neg matrix from the container." alt="" coords="325,589,624,619"/>
-<area shape="rect" id="node28" href="$class_t_k_space_first_order3_d_solver.html#ad20dbc4e85b545ab1aa79c5e7442f42b" title="Get the ddy_k_shift_neg matrix from the container." alt="" coords="325,643,624,672"/>
-<area shape="rect" id="node30" href="$class_t_k_space_first_order3_d_solver.html#a0f1c60eae8e11dce568bc53323244953" title="Get the ddz_k_shift_neg matrix from the container." alt="" coords="325,696,624,725"/>
-<area shape="rect" id="node32" href="$class_t_f_f_t_w_complex_matrix.html#aca5fb97a3f98188b12b006225b5e1a78" title="Compute 3D FFT Complex&#45;to&#45;Real." alt="" coords="332,749,617,779"/>
-<area shape="rect" id="node35" href="$class_t_k_space_first_order3_d_solver.html#ab21848ed518796791e68fb0cc46a6a22" title="Get the duxdx matrix from the container." alt="" coords="353,803,596,832"/>
-<area shape="rect" id="node37" href="$class_t_k_space_first_order3_d_solver.html#ab87a9bd78bc7095cee4659203727b642" title="Get the duydy matrix from the container." alt="" coords="353,856,596,885"/>
-<area shape="rect" id="node39" href="$class_t_k_space_first_order3_d_solver.html#a0506862466836035575ea30229328352" title="Get the duzdz matrix from the container." alt="" coords="353,909,596,939"/>
-<area shape="rect" id="node41" href="$class_t_parameters.html#a9bd4e19e37f793e2c40c75a6ceef663d" title="Get nonuniform_grid_flag value." alt="" coords="355,963,595,992"/>
-<area shape="rect" id="node43" href="$class_t_k_space_first_order3_d_solver.html#a013096ddb46f66ba5c274eab5cf3eb27" title="Get the dxudxn matrix from the container." alt="" coords="351,1016,599,1045"/>
-<area shape="rect" id="node45" href="$class_t_k_space_first_order3_d_solver.html#a7e5929cf553b8014c8e367531d20749e" title="Get the dyudyn matrix from the container." alt="" coords="351,1069,599,1099"/>
-<area shape="rect" id="node47" href="$class_t_k_space_first_order3_d_solver.html#ac95c8ce682034cf44b44763e9e1a0b62" title="Get the dzudzn matrix from the container." alt="" coords="351,1123,599,1152"/>
+<map id="TKSpaceFirstOrder3DSolver::Compute_duxyz" name="TKSpaceFirstOrder3DSolver::Compute_duxyz">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a9114f72450c5e5f307a9a6b5bd332200" title="Get the FFT_X_temp from the container. " alt="" coords="245,5,422,43"/>
+<area shape="rect" id="node3" href="$class_t_f_f_t_w_complex_matrix.html#acb9c96e1c666e4ed3bed9f9b0cb13bc7" title="Compute 3D out&#45;of&#45;place Real&#45;to&#45;Complex FFT. " alt="" coords="253,67,414,106"/>
+<area shape="rect" id="node4" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access). " alt="" coords="483,131,677,157"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a7cf912613ab225e7248891d34b4456ec" title="Get the ux_sgx matrix from the container. " alt="" coords="245,182,422,221"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#aef8925544ee69b5c53b1cc03377eb207" title="Get the FFT_Y_temp from the container. " alt="" coords="245,245,422,283"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a68975a172579fb20115b5e671251b964" title="Get the uy_sgy matrix from the container. " alt="" coords="245,307,422,346"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a6a15acf2e312fbfb9fcbd1dbc9c9c96d" title="Get the FFT_Z_temp from the container. " alt="" coords="245,370,422,409"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a159852c13711b796b583b40478285b46" title="Get the uz_sgz matrix from the container. " alt="" coords="245,433,422,471"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a6b7cd21433d5e6996d405da3ed42cffb" title="Get the kappa matrix from the container. " alt="" coords="245,495,422,534"/>
+<area shape="rect" id="node11" href="$class_t_base_float_matrix.html#a789f3476db3b94f488642f524859c4f7" title="Get dimension sizes of the matrix. " alt="" coords="233,558,434,597"/>
+<area shape="rect" id="node12" href="$class_t_base_float_matrix.html#ab3907d95cf9560d68dbdb1f3bdecc643" title="Get element count of the matrix. " alt="" coords="249,621,418,659"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a0710a626163b92d8b1d842fd86619f27" title="Get the ddx_k_shift_neg matrix from the container. " alt="" coords="245,683,422,722"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#ad20dbc4e85b545ab1aa79c5e7442f42b" title="Get the ddy_k_shift_neg matrix from the container. " alt="" coords="245,746,422,785"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#a0f1c60eae8e11dce568bc53323244953" title="Get the ddz_k_shift_neg matrix from the container. " alt="" coords="245,809,422,847"/>
+<area shape="rect" id="node16" href="$class_t_f_f_t_w_complex_matrix.html#abde628c727c983a17652ed74018da623" title="Compute 3D out&#45;of&#45;place Complex&#45;to&#45;Real FFT. " alt="" coords="253,871,414,910"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#ab21848ed518796791e68fb0cc46a6a22" title="Get the duxdx matrix from the container. " alt="" coords="245,934,422,973"/>
+<area shape="rect" id="node18" href="$class_t_k_space_first_order3_d_solver.html#ab87a9bd78bc7095cee4659203727b642" title="Get the duydy matrix from the container. " alt="" coords="245,997,422,1035"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#a0506862466836035575ea30229328352" title="Get the duzdz matrix from the container. " alt="" coords="245,1059,422,1098"/>
+<area shape="rect" id="node20" href="$class_t_parameters.html#a175b3848acd217844763df54c19f3fbf" title="Get nonuniform_grid_flag value. " alt="" coords="240,1122,427,1161"/>
+<area shape="rect" id="node21" href="$class_t_k_space_first_order3_d_solver.html#a013096ddb46f66ba5c274eab5cf3eb27" title="Get the dxudxn matrix from the container. " alt="" coords="245,1185,422,1223"/>
+<area shape="rect" id="node22" href="$class_t_k_space_first_order3_d_solver.html#a7e5929cf553b8014c8e367531d20749e" title="Get the dyudyn matrix from the container. " alt="" coords="245,1247,422,1286"/>
+<area shape="rect" id="node23" href="$class_t_k_space_first_order3_d_solver.html#ac95c8ce682034cf44b44763e9e1a0b62" title="Get the dzudzn matrix from the container. " alt="" coords="245,1310,422,1349"/>
 </map>

@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.15
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              29 September 2014, 12:15 (revised)
+ *              02 October   2014, 12:15 (revised)
  *
  * @section Params Command Line Parameters
  *
@@ -23,8 +23,8 @@
  * The \c -t parameter sets the number of threads used, which defaults the system maximum.
  * On CPUs with Intel Hyper-Threading (HT), the performance is sometimes better if HT
  * is disabled in the BIOS settings. If HT is switched on, the default will be to
- * spawn twice as many threads as there are physical processor cores, which might
- * or might not slow down the code execution. Therefore, if the HT is on, try specifying the
+ * spawn twice as many threads as there are physical processor cores, which may but again
+ * may not slow down the code execution. Therefore, if the HT is on, try specifying the
  * number of threads manually for best performance (e.g. 4 for Intel i7). We
  * recommend experimenting with this parameter to find the best configuration.
  * Note, if there are other tasks being executed on the system, it might be useful
@@ -50,7 +50,8 @@
  * used to quickly find the ideal number of CPU threads to use.
  *
  *
- * For codes that are expected to run for a very long time, it may be useful to
+ *
+ * For jobs that are expected to run for a very long time, it may be useful to
  * checkpoint and restart the execution. One motivation is the wall clock limit
  * per task on clusters where jobs must fit within a given time span
  * (e.g. 24 hours). The second motivation is a level of fault-tolerance, where
@@ -65,12 +66,12 @@
  * When controlling a multi-leg simulation by a script loop, the parameters of the code
  * remains the same in all legs. The first leg of the simulation creates a checkpoint
  * file while the last one deletes it. If the checkpoint file is not found the
- * simulation starts from beginning. In order to get know how many steps have been
+ * simulation starts from the beginning. In order to find out how many steps have been
  * finished, please open the output file and read the variable <tt>t_index</tt>.
  *
  *
- * The \c -h and \c --help parameters print all the parameters of the C++ code,
- * The <tt> --version </tt>parameter reports detail information of the code useful for
+ * The \c -h and \c --help parameters print all the parameters of the C++ code.
+ * The <tt> --version </tt>parameter reports detail information about the code useful for
  * debugging and bug reports. It prints out the internal version, the build date and time, the
  * git hash allowing us to track the version of the source code, the operating system,
  * the compiler name and version and the instruction set used.
@@ -78,7 +79,7 @@
  *
  * The remaining flags specify the output quantities to be recorded during the
  * simulation and stored on disk analogous to  the sensor.record input. If
- * the \c -p or \c --p raw flags are set (these are equivalent), a time series of
+ * the \c -p or \c --p\_raw flags are set (these are equivalent), a time series of
  * the acoustic pressure at the grid points specified by the sensor mask is
  * recorded. If the \c --p_rms, \c --p_max, \c --p_min flags are set,
  * the root mean square and/or maximum and/or minimum values of the pressure at
@@ -89,12 +90,11 @@
  * The flags \c --p_max_all and \c --p_min_all allow to calculate the maximum and
  * minimum values over the entire acoustic pressure field, regardless on the shape
  * of the sensor mask.
- *
- * Flags to record the acoustic particular velocity are defined in an analogous fashion.
+ * Flags to record the acoustic particle velocity are defined in an analogous fashion.
  * For proper calculation of acoustic intensity, the particle velocity has to be
  * shifted onto the same grid as the acoustic pressure. This can be done by setting
- * \c --u_non_staggered_raw flag, that first shift the particle velocity and then
- * sample the grid points specified by the sensor mask. Since the shift operation
+ * \c --u_non_staggered_raw flag, that first shifts the particle velocity and then
+ * samples the grid points specified by the sensor mask. Since the shift operation
  * requires additional FFTs, the impact on the simulation time may be significant.
  *
  * Any combination of <tt>p</tt> and <tt>u</tt> flags is admissible. If no output flag is set,
@@ -122,7 +122,7 @@ Optional parameters:
                                       (default = 0)
   --benchmark <steps>             : Run a specified number of time steps
 
-  --checkpoint_file <file_name>   : HDF5 Checkpoint file
+  --checkpoint_file <file_name>   : HDF5 checkpoint file
   --checkpoint_interval <seconds> : Stop after a given number of seconds and
                                       store the actual state
 

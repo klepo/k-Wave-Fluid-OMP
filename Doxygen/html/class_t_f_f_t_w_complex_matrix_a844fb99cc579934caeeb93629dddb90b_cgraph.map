@@ -1,0 +1,5 @@
+<map id="TFFTWComplexMatrix::Compute_FFT_1DX_R2C" name="TFFTWComplexMatrix::Compute_FFT_1DX_R2C">
+<area shape="rect" id="node2" href="$class_t_base_float_matrix.html#a23833ba07c24d706f8dc38717fe80e04" title="Get raw data out of the class (for direct kernel access). " alt="" coords="226,5,419,30"/>
+<area shape="rect" id="node3" href="$class_t_parameters.html#a762a94a05f95c07fd608c023a3396c7e" title="Get instance of the singleton class. " alt="" coords="241,54,404,79"/>
+<area shape="rect" id="node4" href="$class_t_parameters.html#a423df8dff377c0f791ec1e33e6454afa" title="Full dimension sizes of the simulation (real classes). " alt="" coords="225,103,421,142"/>
+</map>

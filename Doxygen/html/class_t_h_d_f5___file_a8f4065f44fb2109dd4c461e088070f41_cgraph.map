@@ -1,0 +1,6 @@
+<map id="THDF5_File::ReadScalarValue" name="THDF5_File::ReadScalarValue">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file.html#a500ef4edc732c4780dd1dd5107b211fb" title="Read data from the dataset under a specified group &#45; float dataset. " alt="" coords="246,37,423,75"/>
+<area shape="rect" id="node3" href="$class_t_h_d_f5___file.html#a54cbe273921357b1670803fb174c8337" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="473,5,687,43"/>
+<area shape="rect" id="node5" href="$struct_t_dimension_sizes.html#a6b893b8f9e5b4535de4df86e9cd5a85f" title="Get element count, in 3D only spatial domain, in 4D with time. " alt="" coords="486,67,674,106"/>
+<area shape="rect" id="node4" href="$class_t_h_d_f5___file.html#a436e764c1d333f8ba5710d3cd53dce5c" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="737,5,935,43"/>
+</map>

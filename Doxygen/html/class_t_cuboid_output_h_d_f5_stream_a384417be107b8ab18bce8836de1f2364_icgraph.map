@@ -1,0 +1,4 @@
+<map id="TCuboidOutputHDF5Stream::FlushBufferToFile" name="TCuboidOutputHDF5Stream::FlushBufferToFile">
+<area shape="rect" id="node2" href="$class_t_cuboid_output_h_d_f5_stream.html#ac2c704c5a81c154a5d8ead0d9f93bc00" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="229,5,405,43"/>
+<area shape="rect" id="node3" href="$class_t_cuboid_output_h_d_f5_stream.html#ac7f04644dc9309dbbb97693cc267b1dc" title="Checkpoint the stream and close. " alt="" coords="229,67,405,106"/>
+</map>

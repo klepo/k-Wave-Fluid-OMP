@@ -1,0 +1,6 @@
+<map id="TOutputStreamContainer::SampleStreams" name="TOutputStreamContainer::SampleStreams">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a153d0bb845efc85199f1f402f1a2643e" title="Store sensor data. " alt="" coords="214,5,391,43"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="441,5,618,43"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="667,5,845,43"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="894,11,943,37"/>
+</map>

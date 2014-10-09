@@ -1,10 +1,39 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$class_t_h_d_f5___file_header.html#ac9a9b6a3e1c9ba2b145c41e0414a13ed" title="Set memory consumption." alt="" coords="251,5,520,35"/>
-<area shape="rect" id="node9" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1265,111,1313,140"/>
-<area shape="rect" id="node11" href="$class_t_h_d_f5___file_header.html#a0987efedd81cd5af50564d19164498f3" title="Set number of cores." alt="" coords="264,59,507,88"/>
-<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#ac722ef9133730f662e054ff8b30496a5" title="Constructor." alt="" coords="216,163,555,192"/>
-<area shape="rect" id="node17" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container." alt="" coords="617,188,881,217"/>
-<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file." alt="" coords="603,59,896,88"/>
-<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation." alt="" coords="964,59,1196,88"/>
-<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation." alt="" coords="945,175,1215,204"/>
+<map id="TParameters::GetInstance" name="TParameters::GetInstance">
+<area shape="rect" id="node2" href="$class_t_h_d_f5___file_header.html#ac9a9b6a3e1c9ba2b145c41e0414a13ed" title="Set memory consumption. " alt="" coords="225,502,423,540"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1425,518,1474,543"/>
+<area shape="rect" id="node6" href="$class_t_h_d_f5___file_header.html#a0987efedd81cd5af50564d19164498f3" title="Set number of cores. " alt="" coords="225,564,423,603"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#ac722ef9133730f662e054ff8b30496a5" title="Constructor. " alt="" coords="233,907,415,946"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#ab11cbf74a1e06cfd258270cef3daa12f" title="Initialize FFT plans. " alt="" coords="745,627,922,666"/>
+<area shape="rect" id="node9" href="$class_t_f_f_t_w_complex_matrix.html#a844fb99cc579934caeeb93629dddb90b" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the X dimension. " alt="" coords="239,324,409,363"/>
+<area shape="rect" id="node13" href="$class_t_f_f_t_w_complex_matrix.html#ae6885b3adb9a75ac5b91c89e0bfb1db2" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the Y dimension. " alt="" coords="239,387,409,426"/>
+<area shape="rect" id="node14" href="$class_t_f_f_t_w_complex_matrix.html#af10180931c0d46e5c952aeab6ef0b461" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the Z dimension. " alt="" coords="240,74,408,112"/>
+<area shape="rect" id="node15" href="$class_t_f_f_t_w_complex_matrix.html#a6dc3c0c5bcccb507429fcbd5481c08ee" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the X dimension. " alt="" coords="239,136,409,175"/>
+<area shape="rect" id="node16" href="$class_t_f_f_t_w_complex_matrix.html#a5a933fce3327d3a89ae381778c33c901" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the Y dimension. " alt="" coords="239,199,409,238"/>
+<area shape="rect" id="node17" href="$class_t_f_f_t_w_complex_matrix.html#a6a510dfcc4ab9356ffc3aac26c1d3ebe" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the Z dimension. " alt="" coords="240,262,408,300"/>
+<area shape="rect" id="node18" href="$class_t_f_f_t_w_complex_matrix.html#ab9b4cf91abe05becb9784781e1f50d1b" title="Get Wisdom file name, base on the checkpoint filename. " alt="" coords="252,627,396,666"/>
+<area shape="rect" id="node23" href="$class_t_matrix_container.html#a72d2f026ccdc84071706fe4ef0fe8de3" title="Store selected matrices into the checkpoint file. " alt="" coords="499,387,677,426"/>
+<area shape="rect" id="node24" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="493,742,683,780"/>
+<area shape="rect" id="node26" href="$class_t_output_stream_container.html#aaf3a05b2c2c0f56dfcfba5181a748064" title="Create all streams in container (no file manipulation). " alt="" coords="503,804,673,843"/>
+<area shape="rect" id="node27" href="$class_t_output_stream_container.html#a541a9126a45c069c71a528ad2ff490f5" title="TOutputStreamContainer\l::CreateNewOutputStream" alt="" coords="241,792,407,831"/>
+<area shape="rect" id="node28" href="$class_t_base_output_h_d_f5_stream.html#aaabc990b91747ff2c380c77bc656ac57" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="242,970,406,1008"/>
+<area shape="rect" id="node32" href="$class_t_index_output_h_d_f5_stream.html#afc865b5d2d44387a096b085a392a10a1" title="Create a HDF5 stream and allocate data for it. " alt="" coords="241,1032,407,1071"/>
+<area shape="rect" id="node33" href="$class_t_index_output_h_d_f5_stream.html#ae7beb560dd32be91c46500a43e1b1190" title="Reopen the output stream after restart and reload data. " alt="" coords="241,1095,407,1134"/>
+<area shape="rect" id="node34" href="$class_t_cuboid_output_h_d_f5_stream.html#ac6c36acdb69dbd048eb8101e7c7d6aa8" title="Reopen the output stream after restart and reload data. " alt="" coords="236,1158,412,1196"/>
+<area shape="rect" id="node35" href="$class_t_cuboid_output_h_d_f5_stream.html#ad32c05893dfc36984c58a2ab511f5f95" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="236,1220,412,1259"/>
+<area shape="rect" id="node37" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0e177c166b45ef1501633de357defc54" title="Create a HDF5 stream and allocate data for it. " alt="" coords="217,1283,431,1322"/>
+<area shape="rect" id="node38" href="$class_t_whole_domain_output_h_d_f5_stream.html#a507830a4ec48323a9ef621a0bec49d6f" title="Reopen the output stream after restart and reload data. " alt="" coords="217,1346,431,1384"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="499,450,677,488"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="1198,511,1375,550"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a21665aa1ffc35c605f47a2d136a4cb97" title="Calculate ux_shifted, uy_shifted and uz_shifted. " alt="" coords="499,262,677,300"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a153d0bb845efc85199f1f402f1a2643e" title="Store sensor data. " alt="" coords="745,295,922,334"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="971,360,1149,399"/>
+<area shape="rect" id="node19" href="$class_t_f_f_t_w_complex_matrix.html#ac16c81999a0b6eb14094b208ffe95c05" title="Export wisdom to the file. " alt="" coords="517,512,659,551"/>
+<area shape="rect" id="node21" href="$class_t_f_f_t_w_complex_matrix.html#acf3b47b1649c4f7a9780cfd3f0e1d8e9" title="Import wisdom from the file. " alt="" coords="517,627,659,666"/>
+<area shape="rect" id="node22" href="$class_t_f_f_t_w_complex_matrix.html#a7b66a79b004f5d6c5894a78a1754fda3" title="Destroy wisdom in the file (delete it). " alt="" coords="988,568,1132,607"/>
+<area shape="rect" id="node20" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="745,511,922,550"/>
+<area shape="rect" id="node25" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="745,742,922,780"/>
+<area shape="rect" id="node29" href="$class_t_index_output_h_d_f5_stream.html#a7342efe72c0e6fcaeb9134904c5af590" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="505,907,671,946"/>
+<area shape="rect" id="node30" href="$class_t_cuboid_output_h_d_f5_stream.html#ac2c704c5a81c154a5d8ead0d9f93bc00" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="500,970,676,1008"/>
+<area shape="rect" id="node31" href="$class_t_whole_domain_output_h_d_f5_stream.html#a567b784ea3474013c73827214daae779" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="481,1032,695,1071"/>
+<area shape="rect" id="node36" href="$class_t_cuboid_output_h_d_f5_stream.html#aa06e50911303e33944f8bb6af2dc9a2f" title="Create a HDF5 stream and allocate data for it. " alt="" coords="500,1220,676,1259"/>
 </map>
