@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30      (created) \n
- *              26 September 2014, 18:36      (revised)
+ *              12 February  2015, 16:07      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -314,19 +314,22 @@ void TIndexOutputHDF5Stream::Reopen()
 
   if (ReductionOp == roNONE)
   { // raw time series - just seek to the right place in the dataset
-     SampledTimeStep = ((Params->Get_t_index() - Params->GetStartTimeIndex()) < 0) ?
-                                0 : (Params->Get_t_index() - Params->GetStartTimeIndex());
+    SampledTimeStep = (Params->Get_t_index() < Params->GetStartTimeIndex()) ?
+                              0 : (Params->Get_t_index() - Params->GetStartTimeIndex());
 
   }
   else
   { // aggregated quantities - reload data
     SampledTimeStep = 0;
-
-    // Since there is only a single timestep in the dataset, I can read the whole dataset
-    HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
-                                  HDF5_RootObjectName,
-                                  TDimensionSizes(BufferSize, 1, 1),
-                                  StoreBuffer);
+    // read only if it is necessary (it is anything to read).
+    if (Params->Get_t_index() > Params->GetStartTimeIndex())
+    {
+      // Since there is only a single timestep in the dataset, I can read the whole dataset
+      HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
+                                    HDF5_RootObjectName,
+                                    TDimensionSizes(BufferSize, 1, 1),
+                                    StoreBuffer);
+    }
   }
 }// end of Reopen
 //------------------------------------------------------------------------------
@@ -556,7 +559,7 @@ void TCuboidOutputHDF5Stream::Reopen()
   SampledTimeStep = 0;
   if (ReductionOp == roNONE) // set correct sampled timestep for raw data series
   {
-    SampledTimeStep = ((Params->Get_t_index() - Params->GetStartTimeIndex()) < 0) ?
+    SampledTimeStep = (Params->Get_t_index() < Params->GetStartTimeIndex()) ?
                         0 : (Params->Get_t_index() - Params->GetStartTimeIndex());
   }
 
@@ -590,18 +593,22 @@ void TCuboidOutputHDF5Stream::Reopen()
     CuboidInfo.StartingPossitionInBuffer = ActualPositionInBuffer;
     CuboidsInfo.push_back(CuboidInfo);
 
-    if (ReductionOp != roNONE)
-    { // Reload data
-      TDimensionSizes CuboidSize((SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex)).X,
-                                 (SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex)).Y,
-                                 (SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex)).Z);
+    // read only if there is anything to read
+    if (Params->Get_t_index() > Params->GetStartTimeIndex())
+    {
+      if (ReductionOp != roNONE)
+      { // Reload data
+        TDimensionSizes CuboidSize((SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex)).X,
+                                   (SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex)).Y,
+                                   (SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex)).Z);
 
-      HDF5_File.ReadCompleteDataset(HDF5_GroupId,
-                                    HDF5_DatasetName,
-                                    CuboidSize,
-                                    StoreBuffer + ActualPositionInBuffer);
+        HDF5_File.ReadCompleteDataset(HDF5_GroupId,
+                                      HDF5_DatasetName,
+                                      CuboidSize,
+                                      StoreBuffer + ActualPositionInBuffer);
+      }
     }
-    // move the pointer for the next cuboid beginning
+    // move the pointer for the next cuboid beginning (this inits the locations)
     ActualPositionInBuffer += (SensorMask.GetBottomRightCorner(CuboidIndex) -
                                SensorMask.GetTopLeftCorner(CuboidIndex)).GetElementCount();
   }
@@ -858,7 +865,7 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
   size_t NumberOfSampledTimeSteps = (ReductionOp == roNONE)
                                       ? Params->Get_Nt() - Params->GetStartTimeIndex()
                                       : 0; // will be a 3D dataset
-  // Set cuboid dimensions
+  // Set cuboid dimensions (subtract two corners (add 1) and use the appropriate component)
   TDimensionSizes CuboidSize((SensorMask.GetBottomRightCorner(Index) - SensorMask.GetTopLeftCorner(Index)).X,
                              (SensorMask.GetBottomRightCorner(Index) - SensorMask.GetTopLeftCorner(Index)).Y,
                              (SensorMask.GetBottomRightCorner(Index) - SensorMask.GetTopLeftCorner(Index)).Z,
@@ -1021,15 +1028,18 @@ void TWholeDomainOutputHDF5Stream::Reopen()
   SampledTimeStep = 0;
   if (ReductionOp == roNONE)
   { // seek in the dataset
-    SampledTimeStep = ((Params->Get_t_index() - Params->GetStartTimeIndex()) < 0) ?
+    SampledTimeStep = (Params->Get_t_index() < Params->GetStartTimeIndex()) ?
                         0 : (Params->Get_t_index() - Params->GetStartTimeIndex());
   }
   else
   { // reload data
-    HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
-                                  HDF5_RootObjectName,
-                                  SourceMatrix.GetDimensionSizes(),
-                                  StoreBuffer);
+    if (Params->Get_t_index() > Params->GetStartTimeIndex())
+    {
+      HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
+                                    HDF5_RootObjectName,
+                                    SourceMatrix.GetDimensionSizes(),
+                                    StoreBuffer);
+    }
   }
 }// end of Reopen
 //------------------------------------------------------------------------------

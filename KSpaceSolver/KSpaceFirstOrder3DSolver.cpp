@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27  (created)\n
- *              12 February  2015, 10:33  (revised)
+ *              12 February  2015, 16:08  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -2620,8 +2620,8 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   // Close the checkpoint file
   HDF5_CheckpointFile.Close();
 
-  // checkpoint only if necessary (t_index >= start_index)
-  if (Parameters->Get_t_index() >= Parameters->GetStartTimeIndex())
+  // checkpoint only if necessary (t_index > start_index) - here we're at  step + 1
+  if (Parameters->Get_t_index() > Parameters->GetStartTimeIndex())
   {
     OutputStreamContainer.CheckpointStreams();
   }
