@@ -7,9 +7,9 @@
  *
  * @brief       The implementation file containing the HDF5 related classes
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14      (created) \n
- *              23 September 2014, 15:46      (revised)
+ *              12 February  2015, 10:30      (revised)
  *
 
  * @section License
@@ -1328,6 +1328,7 @@ THDF5_FileHeader::~THDF5_FileHeader()
 /**
  * Read header from the input file.
  * @param [in] InputFile - Input file to read from
+ * @throw ios:failure when en error happens
  */
 void THDF5_FileHeader::ReadHeaderFromInputFile(THDF5_File & InputFile)
 {
@@ -1370,6 +1371,7 @@ void THDF5_FileHeader::ReadHeaderFromInputFile(THDF5_File & InputFile)
  * calculated based on the very last leg of the simulation).
  * This function is called only if checkpoint-restart is enabled.
  * @param [in] OutputFile
+ * @throw ios:failure when en error happens
  */
 void THDF5_FileHeader::ReadHeaderFromOutputFile(THDF5_File & OutputFile)
 {
@@ -1409,6 +1411,7 @@ void THDF5_FileHeader::ReadHeaderFromOutputFile(THDF5_File & OutputFile)
  * Read the file header form the checkpoint file. We need the header to verify
  * the file version and type
  * @param [in] CheckpointFile
+ * @throw ios:failure when en error happens
  */
 void THDF5_FileHeader::ReadHeaderFromCheckpointFile(THDF5_File & CheckpointFile)
 {

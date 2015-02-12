@@ -8,9 +8,9 @@
  * @brief       The implementation file containing the main class of the project
  *              responsible for the entire simulation.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27  (created)\n
- *              29 September 2014, 17:23  (revised)
+ *              12 February  2015, 10:33  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -92,7 +92,7 @@ TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver():
   Parameters = TParameters::GetInstance();
 
   //Switch off HDF5 error messages
-  H5Eset_auto( H5E_DEFAULT, NULL, NULL);
+  H5Eset_auto(H5E_DEFAULT, NULL, NULL);
 }// end of TKSpaceFirstOrder3DSolver
 //------------------------------------------------------------------------------
 
@@ -342,7 +342,7 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file)
 {
   fprintf(file,"\n");
   fprintf(file,"+----------------------------------------------------+\n");
-  fprintf(file,"| Build name:       kspaceFirstOrder3D v2.15         |\n");
+  fprintf(file,"| Build name:       kspaceFirstOrder3D v2.16         |\n");
   fprintf(file,"| Build date:       %*.*s                      |\n", 10,11,__DATE__);
   fprintf(file,"| Build time:       %*.*s                         |\n", 8,8,__TIME__);
   #if (defined (__KWAVE_GIT_HASH__))
@@ -907,7 +907,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
       Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgx_scalar(), Get_FFT_X_temp());
       Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgy_scalar(), Get_FFT_Y_temp());
       Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgz_scalar(), Get_FFT_Z_temp());
-      }
+    }
   }
   else
   { // homogeneous, non-unifrom grid
@@ -2679,7 +2679,7 @@ void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
   double ElapsedTotalTime, ElapsedDataLoadTime, ElapsedPreProcessingTime,
          ElapsedSimulationTime, ElapsedPostProcessingTime;
 
-  /// Get execution times stored in the output file header
+  // Get execution times stored in the output file header
   Parameters->HDF5_FileHeader.GetExecutionTimes(ElapsedTotalTime,
                                                 ElapsedDataLoadTime,
                                                 ElapsedPreProcessingTime,

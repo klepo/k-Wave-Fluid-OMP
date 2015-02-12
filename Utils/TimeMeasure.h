@@ -7,7 +7,7 @@
  *
  * @brief       The header file containing the class measuring elapsed time.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        15 August    2012,  9:35 (created) \n
  *              29 September 2014, 14:11 (revised)
@@ -39,7 +39,7 @@
 #ifdef _OPENMP
   #include <omp.h>
 #else
-#include <sys/time.h>
+  #include <sys/time.h>
 #endif
 
 

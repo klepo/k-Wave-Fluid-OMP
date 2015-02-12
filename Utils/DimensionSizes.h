@@ -7,7 +7,7 @@
  *
  * @brief       The header file containing the structure with 3D dimension sizes
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August     2011, 12:34     (created) \n
  *              29 September  2014, 13:10     (revised)
@@ -76,7 +76,7 @@ struct TDimensionSizes
 
   /**
    * @brief Constructor.
-   * @param [in] x, y, z, t - Three spatial dimesnions and time.
+   * @param [in] x, y, z, t - Three spatial dimensions and time.
    */
   TDimensionSizes(const size_t x,
                   const size_t y,

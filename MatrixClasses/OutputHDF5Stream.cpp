@@ -8,7 +8,7 @@
  * @brief       The implementation file of classes responsible for storing output
  *              quantities into the output HDF5 file
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30      (created) \n
  *              26 September 2014, 18:36      (revised)
@@ -231,7 +231,7 @@ TIndexOutputHDF5Stream::TIndexOutputHDF5Stream(THDF5_File &             HDF5_Fil
 
 /**
  * Destructor.
- * if the file is still opened, it applies the post processing and flush the data.
+ * If the file is still opened, it applies the post processing and flush the data.
  * Then, the object memory is freed and the object destroyed.
  */
 TIndexOutputHDF5Stream::~TIndexOutputHDF5Stream()
@@ -1178,5 +1178,4 @@ void TWholeDomainOutputHDF5Stream::FlushBufferToFile()
   SampledTimeStep++;
 }// end of FlushToFile
 //------------------------------------------------------------------------------
-
 

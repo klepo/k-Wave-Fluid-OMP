@@ -7,7 +7,7 @@
  *
  * @brief       The main file of kspaceFirstOrder3D-OMP.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:57 (created) \n
  *              02 October   2014, 10:06 (revised)
@@ -304,7 +304,7 @@ Mandatory parameters:
 
 Optional parameters:
   -t <num_threads>                : Number of CPU threads
-                                      (default = 4)
+                                      (default = all)
   -r <interval_in_%>              : Progress print interval
                                       (default = 5%)
   -c <comp_level>                 : Output file compression level <0,9>

@@ -74,7 +74,7 @@ LINKING = STATIC
 
 #Set up paths: FFT_DIR for FFTW or MKL for MKL
 FFT_DIR=/usr/local
-MKL_DIR=/opt/intel/composer_xe_2013/mkl
+#MKL_DIR=/opt/intel/composer_xe_2013/mkl
 #HDF5_DIR=/usr/local/hdf5-1.8.10-serial-icc
 HDF5_DIR=/usr/local/hdf5-serial
 

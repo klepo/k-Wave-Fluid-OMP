@@ -7,7 +7,7 @@
  *
  * @brief       The header file containing the particle velocity matrix.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
  *              26 September 2014, 14:15 (revised)

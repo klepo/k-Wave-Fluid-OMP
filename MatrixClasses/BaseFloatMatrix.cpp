@@ -8,7 +8,7 @@
  * @brief       The implementation file containing the base class for
  *              single precisions floating point numbers (floats)
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 12:13 (created) \n
  *              24 September 2014, 14:54 (revised)

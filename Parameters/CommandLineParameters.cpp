@@ -7,7 +7,7 @@
  *
  * @brief       The implementation file containing the command line parameters.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        29 August    2012, 11:25 (created) \n
  *              29 September 2014, 12:23 (revised)
@@ -210,7 +210,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
 #ifdef _OPENMP
   const char * shortOpts = "i:o:r:c:t:puhs:";
 #else
-  const char * shortOpts = "i:o:r:c:puIhs:";
+  const char * shortOpts = "i:o:r:c:puhs:";
 #endif
 
   const struct option longOpts[] =

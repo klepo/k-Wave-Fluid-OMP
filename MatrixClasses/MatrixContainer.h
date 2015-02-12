@@ -7,10 +7,10 @@
  *
  * @brief       The header file containing the matrix container.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              26 September 2014, 17:10 (revised)
+ *              12 February  2015, 10:40 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -166,7 +166,7 @@ class TMatrixContainer
 {
   public:
 
-    /// Constructor
+    /// Constructor.
     TMatrixContainer() {}
     /// Destructor.
     virtual ~TMatrixContainer();
@@ -204,7 +204,7 @@ class TMatrixContainer
     /// Free all matrices - destroy them.
     void FreeAllMatrices();
 
-    /// Set all matrices recored - populate the container
+    /// Set all matrices recored - populate the container.
     void AddMatricesIntoContainer();
 
     /**
@@ -334,7 +334,7 @@ class TOutputStreamContainer
     void FreeAllStreams();
 
   protected:
-    // Create a new output stream.
+    /// Create a new output stream.
     TBaseOutputHDF5Stream * CreateNewOutputStream(TMatrixContainer & MatrixContainer,
                                                   const TMatrixID    SampledMatrixID,
                                                   const char *       HDF5_DatasetName,
