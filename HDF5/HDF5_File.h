@@ -7,9 +7,9 @@
  *
  * @brief       The header file containing the HDF5 related classes
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14 (created) \n
- *              02 October   2014, 12:45 (revised)
+ *              12 February  2015, 10:26 (revised)
  *
  *
  *
@@ -526,7 +526,7 @@ class THDF5_File
     //----------------------- Basic file operations --------------------------//
     /// Create the file, overwrite if exist.
     void Create(const char * FileName,
-                unsigned int Flags = H5F_ACC_TRUNC );
+                unsigned int Flags = H5F_ACC_TRUNC);
 
     /// Open the file.
     void Open(const char * FileName,
@@ -744,7 +744,6 @@ class THDF5_File
  * @brief Class for HDF5 header
  * @details This class manages all information that can be stored in the input
  * output or checkpoint file.
- *
  */
 class THDF5_FileHeader
 {
@@ -754,39 +753,44 @@ class THDF5_FileHeader
      * @enum THDF5_FileHeaderItems
      * @brief List of all header items
      */
-    enum THDF5_FileHeaderItems{hdf5_fhi_created_by                   =  0,
-                               hdf5_fhi_creation_date                =  1,
-                               hdf5_fhi_file_description             =  2,
-                               hdf5_fhi_major_version                =  3,
-                               hdf5_fhi_minor_version                =  4,
-                               hdf5_fhi_file_type                    =  5,
-                               hdf5_fhi_host_name                    =  6,
-                               hdf5_fhi_total_memory_consumption     =  7,
-                               hdf5_fhi_peak_core_memory_consumption =  8,
-                               hdf5_fhi_total_execution_time         =  9,
-                               hdf5_fhi_data_load_time               = 10,
-                               hdf5_fhi_preprocessing_time           = 11,
-                               hdf5_fhi_simulation_time              = 12,
-                               hdf5_fhi_postprocessing_time          = 13,
-                               hdf5_fhi_number_of_cores              = 14
+    enum THDF5_FileHeaderItems{
+                                hdf5_fhi_created_by                   =  0,
+                                hdf5_fhi_creation_date                =  1,
+                                hdf5_fhi_file_description             =  2,
+                                hdf5_fhi_major_version                =  3,
+                                hdf5_fhi_minor_version                =  4,
+                                hdf5_fhi_file_type                    =  5,
+                                hdf5_fhi_host_name                    =  6,
+                                hdf5_fhi_total_memory_consumption     =  7,
+                                hdf5_fhi_peak_core_memory_consumption =  8,
+                                hdf5_fhi_total_execution_time         =  9,
+                                hdf5_fhi_data_load_time               = 10,
+                                hdf5_fhi_preprocessing_time           = 11,
+                                hdf5_fhi_simulation_time              = 12,
+                                hdf5_fhi_postprocessing_time          = 13,
+                                hdf5_fhi_number_of_cores              = 14
                               };
 
     /**
      * @enum  THDF5_FileType
-     * @brief HDF5 file type
+     * @brief HDF5 file type.
      */
-    enum THDF5_FileType       {hdf5_ft_input  = 0,
-                               hdf5_ft_output = 1,
-                               hdf5_ft_checkpoint = 2,
-                               hdf5_ft_unknown = 3};
+    enum THDF5_FileType       {
+                                hdf5_ft_input  = 0,
+                                hdf5_ft_output = 1,
+                                hdf5_ft_checkpoint = 2,
+                                hdf5_ft_unknown = 3
+                              };
 
     /**
      * @enum  THDF5_FileVersion
-     * @brief HDF5 file version
+     * @brief HDF5 file version.
      */
-    enum THDF5_FileVersion     {hdf5_fv_10 = 0,
+    enum THDF5_FileVersion    {
+                                hdf5_fv_10 = 0,
                                 hdf5_fv_11 = 1,
-                                hdf5_fv_unknown = 2};
+                                hdf5_fv_unknown = 2
+                              };
 
 
     /// Constructor.
@@ -811,7 +815,7 @@ class THDF5_FileHeader
     /**
      * @brief Set code name.
      * @details Set code name to the header.
-     * @param CodeName - code version
+     * @param [in] CodeName - code version
      */
     void SetCodeName(const string& CodeName)
     {
@@ -882,7 +886,7 @@ class THDF5_FileHeader
     /// Set host name.
     void SetHostName();
     /// Set memory consumption.
-    void SetMemoryConsumption(size_t TotalMemory);
+    void SetMemoryConsumption(const size_t TotalMemory);
     /// Set execution times.
     void SetExecutionTimes(const double TotalTime,
                            const double LoadTime,

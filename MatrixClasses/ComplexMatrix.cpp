@@ -7,7 +7,7 @@
  *
  * @brief       The implementation file with the class for complex matrices.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
  *              25 September 2014, 12:35 (revised)

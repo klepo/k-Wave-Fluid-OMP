@@ -8,7 +8,7 @@
  * @brief       The header file containing the main class of the project
  *              responsible for the entire simulation.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        12 July      2012, 10:27 (created)\n
  *              29 September 2014, 14:45 (revised)
@@ -633,8 +633,7 @@ class TKSpaceFirstOrder3DSolver
     /// Iteration time of the simulation.
     TTimeMeasure       IterationTime;
 
-
-};// end of  TKSpace3DSolver
+};// end of  TKSpaceFirstOrder3DSolver
 //------------------------------------------------------------------------------
 
 #endif	/* TKSPACE3DSOLVER_H */

@@ -8,7 +8,7 @@
  * @brief       The header file of the common ancestor of all matrix classes.
  *              A pure abstract class.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 11:34 (created) \n
  *              24 September 2014, 15:35 (revised)

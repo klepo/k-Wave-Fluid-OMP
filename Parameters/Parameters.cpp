@@ -7,7 +7,7 @@
  *
  * @brief       The implementation file containing parameters of the simulation.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2012, 13:39 (created) \n
  *              29 September 2014, 12:43 (revised)
@@ -352,7 +352,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
     HDF5_InputFile.ReadScalarValue(HDF5RootGroup, rho0_sgy_Name, rho0_sgy_scalar);
     HDF5_InputFile.ReadScalarValue(HDF5RootGroup, rho0_sgz_Name, rho0_sgz_scalar);
   }
-}// end of ReadScalarsFromMatlabInputFile
+}// end of ReadScalarsFromHDF5InputFile
 //------------------------------------------------------------------------------
 
 /**

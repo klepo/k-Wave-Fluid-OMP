@@ -7,7 +7,7 @@
  *
  * @brief       The header file containing the parameters of the simulation.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        08 December  2011, 16:34 (created) \n
  *              29 September 2014, 12:42 (revised)
@@ -77,7 +77,7 @@ class TParameters
     void ParseCommandLine(int argc, char** argv);
     /// Read scalar values from the input HDF5 file.
     void ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile);
-    /// Save scalars into the output HDF5 file.
+    /// Save scalar values into the output HDF5 file.
     void SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile);
 
     /// Full dimension sizes of the simulation (real classes).
@@ -311,7 +311,7 @@ class TParameters
     TSenosrMaskType sensor_mask_type;
     /// sensor_mask_ind_size value.
     size_t sensor_mask_ind_size;
-    /// sensor_mask_corners_size - how many cuboids is in the mask..
+    /// sensor_mask_corners_size - how many cuboids are in the mask..
     size_t sensor_mask_corners_size;
 
     /// u_source_index_size value.

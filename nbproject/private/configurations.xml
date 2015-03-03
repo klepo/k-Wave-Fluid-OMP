@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="94">
+<configurationDescriptor version="95">
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -24,7 +24,6 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 100</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 10 </runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_case_1.h5 -o Data/output_data_128_128_128_case_1.h5 --benchmark 10</runcommandpicklistitem>
@@ -36,8 +35,9 @@
 --u_non_staggered_raw</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10 --u_non_staggered_raw</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_het_cuboid.h5 -o Data/output_data_128_128_128_het_cuboid.h5 --benchmark 10</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_corners.h5 -o Data/output_data_128_128_128_corners.h5 --benchmark 10</runcommand>
+        <runcommand>"${OUTPUT_PATH}"  -i Data/input_data_128_128_128_het_cuboid.h5 -o Data/output_data_128_128_128_het_cuboid.h5 --benchmark 10</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

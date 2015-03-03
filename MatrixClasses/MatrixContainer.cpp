@@ -7,7 +7,7 @@
  *
  * @brief       The implementation file containing the matrix container.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27  (created) \n
  *              26 September 2014, 17:09  (revised)
  *
@@ -834,7 +834,7 @@ void TOutputStreamContainer::ReopenStreams()
       (it->second)->Reopen();
     }
   }
-}// end of CreateStreams
+}// end of ReopenStreams
 //------------------------------------------------------------------------------
 
 
@@ -850,7 +850,7 @@ void TOutputStreamContainer::SampleStreams()
       (it->second)->Sample();
     }
   }
-}// end of CloseStreams
+}// end of SampleStreams
 //------------------------------------------------------------------------------
 
 

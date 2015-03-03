@@ -8,7 +8,7 @@
  * @brief       The header file of classes responsible for storing output
  *              quantities into the output HDF5 file.
  *
- * @version     kspaceFirstOrder3D 2.15
+ * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
  *              26 September 2014, 18:33 (revised)
