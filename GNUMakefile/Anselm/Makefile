@@ -59,12 +59,12 @@
 #################################################################################
 
 # Select compiler
-COMPILER = GNU
-#COMPILER = Intel
+#COMPILER = GNU
+COMPILER = Intel
 
 # static lining is deafult
-LINKING = STATIC
-#LINKING = DYNAMIC
+#LINKING = STATIC
+LINKING = DYNAMIC
 
 
 #load following modues for GNU
@@ -100,14 +100,14 @@ ifeq ($(COMPILER),GNU)
   
   ifeq ($(LINKING),STATIC)
 
-	LDFLAGS  = -fopenmp $(CPU_FLAGS) -L$(HDF5_LIB_DIR) -L$(FFTW3_LIB_DIR) -Wl,-rpath,$(HDF5_LIB_DIR)
+	LDFLAGS  = -fopenmp -O3 -L$(HDF5_LIB_DIR) -L$(FFTW3_LIB_DIR) -Wl,-rpath,$(HDF5_LIB_DIR)
 
 	LIBS     = $(FFTW3_LIB_DIR)/libfftw3f.a  	\
 		   $(FFTW3_LIB_DIR)/libfftw3f_omp.a 	\
 		     -lhdf5 -lhdf5_hl
     else	
-	LDFLAGS  = -fopenmp $(CPU_FLAGS) -L$(HDF5_LIB_DIR) -L$(FFT_LIB_DIR)
-	LIBS     = -lfftw3f  -lfftw3f_omp -lhdf5 -lhdf5_hl
+	LDFLAGS  = -fopenmp -O3  -L$(HDF5_LIB_DIR) -L$(FFT_LIB_DIR)  -Wl,-rpath,$(HDF5_LIB_DIR)
+	LIBS     = -lfftw3f -lfftw3f_omp -lhdf5 -lhdf5_hl
   endif
 endif
 
@@ -115,43 +115,33 @@ endif
 ########################### Intel Compiler + MKL ################################
 ifeq ($(COMPILER),Intel)
 
-  #intel 2013 compilers
+  #intel 2015 compilers
   CXX	   = icpc
 
 
 		
-  CXXFLAGS = -fast -xhost -xavx -openmp  $(CPU_FLAGS) -Wall -ipo \
+  CXXFLAGS = -O3 -xhost -xavx -openmp -Wall \
     	     -I$(HDF5_INC_DIR) -I$(MKL_INC_DIR) -I$(MKL_INC_DIR)/fftw -I./ 
 #    	     -I$(HDF5)/include -I$(MKL_INC_DIR) -I$(MKL_INC_DIR)/fftw -I./ 
 
 
   ifeq ($(LINKING),STATIC)
-	LDFLAGS  = -fast -openmp $(CPU_FLAGS) -L$(HDF5)/lib \
-		   -mkl=parallel	
-		   
-#		   -L/apps/intel/inspector_xe_2013/lib64/pinruntime/glibc \
-#		   -L/apps/libs/zlib/intel/1.2.8/lib		\
-#		   -L/apps/libs/szip/intel/2.1/lib		\
-#		   -mkl=parallel
+	LDFLAGS  = -O3 -openmp -L$(HDF5_LIB_DIR) \
+		   -mkl=parallel -static-intel
 
-	LIBS = 	$(HDF5)/lib/libhdf5_hl.a 			\
-		$(HDF5)/lib/libhdf5.a 				\
+	LIBS = 	$(HDF5_LIB_DIR)/libhdf5_hl.a 			\
+		$(HDF5_LIB_DIR)/libhdf5.a 				\
 		/apps/libs/zlib/intel/1.2.8/lib/libz.a 		\
-		-lm
-
-
-#		/apps/libs/zlib/intel/1.2.8/lib/libz.a 		\
-#		/apps/libs/szip/intel/2.1/lib/libsz.a		\
-#		-lm
+		-lm -ldl
 
   else	
-	LDFLAGS  = -openmp $(CPU_FLAGS) -L$(HDF5_LIB_DIR) -L. \
-                   -Wl,--start-group $(MKL_LIB_DIR)/libmkl_intel_ilp64.a $(MKL_LIB_DIR)/libmkl_core.a
+        # Dynamic link
+	LDFLAGS  = $(CPU_FLAGS) -O3 -openmp             \
+                   -L$(HDF5_LIB_DIR)			\
+            	   -Wl,-rpath,$(HDF5_LIB_DIR):$(FFT_DIR)/lib \
+    		   -mkl=parallel
+        LIBS     = -lhdf5 -lhdf5_hl -lz
 
-#	-L/apps/libs/zlib/intel/1.2.8/lib/	\
-#	-L/apps/libs/szip/intel/2.1/lib/	\
-
-  	LIBS     = -lhdf5_hl -lhdf5
   endif
 endif
 
