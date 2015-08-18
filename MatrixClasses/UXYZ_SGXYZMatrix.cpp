@@ -614,7 +614,7 @@ void Tuxyz_sgxyzMatrix::AddTransducerSource(const TIndexMatrix& u_source_index,
                                                   TIndexMatrix& delay_mask,
                                             const TRealMatrix & transducer_signal)
 {
-  #pragma omp parallel for schedule (static)  if (u_source_index.GetTotalElementCount() > 1e5)
+  #pragma omp parallel for schedule (static)  if (u_source_index.GetTotalElementCount() > 16384)
   for (size_t i = 0; i < u_source_index.GetTotalElementCount(); i++)
   {
     pMatrixData[u_source_index[i]] += transducer_signal[delay_mask[i]];
@@ -642,29 +642,27 @@ void Tuxyz_sgxyzMatrix::Add_u_source(const TRealMatrix & u_source_input,
                                      const size_t        u_source_mode,
                                      const size_t        u_source_many)
 {
-  size_t index2D = t_index;
-  if (u_source_many != 0)
-  { // is 2D
-    index2D = t_index * u_source_index.GetTotalElementCount();
-  }
+  
+  const size_t u_source_size = u_source_index.GetTotalElementCount();
+  const size_t Index2D = (u_source_many != 0) ? t_index * u_source_size : t_index;
 
   if (u_source_mode == 0)
   {
-    for (size_t i = 0; i < u_source_index.GetTotalElementCount(); i++)
+    #pragma omp parallel for if (u_source_size > 16384)
+    for (size_t i = 0; i < u_source_size; i++)
     {
-      pMatrixData[u_source_index[i]] = u_source_input[index2D];
-
-      if (u_source_many != 0) index2D++;
+      const size_t SignalIndex = (u_source_many != 0) ? Index2D + i : Index2D;
+      pMatrixData[u_source_index[i]] = u_source_input[SignalIndex];    
     }
   }// end of Dirichlet
 
   if (u_source_mode == 1)
   {
-    for (size_t i = 0; i < u_source_index.GetTotalElementCount(); i++)
+    #pragma omp parallel for if (u_source_size > 16384)
+    for (size_t i = 0; i < u_source_size; i++)
     {
-      pMatrixData[u_source_index[i]] += u_source_input[index2D];
-
-      if (u_source_many != 0) index2D++;
+      const size_t SignalIndex = (u_source_many != 0) ? Index2D + i : Index2D;      
+      pMatrixData[u_source_index[i]] += u_source_input[SignalIndex];
     }
   }// end of add
 }// end of Add_u_source

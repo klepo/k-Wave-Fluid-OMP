@@ -2209,39 +2209,37 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
     float * rhoz = Get_rhoz().GetRawData();
 
     float  * p_source_input = Get_p_source_input().GetRawData();
-    size_t * p_source_index = Get_p_source_index().GetRawData();
-
-
-    size_t index2D = t_index;
-
-    if (Parameters->Get_p_source_many() != 0)
-    { // is 2D
-      index2D = t_index * Get_p_source_index().GetTotalElementCount();
-    }
-
+    const size_t * p_source_index = Get_p_source_index().GetRawData();
+        
+    const bool   Is_p_source_many  = (Parameters->Get_p_source_many() != 0);    
+    const size_t Index2D           = (Is_p_source_many) ? t_index * Get_p_source_index().GetTotalElementCount() : t_index;      
+    const size_t p_source_size     = Get_p_source_index().GetTotalElementCount();
+    
     // replacement
     if (Parameters->Get_p_source_mode() == 0)
     {
-      for (size_t i = 0; i < Get_p_source_index().GetTotalElementCount(); i++)
+      #pragma omp parallel for if (p_source_size > 16384)
+      for (size_t i = 0; i < p_source_size; i++)
       {
-        rhox[p_source_index[i]] = p_source_input[index2D];
-        rhoy[p_source_index[i]] = p_source_input[index2D];
-        rhoz[p_source_index[i]] = p_source_input[index2D];
+        const size_t SignalIndex = (Is_p_source_many) ? Index2D + i : Index2D;
 
-        if (Parameters->Get_p_source_many() != 0) index2D++;
+        rhox[p_source_index[i]] = p_source_input[SignalIndex];
+        rhoy[p_source_index[i]] = p_source_input[SignalIndex];
+        rhoz[p_source_index[i]] = p_source_input[SignalIndex];
+        
       }
     }
     // Addition
     else
     {
-
-      for (size_t i = 0; i < Get_p_source_index().GetTotalElementCount(); i++)
+      #pragma omp parallel for if (p_source_size > 16384)
+      for (size_t i = 0; i < p_source_size; i++)
       {
-        rhox[p_source_index[i]] += p_source_input[index2D];
-        rhoy[p_source_index[i]] += p_source_input[index2D];
-        rhoz[p_source_index[i]] += p_source_input[index2D];
-
-        if (Parameters->Get_p_source_many() != 0) index2D++;
+        const size_t SignalIndex = (Is_p_source_many) ? Index2D + i : Index2D;
+        
+        rhox[p_source_index[i]] += p_source_input[SignalIndex];
+        rhoy[p_source_index[i]] += p_source_input[SignalIndex];
+        rhoz[p_source_index[i]] += p_source_input[SignalIndex];
       }
     }// type of replacement
   }// if do at all
