@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27  (created)\n
- *              12 February  2015, 16:08  (revised)
+ *              21 August    2015, 18:28  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -2210,11 +2210,11 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
 
     float  * p_source_input = Get_p_source_input().GetRawData();
     const size_t * p_source_index = Get_p_source_index().GetRawData();
-        
-    const bool   Is_p_source_many  = (Parameters->Get_p_source_many() != 0);    
-    const size_t Index2D           = (Is_p_source_many) ? t_index * Get_p_source_index().GetTotalElementCount() : t_index;      
+
+    const bool   Is_p_source_many  = (Parameters->Get_p_source_many() != 0);
+    const size_t Index2D           = (Is_p_source_many) ? t_index * Get_p_source_index().GetTotalElementCount() : t_index;
     const size_t p_source_size     = Get_p_source_index().GetTotalElementCount();
-    
+
     // replacement
     if (Parameters->Get_p_source_mode() == 0)
     {
@@ -2226,7 +2226,7 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
         rhox[p_source_index[i]] = p_source_input[SignalIndex];
         rhoy[p_source_index[i]] = p_source_input[SignalIndex];
         rhoz[p_source_index[i]] = p_source_input[SignalIndex];
-        
+
       }
     }
     // Addition
@@ -2236,7 +2236,7 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
       for (size_t i = 0; i < p_source_size; i++)
       {
         const size_t SignalIndex = (Is_p_source_many) ? Index2D + i : Index2D;
-        
+
         rhox[p_source_index[i]] += p_source_input[SignalIndex];
         rhoy[p_source_index[i]] += p_source_input[SignalIndex];
         rhoz[p_source_index[i]] += p_source_input[SignalIndex];
@@ -2383,7 +2383,7 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
   // set ActPercent to correspond the t_index after recovery
   if (Parameters->Get_t_index() > 0)
   {
-    ActPercent = (Parameters->Get_t_index() / (Parameters->Get_Nt() / 100));
+    ActPercent = (100 * Parameters->Get_t_index()) / Parameters->Get_Nt();
   }
 
   PrintOtputHeader();
@@ -2446,11 +2446,11 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
  */
 void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
 {
-  const float  Nt = (float) Parameters->Get_Nt();
+  const size_t Nt =  Parameters->Get_Nt();
   const size_t t_index = Parameters->Get_t_index();
 
 
-  if (t_index > (ActPercent * Nt * 0.01f) )
+  if (t_index > ((ActPercent * Nt) / 100) )
   {
     ActPercent += Parameters->GetVerboseInterval();
 
@@ -2458,7 +2458,7 @@ void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
 
     const double ElTime = IterationTime.GetElapsedTime();
     const double ElTimeWithLegs = IterationTime.GetElapsedTime() + SimulationTime.GetCumulatedElapsedTimeOverPreviousLegs();
-    const double ToGo   = ((ElTimeWithLegs / (float) (t_index + 1)) *  Nt) - ElTimeWithLegs;
+    const double ToGo   = ((ElTimeWithLegs / (double) (t_index + 1)) *  double(Nt)) - ElTimeWithLegs;
 
     struct tm *current;
     time_t now;
@@ -2467,9 +2467,9 @@ void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
     current = localtime(&now);
 
     fprintf(stdout, "%5li%c      %9.3fs      %9.3fs      %02i/%02i/%02i %02i:%02i:%02i\n",
-            (size_t) ((t_index) / (Nt * 0.01f)),'%',
+            (100 * t_index) / Nt ,'%',
             ElTime, ToGo,
-            current->tm_mday, current->tm_mon+1, current->tm_year-100,
+            current->tm_mday, current->tm_mon + 1, current->tm_year - 100,
             current->tm_hour, current->tm_min, current->tm_sec
             );
 
