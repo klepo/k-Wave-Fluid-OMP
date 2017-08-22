@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        12 July      2012, 10:27 (created)\n
- *              29 September 2014, 14:45 (revised)
+ *              22 August    2017, 11:48 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -94,30 +94,30 @@ class TKSpaceFirstOrder3DSolver
     void   SetProcessorAffinity();
 
     /// Get total simulation time.
-    double GetTotalTime()          const { return TotalTime.GetElapsedTime();         };
+    double GetTotalTime()          const { return TotalTime.getElapsedTime();         };
 
     /// Get pre-processing time.
-    double GetPreProcessingTime()  const { return PreProcessingTime.GetElapsedTime(); };
+    double GetPreProcessingTime()  const { return PreProcessingTime.getElapsedTime(); };
 
     /// Get data load time.
-    double GetDataLoadTime()       const { return DataLoadTime.GetElapsedTime();      };
+    double GetDataLoadTime()       const { return DataLoadTime.getElapsedTime();      };
 
     /// Get simulation time (time loop).
-    double GetSimulationTime()     const { return SimulationTime.GetElapsedTime();    };
+    double GetSimulationTime()     const { return SimulationTime.getElapsedTime();    };
 
     /// Get post-processing time.
-    double GetPostProcessingTime() const { return PostProcessingTime.GetElapsedTime();};
+    double GetPostProcessingTime() const { return PostProcessingTime.getElapsedTime();};
 
     /// Get total simulation time cumulated over all legs.
-    double GetCumulatedTotalTime()          const { return TotalTime.GetCumulatedElapsedTimeOverAllLegs();          };
+    double GetCumulatedTotalTime()          const { return TotalTime.getElapsedTimeOverAllLegs();          };
     /// Get pre-processing time cumulated over all legs.
-    double GetCumulatedPreProcessingTime()  const { return PreProcessingTime.GetCumulatedElapsedTimeOverAllLegs();  };
+    double GetCumulatedPreProcessingTime()  const { return PreProcessingTime.getElapsedTimeOverAllLegs();  };
     /// Get data load time cumulated over all legs.
-    double GetCumulatedDataLoadTime()       const { return DataLoadTime.GetCumulatedElapsedTimeOverAllLegs();       };
+    double GetCumulatedDataLoadTime()       const { return DataLoadTime.getElapsedTimeOverAllLegs();       };
     /// Get simulation time (time loop) cumulated over all legs.
-    double GetCumulatedSimulationTime()     const { return SimulationTime.GetCumulatedElapsedTimeOverAllLegs();     };
+    double GetCumulatedSimulationTime()     const { return SimulationTime.getElapsedTimeOverAllLegs();     };
     /// Get post-processing time cumulated over all legs.
-    double GetCumulatedPostProcessingTime() const { return PostProcessingTime.GetCumulatedElapsedTimeOverAllLegs(); };
+    double GetCumulatedPostProcessingTime() const { return PostProcessingTime.getElapsedTimeOverAllLegs(); };
 
   protected:
 
@@ -621,17 +621,17 @@ class TKSpaceFirstOrder3DSolver
     TParameters *      Parameters;
 
     /// Total time of the simulation.
-    TTimeMeasure       TotalTime;
+    TimeMeasure       TotalTime;
     /// Pre-processing time of the simulation.
-    TTimeMeasure       PreProcessingTime;
+    TimeMeasure       PreProcessingTime;
     /// Data load time of the simulation.
-    TTimeMeasure       DataLoadTime;
+    TimeMeasure       DataLoadTime;
     /// Simulation time of the simulation.
-    TTimeMeasure       SimulationTime;
+    TimeMeasure       SimulationTime;
     /// Post-processing time of the simulation.
-    TTimeMeasure       PostProcessingTime;
+    TimeMeasure       PostProcessingTime;
     /// Iteration time of the simulation.
-    TTimeMeasure       IterationTime;
+    TimeMeasure       IterationTime;
 
 };// end of  TKSpaceFirstOrder3DSolver
 //------------------------------------------------------------------------------

@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27  (created)\n
- *              21 August    2015, 18:28  (revised)
+ *              22 August    2017, 11:48  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -88,7 +88,7 @@ TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver():
         TotalTime(), PreProcessingTime(), DataLoadTime (), SimulationTime(),
         PostProcessingTime(), IterationTime()
 {
-  TotalTime.Start();
+  TotalTime.start();
   Parameters = TParameters::GetInstance();
 
   //Switch off HDF5 error messages
@@ -139,7 +139,7 @@ void TKSpaceFirstOrder3DSolver::FreeMemory()
 void TKSpaceFirstOrder3DSolver::LoadInputData()
 {
   // Start timer
-  DataLoadTime.Start();
+  DataLoadTime.start();
 
   // get handles
   THDF5_File& HDF5_InputFile      = Parameters->HDF5_InputFile; // file is opened (in Parameters)
@@ -203,7 +203,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   }
 
  // Stop timer
-  DataLoadTime.Stop();
+  DataLoadTime.stop();
 }// end of LoadInputData
 //------------------------------------------------------------------------------
 
@@ -216,7 +216,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
  */
 void TKSpaceFirstOrder3DSolver::Compute()
 {
-  PreProcessingTime.Start();
+  PreProcessingTime.start();
 
   fprintf(stdout,"FFT plans creation.........."); fflush(stdout);
 
@@ -230,24 +230,24 @@ void TKSpaceFirstOrder3DSolver::Compute()
 
   fprintf(stdout,"Done \n");
   fprintf(stdout,"Current memory in use:%8ldMB\n", ShowMemoryUsageInMB());
-  PreProcessingTime.Stop();
+  PreProcessingTime.stop();
 
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",PreProcessingTime.GetElapsedTime());
+  fprintf(stdout,"Elapsed time:          %8.2fs\n",PreProcessingTime.getElapsedTime());
 
-  SimulationTime.Start();
+  SimulationTime.start();
 
     Compute_MainLoop();
 
-  SimulationTime.Stop();
+  SimulationTime.stop();
 
-  PostProcessingTime.Start();
+  PostProcessingTime.start();
 
   if (IsCheckpointInterruption())
   { // Checkpoint
     fprintf(stdout,"-------------------------------------------------------------\n");
     fprintf(stdout,".............. Interrupted to checkpoint! ...................\n");
     fprintf(stdout,"Number of time steps completed:                    %10ld\n",  Parameters->Get_t_index());
-    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.GetElapsedTime());
+    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.getElapsedTime());
     fprintf(stdout,"-------------------------------------------------------------\n");
     fprintf(stdout,"Checkpoint in progress......"); fflush(stdout);
 
@@ -256,7 +256,7 @@ void TKSpaceFirstOrder3DSolver::Compute()
   else
   { // Finish
     fprintf(stdout,"-------------------------------------------------------------\n");
-    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.GetElapsedTime());
+    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.getElapsedTime());
     fprintf(stdout,"-------------------------------------------------------------\n");
     fprintf(stdout,"Post-processing phase......."); fflush(stdout);
 
@@ -270,10 +270,10 @@ void TKSpaceFirstOrder3DSolver::Compute()
     }
   }
 
-  PostProcessingTime.Stop();
+  PostProcessingTime.stop();
 
   fprintf(stdout,"Done \n");
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",PostProcessingTime.GetElapsedTime());
+  fprintf(stdout,"Elapsed time:          %8.2fs\n",PostProcessingTime.getElapsedTime());
 
     WriteOutputDataInfo();
 
@@ -2388,7 +2388,7 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
 
   PrintOtputHeader();
 
-  IterationTime.Start();
+  IterationTime.start();
 
   while (Parameters->Get_t_index() < Parameters->Get_Nt() && (!IsTimeToCheckpoint()))
   {
@@ -2454,10 +2454,10 @@ void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
   {
     ActPercent += Parameters->GetVerboseInterval();
 
-    IterationTime.Stop();
+    IterationTime.stop();
 
-    const double ElTime = IterationTime.GetElapsedTime();
-    const double ElTimeWithLegs = IterationTime.GetElapsedTime() + SimulationTime.GetCumulatedElapsedTimeOverPreviousLegs();
+    const double ElTime = IterationTime.getElapsedTime();
+    const double ElTimeWithLegs = IterationTime.getElapsedTime() + SimulationTime.getElapsedTimeOverPreviousLegs();
     const double ToGo   = ((ElTimeWithLegs / (double) (t_index + 1)) *  double(Nt)) - ElTimeWithLegs;
 
     struct tm *current;
@@ -2497,9 +2497,9 @@ bool TKSpaceFirstOrder3DSolver::IsTimeToCheckpoint()
 {
   if (!Parameters->IsCheckpointEnabled()) return false;
 
-  TotalTime.Stop();
+  TotalTime.stop();
 
-  return (TotalTime.GetElapsedTime() > (float) Parameters->GetCheckpointInterval());
+  return (TotalTime.getElapsedTime() > (float) Parameters->GetCheckpointInterval());
 
 }// end of IsTimeToCheckpoint
 //------------------------------------------------------------------------------
@@ -2654,7 +2654,7 @@ void TKSpaceFirstOrder3DSolver::WriteOutputDataInfo()
   HDF5_FileHeader.SetMemoryConsumption(ShowMemoryUsageInMB());
 
   // Stop total timer here
-  TotalTime.Stop();
+  TotalTime.stop();
   HDF5_FileHeader.SetExecutionTimes(GetCumulatedTotalTime(),
                                     GetCumulatedDataLoadTime(),
                                     GetCumulatedPreProcessingTime(),
@@ -2684,11 +2684,11 @@ void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
                                                 ElapsedSimulationTime,
                                                 ElapsedPostProcessingTime);
 
-  TotalTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedTotalTime);
-  DataLoadTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedDataLoadTime);
-  PreProcessingTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedPreProcessingTime);
-  SimulationTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedSimulationTime);
-  PostProcessingTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedPostProcessingTime);
+  TotalTime.SetElapsedTimeOverPreviousLegs(ElapsedTotalTime);
+  DataLoadTime.SetElapsedTimeOverPreviousLegs(ElapsedDataLoadTime);
+  PreProcessingTime.SetElapsedTimeOverPreviousLegs(ElapsedPreProcessingTime);
+  SimulationTime.SetElapsedTimeOverPreviousLegs(ElapsedSimulationTime);
+  PostProcessingTime.SetElapsedTimeOverPreviousLegs(ElapsedPostProcessingTime);
 
 }// end of RestoreCumulatedElapsedFromOutputFile
 //------------------------------------------------------------------------------
