@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="95">
+<configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="f1" displayName="HDF5" projectFiles="true">
       <itemPath>HDF5/HDF5_File.cpp</itemPath>
@@ -71,7 +71,7 @@
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="Debug" type="1">
+    <conf name="Debug-pcjaros-dynamic" type="1">
       <toolsSet>
         <compilerSet>GNU|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
@@ -79,17 +79,20 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <developmentMode>6</developmentMode>
+          <developmentMode>0</developmentMode>
           <warningLevel>2</warningLevel>
         </cTool>
         <ccTool>
+          <developmentMode>0</developmentMode>
           <architecture>2</architecture>
+          <standard>8</standard>
           <incDir>
-            <pElem>/usr/local/hdf5-serial/include</pElem>
-            <pElem>.</pElem>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/include</pElem>
+            <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-Wall -fopenmp -mavx -mtune=native -ffast-math -fassociative-math -ftree-vectorizer-verbose=0</commandLine>
-          <warningLevel>2</warningLevel>
+          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -99,11 +102,16 @@
           <developmentMode>5</developmentMode>
         </asmTool>
         <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp</output>
           <linkerAddLib>
-            <pElem>/usr/local/hdf5-serial/lib</pElem>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
           </linkerAddLib>
           <linkerDynSerch>
-            <pElem>/usr/local/hdf5-serial/lib</pElem>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
           </linkerDynSerch>
           <commandlineTool>g++</commandlineTool>
           <linkerLibItems>
@@ -113,7 +121,7 @@
             <linkerLibLibItem>hdf5</linkerLibLibItem>
             <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
           </linkerLibItems>
-          <commandLine>-fopenmp -lm</commandLine>
+          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
       <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
@@ -134,7 +142,7 @@
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/BaseIndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -151,7 +159,7 @@
       </item>
       <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -193,7 +201,7 @@
       <item path="main.cpp" ex="false" tool="1" flavor2="9">
       </item>
     </conf>
-    <conf name="Release" type="1">
+    <conf name="Debug-generic-dynamic" type="1">
       <toolsSet>
         <compilerSet>GNU|GNU</compilerSet>
         <dependencyChecking>true</dependencyChecking>
@@ -201,18 +209,20 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <developmentMode>6</developmentMode>
+          <developmentMode>0</developmentMode>
           <warningLevel>2</warningLevel>
         </cTool>
         <ccTool>
-          <developmentMode>6</developmentMode>
+          <developmentMode>0</developmentMode>
           <architecture>2</architecture>
+          <standard>8</standard>
           <incDir>
-            <pElem>/usr/local/hdf5-serial/include</pElem>
-            <pElem>.</pElem>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/include</pElem>
+            <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-Wall -fopenmp -mavx -mtune=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>2</warningLevel>
+          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
+          <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -222,86 +232,92 @@
           <developmentMode>5</developmentMode>
         </asmTool>
         <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp</output>
           <linkerAddLib>
-            <pElem>/usr/local/hdf5-serial/lib</pElem>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
           </linkerAddLib>
           <linkerDynSerch>
-            <pElem>/usr/local/hdf5-serial/lib</pElem>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
           </linkerDynSerch>
           <commandlineTool>g++</commandlineTool>
           <linkerLibItems>
-            <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
             <linkerLibLibItem>fftw3f</linkerLibLibItem>
             <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
             <linkerLibLibItem>hdf5</linkerLibLibItem>
             <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
+            <linkerLibLibItem>sz</linkerLibLibItem>
+            <linkerLibLibItem>z</linkerLibLibItem>
           </linkerLibItems>
-          <commandLine>-fopenmp -lm</commandLine>
+          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="0">
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="9">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/BaseIndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/FFTWComplexMatrix.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="9">
       </item>
       <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="0">
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="9">
       </item>
       <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="0">
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -313,7 +329,800 @@
       </item>
       <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="main.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+    </conf>
+    <conf name="Release-pcjaros-dynamic" type="1">
+      <toolsSet>
+        <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>0</developmentMode>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/include</pElem>
+            <pElem>${EBROOTFFTW}/include</pElem>
+          </incDir>
+          <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <warningLevel>0</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>2</warningLevel>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp</output>
+          <linkerAddLib>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerDynSerch>
+          <commandlineTool>g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
+            <linkerLibLibItem>fftw3f</linkerLibLibItem>
+            <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
+            <linkerLibLibItem>hdf5</linkerLibLibItem>
+            <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/DimensionSizes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/MatrixNames.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+    </conf>
+    <conf name="Release-generic-dynamic" type="1">
+      <toolsSet>
+        <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>0</developmentMode>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/include</pElem>
+            <pElem>${EBROOTFFTW}/include</pElem>
+          </incDir>
+          <commandLine>-O3 -Wall -fopenmp</commandLine>
+          <warningLevel>0</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>2</warningLevel>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp</output>
+          <linkerAddLib>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerDynSerch>
+          <commandlineTool>g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibLibItem>fftw3f</linkerLibLibItem>
+            <linkerLibLibItem>fftw3f_omp</linkerLibLibItem>
+            <linkerLibLibItem>hdf5</linkerLibLibItem>
+            <linkerLibLibItem>hdf5_hl</linkerLibLibItem>
+            <linkerLibLibItem>sz</linkerLibLibItem>
+            <linkerLibLibItem>z</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-O3 -Wall -fopenmp</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/DimensionSizes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/MatrixNames.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+    </conf>
+    <conf name="Debug-pcjaros-static" type="1">
+      <toolsSet>
+        <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>0</developmentMode>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/include</pElem>
+            <pElem>${EBROOTFFTW}/include</pElem>
+          </incDir>
+          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <warningLevel>0</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>2</warningLevel>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp</output>
+          <linkerAddLib>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerDynSerch>
+          <linkerDepDynSerchKind>0</linkerDepDynSerchKind>
+          <commandlineTool>g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibFileItem>${EBROOTHDF5}/lib/libhdf5_hl.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTHDF5}/lib/libhdf5.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTSZIP}/lib/libsz.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTZLIB}/lib/libz.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTFFTW}/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTFFTW}/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibStdlibItem>DynamicLinking</linkerLibStdlibItem>
+          </linkerLibItems>
+          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/DimensionSizes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/MatrixNames.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+    </conf>
+    <conf name="Debug-generic-static" type="1">
+      <toolsSet>
+        <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>0</developmentMode>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/include</pElem>
+            <pElem>${EBROOTFFTW}/include</pElem>
+          </incDir>
+          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -ffast-math -fassociative-math</commandLine>
+          <warningLevel>0</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>2</warningLevel>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp</output>
+          <linkerAddLib>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerDynSerch>
+          <linkerDepDynSerchKind>0</linkerDepDynSerchKind>
+          <commandlineTool>g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibFileItem>${EBROOTHDF5}/lib/libhdf5_hl.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTHDF5}/lib/libhdf5.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTSZIP}/lib/libsz.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTZLIB}/lib/libz.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTFFTW}/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTFFTW}/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibStdlibItem>DynamicLinking</linkerLibStdlibItem>
+          </linkerLibItems>
+          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/DimensionSizes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/MatrixNames.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+    </conf>
+    <conf name="Release-generic-static" type="1">
+      <toolsSet>
+        <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>0</developmentMode>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/include</pElem>
+            <pElem>${EBROOTFFTW}/include</pElem>
+          </incDir>
+          <commandLine>-O3 -fopenmp -ffast-math -fassociative-math</commandLine>
+          <warningLevel>0</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>2</warningLevel>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp</output>
+          <linkerAddLib>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerDynSerch>
+          <linkerDepDynSerchKind>0</linkerDepDynSerchKind>
+          <commandlineTool>g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibFileItem>${EBROOTHDF5}/lib/libhdf5_hl.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTHDF5}/lib/libhdf5.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTSZIP}/lib/libsz.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTZLIB}/lib/libz.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTFFTW}/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTFFTW}/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibStdlibItem>DynamicLinking</linkerLibStdlibItem>
+          </linkerLibItems>
+          <commandLine>-O3 -Wall -fopenmp</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/DimensionSizes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/MatrixNames.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+    </conf>
+    <conf name="Release-pcjaros-static" type="1">
+      <toolsSet>
+        <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>0</developmentMode>
+          <warningLevel>2</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/include</pElem>
+            <pElem>${EBROOTFFTW}/include</pElem>
+          </incDir>
+          <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <warningLevel>0</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>2</warningLevel>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp</output>
+          <linkerAddLib>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>./</pElem>
+            <pElem>${EBROOTHDF5}/lib</pElem>
+            <pElem>${EBROOTFFTW}/lib</pElem>
+          </linkerDynSerch>
+          <linkerDepDynSerchKind>0</linkerDepDynSerchKind>
+          <commandlineTool>g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibFileItem>${EBROOTHDF5}/lib/libhdf5_hl.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTHDF5}/lib/libhdf5.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTSZIP}/lib/libsz.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTZLIB}/lib/libz.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTFFTW}/lib/libfftw3f.a</linkerLibFileItem>
+            <linkerLibFileItem>${EBROOTFFTW}/lib/libfftw3f_omp.a</linkerLibFileItem>
+            <linkerLibStdlibItem>DynamicLinking</linkerLibStdlibItem>
+          </linkerLibItems>
+          <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/BaseIndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/BaseMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/CommandLineParameters.cpp"
+            ex="false"
+            tool="1"
+            flavor2="9">
+      </item>
+      <item path="Parameters/CommandLineParameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Parameters/Parameters.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Parameters/Parameters.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/DimensionSizes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/MatrixNames.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Utils/TimeMeasure.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="9">
       </item>
     </conf>
   </confs>
