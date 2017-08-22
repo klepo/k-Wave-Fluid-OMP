@@ -24,14 +24,14 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=k-wave-fluid-omp
+PROJECTNAME=k-Wave-Fluid-OMP
 
 # Active Configuration
-DEFAULTCONF=Debug
+DEFAULTCONF=Debug-pcjaros-dynamic
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Debug Release 
+ALLCONFS=Debug-pcjaros-dynamic Debug-generic-dynamic Release-pcjaros-dynamic Release-generic-dynamic Debug-pcjaros-static Debug-generic-static Release-generic-static Release-pcjaros-static 
 
 
 # build
@@ -76,7 +76,7 @@ ALLCONFS=Debug Release
 .depcheck-impl:
 	@echo "# This code depends on make tool being used" >.dep.inc
 	@if [ -n "${MAKE_VERSION}" ]; then \
-	    echo "DEPFILES=\$$(wildcard \$$(addsuffix .d, \$${OBJECTFILES}))" >>.dep.inc; \
+	    echo "DEPFILES=\$$(wildcard \$$(addsuffix .d, \$${OBJECTFILES} \$${TESTOBJECTFILES}))" >>.dep.inc; \
 	    echo "ifneq (\$${DEPFILES},)" >>.dep.inc; \
 	    echo "include \$${DEPFILES}" >>.dep.inc; \
 	    echo "endif" >>.dep.inc; \
