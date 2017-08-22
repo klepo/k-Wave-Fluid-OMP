@@ -12,7 +12,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 2:17  (created) \n
- *              24 September 2014, 14:57 (revised) \n
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -62,7 +62,7 @@ class TBaseIndexMatrix : public TBaseMatrix
     {};
 
     /// Get dimension sizes of the matrix.
-    inline struct TDimensionSizes GetDimensionSizes() const
+    inline struct DimensionSizes GetDimensionSizes() const
     {
       return pDimensionSizes;
     }
@@ -105,7 +105,7 @@ class TBaseIndexMatrix : public TBaseMatrix
     size_t pTotalAllocatedElementCount;
 
     /// Dimension sizes.
-    struct TDimensionSizes pDimensionSizes;
+    struct DimensionSizes pDimensionSizes;
 
     /// Size of 1D row in X dimension.
     size_t pDataRowSize;

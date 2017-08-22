@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
- *              25 September 2014, 12:35 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -55,7 +55,7 @@
  * @param [in] DimensionSizes - Dimension sizes
  */
 
-TComplexMatrix::TComplexMatrix(const TDimensionSizes & DimensionSizes)
+TComplexMatrix::TComplexMatrix(const DimensionSizes & DimensionSizes)
                       : TBaseFloatMatrix()
 {
   InitDimensions(DimensionSizes);
@@ -92,8 +92,8 @@ void TComplexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
   }
 
   // Initialise dimensions
-  TDimensionSizes ComplexDims = pDimensionSizes;
-  ComplexDims.X = 2 * ComplexDims.X;
+  DimensionSizes ComplexDims = pDimensionSizes;
+  ComplexDims.nx = 2 * ComplexDims.nx;
 
   // Read data from the file
   HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
@@ -116,11 +116,11 @@ void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                          const size_t CompressionLevel)
 {
   // set dimensions and chunks
-  TDimensionSizes ComplexDims = pDimensionSizes;
-  ComplexDims.X = 2 * ComplexDims.X;
+  DimensionSizes ComplexDims = pDimensionSizes;
+  ComplexDims.nx = 2 * ComplexDims.nx;
 
-  TDimensionSizes Chunks = ComplexDims;
-  ComplexDims.Z = 1;
+  DimensionSizes Chunks = ComplexDims;
+  ComplexDims.nz = 1;
 
   // create a dataset
   hid_t HDF5_Dataset_id = HDF5_File.CreateFloatDataset(HDF5_File.GetRootGroup(),
@@ -130,7 +130,7 @@ void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                                        CompressionLevel);
  // Write write the matrix at once.
   HDF5_File.WriteHyperSlab(HDF5_Dataset_id,
-                           TDimensionSizes(0, 0, 0),
+                           DimensionSizes(0, 0, 0),
                            pDimensionSizes,
                            pMatrixData);
   HDF5_File.CloseDataset(HDF5_Dataset_id);
@@ -157,19 +157,19 @@ void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
  * Initialize matrix dimension sizes.
  * @param [in] DimensionSizes
  */
-void TComplexMatrix::InitDimensions(const TDimensionSizes & DimensionSizes)
+void TComplexMatrix::InitDimensions(const DimensionSizes & DimensionSizes)
 {
 
   pDimensionSizes = DimensionSizes;
 
-  pTotalElementCount = pDimensionSizes.X *
-                       pDimensionSizes.Y *
-                       pDimensionSizes.Z;
+  pTotalElementCount = pDimensionSizes.nx *
+                       pDimensionSizes.ny *
+                       pDimensionSizes.nz;
 
-  pDataRowSize = (pDimensionSizes.X << 1);
+  pDataRowSize = (pDimensionSizes.nx << 1);
 
-  p2DDataSliceSize = (pDimensionSizes.X *
-                      pDimensionSizes.Y) << 1;
+  p2DDataSliceSize = (pDimensionSizes.nx *
+                      pDimensionSizes.ny) << 1;
 
   // compute actual necessary memory sizes
   pTotalAllocatedElementCount = pTotalElementCount << 1;

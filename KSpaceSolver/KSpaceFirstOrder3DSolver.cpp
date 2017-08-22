@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27  (created)\n
- *              22 August    2017, 11:48  (revised)
+ *              22 August    2017, 13:16  (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -291,9 +291,9 @@ void TKSpaceFirstOrder3DSolver::Compute()
 void TKSpaceFirstOrder3DSolver::PrintParametersOfSimulation(FILE * file)
 {
   fprintf(file,"Domain dims:   [%4ld, %4ld,%4ld]\n",
-                Parameters->GetFullDimensionSizes().X,
-                Parameters->GetFullDimensionSizes().Y,
-                Parameters->GetFullDimensionSizes().Z);
+                Parameters->GetFullDimensionSizes().nx,
+                Parameters->GetFullDimensionSizes().ny,
+                Parameters->GetFullDimensionSizes().nz);
 
   fprintf(file,"Simulation time steps:  %8ld\n", Parameters->Get_Nt());
 }// end of PrintParametersOfSimulation
@@ -565,14 +565,14 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa()
 
     const float c_ref_dt_pi = Parameters->Get_c_ref() * Parameters->Get_dt() * float(M_PI);
 
-    const float Nx_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().X;
-    const float Ny_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
-    const float Nz_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
+    const float Nx_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().nx;
+    const float Ny_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().ny;
+    const float Nz_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().nz;
 
 
-    const size_t X_Size  = Parameters->GetReducedDimensionSizes().X;
-    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().Y;
-    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().Z;
+    const size_t X_Size  = Parameters->GetReducedDimensionSizes().nx;
+    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().ny;
+    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().nz;
 
     float * kappa = Get_kappa().GetRawData();
 
@@ -622,17 +622,17 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2()
     const float c_ref_dt_2 = Parameters->Get_c_ref() * Parameters->Get_dt() * 0.5f;
     const float pi_2       = float(M_PI) * 2.0f;
 
-    const size_t Nx = Parameters->GetFullDimensionSizes().X;
-    const size_t Ny = Parameters->GetFullDimensionSizes().Y;
-    const size_t Nz = Parameters->GetFullDimensionSizes().Z;
+    const size_t Nx = Parameters->GetFullDimensionSizes().nx;
+    const size_t Ny = Parameters->GetFullDimensionSizes().ny;
+    const size_t Nz = Parameters->GetFullDimensionSizes().nz;
 
     const float Nx_rec   = 1.0f / (float) Nx;
     const float Ny_rec   = 1.0f / (float) Ny;
     const float Nz_rec   = 1.0f / (float) Nz;
 
-    const size_t X_Size  = Parameters->GetReducedDimensionSizes().X;
-    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().Y;
-    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().Z;
+    const size_t X_Size  = Parameters->GetReducedDimensionSizes().nx;
+    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().ny;
+    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().nz;
 
     float * kappa           = Get_kappa().GetRawData();
     float * absorb_nabla1   = Get_absorb_nabla1().GetRawData();
@@ -705,9 +705,9 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
   {
     #pragma omp parallel
     {
-      const size_t Z_Size  = Parameters->GetFullDimensionSizes().Z;
-      const size_t Y_Size  = Parameters->GetFullDimensionSizes().Y;
-      const size_t X_Size  = Parameters->GetFullDimensionSizes().X;
+      const size_t Z_Size  = Parameters->GetFullDimensionSizes().nz;
+      const size_t Y_Size  = Parameters->GetFullDimensionSizes().ny;
+      const size_t X_Size  = Parameters->GetFullDimensionSizes().nx;
 
       float * absorb_tau = Get_absorb_tau().GetRawData();
       float * absorb_eta = Get_absorb_eta().GetRawData();
@@ -785,9 +785,9 @@ void TKSpaceFirstOrder3DSolver::Calculate_dt_rho0_non_uniform()
     const float * duydyn_sgy = Get_dyudyn_sgy().GetRawData();
     const float * duzdzn_sgz = Get_dzudzn_sgz().GetRawData();
 
-    const size_t Z_Size = Get_dt_rho0_sgx().GetDimensionSizes().Z;
-    const size_t Y_Size = Get_dt_rho0_sgx().GetDimensionSizes().Y;
-    const size_t X_Size = Get_dt_rho0_sgx().GetDimensionSizes().X;
+    const size_t Z_Size = Get_dt_rho0_sgx().GetDimensionSizes().nz;
+    const size_t Y_Size = Get_dt_rho0_sgx().GetDimensionSizes().ny;
+    const size_t X_Size = Get_dt_rho0_sgx().GetDimensionSizes().nx;
 
     const size_t SliceSize = (X_Size * Y_Size );
 
@@ -982,9 +982,9 @@ void TKSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(TRealMatrix&        X_Ma
     const float * ddy_data   = ddy.GetRawData();
     const float * ddz_data   = ddz.GetRawData();
 
-    const size_t Z_Size = FFT_X.GetDimensionSizes().Z;
-    const size_t Y_Size = FFT_X.GetDimensionSizes().Y;
-    const size_t X_Size = FFT_X.GetDimensionSizes().X;
+    const size_t Z_Size = FFT_X.GetDimensionSizes().nz;
+    const size_t Y_Size = FFT_X.GetDimensionSizes().ny;
+    const size_t X_Size = FFT_X.GetDimensionSizes().nx;
 
     const size_t SliceSize = (X_Size * Y_Size ) << 1;
 
@@ -1043,9 +1043,9 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
 
     const float * kappa   = Get_kappa().GetRawData();
 
-    const size_t FFT_Z_dim = Get_FFT_X_temp().GetDimensionSizes().Z;
-    const size_t FFT_Y_dim = Get_FFT_X_temp().GetDimensionSizes().Y;
-    const size_t FFT_X_dim = Get_FFT_X_temp().GetDimensionSizes().X;
+    const size_t FFT_Z_dim = Get_FFT_X_temp().GetDimensionSizes().nz;
+    const size_t FFT_Y_dim = Get_FFT_X_temp().GetDimensionSizes().ny;
+    const size_t FFT_X_dim = Get_FFT_X_temp().GetDimensionSizes().nx;
 
     const size_t SliceSize = (FFT_X_dim * FFT_Y_dim) << 1;
     const float  Divider = 1.0f / Get_ux_sgx().GetTotalElementCount();
@@ -1135,9 +1135,9 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
       const float * duydyn = Get_dyudyn().GetRawData();
       const float * duzdzn = Get_dzudzn().GetRawData();
 
-      const size_t Z_Size = Get_duxdx().GetDimensionSizes().Z;
-      const size_t Y_Size = Get_duxdx().GetDimensionSizes().Y;
-      const size_t X_Size = Get_duxdx().GetDimensionSizes().X;
+      const size_t Z_Size = Get_duxdx().GetDimensionSizes().nz;
+      const size_t Y_Size = Get_duxdx().GetDimensionSizes().ny;
+      const size_t X_Size = Get_duxdx().GetDimensionSizes().nx;
 
       const size_t SliceSize = (X_Size * Y_Size );
 
@@ -1196,9 +1196,9 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
  */
 void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
 {
-  const size_t Z_Size = Get_rhox().GetDimensionSizes().Z;
-  const size_t Y_Size = Get_rhox().GetDimensionSizes().Y;
-  const size_t X_Size = Get_rhox().GetDimensionSizes().X;
+  const size_t Z_Size = Get_rhox().GetDimensionSizes().nz;
+  const size_t Y_Size = Get_rhox().GetDimensionSizes().ny;
+  const size_t X_Size = Get_rhox().GetDimensionSizes().nx;
 
   const float dt2   = 2.0f * Parameters->Get_dt();
   const float dt_el = Parameters->Get_dt();
@@ -1360,9 +1360,9 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
  */
 void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear()
 {
-  const size_t Z_Size = Get_rhox().GetDimensionSizes().Z;
-  const size_t Y_Size = Get_rhox().GetDimensionSizes().Y;
-  const size_t X_Size = Get_rhox().GetDimensionSizes().X;
+  const size_t Z_Size = Get_rhox().GetDimensionSizes().nz;
+  const size_t Y_Size = Get_rhox().GetDimensionSizes().ny;
+  const size_t X_Size = Get_rhox().GetDimensionSizes().nx;
 
   const float dt_el = Parameters->Get_dt();
   const size_t SliceSize =  Y_Size * X_Size;
@@ -1652,7 +1652,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
 void TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix & Sum_rhoxyz,
                                                            TRealMatrix & Sum_rho0_du)
  {
-  const size_t TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
+  const size_t TotalElementCount = Parameters->GetFullDimensionSizes().nElements();
 
   #pragma  omp parallel
   {
@@ -1856,7 +1856,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   const float * Absorb_tau_data = Absorb_tau_temp.GetRawData();
   const float * Absorb_eta_data = Absorb_eta_temp.GetRawData();
 
-  const size_t TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
+  const size_t TotalElementCount = Parameters->GetFullDimensionSizes().nElements();
   const float Divider = 1.0f / (float) TotalElementCount;
 
   // c2 scalar
@@ -1914,7 +1914,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
  {
   #pragma omp parallel
   {
-    const size_t TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
+    const size_t TotalElementCount = Parameters->GetFullDimensionSizes().nElements();
     float * p_data = Get_p().GetRawData();
 
     const float * rhox_data = Get_rhox().GetRawData();
@@ -1992,7 +1992,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     const float * rhoy = Get_rhoy().GetRawData();
     const float * rhoz = Get_rhoz().GetRawData();
           float * p_data = Get_p().GetRawData();
-    const size_t  TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
+    const size_t  TotalElementCount = Parameters->GetFullDimensionSizes().nElements();
 
     if (Parameters->Get_c0_scalar_flag())
     {
@@ -2264,30 +2264,30 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
 
 
   // sizes of frequency spaces
-  TDimensionSizes XShiftDims = Parameters->GetFullDimensionSizes();
-                  XShiftDims.X = XShiftDims.X/2 + 1;
+  DimensionSizes XShiftDims = Parameters->GetFullDimensionSizes();
+                  XShiftDims.nx = XShiftDims.nx/2 + 1;
 
-  TDimensionSizes YShiftDims = Parameters->GetFullDimensionSizes();
-                  YShiftDims.Y = YShiftDims.Y/2 + 1;
+  DimensionSizes YShiftDims = Parameters->GetFullDimensionSizes();
+                  YShiftDims.ny = YShiftDims.ny/2 + 1;
 
-  TDimensionSizes ZShiftDims = Parameters->GetFullDimensionSizes();
-                  ZShiftDims.Z = ZShiftDims.Z/2 + 1;
+  DimensionSizes ZShiftDims = Parameters->GetFullDimensionSizes();
+                  ZShiftDims.nz = ZShiftDims.nz/2 + 1;
 
   // normalization constants for FFTs
-  const float DividerX = 1.0f / (float) Parameters->GetFullDimensionSizes().X;
-  const float DividerY = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
-  const float DividerZ = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
+  const float DividerX = 1.0f / (float) Parameters->GetFullDimensionSizes().nx;
+  const float DividerY = 1.0f / (float) Parameters->GetFullDimensionSizes().ny;
+  const float DividerZ = 1.0f / (float) Parameters->GetFullDimensionSizes().nz;
 
   //-------------------------- ux_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
 
   #pragma omp parallel for schedule (static)
-  for (size_t z = 0; z < XShiftDims.Z; z++)
+  for (size_t z = 0; z < XShiftDims.nz; z++)
   {
-    register size_t i = z *  XShiftDims.Y * XShiftDims.X;
-    for (size_t y = 0; y < XShiftDims.Y; y++)
+    register size_t i = z *  XShiftDims.ny * XShiftDims.nx;
+    for (size_t y = 0; y < XShiftDims.ny; y++)
     {
-      for (size_t x = 0; x < XShiftDims.X; x++)
+      for (size_t x = 0; x < XShiftDims.nx; x++)
       {
         TFloatComplex Temp;
 
@@ -2313,12 +2313,12 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   Get_FFT_shift_temp().Compute_FFT_1DY_R2C(Get_uy_sgy());
 
   #pragma omp parallel for schedule (static)
-  for (size_t z = 0; z < YShiftDims.Z; z++)
+  for (size_t z = 0; z < YShiftDims.nz; z++)
   {
-    register size_t i = z *  YShiftDims.Y * YShiftDims.X;
-    for (size_t y = 0; y < YShiftDims.Y; y++)
+    register size_t i = z *  YShiftDims.ny * YShiftDims.nx;
+    for (size_t y = 0; y < YShiftDims.ny; y++)
     {
-      for (size_t x = 0; x < YShiftDims.X; x++)
+      for (size_t x = 0; x < YShiftDims.nx; x++)
       {
         TFloatComplex Temp;
 
@@ -2343,12 +2343,12 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   //-------------------------- uz_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DZ_R2C(Get_uz_sgz());
   #pragma omp parallel for schedule (static)
-  for (size_t z = 0; z < ZShiftDims.Z; z++)
+  for (size_t z = 0; z < ZShiftDims.nz; z++)
   {
-    register size_t i = z *  ZShiftDims.Y * ZShiftDims.X;
-    for (size_t y = 0; y < ZShiftDims.Y; y++)
+    register size_t i = z *  ZShiftDims.ny * ZShiftDims.nx;
+    for (size_t y = 0; y < ZShiftDims.ny; y++)
     {
-      for (size_t x = 0; x < ZShiftDims.X; x++)
+      for (size_t x = 0; x < ZShiftDims.nx; x++)
       {
         TFloatComplex Temp;
 
@@ -2597,13 +2597,13 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   // store basic dimension sizes (Nx, Ny, Nz) - Nt is not necessary
   HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
                                        Nx_Name,
-                                       Parameters->GetFullDimensionSizes().X);
+                                       Parameters->GetFullDimensionSizes().nx);
   HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
                                        Ny_Name,
-                                       Parameters->GetFullDimensionSizes().Y);
+                                       Parameters->GetFullDimensionSizes().ny);
   HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
                                        Nz_Name,
-                                       Parameters->GetFullDimensionSizes().Z);
+                                       Parameters->GetFullDimensionSizes().nz);
 
 
   // Write checkpoint file header
@@ -2738,30 +2738,30 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
 
 
   // Check dimension sizes
-  TDimensionSizes OutputDimSizes;
+  DimensionSizes OutputDimSizes;
   OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
                              Nx_Name,
-                             OutputDimSizes.X);
+                             OutputDimSizes.nx);
 
   OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
                              Ny_Name,
-                             OutputDimSizes.Y);
+                             OutputDimSizes.ny);
 
   OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
                              Nz_Name,
-                             OutputDimSizes.Z);
+                             OutputDimSizes.nz);
 
  if (Parameters->GetFullDimensionSizes() != OutputDimSizes)
  {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             KSpaceFirstOrder3DSolver_ERR_FMT_OutputDimensionsDoNotMatch,
-            OutputDimSizes.X,
-            OutputDimSizes.Y,
-            OutputDimSizes.Z,
-            Parameters->GetFullDimensionSizes().X,
-            Parameters->GetFullDimensionSizes().Y,
-            Parameters->GetFullDimensionSizes().Z);
+            OutputDimSizes.nx,
+            OutputDimSizes.ny,
+            OutputDimSizes.nz,
+            Parameters->GetFullDimensionSizes().nx,
+            Parameters->GetFullDimensionSizes().ny,
+            Parameters->GetFullDimensionSizes().nz);
 
    throw ios::failure(ErrorMessage);
  }
@@ -2816,30 +2816,30 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
 
 
   // Check dimension sizes
-  TDimensionSizes CheckpointDimSizes;
+  DimensionSizes CheckpointDimSizes;
   HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
                                       Nx_Name,
-                                      CheckpointDimSizes.X);
+                                      CheckpointDimSizes.nx);
 
   HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
                                       Ny_Name,
-                                      CheckpointDimSizes.Y);
+                                      CheckpointDimSizes.ny);
 
   HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
                                       Nz_Name,
-                                      CheckpointDimSizes.Z);
+                                      CheckpointDimSizes.nz);
 
  if (Parameters->GetFullDimensionSizes() != CheckpointDimSizes)
  {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             KSpaceFirstOrder3DSolver_ERR_FMT_CheckpointDimensionsDoNotMatch,
-            CheckpointDimSizes.X,
-            CheckpointDimSizes.Y,
-            CheckpointDimSizes.Z,
-            Parameters->GetFullDimensionSizes().X,
-            Parameters->GetFullDimensionSizes().Y,
-            Parameters->GetFullDimensionSizes().Z);
+            CheckpointDimSizes.nx,
+            CheckpointDimSizes.ny,
+            CheckpointDimSizes.nz,
+            Parameters->GetFullDimensionSizes().nx,
+            Parameters->GetFullDimensionSizes().ny,
+            Parameters->GetFullDimensionSizes().nz);
 
    throw ios::failure(ErrorMessage);
  }

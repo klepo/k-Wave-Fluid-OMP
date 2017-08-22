@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        09 August    2011, 13:10 (created) \n
- *              25 September 2014, 13:47 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -57,7 +57,7 @@ const string TFFTWComplexMatrix::FFTW_Wisdom_FileName_Extension = "FFTW_Wisdom";
  * Constructor.
  * @param [in] DimensionSizes - Dimension sizes of the reduced complex matrix
  */
-TFFTWComplexMatrix::TFFTWComplexMatrix(const TDimensionSizes & DimensionSizes) :
+TFFTWComplexMatrix::TFFTWComplexMatrix(const DimensionSizes & DimensionSizes) :
         TComplexMatrix(),
         fftw_plan_3D_R2C(NULL),  fftw_plan_3D_C2R(NULL),
         fftw_plan_1DX_R2C(NULL), fftw_plan_1DY_R2C(NULL), fftw_plan_1DZ_R2C(NULL),
@@ -114,9 +114,9 @@ TFFTWComplexMatrix::~TFFTWComplexMatrix()
  */
 void TFFTWComplexMatrix::Create_FFT_Plan_3D_R2C(TRealMatrix& InMatrix)
 {
-  fftw_plan_3D_R2C = fftwf_plan_dft_r2c_3d(InMatrix.GetDimensionSizes().Z,
-                                           InMatrix.GetDimensionSizes().Y,
-                                           InMatrix.GetDimensionSizes().X,
+  fftw_plan_3D_R2C = fftwf_plan_dft_r2c_3d(InMatrix.GetDimensionSizes().nz,
+                                           InMatrix.GetDimensionSizes().ny,
+                                           InMatrix.GetDimensionSizes().nx,
                                            InMatrix.GetRawData(),
                                            (fftwf_complex *) pMatrixData,
                                            TFFTWComplexMatrix_FFT_FLAG);
@@ -139,9 +139,9 @@ void TFFTWComplexMatrix::Create_FFT_Plan_3D_R2C(TRealMatrix& InMatrix)
  */
 void TFFTWComplexMatrix::Create_FFT_Plan_3D_C2R(TRealMatrix& OutMatrix)
 {
-  fftw_plan_3D_C2R = fftwf_plan_dft_c2r_3d(OutMatrix.GetDimensionSizes().Z,
-                                           OutMatrix.GetDimensionSizes().Y,
-                                           OutMatrix.GetDimensionSizes().X,
+  fftw_plan_3D_C2R = fftwf_plan_dft_c2r_3d(OutMatrix.GetDimensionSizes().nz,
+                                           OutMatrix.GetDimensionSizes().ny,
+                                           OutMatrix.GetDimensionSizes().nx,
                                            (fftwf_complex *) (pMatrixData),
                                            OutMatrix.GetRawData(),
                                            TFFTWComplexMatrix_FFT_FLAG);
@@ -168,9 +168,9 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_R2C(TRealMatrix& InMatrix)
 {
   // the FFTW uses here 32b interface although it is internally 64b, it doesn't mind
   // since the size of 1 domain will never be bigger than 2^31 - however it it not a clear solution :)
-  const int X   = static_cast<int> (InMatrix.GetDimensionSizes().X);
-  const int Y   = static_cast<int> (InMatrix.GetDimensionSizes().Y);
-  const int Z   = static_cast<int> (InMatrix.GetDimensionSizes().Z);
+  const int X   = static_cast<int> (InMatrix.GetDimensionSizes().nx);
+  const int Y   = static_cast<int> (InMatrix.GetDimensionSizes().ny);
+  const int Z   = static_cast<int> (InMatrix.GetDimensionSizes().nz);
   const int X_2 = ((X / 2) + 1);
 
   // 1D FFT definition - over the X axis
@@ -244,9 +244,9 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_R2C(TRealMatrix& InMatrix)
 {
   // the FFTW uses here 32b interface although it is internally 64b, it doesn't mind
   // since the size of 1 domain will never be bigger than 2^31 - however it it not a clear solution :)
-  const int X   = static_cast<int> (InMatrix.GetDimensionSizes().X);
-  const int Y   = static_cast<int> (InMatrix.GetDimensionSizes().Y);
-  const int Z   = static_cast<int> (InMatrix.GetDimensionSizes().Z);
+  const int X   = static_cast<int> (InMatrix.GetDimensionSizes().nx);
+  const int Y   = static_cast<int> (InMatrix.GetDimensionSizes().ny);
+  const int Z   = static_cast<int> (InMatrix.GetDimensionSizes().nz);
   const int Y_2 = ((Y / 2) + 1);
 
   // 1D FFT definition - over the Y axis
@@ -320,9 +320,9 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DZ_R2C(TRealMatrix& InMatrix)
 {
   // the FFTW uses here 32b interface although it is internally 64b, it doesn't mind
   // since the size of 1 domain will never be bigger than 2^31 - however it it not a clear solution :)
-  const int X   = static_cast<int> (InMatrix.GetDimensionSizes().X);
-  const int Y   = static_cast<int> (InMatrix.GetDimensionSizes().Y);
-  const int Z   = static_cast<int> (InMatrix.GetDimensionSizes().Z);
+  const int X   = static_cast<int> (InMatrix.GetDimensionSizes().nx);
+  const int Y   = static_cast<int> (InMatrix.GetDimensionSizes().ny);
+  const int Z   = static_cast<int> (InMatrix.GetDimensionSizes().nz);
 
   // 1D FFT definition - over the Y axis
   const int  fft_rank = 1;
@@ -393,9 +393,9 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_C2R(TRealMatrix& OutMatrix)
 {
   // the FFTW uses here 32b interface although it is internally 64b, it doesn't mind
   // since the size of 1 domain will never be bigger than 2^31 - however it it not a clear solution :)
-  const int X   = static_cast<int> (OutMatrix.GetDimensionSizes().X);
-  const int Y   = static_cast<int> (OutMatrix.GetDimensionSizes().Y);
-  const int Z   = static_cast<int> (OutMatrix.GetDimensionSizes().Z);
+  const int X   = static_cast<int> (OutMatrix.GetDimensionSizes().nx);
+  const int Y   = static_cast<int> (OutMatrix.GetDimensionSizes().ny);
+  const int Z   = static_cast<int> (OutMatrix.GetDimensionSizes().nz);
   const int X_2 = ((X / 2) + 1);
 
   // 1D FFT definition - over the X axis
@@ -467,9 +467,9 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_C2R(TRealMatrix& OutMatrix)
 {
   // the FFTW uses here 32b interface although it is internally 64b, it doesn't mind
   // since the size of 1 domain will never be bigger than 2^31 - however it it not a clear solution :)
-  const int X   = static_cast<int> (OutMatrix.GetDimensionSizes().X);
-  const int Y   = static_cast<int> (OutMatrix.GetDimensionSizes().Y);
-  const int Z   = static_cast<int> (OutMatrix.GetDimensionSizes().Z);
+  const int X   = static_cast<int> (OutMatrix.GetDimensionSizes().nx);
+  const int Y   = static_cast<int> (OutMatrix.GetDimensionSizes().ny);
+  const int Z   = static_cast<int> (OutMatrix.GetDimensionSizes().nz);
   const int Y_2 = ((Y / 2) + 1);
 
   // 1D FFT definition - over the Y axis
@@ -540,9 +540,9 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DZ_C2R(TRealMatrix& OutMatrix)
 {
   // the FFTW uses here 32b interface although it is internally 64b, it doesn't mind
   // since the size of 1 domain will never be bigger than 2^31 - however it it not a clear solution :)
-  const int X   = static_cast<int> (OutMatrix.GetDimensionSizes().X);
-  const int Y   = static_cast<int> (OutMatrix.GetDimensionSizes().Y);
-  const int Z   = static_cast<int> (OutMatrix.GetDimensionSizes().Z);
+  const int X   = static_cast<int> (OutMatrix.GetDimensionSizes().nx);
+  const int Y   = static_cast<int> (OutMatrix.GetDimensionSizes().ny);
+  const int Z   = static_cast<int> (OutMatrix.GetDimensionSizes().nz);
 
   // 1D FFT definition - over the Y axis
   const int  fft_rank = 1;
@@ -662,7 +662,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DX_R2C(TRealMatrix& InMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
       {
         fftwf_execute_dft_r2c(fftw_plan_1DX_R2C,
@@ -698,7 +698,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DY_R2C(TRealMatrix& InMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
       {
         fftwf_execute_dft_r2c(fftw_plan_1DY_R2C,
@@ -734,7 +734,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_R2C(TRealMatrix& InMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Y; slab_id++)
       {
         fftwf_execute_dft_r2c(fftw_plan_1DZ_R2C,
@@ -771,7 +771,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DX_C2R(TRealMatrix& OutMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
       {
         fftwf_execute_dft_c2r(fftw_plan_1DX_C2R,
@@ -807,7 +807,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DY_C2R(TRealMatrix& OutMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
       {
         fftwf_execute_dft_c2r(fftw_plan_1DY_C2R,
@@ -843,7 +843,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_C2R(TRealMatrix& OutMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const TDimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Y; slab_id++)
       {
         fftwf_execute_dft_c2r(fftw_plan_1DZ_C2R,

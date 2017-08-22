@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2011, 13:10 (created) \n
- *              25 September 2014, 12:45 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -51,7 +51,7 @@ class TFFTWComplexMatrix : public TComplexMatrix
 {
   public:
     /// Constructor.
-    TFFTWComplexMatrix(const TDimensionSizes& DimensionSizes);
+    TFFTWComplexMatrix(const DimensionSizes& DimensionSizes);
     /// Destructor.
     virtual ~TFFTWComplexMatrix();
 

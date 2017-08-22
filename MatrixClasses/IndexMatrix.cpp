@@ -9,8 +9,8 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  *
- * @date        26 July      2011, 15:16   (created) \n
- *              25 September 2014, 17:29   (revised)
+ * @date        26 July      2011, 15:16 (created) \n
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -58,21 +58,21 @@
  * Constructor allocating memory.
  * @param [in] DimensionSizes - Dimension sizes
  */
-TIndexMatrix::TIndexMatrix(const TDimensionSizes & DimensionSizes)
+TIndexMatrix::TIndexMatrix(const DimensionSizes & DimensionSizes)
               : TBaseIndexMatrix()
 {
   pDimensionSizes = DimensionSizes;
 
-  pTotalElementCount = pDimensionSizes.X *
-                       pDimensionSizes.Y *
-                       pDimensionSizes.Z;
+  pTotalElementCount = pDimensionSizes.nx *
+                       pDimensionSizes.ny *
+                       pDimensionSizes.nz;
 
   pTotalAllocatedElementCount = pTotalElementCount;
 
-  pDataRowSize       = pDimensionSizes.X;
+  pDataRowSize       = pDimensionSizes.nx;
 
-  p2DDataSliceSize   = pDimensionSizes.X *
-                       pDimensionSizes.Y;
+  p2DDataSliceSize   = pDimensionSizes.nx *
+                       pDimensionSizes.ny;
 
   AllocateMemory();
 }// end of TIndexMatrix
@@ -152,9 +152,9 @@ void TIndexMatrix::RecomputeIndicesToMatlab()
 size_t TIndexMatrix::GetTotalNumberOfElementsInAllCuboids() const
 {
   size_t ElementSum = 0;
-  for (size_t cuboidIdx = 0; cuboidIdx < pDimensionSizes.Y; cuboidIdx++)
+  for (size_t cuboidIdx = 0; cuboidIdx < pDimensionSizes.ny; cuboidIdx++)
   {
-    ElementSum += (GetBottomRightCorner(cuboidIdx) - GetTopLeftCorner(cuboidIdx)).GetElementCount();
+    ElementSum += (GetBottomRightCorner(cuboidIdx) - GetTopLeftCorner(cuboidIdx)).nElements();
   }
 
   return ElementSum;
@@ -175,24 +175,24 @@ void TIndexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                       const size_t CompressionLevel)
 {
   // set chunks - may be necessary for long index based sensor masks
-  TDimensionSizes Chunks = pDimensionSizes;
-  Chunks.Z = 1;
+  DimensionSizes Chunks = pDimensionSizes;
+  Chunks.nz = 1;
 
   //1D matrices
-  if ((pDimensionSizes.Y == 1) && (pDimensionSizes.Z == 1))
+  if ((pDimensionSizes.ny == 1) && (pDimensionSizes.nz == 1))
   {
     // Chunk = 4MB
-    if (pDimensionSizes.X > 4 * ChunkSize_1D_4MB)
+    if (pDimensionSizes.nx > 4 * ChunkSize_1D_4MB)
     {
-      Chunks.X = ChunkSize_1D_4MB;
+      Chunks.nx = ChunkSize_1D_4MB;
     }
-    else if (pDimensionSizes.X > 4 * ChunkSize_1D_1MB)
+    else if (pDimensionSizes.nx > 4 * ChunkSize_1D_1MB)
     {
-      Chunks.X = ChunkSize_1D_1MB;
+      Chunks.nx = ChunkSize_1D_1MB;
     }
-    else if (pDimensionSizes.X > 4 * ChunkSize_1D_256KB)
+    else if (pDimensionSizes.nx > 4 * ChunkSize_1D_256KB)
     {
-      Chunks.X = ChunkSize_1D_256KB;
+      Chunks.nx = ChunkSize_1D_256KB;
     }
   }
 
@@ -203,7 +203,7 @@ void TIndexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                                        CompressionLevel);
 
   HDF5_File.WriteHyperSlab(HDF5_Dataset_id,
-                           TDimensionSizes(0, 0, 0),
+                           DimensionSizes(0, 0, 0),
                            pDimensionSizes,
                            pMatrixData);
 

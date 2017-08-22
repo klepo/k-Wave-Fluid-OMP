@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14      (created) \n
- *              12 February  2015, 10:30      (revised)
+ *              22 August    2017, 13:15      (revised)
  *
 
  * @section License
@@ -290,37 +290,37 @@ hid_t THDF5_File::OpenDataset(const hid_t ParentGroup,
  */
 hid_t THDF5_File::CreateFloatDataset(const hid_t ParentGroup,
                                      const char * DatasetName,
-                                     const TDimensionSizes & DimensionSizes,
-                                     const TDimensionSizes & ChunkSizes,
+                                     const DimensionSizes & dimensionSizes,
+                                     const DimensionSizes & ChunkSizes,
                                      const size_t CompressionLevel)
 {
-  const int RANK = (DimensionSizes.Is3D()) ? 3 : 4;
+  const int RANK = (dimensionSizes.is3D()) ? 3 : 4;
 
   hsize_t Dims [RANK];
   hsize_t Chunk[RANK];
 
 
-  if (DimensionSizes.Is3D())
+  if (dimensionSizes.is3D())
   {  // 3D dataset
-    Dims[0] = DimensionSizes.Z;
-    Dims[1] = DimensionSizes.Y;
-    Dims[2] = DimensionSizes.X;
+    Dims[0] = dimensionSizes.nz;
+    Dims[1] = dimensionSizes.ny;
+    Dims[2] = dimensionSizes.nx;
 
-    Chunk[0] = ChunkSizes.Z;
-    Chunk[1] = ChunkSizes.Y;
-    Chunk[2] = ChunkSizes.X;
+    Chunk[0] = ChunkSizes.nz;
+    Chunk[1] = ChunkSizes.ny;
+    Chunk[2] = ChunkSizes.nx;
   }
   else
   { // 4D dataset
-    Dims[0] = DimensionSizes.T;
-    Dims[1] = DimensionSizes.Z;
-    Dims[2] = DimensionSizes.Y;
-    Dims[3] = DimensionSizes.X;
+    Dims[0] = dimensionSizes.nt;
+    Dims[1] = dimensionSizes.nz;
+    Dims[2] = dimensionSizes.ny;
+    Dims[3] = dimensionSizes.nx;
 
-    Chunk[0] = ChunkSizes.T;
-    Chunk[1] = ChunkSizes.Z;
-    Chunk[2] = ChunkSizes.Y;
-    Chunk[3] = ChunkSizes.X;
+    Chunk[0] = ChunkSizes.nt;
+    Chunk[1] = ChunkSizes.nz;
+    Chunk[2] = ChunkSizes.ny;
+    Chunk[3] = ChunkSizes.nx;
   }
 
   hid_t Property_list;
@@ -384,14 +384,14 @@ hid_t THDF5_File::CreateFloatDataset(const hid_t ParentGroup,
  */
 hid_t THDF5_File::CreateIndexDataset(const hid_t ParentGroup,
                                      const char * DatasetName,
-                                     const TDimensionSizes & DimensionSizes,
-                                     const TDimensionSizes & ChunkSizes,
+                                     const DimensionSizes & dimensionSizes,
+                                     const DimensionSizes & ChunkSizes,
                                      const size_t CompressionLevel)
 {
   const int RANK = 3;
 
-  hsize_t Dims [RANK] = {DimensionSizes.Z, DimensionSizes.Y, DimensionSizes.X};
-  hsize_t Chunk[RANK] = {ChunkSizes.Z, ChunkSizes.Y, ChunkSizes.X};
+  hsize_t Dims [RANK] = {dimensionSizes.nz, dimensionSizes.ny, dimensionSizes.nx};
+  hsize_t Chunk[RANK] = {ChunkSizes.nz, ChunkSizes.ny, ChunkSizes.nx};
 
   hid_t  Property_list;
   herr_t Status;
@@ -465,8 +465,8 @@ void  THDF5_File::CloseDataset(const hid_t HDF5_Dataset_id)
  * @throw ios::failure
  */
 void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
-                                const TDimensionSizes & Position,
-                                const TDimensionSizes & Size,
+                                const DimensionSizes & Position,
+                                const DimensionSizes & Size,
                                 const float * Data)
 {
   herr_t status;
@@ -483,25 +483,25 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
 
   if (Rank == 3)
   { // 3D dataset
-    ElementCount[0] = Size.Z;
-    ElementCount[1] = Size.Y;
-    ElementCount[2] = Size.X;
+    ElementCount[0] = Size.nz;
+    ElementCount[1] = Size.ny;
+    ElementCount[2] = Size.nx;
 
-    Offset[0] = Position.Z;
-    Offset[1] = Position.Y;
-    Offset[2] = Position.X;
+    Offset[0] = Position.nz;
+    Offset[1] = Position.ny;
+    Offset[2] = Position.nx;
   }
   else
   { // 4D dataset
-    ElementCount[0] = Size.T;
-    ElementCount[1] = Size.Z;
-    ElementCount[2] = Size.Y;
-    ElementCount[3] = Size.X;
+    ElementCount[0] = Size.nt;
+    ElementCount[1] = Size.nz;
+    ElementCount[2] = Size.ny;
+    ElementCount[3] = Size.nx;
 
-    Offset[0] = Position.T;
-    Offset[1] = Position.Z;
-    Offset[2] = Position.Y;
-    Offset[3] = Position.X;
+    Offset[0] = Position.nt;
+    Offset[1] = Position.nz;
+    Offset[2] = Position.ny;
+    Offset[3] = Position.nx;
   }
 
   // select hyperslab
@@ -550,8 +550,8 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
  * @throw ios::failure
  */
 void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
-                                const TDimensionSizes & Position,
-                                const TDimensionSizes & Size,
+                                const DimensionSizes & Position,
+                                const DimensionSizes & Size,
                                 const size_t * Data)
 {
   herr_t status;
@@ -567,25 +567,25 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
 
   if (Rank == 3)
   { // 3D dataset
-    ElementCount[0] = Size.Z;
-    ElementCount[1] = Size.Y;
-    ElementCount[2] = Size.X;
+    ElementCount[0] = Size.nz;
+    ElementCount[1] = Size.ny;
+    ElementCount[2] = Size.nx;
 
-    Offset[0] = Position.Z;
-    Offset[1] = Position.Y;
-    Offset[2] = Position.X;
+    Offset[0] = Position.nz;
+    Offset[1] = Position.ny;
+    Offset[2] = Position.nx;
   }
   else
   { // 4D dataset
-    ElementCount[0] = Size.T;
-    ElementCount[1] = Size.Z;
-    ElementCount[2] = Size.Y;
-    ElementCount[3] = Size.X;
+    ElementCount[0] = Size.nt;
+    ElementCount[1] = Size.nz;
+    ElementCount[2] = Size.ny;
+    ElementCount[3] = Size.nx;
 
-    Offset[0] = Position.T;
-    Offset[1] = Position.Z;
-    Offset[2] = Position.Y;
-    Offset[3] = Position.X;
+    Offset[0] = Position.nt;
+    Offset[1] = Position.nz;
+    Offset[2] = Position.ny;
+    Offset[3] = Position.nx;
   }
 
 
@@ -631,10 +631,10 @@ void THDF5_File::WriteHyperSlab(const hid_t HDF5_Dataset_id,
  * @param [in] MatrixData        - C array of MatrixData
  */
 void THDF5_File::WriteCuboidToHyperSlab(const hid_t HDF5_Dataset_id,
-                                        const TDimensionSizes & HyperslabPosition,
-                                        const TDimensionSizes & CuboidPosition,
-                                        const TDimensionSizes & CuboidSize,
-                                        const TDimensionSizes & MatrixDimensions,
+                                        const DimensionSizes & HyperslabPosition,
+                                        const DimensionSizes & CuboidPosition,
+                                        const DimensionSizes & CuboidSize,
+                                        const DimensionSizes & MatrixDimensions,
                                         const float * MatrixData)
 {
   herr_t status;
@@ -644,10 +644,10 @@ void THDF5_File::WriteCuboidToHyperSlab(const hid_t HDF5_Dataset_id,
 
   // Select sizes and positions
   // The T here is always 1 (only one timestep)
-  hsize_t SlabSize[Rank]        = {1,  CuboidSize.Z, CuboidSize.Y, CuboidSize.X};
-  hsize_t OffsetInDataset[Rank] = {HyperslabPosition.T, HyperslabPosition.Z, HyperslabPosition.Y, HyperslabPosition.X };
-  hsize_t OffsetInMatrixData[]  = {CuboidPosition.Z,   CuboidPosition.Y,   CuboidPosition.X};
-  hsize_t MatrixSize        []  = {MatrixDimensions.Z, MatrixDimensions.Y, MatrixDimensions.X};
+  hsize_t SlabSize[Rank]        = {1,  CuboidSize.nz, CuboidSize.ny, CuboidSize.nx};
+  hsize_t OffsetInDataset[Rank] = {HyperslabPosition.nt, HyperslabPosition.nz, HyperslabPosition.ny, HyperslabPosition.nx };
+  hsize_t OffsetInMatrixData[]  = {CuboidPosition.nz,   CuboidPosition.ny,   CuboidPosition.nx};
+  hsize_t MatrixSize        []  = {MatrixDimensions.nz, MatrixDimensions.ny, MatrixDimensions.nx};
 
 
   // select hyperslab in the HDF5 dataset
@@ -714,10 +714,10 @@ void THDF5_File::WriteCuboidToHyperSlab(const hid_t HDF5_Dataset_id,
  * @warning  - very slow at this version of HDF5 for orthogonal planes-> DO NOT USE
  */
 void THDF5_File::WriteSensorByMaskToHyperSlab(const hid_t HDF5_Dataset_id,
-                                              const TDimensionSizes & HyperslabPosition,
+                                              const DimensionSizes & HyperslabPosition,
                                               const size_t   IndexSensorSize,
                                               const size_t * IndexSensorData,
-                                              const TDimensionSizes & MatrixDimensions,
+                                              const DimensionSizes & MatrixDimensions,
                                               const float * MatrixData)
 {
   herr_t status;
@@ -728,12 +728,12 @@ void THDF5_File::WriteSensorByMaskToHyperSlab(const hid_t HDF5_Dataset_id,
   // Select sizes and positions
   // Only one timestep
   hsize_t SlabSize[Rank]        = {1, 1, IndexSensorSize};
-  hsize_t OffsetInDataset[Rank] = {HyperslabPosition.Z,
-                                   HyperslabPosition.Y,
-                                   HyperslabPosition.X };
+  hsize_t OffsetInDataset[Rank] = {HyperslabPosition.nz,
+                                   HyperslabPosition.ny,
+                                   HyperslabPosition.nx };
   // treat as a 1D array
   //hsize_t MatrixSize        []  = {MatrixDimensions.Z  * MatrixDimensions.Y * MatrixDimensions.X};
-  hsize_t MatrixSize = MatrixDimensions.Z  * MatrixDimensions.Y * MatrixDimensions.X;
+  hsize_t MatrixSize = MatrixDimensions.nz  * MatrixDimensions.ny * MatrixDimensions.nx;
 
 
   // select hyperslab in the HDF5 dataset
@@ -923,7 +923,7 @@ void THDF5_File::ReadScalarValue(const hid_t ParentGroup,
                                  const char * DatasetName,
                                  float      & Value)
 {
-  ReadCompleteDataset(ParentGroup, DatasetName, TDimensionSizes(1,1,1), &Value);
+  ReadCompleteDataset(ParentGroup, DatasetName, DimensionSizes(1,1,1), &Value);
 } // end of ReadScalarValue
 //------------------------------------------------------------------------------
 
@@ -938,7 +938,7 @@ void THDF5_File::ReadScalarValue(const hid_t ParentGroup,
                                  const char * DatasetName,
                                  size_t & Value)
 {
- ReadCompleteDataset(ParentGroup, DatasetName, TDimensionSizes(1,1,1), &Value);
+ ReadCompleteDataset(ParentGroup, DatasetName, DimensionSizes(1,1,1), &Value);
 }// end of ReadScalarValue
 //------------------------------------------------------------------------------
 
@@ -953,12 +953,12 @@ void THDF5_File::ReadScalarValue(const hid_t ParentGroup,
  */
 void THDF5_File::ReadCompleteDataset (const hid_t ParentGroup,
                                       const char * DatasetName,
-                                      const TDimensionSizes & DimensionSizes,
+                                      const DimensionSizes & dimensionSizes,
                                       float * Data)
 {
   // Check Dimensions sizes
-  if (GetDatasetDimensionSizes(ParentGroup, DatasetName).GetElementCount() !=
-      DimensionSizes.GetElementCount())
+  if (GetDatasetDimensionSizes(ParentGroup, DatasetName).nElements() !=
+      dimensionSizes.nElements())
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage, HDF5_ERR_FMT_WrongDimensionSizes, DatasetName);
@@ -987,11 +987,11 @@ void THDF5_File::ReadCompleteDataset (const hid_t ParentGroup,
  */
 void THDF5_File::ReadCompleteDataset (const hid_t ParentGroup,
                                       const char * DatasetName,
-                                      const TDimensionSizes & DimensionSizes,
+                                      const DimensionSizes & dimensionSizes,
                                       size_t * Data)
 {
-  if (GetDatasetDimensionSizes(ParentGroup, DatasetName).GetElementCount() !=
-      DimensionSizes.GetElementCount())
+  if (GetDatasetDimensionSizes(ParentGroup, DatasetName).nElements() !=
+      dimensionSizes.nElements())
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage, HDF5_ERR_FMT_WrongDimensionSizes, DatasetName);
@@ -1021,7 +1021,7 @@ void THDF5_File::ReadCompleteDataset (const hid_t ParentGroup,
   * @return DimensionSizes
   * @throw ios::failure
   */
-TDimensionSizes THDF5_File::GetDatasetDimensionSizes(const hid_t ParentGroup,
+DimensionSizes THDF5_File::GetDatasetDimensionSizes(const hid_t ParentGroup,
                                                      const char * DatasetName)
 {
   const size_t NoDims = GetDatasetNumberOfDimensions(ParentGroup, DatasetName);
@@ -1043,11 +1043,11 @@ TDimensionSizes THDF5_File::GetDatasetDimensionSizes(const hid_t ParentGroup,
 
   if (NoDims == 3)
   {
-    return TDimensionSizes(Dims[2], Dims[1], Dims[0]);
+    return DimensionSizes(Dims[2], Dims[1], Dims[0]);
   }
   else
   {
-    return TDimensionSizes(Dims[3], Dims[2], Dims[1], Dims[0]);
+    return DimensionSizes(Dims[3], Dims[2], Dims[1], Dims[0]);
   }
 }// end of GetDatasetDimensionSizes
 //------------------------------------------------------------------------------

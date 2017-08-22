@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 14:17 (created) \n
- *              24 September 2014, 14:58 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org). .\n
@@ -86,7 +86,7 @@ void TBaseIndexMatrix::AllocateMemory()
   /* No memory allocated before this function*/
   assert(pMatrixData == NULL);
 
-  pMatrixData = (size_t *) _mm_malloc(pTotalAllocatedElementCount * sizeof (size_t), DATA_ALIGNMENT);
+  pMatrixData = (size_t *) _mm_malloc(pTotalAllocatedElementCount * sizeof (size_t), kDataAlignment);
 
   if (!pMatrixData)
   {

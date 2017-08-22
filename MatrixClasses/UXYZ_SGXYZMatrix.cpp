@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              26 September 2014, 14:15 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -111,12 +111,12 @@ void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x
 
   //dt_rho0_sgx .* real...
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
-    register size_t i = z * pDimensionSizes.Y * pDimensionSizes.X;
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    register size_t i = z * pDimensionSizes.ny * pDimensionSizes.nx;
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         pMatrixData[i] = pMatrixData[i] * Divider * dxudxn_sgx[x];
         i++;
@@ -145,13 +145,13 @@ void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y
 
   //dt_rho0_sgx .* real...
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
-    register size_t i = z * pDimensionSizes.Y * pDimensionSizes.X;
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    register size_t i = z * pDimensionSizes.ny * pDimensionSizes.nx;
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
       const float dyudyn_sgy_data = dyudyn_sgy[y] * Divider;
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         pMatrixData[i] = pMatrixData[i] * dyudyn_sgy_data;
         i++;
@@ -179,14 +179,14 @@ void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z
 
   //dt_rho0_sgx .* real...
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
-    register size_t i = z * pDimensionSizes.Y * pDimensionSizes.X;
+    register size_t i = z * pDimensionSizes.ny * pDimensionSizes.nx;
     const float dzudzn_sgz_data = dzudzn_sgz[z] * Divider;
 
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         pMatrixData[i] = pMatrixData[i] * dzudzn_sgz_data;
         i++;
@@ -213,12 +213,12 @@ void Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize(const TRealMatrix& FFT_p,
   const float Divider = 1.0f / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     register size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -255,12 +255,12 @@ void Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize_scalar_uniform(const TRealMatri
   const float Divider = dt_rho0 / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     register size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -300,12 +300,12 @@ void Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize_scalar_nonuniform(const TRealMa
   const float Divider = dt_rho0 / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     register size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -344,13 +344,13 @@ void Tuxyz_sgxyzMatrix::Compute_uy_sgy_normalize(const TRealMatrix& FFT_p,
   const float Divider = 1.0f / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
       const float pml_y = pml[y];
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -388,13 +388,13 @@ void Tuxyz_sgxyzMatrix::Compute_uy_sgy_normalize_scalar_uniform(const TRealMatri
   const float Divider = dt_rho0 / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
       const float pml_y = pml[y];
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -434,14 +434,14 @@ void Tuxyz_sgxyzMatrix::Compute_uy_sgy_normalize_scalar_nonuniform(const TRealMa
   const float Divider = dt_rho0 / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
       const float pml_y = pml[y];
       const float dyudyn_sgy_data = dyudyn_sgy[y];
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -480,13 +480,13 @@ void Tuxyz_sgxyzMatrix::Compute_uz_sgz_normalize(const TRealMatrix& FFT_p,
   const float Divider = 1.0f / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     size_t i = z * p2DDataSliceSize;
     const float pml_z = pml[z];
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -524,13 +524,13 @@ void Tuxyz_sgxyzMatrix::Compute_uz_sgz_normalize_scalar_uniform(const TRealMatri
   const float Divider = dt_rho0 / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     size_t i = z* p2DDataSliceSize;
     const float pml_z = pml[z];
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -571,15 +571,15 @@ void Tuxyz_sgxyzMatrix::Compute_uz_sgz_normalize_scalar_nonuniform(const TRealMa
   const float Divider = dt_rho0 / pTotalElementCount;
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.Z; z++)
+  for (size_t z = 0; z < pDimensionSizes.nz; z++)
   {
     size_t i = z * p2DDataSliceSize;
     const float pml_z = pml[z];
     const float dzudzn_sgz_data = dzudzn_sgz[z];
 
-    for (size_t y = 0; y < pDimensionSizes.Y; y++)
+    for (size_t y = 0; y < pDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.X; x++)
+      for (size_t x = 0; x < pDimensionSizes.nx; x++)
       {
         register float pMatrixElement = pMatrixData[i];
 
@@ -642,7 +642,7 @@ void Tuxyz_sgxyzMatrix::Add_u_source(const TRealMatrix & u_source_input,
                                      const size_t        u_source_mode,
                                      const size_t        u_source_many)
 {
-  
+
   const size_t u_source_size = u_source_index.GetTotalElementCount();
   const size_t Index2D = (u_source_many != 0) ? t_index * u_source_size : t_index;
 
@@ -652,7 +652,7 @@ void Tuxyz_sgxyzMatrix::Add_u_source(const TRealMatrix & u_source_input,
     for (size_t i = 0; i < u_source_size; i++)
     {
       const size_t SignalIndex = (u_source_many != 0) ? Index2D + i : Index2D;
-      pMatrixData[u_source_index[i]] = u_source_input[SignalIndex];    
+      pMatrixData[u_source_index[i]] = u_source_input[SignalIndex];
     }
   }// end of Dirichlet
 
@@ -661,7 +661,7 @@ void Tuxyz_sgxyzMatrix::Add_u_source(const TRealMatrix & u_source_input,
     #pragma omp parallel for if (u_source_size > 16384)
     for (size_t i = 0; i < u_source_size; i++)
     {
-      const size_t SignalIndex = (u_source_many != 0) ? Index2D + i : Index2D;      
+      const size_t SignalIndex = (u_source_many != 0) ? Index2D + i : Index2D;
       pMatrixData[u_source_index[i]] += u_source_input[SignalIndex];
     }
   }// end of add

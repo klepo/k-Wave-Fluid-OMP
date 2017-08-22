@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 15:16 (created) \n
- *              25 September 2014, 17:28 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -52,7 +52,7 @@ class TIndexMatrix : public TBaseIndexMatrix
   public:
 
     /// Constructor allocating memory.
-    TIndexMatrix(const TDimensionSizes& DimensionSizes);
+    TIndexMatrix(const DimensionSizes& DimensionSizes);
 
     /// Destructor.
     virtual ~TIndexMatrix()
@@ -96,13 +96,13 @@ class TIndexMatrix : public TBaseIndexMatrix
      * @param [in] index - Id of the corner
      * @return the top left corner
      */
-    TDimensionSizes GetTopLeftCorner(const size_t& index) const
+    DimensionSizes GetTopLeftCorner(const size_t& index) const
     {
       size_t X =  pMatrixData[6 * index   ];
       size_t Y =  pMatrixData[6 * index +1];
       size_t Z =  pMatrixData[6 * index +2];
 
-      return TDimensionSizes(X, Y, Z);
+      return DimensionSizes(X, Y, Z);
     };
 
     /**
@@ -113,13 +113,13 @@ class TIndexMatrix : public TBaseIndexMatrix
      * @param [in] index -Id of the corner
      * @return the bottom right corner
      */
-    TDimensionSizes GetBottomRightCorner(const size_t & index) const
+    DimensionSizes GetBottomRightCorner(const size_t & index) const
     {
       size_t X =  pMatrixData[6 * index + 3];
       size_t Y =  pMatrixData[6 * index + 4];
       size_t Z =  pMatrixData[6 * index + 5];
 
-      return TDimensionSizes(X, Y, Z);
+      return DimensionSizes(X, Y, Z);
     };
 
     ///  Recompute indices MATALAB->C++.

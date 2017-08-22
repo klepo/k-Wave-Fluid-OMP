@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2012, 13:39 (created) \n
- *              29 September 2014, 12:43 (revised)
+ *              22 August    2017, 13:22 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -125,7 +125,7 @@ void TParameters::ParseCommandLine(int argc, char** argv)
  */
 void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
 {
-  TDimensionSizes ScalarSizes(1, 1, 1);
+  DimensionSizes ScalarSizes(1, 1, 1);
 
   if (!HDF5_InputFile.IsOpened())
   {
@@ -192,13 +192,13 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   HDF5_InputFile.ReadScalarValue(HDF5RootGroup, Ny_Name, Y);
   HDF5_InputFile.ReadScalarValue(HDF5RootGroup, Nz_Name, Z);
 
-  FullDimensionSizes.X = X;
-  FullDimensionSizes.Y = Y;
-  FullDimensionSizes.Z = Z;
+  FullDimensionSizes.nx = X;
+  FullDimensionSizes.ny = Y;
+  FullDimensionSizes.nz = Z;
 
-  ReducedDimensionSizes.X = ((X / 2) + 1);
-  ReducedDimensionSizes.Y = Y;
-  ReducedDimensionSizes.Z = Z;
+  ReducedDimensionSizes.nx = ((X / 2) + 1);
+  ReducedDimensionSizes.ny = Y;
+  ReducedDimensionSizes.nz = Z;
 
   // if the file is of version 1.0, there must be a sensor mask index (backward compatibility)
   if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_10)
@@ -245,7 +245,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
       case smt_corners:
       {
         // mask dimensions are [6, N, 1] - I want to know N
-        sensor_mask_corners_size = HDF5_InputFile.GetDatasetDimensionSizes(HDF5RootGroup, sensor_mask_corners_Name).Y;
+        sensor_mask_corners_size = HDF5_InputFile.GetDatasetDimensionSizes(HDF5RootGroup, sensor_mask_corners_Name).ny;
         break;
       }
     }// switch
@@ -364,9 +364,9 @@ void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
   const hid_t HDF5RootGroup = HDF5_OutputFile.GetRootGroup();
 
   // Write dimension sizes
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nx_Name, FullDimensionSizes.X);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Ny_Name, FullDimensionSizes.Y);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nz_Name, FullDimensionSizes.Z);
+  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nx_Name, FullDimensionSizes.nx);
+  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Ny_Name, FullDimensionSizes.ny);
+  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nz_Name, FullDimensionSizes.nz);
 
   HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nt_Name, Nt);
 

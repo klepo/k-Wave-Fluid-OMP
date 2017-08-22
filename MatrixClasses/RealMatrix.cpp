@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 10:30 (created) \n
- *              25 September 2014, 15:13 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -57,7 +57,7 @@
  * Constructor.
  * @param [in] DimensionSizes - Dimension sizes
  */
-TRealMatrix::TRealMatrix(const TDimensionSizes & DimensionSizes)
+TRealMatrix::TRealMatrix(const DimensionSizes & DimensionSizes)
                     : TBaseFloatMatrix()
 {
   InitDimensions(DimensionSizes);
@@ -115,24 +115,24 @@ void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                       const char * MatrixName,
                                       const size_t CompressionLevel)
 {
-  TDimensionSizes Chunks = pDimensionSizes;
-  Chunks.Z = 1;
+  DimensionSizes Chunks = pDimensionSizes;
+  Chunks.nz = 1;
 
   //1D matrices
-  if ((pDimensionSizes.Y == 1) && (pDimensionSizes.Z == 1))
+  if ((pDimensionSizes.ny == 1) && (pDimensionSizes.nz == 1))
   {
     // Chunk = 4MB
-    if (pDimensionSizes.X > 4 * ChunkSize_1D_4MB)
+    if (pDimensionSizes.nx > 4 * ChunkSize_1D_4MB)
     {
-      Chunks.X = ChunkSize_1D_4MB;
+      Chunks.nx = ChunkSize_1D_4MB;
     }
-    else if (pDimensionSizes.X > 4 * ChunkSize_1D_1MB)
+    else if (pDimensionSizes.nx > 4 * ChunkSize_1D_1MB)
     {
-      Chunks.X = ChunkSize_1D_1MB;
+      Chunks.nx = ChunkSize_1D_1MB;
     }
-    else if (pDimensionSizes.X > 4 * ChunkSize_1D_256KB)
+    else if (pDimensionSizes.nx > 4 * ChunkSize_1D_256KB)
     {
-      Chunks.X = ChunkSize_1D_256KB;
+      Chunks.nx = ChunkSize_1D_256KB;
     }
   }
 
@@ -143,7 +143,7 @@ void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
                                                        CompressionLevel);
 
   HDF5_File.WriteHyperSlab(HDF5_Dataset_id,
-                           TDimensionSizes(0, 0, 0),
+                           DimensionSizes(0, 0, 0),
                            pDimensionSizes,
                            pMatrixData);
 
@@ -168,20 +168,20 @@ void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
  * Set necessary dimensions and auxiliary variables.
  * @param [in] DimensionSizes - 3D Dimension sizes
  */
-void TRealMatrix::InitDimensions(const TDimensionSizes & DimensionSizes)
+void TRealMatrix::InitDimensions(const DimensionSizes & DimensionSizes)
 {
   pDimensionSizes = DimensionSizes;
 
-  pTotalElementCount = pDimensionSizes.X *
-                       pDimensionSizes.Y *
-                       pDimensionSizes.Z;
+  pTotalElementCount = pDimensionSizes.nx *
+                       pDimensionSizes.ny *
+                       pDimensionSizes.nz;
 
   pTotalAllocatedElementCount = pTotalElementCount;
 
-  pDataRowSize = pDimensionSizes.X;
+  pDataRowSize = pDimensionSizes.nx;
 
-  p2DDataSliceSize = pDimensionSizes.X *
-                     pDimensionSizes.Y;
+  p2DDataSliceSize = pDimensionSizes.nx *
+                     pDimensionSizes.ny;
 }// end of SetDimensions
 //------------------------------------------------------------------------------/
 

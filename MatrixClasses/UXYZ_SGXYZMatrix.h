@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              26 September 2014, 14:15 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -54,7 +54,7 @@ class Tuxyz_sgxyzMatrix : public TRealMatrix
      * @details Constructor allocating memory.
      * @param [in] DimensionSizes
      */
-    Tuxyz_sgxyzMatrix(struct TDimensionSizes DimensionSizes) :
+    Tuxyz_sgxyzMatrix(struct DimensionSizes DimensionSizes) :
             TRealMatrix(DimensionSizes)
     {};
 

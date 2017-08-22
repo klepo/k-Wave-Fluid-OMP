@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 12:13 (created) \n
- *              24 September 2014, 14:07 (revised)
+ *              22 August    2017, 13:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -61,7 +61,7 @@ class TBaseFloatMatrix : public TBaseMatrix
 
 
     /// Get dimension sizes of the matrix.
-    virtual TDimensionSizes GetDimensionSizes() const
+    virtual DimensionSizes GetDimensionSizes() const
     {
       return pDimensionSizes;
     }
@@ -111,7 +111,7 @@ class TBaseFloatMatrix : public TBaseMatrix
     size_t pTotalAllocatedElementCount;
 
     /// Dimension sizes.
-    struct TDimensionSizes pDimensionSizes;
+    struct DimensionSizes pDimensionSizes;
 
     /// Size of a 1D row in X dimension.
     size_t pDataRowSize;
