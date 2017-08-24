@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 15:16 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              24 August    2017, 12:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -61,10 +61,10 @@ class TIndexMatrix : public TBaseIndexMatrix
     };
 
     /// Read data from the HDF5 file.
-    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File,
+    virtual void ReadDataFromHDF5File(Hdf5File & HDF5_File,
                                       const char * MatrixName);
     /// Write data into the HDF5 file.
-    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File,
+    virtual void WriteDataToHDF5File(Hdf5File & HDF5_File,
                                      const char * MatrixName,
                                      const size_t CompressionLevel);
 

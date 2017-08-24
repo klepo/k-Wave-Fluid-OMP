@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created) \n
- *              24 August    2017, 09:25 (revised)
+ *              24 August    2017, 12:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -212,7 +212,7 @@ void TMatrixContainer::CreateAllObjects()
  * Load all marked matrices from the HDF5 file.
  * @param [in] HDF5_File - HDF5 file handle
  */
-void TMatrixContainer::LoadDataFromInputHDF5File(THDF5_File & HDF5_File)
+void TMatrixContainer::LoadDataFromInputHDF5File(Hdf5File & HDF5_File)
 {
   for (TMatrixRecordContainer::iterator it = MatrixContainer.begin(); it != MatrixContainer.end(); it++)
   {
@@ -229,7 +229,7 @@ void TMatrixContainer::LoadDataFromInputHDF5File(THDF5_File & HDF5_File)
  * Load selected matrices from checkpoint HDF5 file.
  * @param [in] HDF5_File - HDF5 file handle
  */
-void TMatrixContainer::LoadDataFromCheckpointHDF5File(THDF5_File & HDF5_File)
+void TMatrixContainer::LoadDataFromCheckpointHDF5File(Hdf5File & HDF5_File)
 {
   for (TMatrixRecordContainer::iterator it = MatrixContainer.begin(); it != MatrixContainer.end(); it++)
   {
@@ -245,7 +245,7 @@ void TMatrixContainer::LoadDataFromCheckpointHDF5File(THDF5_File & HDF5_File)
  * Store selected matrices into the checkpoint file.
  * @param [in] HDF5_File
  */
-void TMatrixContainer::StoreDataIntoCheckpointHDF5File(THDF5_File & HDF5_File)
+void TMatrixContainer::StoreDataIntoCheckpointHDF5File(Hdf5File & HDF5_File)
 {
   for (TMatrixRecordContainer::iterator it = MatrixContainer.begin(); it != MatrixContainer.end(); it++)
   {

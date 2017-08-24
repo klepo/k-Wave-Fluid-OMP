@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
- *              24 August    2017, 09:25 (revised)
+ *              24 August    2017, 12:20 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -72,11 +72,11 @@ TComplexMatrix::TComplexMatrix(const DimensionSizes & DimensionSizes)
  * @param [in] HDF5_File   - HDF5 file
  * @param [in] MatrixName  - HDF5 dataset name
  */
-void TComplexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
+void TComplexMatrix::ReadDataFromHDF5File(Hdf5File & HDF5_File,
                                           const char * MatrixName)
 {
   // check data type
-  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_float)
+  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(), MatrixName) != Hdf5File::hdf5_mdt_float)
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage, kErrFmtMatrixNotFloat, MatrixName);
@@ -84,7 +84,7 @@ void TComplexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
   }
 
   // check domain type
-  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_complex)
+  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != Hdf5File::hdf5_mdt_complex)
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage, kErrFmtMatrixNotComplex, MatrixName);
@@ -111,7 +111,7 @@ void TComplexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
  * @param [in] MatrixName            - HDF5 dataset name
  * @param [in] CompressionLevel      - Compression level for the dataset
  */
-void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
+void TComplexMatrix::WriteDataToHDF5File(Hdf5File & HDF5_File,
                                          const char * MatrixName,
                                          const size_t CompressionLevel)
 {
@@ -138,11 +138,11 @@ void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
  // Write data and domain type
   HDF5_File.WriteMatrixDataType(HDF5_File.GetRootGroup(),
                                 MatrixName,
-                                THDF5_File::hdf5_mdt_float);
+                                Hdf5File::hdf5_mdt_float);
 
   HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
                                   MatrixName,
-                                  THDF5_File::hdf5_mdt_complex);
+                                  Hdf5File::hdf5_mdt_complex);
 }// end of WriteDataToHDF5File
 //---------------------------------------------------------------------------
 

@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              24 August    2017, 12:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -195,11 +195,11 @@ class TMatrixContainer
     void CreateAllObjects();
 
     /// Load all matrices from the HDF5 file.
-    void LoadDataFromInputHDF5File(THDF5_File & HDF5_File);
+    void LoadDataFromInputHDF5File(Hdf5File & HDF5_File);
     /// Load all matrices from the HDF5 file.
-    void LoadDataFromCheckpointHDF5File(THDF5_File & HDF5_File);
+    void LoadDataFromCheckpointHDF5File(Hdf5File & HDF5_File);
     /// Store selected matrices into the checkpoint file.
-    void StoreDataIntoCheckpointHDF5File(THDF5_File & HDF5_File);
+    void StoreDataIntoCheckpointHDF5File(Hdf5File & HDF5_File);
 
     /// Free all matrices - destroy them.
     void FreeAllMatrices();

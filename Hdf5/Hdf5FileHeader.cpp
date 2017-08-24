@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 32.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            24 August    2017, 11:07 (revised)
+ *            24 August    2017, 12:53 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -55,457 +55,417 @@
 //---------------------------------------------------- Constants -----------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 
-const string THDF5_FileHeader::HDF5_FileTypesNames[]  = {"input","output", "checkpoint", "unknown"};
+const string Hdf5FileHeader::kFileTypesNames[]  = {"input", "output", "checkpoint", "unknown"};
 
-const string THDF5_FileHeader::HDF5_MajorFileVersionsNames[] = {"1"};
-
-const string THDF5_FileHeader::HDF5_MinorFileVersionsNames[] = {"0","1"};
-
+const string Hdf5FileHeader::kMajorFileVersionsNames[] = {"1"};
+const string Hdf5FileHeader::kMinorFileVersionsNames[] = {"0","1"};
 
 
+/**
+ * Initialisation of static map with header attribute names.
+ */
+std::map<Hdf5FileHeader::FileHeaderItems, std::string> Hdf5FileHeader::sHeaderNames
+{
+  {Hdf5FileHeader::FileHeaderItems::kCreatedBy             , "created_by"},
+  {Hdf5FileHeader::FileHeaderItems::kCreationDate          , "creation_date"},
+  {Hdf5FileHeader::FileHeaderItems::kFileDescription       , "file_description"},
+  {Hdf5FileHeader::FileHeaderItems::kMajorVersion          , "major_version"},
+  {Hdf5FileHeader::FileHeaderItems::kMinorVersion          , "minor_version"},
+  {Hdf5FileHeader::FileHeaderItems::kFileType              , "file_type"},
 
+  {Hdf5FileHeader::FileHeaderItems::kHostName              , "host_names"},
+  {Hdf5FileHeader::FileHeaderItems::kNumberofCores         , "number_of_cpu_cores"},
+  {Hdf5FileHeader::FileHeaderItems::kTotalMemoryConsumption, "total_memory_in_use"},
+  {Hdf5FileHeader::FileHeaderItems::kPeakMemoryConsumption , "peak_core_memory_in_use"},
 
-//----------------------------------------------------------------------------//
-//------------------------    THDF5_File_Header ------------------------------//
-//-----------------------------    Public     --------------------------------//
-//----------------------------------------------------------------------------//
+  {Hdf5FileHeader::FileHeaderItems::kTotalExecutionTime    , "total_execution_time"},
+  {Hdf5FileHeader::FileHeaderItems::kDataLoadTime          , "data_loading_phase_execution_time"},
+  {Hdf5FileHeader::FileHeaderItems::kPreProcessingTime     , "pre-processing_phase_execution_time"},
+  {Hdf5FileHeader::FileHeaderItems::kSimulationTime        , "simulation_phase_execution_time"},
+  {Hdf5FileHeader::FileHeaderItems::kPostProcessingTime    , "post-processing_phase_execution_time"}
+};// mHeaderNames
+//----------------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
  * Constructor.
  */
-THDF5_FileHeader::THDF5_FileHeader()
+Hdf5FileHeader::Hdf5FileHeader()
+  : mHeaderValues()
 {
-  HDF5_FileHeaderValues.clear();
-  PopulateHeaderFileMap();
-}// end of constructor
-//------------------------------------------------------------------------------
 
+}// end of constructor
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Copy constructor.
- * @param [in] other
  */
-THDF5_FileHeader::THDF5_FileHeader(const THDF5_FileHeader & other)
+Hdf5FileHeader::Hdf5FileHeader(const Hdf5FileHeader& src)
+  : mHeaderValues(src.mHeaderValues)
 {
-  HDF5_FileHeaderValues = other.HDF5_FileHeaderValues;
-  HDF5_FileHeaderNames  = other.HDF5_FileHeaderNames;
-}// end of copy constructor
-//------------------------------------------------------------------------------
 
+}// end of copy constructor
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Destructor.
- *
  */
-THDF5_FileHeader::~THDF5_FileHeader()
+Hdf5FileHeader::~Hdf5FileHeader()
 {
-  HDF5_FileHeaderValues.clear();
-  HDF5_FileHeaderNames.clear();
+  mHeaderValues.clear();
 }// end of destructor
-//------------------------------------------------------------------------------
-
-
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Read header from the input file.
- * @param [in] InputFile - Input file to read from
- * @throw ios:failure when en error happens
  */
-void THDF5_FileHeader::ReadHeaderFromInputFile(THDF5_File & InputFile)
+void Hdf5FileHeader::readHeaderFromInputFile(Hdf5File& inputFile)
 {
   // Get file root handle
-  hid_t FileRootHandle = InputFile.GetRootGroup();
-  // read file type
-  HDF5_FileHeaderValues[hdf5_fhi_file_type] =
-          InputFile.ReadStringAttribute(FileRootHandle,"/",
-                                        HDF5_FileHeaderNames[hdf5_fhi_file_type].c_str());
+  hid_t rootGroup = inputFile.GetRootGroup();
+  // shortcut
+  using FHI = FileHeaderItems;
 
-  if (GetFileType() == hdf5_ft_input)
+  // read file type
+  mHeaderValues[FHI::kFileType] =
+          inputFile.ReadStringAttribute(rootGroup,"/", sHeaderNames[FHI::kFileType].c_str());
+
+  if (getFileType() == FileType::kInput)
   {
-    HDF5_FileHeaderValues[hdf5_fhi_created_by]
-            = InputFile.ReadStringAttribute(FileRootHandle, "/",
-                                            HDF5_FileHeaderNames[hdf5_fhi_created_by].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_creation_date]
-            = InputFile.ReadStringAttribute(FileRootHandle, "/",
-                                            HDF5_FileHeaderNames[hdf5_fhi_creation_date].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_file_description]
-            = InputFile.ReadStringAttribute(FileRootHandle, "/",
-                                            HDF5_FileHeaderNames[hdf5_fhi_file_description].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_major_version]
-            = InputFile.ReadStringAttribute(FileRootHandle, "/",
-                                            HDF5_FileHeaderNames[hdf5_fhi_major_version].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_minor_version]
-            = InputFile.ReadStringAttribute(FileRootHandle, "/",
-                                            HDF5_FileHeaderNames[hdf5_fhi_minor_version].c_str());
+    mHeaderValues[FHI::kCreatedBy]
+            = inputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kCreatedBy].c_str());
+    mHeaderValues[FHI::kCreationDate]
+            = inputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kCreationDate].c_str());
+    mHeaderValues[FHI::kFileDescription]
+            = inputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileDescription].c_str());
+    mHeaderValues[FHI::kMajorVersion]
+            = inputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kMajorVersion].c_str());
+    mHeaderValues[FHI::kMinorVersion]
+            = inputFile.ReadStringAttribute(rootGroup, "/",sHeaderNames[FHI::kMinorVersion].c_str());
   }
   else
   {
     throw ios::failure(kErrFmtBadInputFileType);
   }
-}// end of ReadHeaderFromInputFile
-//------------------------------------------------------------------------------
+}// end of readHeaderFromInputFile
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Read header from output file (necessary for checkpoint-restart).
- * Read only execution times (the others are read from the input file, or
- * calculated based on the very last leg of the simulation).
- * This function is called only if checkpoint-restart is enabled.
- * @param [in] OutputFile
- * @throw ios:failure when en error happens
  */
-void THDF5_FileHeader::ReadHeaderFromOutputFile(THDF5_File & OutputFile)
+void Hdf5FileHeader::readHeaderFromOutputFile(Hdf5File& outputFile)
 {
   // Get file root handle
-  hid_t FileRootHandle = OutputFile.GetRootGroup();
+  hid_t rootGroup = outputFile.GetRootGroup();
+  // shortcut
+  using FHI = FileHeaderItems;
 
-  HDF5_FileHeaderValues[hdf5_fhi_file_type]
-          = OutputFile.ReadStringAttribute(FileRootHandle, "/",
-                                           HDF5_FileHeaderNames[hdf5_fhi_file_type].c_str());
+  mHeaderValues[FHI::kFileType]
+          = outputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileType].c_str());
 
-  if (GetFileType() == hdf5_ft_output)
+  if (getFileType() == FileType::kOutput)
   {
-    HDF5_FileHeaderValues[hdf5_fhi_total_execution_time]
-            = OutputFile.ReadStringAttribute(FileRootHandle, "/",
-                                             HDF5_FileHeaderNames[hdf5_fhi_total_execution_time].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_data_load_time]
-            = OutputFile.ReadStringAttribute(FileRootHandle, "/",
-                                             HDF5_FileHeaderNames[hdf5_fhi_data_load_time].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_preprocessing_time]
-            = OutputFile.ReadStringAttribute(FileRootHandle, "/",
-                                             HDF5_FileHeaderNames[hdf5_fhi_preprocessing_time].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_simulation_time]
-            = OutputFile.ReadStringAttribute(FileRootHandle, "/",
-                                             HDF5_FileHeaderNames[hdf5_fhi_simulation_time].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_postprocessing_time]
-            = OutputFile.ReadStringAttribute(FileRootHandle, "/",
-                                             HDF5_FileHeaderNames[hdf5_fhi_postprocessing_time].c_str());
+    mHeaderValues[FHI::kTotalExecutionTime]
+            = outputFile.ReadStringAttribute(rootGroup, "/",
+                                             sHeaderNames[FHI::kTotalExecutionTime].c_str());
+    mHeaderValues[FHI::kDataLoadTime]
+            = outputFile.ReadStringAttribute(rootGroup, "/",
+                                             sHeaderNames[FHI::kDataLoadTime].c_str());
+    mHeaderValues[FHI::kPreProcessingTime]
+            = outputFile.ReadStringAttribute(rootGroup, "/",
+                                             sHeaderNames[FHI::kPreProcessingTime].c_str());
+    mHeaderValues[FHI::kSimulationTime]
+            = outputFile.ReadStringAttribute(rootGroup, "/",
+                                             sHeaderNames[FHI::kSimulationTime].c_str());
+    mHeaderValues[FHI::kPostProcessingTime]
+            = outputFile.ReadStringAttribute(rootGroup, "/",
+                                             sHeaderNames[FHI::kPostProcessingTime].c_str());
   }
   else
   {
     throw ios::failure(kErrFmtBadOutputFIleType);
   }
-}// end of ReadHeaderFromOutputFile
-//------------------------------------------------------------------------------
+}// end of readHeaderFromOutputFile
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Read the file header form the checkpoint file. We need the header to verify
- * the file version and type
- * @param [in] CheckpointFile
- * @throw ios:failure when en error happens
+ * Read the file header form the checkpoint file.
  */
-void THDF5_FileHeader::ReadHeaderFromCheckpointFile(THDF5_File & CheckpointFile)
+void Hdf5FileHeader::readHeaderFromCheckpointFile(Hdf5File& checkpointFile)
 {
   // Get file root handle
-  hid_t FileRootHandle = CheckpointFile.GetRootGroup();
+  hid_t rootGroup = checkpointFile.GetRootGroup();
+  // shortcut
+  using FHI = FileHeaderItems;
   // read file type
-  HDF5_FileHeaderValues[hdf5_fhi_file_type] =
-          CheckpointFile.ReadStringAttribute(FileRootHandle,"/",
-                                             HDF5_FileHeaderNames[hdf5_fhi_file_type].c_str());
+  mHeaderValues[FHI::kFileType] =
+          checkpointFile.ReadStringAttribute(rootGroup,"/", sHeaderNames[FHI::kFileType].c_str());
 
-  if (GetFileType() == hdf5_ft_checkpoint)
+  if (getFileType() == FileType::kCheckpoint)
   {
-    HDF5_FileHeaderValues[hdf5_fhi_created_by]
-            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/",
-                                                 HDF5_FileHeaderNames[hdf5_fhi_created_by].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_creation_date]
-            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/",
-                                                 HDF5_FileHeaderNames[hdf5_fhi_creation_date].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_file_description]
-            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/",
-                                                 HDF5_FileHeaderNames[hdf5_fhi_file_description].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_major_version]
-            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/",
-                                                 HDF5_FileHeaderNames[hdf5_fhi_major_version].c_str());
-    HDF5_FileHeaderValues[hdf5_fhi_minor_version]
-            = CheckpointFile.ReadStringAttribute(FileRootHandle, "/",
-                                                 HDF5_FileHeaderNames[hdf5_fhi_minor_version].c_str());
+    mHeaderValues[FHI::kCreatedBy]
+            = checkpointFile.ReadStringAttribute(rootGroup, "/",
+                                                 sHeaderNames[FHI::kCreatedBy].c_str());
+    mHeaderValues[FHI::kCreationDate]
+            = checkpointFile.ReadStringAttribute(rootGroup, "/",
+                                                 sHeaderNames[FHI::kCreationDate].c_str());
+    mHeaderValues[FHI::kFileDescription]
+            = checkpointFile.ReadStringAttribute(rootGroup, "/",
+                                                 sHeaderNames[FHI::kFileDescription].c_str());
+    mHeaderValues[FHI::kMajorVersion]
+            = checkpointFile.ReadStringAttribute(rootGroup, "/",
+                                                 sHeaderNames[FHI::kMajorVersion].c_str());
+    mHeaderValues[FHI::kMinorVersion]
+            = checkpointFile.ReadStringAttribute(rootGroup, "/",
+                                                 sHeaderNames[FHI::kMinorVersion].c_str());
   }
   else
   {
     throw ios::failure(kErrFmtBadCheckpointFileType);
   }
-}// end of ReadHeaderFromCheckpointFile
-//------------------------------------------------------------------------------
+}// end of readHeaderFromCheckpointFile
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Write header into the output file.
- * @param [in] OutputFile
  */
-void THDF5_FileHeader::WriteHeaderToOutputFile(THDF5_File & OutputFile)
+void Hdf5FileHeader::writeHeaderToOutputFile(Hdf5File& outputFile)
 {
   // Get file root handle
-  hid_t FileRootHandle = OutputFile.GetRootGroup();
+  hid_t rootGroup = outputFile.GetRootGroup();
 
-  for (map<THDF5_FileHeaderItems, string>::iterator it = HDF5_FileHeaderNames.begin();
-       it != HDF5_FileHeaderNames.end();
-       it++)
+  for (const auto& it : sHeaderNames)
   {
-    OutputFile.WriteStringAttribute(FileRootHandle,
-                                    "/",
-                                    it->second.c_str(),
-                                    HDF5_FileHeaderValues[it->first]);
+    outputFile.WriteStringAttribute(rootGroup,  "/", it.second.c_str(), mHeaderValues[it.first].c_str());
   }
-}// end of WriteHeaderToOutputFile
-//------------------------------------------------------------------------------
+}// end of writeHeaderToOutputFile
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Write header to the output file (only a subset of all possible fields are written).
- * @param [in] CheckpointFile
  */
-void THDF5_FileHeader::WriteHeaderToCheckpointFile(THDF5_File & CheckpointFile)
+void Hdf5FileHeader::writeHeaderToCheckpointFile(Hdf5File& checkpointFile)
 {
   // Get file root handle
-  hid_t FileRootHandle = CheckpointFile.GetRootGroup();
+  hid_t rootGroup = checkpointFile.GetRootGroup();
+  // shortcut
+  using FHI = FileHeaderItems;
 
   // Write header
-  CheckpointFile.WriteStringAttribute(FileRootHandle,
+  checkpointFile.WriteStringAttribute(rootGroup,
                                       "/",
-                                      HDF5_FileHeaderNames [hdf5_fhi_file_type].c_str(),
-                                      HDF5_FileHeaderValues[hdf5_fhi_file_type].c_str());
+                                      sHeaderNames [FHI::kFileType].c_str(),
+                                      mHeaderValues[FHI::kFileType].c_str());
 
-  CheckpointFile.WriteStringAttribute(FileRootHandle,
+  checkpointFile.WriteStringAttribute(rootGroup,
                                       "/",
-                                      HDF5_FileHeaderNames [hdf5_fhi_created_by].c_str(),
-                                      HDF5_FileHeaderValues[hdf5_fhi_created_by].c_str());
+                                      sHeaderNames [FHI::kCreatedBy].c_str(),
+                                      mHeaderValues[FHI::kCreatedBy].c_str());
 
-  CheckpointFile.WriteStringAttribute(FileRootHandle,
+  checkpointFile.WriteStringAttribute(rootGroup,
                                       "/",
-                                      HDF5_FileHeaderNames [hdf5_fhi_creation_date].c_str(),
-                                      HDF5_FileHeaderValues[hdf5_fhi_creation_date].c_str());
+                                      sHeaderNames [FHI::kCreationDate].c_str(),
+                                      mHeaderValues[FHI::kCreationDate].c_str());
 
-  CheckpointFile.WriteStringAttribute(FileRootHandle,
+  checkpointFile.WriteStringAttribute(rootGroup,
                                       "/",
-                                      HDF5_FileHeaderNames [hdf5_fhi_file_description].c_str(),
-                                      HDF5_FileHeaderValues[hdf5_fhi_file_description].c_str());
+                                      sHeaderNames [FHI::kFileDescription].c_str(),
+                                      mHeaderValues[FHI::kFileDescription].c_str());
 
-  CheckpointFile.WriteStringAttribute(FileRootHandle,                                      "/",
-                                      HDF5_FileHeaderNames [hdf5_fhi_major_version].c_str(),
-                                      HDF5_FileHeaderValues[hdf5_fhi_major_version].c_str());
-
-  CheckpointFile.WriteStringAttribute(FileRootHandle,
+  checkpointFile.WriteStringAttribute(rootGroup,
                                       "/",
-                                      HDF5_FileHeaderNames [hdf5_fhi_minor_version].c_str(),
-                                      HDF5_FileHeaderValues[hdf5_fhi_minor_version].c_str());
-}// end of WriteHeaderToCheckpointFile
-//------------------------------------------------------------------------------
+                                      sHeaderNames [FHI::kMajorVersion].c_str(),
+                                      mHeaderValues[FHI::kMajorVersion].c_str());
 
-/**
- * Get File type.
- * @return FileType
- */
-THDF5_FileHeader::THDF5_FileType  THDF5_FileHeader::GetFileType()
-{
-  for (int i = hdf5_ft_input; i < hdf5_ft_unknown ; i++)
-  {
-    if (HDF5_FileHeaderValues[hdf5_fhi_file_type] == HDF5_FileTypesNames[static_cast<THDF5_FileType >(i)])
-    {
-      return static_cast<THDF5_FileType >(i);
-    }
-  }
-
-  return THDF5_FileHeader::hdf5_ft_unknown;
-}// end of GetFileType
-//------------------------------------------------------------------------------
-
-/**
- * Set file type.
- * @param [in] FileType
- */
-void THDF5_FileHeader::SetFileType(const THDF5_FileHeader::THDF5_FileType FileType)
-{
-  HDF5_FileHeaderValues[hdf5_fhi_file_type] = HDF5_FileTypesNames[FileType];
-}// end of SetFileType
-//------------------------------------------------------------------------------
-
-
-/**
- * Get File Version an enum
- * @return file version as an enum
- */
-THDF5_FileHeader::THDF5_FileVersion THDF5_FileHeader::GetFileVersion()
-{
-  if ((HDF5_FileHeaderValues[hdf5_fhi_major_version] == HDF5_MajorFileVersionsNames[0]) &&
-      (HDF5_FileHeaderValues[hdf5_fhi_minor_version] == HDF5_MinorFileVersionsNames[0]))
-  {
-    return hdf5_fv_10;
-  }
-
-  if ((HDF5_FileHeaderValues[hdf5_fhi_major_version] == HDF5_MajorFileVersionsNames[0]) &&
-      (HDF5_FileHeaderValues[hdf5_fhi_minor_version] == HDF5_MinorFileVersionsNames[1]))
-  {
-    return hdf5_fv_11;
-  }
-
-  return hdf5_fv_unknown;
-}// end of GetFileVersion
-//------------------------------------------------------------------------------
+  checkpointFile.WriteStringAttribute(rootGroup,
+                                      "/",
+                                      sHeaderNames [FHI::kMinorVersion].c_str(),
+                                      mHeaderValues[FHI::kMinorVersion].c_str());
+}// end of writeHeaderToCheckpointFile
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Set actual date and time.
- *
  */
-void THDF5_FileHeader::SetActualCreationTime()
+void Hdf5FileHeader::setActualCreationTime()
 {
   struct tm *current;
   time_t now;
   time(&now);
   current = localtime(&now);
 
-  char DateString[20];
+  char dateString[20];
 
-  sprintf(DateString, "%02i/%02i/%02i, %02i:%02i:%02i",
+  sprintf(dateString, "%02i/%02i/%02i, %02i:%02i:%02i",
           current->tm_mday, current->tm_mon+1, current->tm_year-100,
           current->tm_hour, current->tm_min, current->tm_sec);
 
-  HDF5_FileHeaderValues[hdf5_fhi_creation_date] = DateString;
-}// end of SetCreationTime
-//------------------------------------------------------------------------------
+  mHeaderValues[FileHeaderItems::kCreationDate] = dateString;
+}// end of setActualCreationTime
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get file version as an enum.
+ */
+Hdf5FileHeader::FileVersion Hdf5FileHeader::getFileVersion()
+{
+  if ((mHeaderValues[FileHeaderItems::kMajorVersion] == kMajorFileVersionsNames[0]) &&
+      (mHeaderValues[FileHeaderItems::kMinorVersion] == kMinorFileVersionsNames[0]))
+  {
+    return FileVersion::kVersion10;
+  }
+
+  if ((mHeaderValues[FileHeaderItems::kMajorVersion] == kMajorFileVersionsNames[0]) &&
+      (mHeaderValues[FileHeaderItems::kMinorVersion] == kMinorFileVersionsNames[1]))
+  {
+    return FileVersion::kVersion11;
+  }
+
+  return FileVersion::kVersionUnknown;
+}// end of getFileVersion
+//----------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * Get File type.
+ */
+Hdf5FileHeader::FileType  Hdf5FileHeader::getFileType()
+{
+  for (int i = static_cast<int>(FileType::kInput); i < static_cast<int>(FileType::kUnknown); i++)
+  {
+    if (mHeaderValues[FileHeaderItems::kFileType] == kFileTypesNames[i])
+    {
+      return static_cast<FileType >(i);
+    }
+  }
+
+  return Hdf5FileHeader::FileType::kUnknown;
+}// end of getFileType
+//----------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * Set File type.
+ */
+void Hdf5FileHeader::setFileType(const Hdf5FileHeader::FileType fileType)
+{
+  mHeaderValues[FileHeaderItems::kFileType] = kFileTypesNames[static_cast<int>(fileType)];
+}// end of setFileType
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Set Host name.
- *
  */
-void THDF5_FileHeader::SetHostName()
+void Hdf5FileHeader::setHostName()
 {
-  char   HostName[256];
+  char hostName[256];
 
   //Linux build
   #ifdef __linux__
-    gethostname(HostName, 256);
+    gethostname(hostName, 256);
   #endif
 
   //Windows build
   #ifdef _WIN64
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
-	  gethostname(HostName, 256);
+	  gethostname(hostName, 256);
 
     WSACleanup();
   #endif
 
-  HDF5_FileHeaderValues[hdf5_fhi_host_name] = HostName;
-}// end of SetHostName
-//------------------------------------------------------------------------------
+  mHeaderValues[FileHeaderItems::kHostName] = hostName;
+}// end of setHostName
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Set memory consumption.
- * @param [in] TotalMemory
  */
-void THDF5_FileHeader::SetMemoryConsumption(size_t TotalMemory)
+void Hdf5FileHeader::setMemoryConsumption(const size_t totalMemory)
 {
   char Text[20] = "";
-  sprintf(Text, "%ld MB",TotalMemory);
+  sprintf(Text, "%ld MB", totalMemory);
 
-  HDF5_FileHeaderValues[hdf5_fhi_total_memory_consumption]     = Text;
+  mHeaderValues[FileHeaderItems::kTotalMemoryConsumption] = Text;
 
-  sprintf(Text, "%ld MB",TotalMemory / TParameters::GetInstance()->GetNumberOfThreads());
-  HDF5_FileHeaderValues[hdf5_fhi_peak_core_memory_consumption] = Text;
-}// end of SetMemoryConsumption
-//------------------------------------------------------------------------------
+  sprintf(Text, "%ld MB", totalMemory / TParameters::GetInstance()->GetNumberOfThreads());
+  mHeaderValues[FileHeaderItems::kPeakMemoryConsumption]  = Text;
+}// end of setMemoryConsumption
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Set execution times in file header.
- * @param [in] TotalTime
- * @param [in] LoadTime
- * @param [in] PreProcessingTime
- * @param [in] SimulationTime
- * @param [in] PostprocessingTime
  */
-void THDF5_FileHeader::SetExecutionTimes(const double TotalTime,
-                                         const double LoadTime,
-                                         const double PreProcessingTime,
-                                         const double SimulationTime,
-                                         const double PostprocessingTime)
+void Hdf5FileHeader::setExecutionTimes(const double totalTime,
+                                       const double loadTime,
+                                       const double preProcessingTime,
+                                       const double simulationTime,
+                                       const double postprocessingTime)
 {
-  char Text [30] = "";
+  char text [30] = "";
+  // shortcut
+  using FHI = FileHeaderItems;
 
-  sprintf(Text,"%8.2fs", TotalTime);
-  HDF5_FileHeaderValues[hdf5_fhi_total_execution_time] = Text;
+  sprintf(text,"%8.2fs", totalTime);
+  mHeaderValues[FHI::kTotalExecutionTime] = text;
 
-  sprintf(Text,"%8.2fs", LoadTime);
-  HDF5_FileHeaderValues[hdf5_fhi_data_load_time] = Text;
+  sprintf(text,"%8.2fs", loadTime);
+  mHeaderValues[FHI::kDataLoadTime] = text;
 
-  sprintf(Text,"%8.2fs", PreProcessingTime);
-  HDF5_FileHeaderValues[hdf5_fhi_preprocessing_time] = Text;
+  sprintf(text,"%8.2fs", preProcessingTime);
+  mHeaderValues[FHI::kPreProcessingTime] = text;
 
+  sprintf(text,"%8.2fs", simulationTime);
+  mHeaderValues[FHI::kSimulationTime] = text;
 
-  sprintf(Text,"%8.2fs", SimulationTime);
-  HDF5_FileHeaderValues[hdf5_fhi_simulation_time] = Text;
-
-  sprintf(Text,"%8.2fs", PostprocessingTime);
-  HDF5_FileHeaderValues[hdf5_fhi_postprocessing_time] = Text;
-}// end of SetExecutionTimes
-//------------------------------------------------------------------------------
+  sprintf(text,"%8.2fs", postprocessingTime);
+  mHeaderValues[FHI::kPostProcessingTime] = text;
+}// end of setExecutionTimes
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Get execution times stored in the output file header
- * @param [out] TotalTime
- * @param [out] LoadTime
- * @param [out] PreProcessingTime
- * @param [out] SimulationTime
- * @param [out] PostprocessingTime
+ * Get execution times stored in the output file header.
  */
-void THDF5_FileHeader::GetExecutionTimes(double& TotalTime,
-                                         double& LoadTime,
-                                         double& PreProcessingTime,
-                                         double& SimulationTime,
-                                         double& PostprocessingTime)
+void Hdf5FileHeader::getExecutionTimes(double& totalTime,
+                                       double& loadTime,
+                                       double& preProcessingTime,
+                                       double& simulationTime,
+                                       double& postprocessingTime)
 {
-  TotalTime          = atof(HDF5_FileHeaderValues[hdf5_fhi_total_execution_time].c_str());
-  LoadTime           = atof(HDF5_FileHeaderValues[hdf5_fhi_data_load_time].c_str());
-  PreProcessingTime  = atof(HDF5_FileHeaderValues[hdf5_fhi_preprocessing_time].c_str());
-  SimulationTime     = atof(HDF5_FileHeaderValues[hdf5_fhi_simulation_time].c_str());
-  PostprocessingTime = atof(HDF5_FileHeaderValues[hdf5_fhi_postprocessing_time].c_str());
-}// end of GetExecutionTimes
-//------------------------------------------------------------------------------
+  totalTime          = std::stof(mHeaderValues[FileHeaderItems::kTotalExecutionTime]);
+  loadTime           = std::stof(mHeaderValues[FileHeaderItems::kDataLoadTime]);
+  preProcessingTime  = std::stof(mHeaderValues[FileHeaderItems::kPreProcessingTime]);
+  simulationTime     = std::stof(mHeaderValues[FileHeaderItems::kSimulationTime]);
+  postprocessingTime = std::stof(mHeaderValues[FileHeaderItems::kPostProcessingTime]);
+}// end of getExecutionTimes
+//----------------------------------------------------------------------------------------------------------------------
+
 
 /**
  * Set Number of cores.
- *
  */
-void THDF5_FileHeader::SetNumberOfCores()
+void Hdf5FileHeader::setNumberOfCores()
 {
-  char Text[12] = "";
-  sprintf(Text, "%ld",TParameters::GetInstance()->GetNumberOfThreads());
+  char text[12] = "";
+  sprintf(text, "%ld",TParameters::GetInstance()->GetNumberOfThreads());
 
-  HDF5_FileHeaderValues[hdf5_fhi_number_of_cores] = Text;
-}// end of SetNumberOfCores
-//------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------//
-//------------------------    THDF5_File_Header ------------------------------//
-//---------------------------    Protected     --------------------------------//
-//----------------------------------------------------------------------------//
+  mHeaderValues[FileHeaderItems::kNumberofCores] = text;
+}// end of setNumberOfCores
+//----------------------------------------------------------------------------------------------------------------------
 
 
-/**
- * Create map with names for the header.
- *
- */
-void THDF5_FileHeader::PopulateHeaderFileMap()
-{
-  HDF5_FileHeaderNames.clear();
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Protected methods ------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-  HDF5_FileHeaderNames[hdf5_fhi_created_by]                   = "created_by";
-  HDF5_FileHeaderNames[hdf5_fhi_creation_date]                = "creation_date";
-  HDF5_FileHeaderNames[hdf5_fhi_file_description]             = "file_description";
-  HDF5_FileHeaderNames[hdf5_fhi_major_version]                = "major_version";
-  HDF5_FileHeaderNames[hdf5_fhi_minor_version]                = "minor_version";
-  HDF5_FileHeaderNames[hdf5_fhi_file_type]                    = "file_type";
 
-  HDF5_FileHeaderNames[hdf5_fhi_host_name]                    = "host_names";
-  HDF5_FileHeaderNames[hdf5_fhi_number_of_cores]              = "number_of_cpu_cores" ;
-  HDF5_FileHeaderNames[hdf5_fhi_total_memory_consumption]     = "total_memory_in_use";
-  HDF5_FileHeaderNames[hdf5_fhi_peak_core_memory_consumption] = "peak_core_memory_in_use";
-
-  HDF5_FileHeaderNames[hdf5_fhi_total_execution_time]         = "total_execution_time";
-  HDF5_FileHeaderNames[hdf5_fhi_data_load_time]               = "data_loading_phase_execution_time";
-  HDF5_FileHeaderNames[hdf5_fhi_preprocessing_time]           = "pre-processing_phase_execution_time";
-  HDF5_FileHeaderNames[hdf5_fhi_simulation_time]              = "simulation_phase_execution_time";
-  HDF5_FileHeaderNames[hdf5_fhi_postprocessing_time]          = "post-processing_phase_execution_time";
-}// end of PopulateHeaderFileMap
-//------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//

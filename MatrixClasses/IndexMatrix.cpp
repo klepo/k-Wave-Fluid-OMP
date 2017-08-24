@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 15:16 (created) \n
- *              24 August    2017, 09:25 (revised)
+ *              24 August    2017, 12:20 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -87,11 +87,11 @@ TIndexMatrix::TIndexMatrix(const DimensionSizes & DimensionSizes)
  *
  * @throw ios:failure if there's an error
  */
-void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
+void TIndexMatrix::ReadDataFromHDF5File(Hdf5File & HDF5_File,
                                         const char * MatrixName)
 {
   // check the datatype
-  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(),MatrixName) != THDF5_File::hdf5_mdt_long)
+  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(),MatrixName) != Hdf5File::hdf5_mdt_long)
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage,kErrFmtMatrixNotIndex,MatrixName);
@@ -99,7 +99,7 @@ void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
   }
 
   // check the domain type
-  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_real)
+  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != Hdf5File::hdf5_mdt_real)
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage,kErrFmtMatrixNotReal,MatrixName);
@@ -170,7 +170,7 @@ size_t TIndexMatrix::GetTotalNumberOfElementsInAllCuboids() const
  *
  * @throw ios:failure if there's an error
  */
-void TIndexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
+void TIndexMatrix::WriteDataToHDF5File(Hdf5File & HDF5_File,
                                       const char * MatrixName,
                                       const size_t CompressionLevel)
 {
@@ -212,11 +212,11 @@ void TIndexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
   // write data and domain types
   HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(),
                                   MatrixName,
-                                  THDF5_File::hdf5_mdt_long);
+                                  Hdf5File::hdf5_mdt_long);
 
   HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
                                   MatrixName,
-                                  THDF5_File::hdf5_mdt_real);
+                                  Hdf5File::hdf5_mdt_real);
 }// end of WriteDataToHDF5File
 //---------------------------------------------------------------------------
 

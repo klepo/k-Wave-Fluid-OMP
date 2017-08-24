@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              24 August    2017, 09:25 (revised)
+ *              24 August    2017, 12:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -213,7 +213,7 @@ void TBaseOutputHDF5Stream::FreeMemory()
  * @param [in] BufferToReuse   - An external buffer can be used to line up
  *                               the grid points
  */
-TIndexOutputHDF5Stream::TIndexOutputHDF5Stream(THDF5_File &             HDF5_File,
+TIndexOutputHDF5Stream::TIndexOutputHDF5Stream(Hdf5File &             HDF5_File,
                                                const char *             HDF5_ObjectName,
                                                const TRealMatrix &      SourceMatrix,
                                                const TIndexMatrix &     SensorMask,
@@ -276,10 +276,10 @@ void TIndexOutputHDF5Stream::Create()
   // Write dataset parameters
   HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
                                   HDF5_RootObjectName,
-                                  THDF5_File::hdf5_mdt_real);
+                                  Hdf5File::hdf5_mdt_real);
   HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(),
                                   HDF5_RootObjectName,
-                                  THDF5_File::hdf5_mdt_float);
+                                  Hdf5File::hdf5_mdt_float);
 
 
   // Sampled time step
@@ -480,7 +480,7 @@ void TIndexOutputHDF5Stream::FlushBufferToFile()
  * @param [in] ReductionOp     - Reduction operator
  * @param [in] BufferToReuse   - If there is a memory space to be reused, provide a pointer
  */
-TCuboidOutputHDF5Stream::TCuboidOutputHDF5Stream(THDF5_File &             HDF5_File,
+TCuboidOutputHDF5Stream::TCuboidOutputHDF5Stream(Hdf5File &             HDF5_File,
                                                  const char *             HDF5_GroupName,
                                                  const TRealMatrix &      SourceMatrix,
                                                  const TIndexMatrix &     SensorMask,
@@ -897,10 +897,10 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
   // Write dataset parameters
   HDF5_File.WriteMatrixDomainType(HDF5_GroupId,
                                   HDF5_DatasetName,
-                                  THDF5_File::hdf5_mdt_real);
+                                  Hdf5File::hdf5_mdt_real);
   HDF5_File.WriteMatrixDataType  (HDF5_GroupId,
                                   HDF5_DatasetName,
-                                  THDF5_File::hdf5_mdt_float);
+                                  Hdf5File::hdf5_mdt_float);
 
   return HDF5_DatasetId;
 }//end of CreateCuboidDatasets
@@ -951,7 +951,7 @@ void TCuboidOutputHDF5Stream::FlushBufferToFile()
  * @param [in] ReductionOp      - Reduction operator
  * @param [in] BufferToReuse    - If there is a memory space to be reused, provide a pointer
  */
-TWholeDomainOutputHDF5Stream::TWholeDomainOutputHDF5Stream(THDF5_File &             HDF5_File,
+TWholeDomainOutputHDF5Stream::TWholeDomainOutputHDF5Stream(Hdf5File &             HDF5_File,
                                                            const char *             HDF5_DatasetName,
                                                            const TRealMatrix &      SourceMatrix,
                                                            const TReductionOperator ReductionOp,
@@ -994,10 +994,10 @@ void TWholeDomainOutputHDF5Stream::Create()
   // Write dataset parameters
   HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
                                   HDF5_RootObjectName,
-                                  THDF5_File::hdf5_mdt_real);
+                                  Hdf5File::hdf5_mdt_real);
   HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(),
                                   HDF5_RootObjectName,
-                                  THDF5_File::hdf5_mdt_float);
+                                  Hdf5File::hdf5_mdt_float);
 
   // Set buffer size
   BufferSize = SourceMatrix.GetTotalElementCount();

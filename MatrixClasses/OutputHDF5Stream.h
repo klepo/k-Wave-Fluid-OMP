@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              26 September 2014, 18:33 (revised)
+ *              24 August    2017, 12:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -87,7 +87,7 @@ class TBaseOutputHDF5Stream
      * @param [in] BufferToReuse       - An external buffer can be used to line
      *                                   up the grid points
      */
-    TBaseOutputHDF5Stream(THDF5_File &             HDF5_File,
+    TBaseOutputHDF5Stream(Hdf5File &             HDF5_File,
                           const char *             HDF5_RootObjectName,
                           const TRealMatrix &      SourceMatrix,
                           const TReductionOperator ReductionOp,
@@ -146,7 +146,7 @@ class TBaseOutputHDF5Stream
     virtual void FreeMemory();
 
     /// HDF5 file handle.
-    THDF5_File &             HDF5_File;
+    Hdf5File &             HDF5_File;
     /// Dataset name.
     char *                   HDF5_RootObjectName;
     /// Source matrix to be sampled.
@@ -183,7 +183,7 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
   public:
 
     /// Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together.
-    TIndexOutputHDF5Stream(THDF5_File &             HDF5_File,
+    TIndexOutputHDF5Stream(Hdf5File &             HDF5_File,
                            const char *             HDF5_ObjectName,
                            const TRealMatrix &      SourceMatrix,
                            const TIndexMatrix &     SensorMask,
@@ -240,7 +240,7 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
 {
   public:
     /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together.
-    TCuboidOutputHDF5Stream(THDF5_File &             HDF5_File,
+    TCuboidOutputHDF5Stream(Hdf5File &             HDF5_File,
                             const char *             HDF5_GroupName,
                             const TRealMatrix &      SourceMatrix,
                             const TIndexMatrix &     SensorMask,
@@ -317,7 +317,7 @@ class TWholeDomainOutputHDF5Stream : public TBaseOutputHDF5Stream
 
   public:
     /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together.
-    TWholeDomainOutputHDF5Stream(THDF5_File &             HDF5_File,
+    TWholeDomainOutputHDF5Stream(Hdf5File &             HDF5_File,
                                  const char *             HDF5_DatasetName,
                                  const TRealMatrix &      SourceMatrix,
                                  const TReductionOperator ReductionOp,

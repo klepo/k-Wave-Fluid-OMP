@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 10:30 (created) \n
- *              24 August    2017, 09:25 (revised)
+ *              24 August    2017, 12:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -74,11 +74,11 @@ TRealMatrix::TRealMatrix(const DimensionSizes & DimensionSizes)
  *
  * @throw ios::failure if error occurred.
  */
-void TRealMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
+void TRealMatrix::ReadDataFromHDF5File(Hdf5File & HDF5_File,
                                        const char * MatrixName)
 {
   // test matrix datatype
-  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_float)
+  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(), MatrixName) != Hdf5File::hdf5_mdt_float)
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage, kErrFmtMatrixNotFloat, MatrixName);
@@ -86,7 +86,7 @@ void TRealMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
   }
 
 
-  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_real)
+  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != Hdf5File::hdf5_mdt_real)
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage, kErrFmtMatrixNotReal, MatrixName);
@@ -111,7 +111,7 @@ void TRealMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
  *
  * @throw ios::failure if an error occurred
  */
-void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
+void TRealMatrix::WriteDataToHDF5File(Hdf5File & HDF5_File,
                                       const char * MatrixName,
                                       const size_t CompressionLevel)
 {
@@ -152,10 +152,10 @@ void TRealMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
   // Write data and domain type
   HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(),
                                   MatrixName,
-                                  THDF5_File::hdf5_mdt_float);
+                                  Hdf5File::hdf5_mdt_float);
   HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
                                   MatrixName,
-                                  THDF5_File::hdf5_mdt_real);
+                                  Hdf5File::hdf5_mdt_real);
 }// end of WriteDataToHDF5File
 //------------------------------------------------------------------------------
 

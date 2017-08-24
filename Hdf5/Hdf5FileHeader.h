@@ -12,7 +12,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            24 August    2017, 11:07 (revised)
+ *            24 August    2017, 11:25 (revised)
  *
  * @section   Hdf5FileHeader HDF5 File Header Structure
  *
@@ -81,187 +81,269 @@
 #include <Utils/MatrixNames.h>
 
 /**
- * @class THDF5_FileHeader
- * @brief Class for HDF5 header
- * @details This class manages all information that can be stored in the input
- * output or checkpoint file.
+ * @class   Hdf5FileHeader
+ * @brief   Class for HDF5 file header.
+ * @details This class manages all information that can be stored in the input output or checkpoint
+ * file header.
  */
-class THDF5_FileHeader
+class Hdf5FileHeader
 {
   public:
 
     /**
-     * @enum THDF5_FileHeaderItems
-     * @brief List of all header items
+     * @enum    FileHeaderItems
+     * @brief   List of all header items.
+     * @details List of all header items.
+     * @todo    In the future, we should add number of GPUs, peak GPU memory.
      */
-    enum THDF5_FileHeaderItems{
-                                hdf5_fhi_created_by                   =  0,
-                                hdf5_fhi_creation_date                =  1,
-                                hdf5_fhi_file_description             =  2,
-                                hdf5_fhi_major_version                =  3,
-                                hdf5_fhi_minor_version                =  4,
-                                hdf5_fhi_file_type                    =  5,
-                                hdf5_fhi_host_name                    =  6,
-                                hdf5_fhi_total_memory_consumption     =  7,
-                                hdf5_fhi_peak_core_memory_consumption =  8,
-                                hdf5_fhi_total_execution_time         =  9,
-                                hdf5_fhi_data_load_time               = 10,
-                                hdf5_fhi_preprocessing_time           = 11,
-                                hdf5_fhi_simulation_time              = 12,
-                                hdf5_fhi_postprocessing_time          = 13,
-                                hdf5_fhi_number_of_cores              = 14
-                              };
+    enum class FileHeaderItems
+    {
+      /// Code that created the file.
+      kCreatedBy              =  0,
+      /// When the file was created.
+      kCreationDate           =  1,
+      /// Description of the file (e.g. simulation).
+      kFileDescription        =  2,
+      /// Major file version.
+      kMajorVersion           =  3,
+      /// Minor file version.
+      kMinorVersion           =  4,
+      /// File type.
+      kFileType               =  5,
+      /// Machines the code were executed on.
+      kHostName               =  6,
+      /// Total amount of memory consumed by the code.
+      kTotalMemoryConsumption =  7,
+      /// Peak memory consumption (by process).
+      kPeakMemoryConsumption  =  8,
+      /// Total execution time.
+      kTotalExecutionTime     =  9,
+      /// Time to load data in.
+      kDataLoadTime           = 10,
+      /// Time to preprocess data.
+      kPreProcessingTime      = 11,
+      /// Simulation time.
+      kSimulationTime         = 12,
+      /// Time to postprocess data.
+      kPostProcessingTime     = 13,
+      /// Number of cores the simulation was executed.
+      kNumberofCores          = 14
+    };
 
     /**
-     * @enum  THDF5_FileType
-     * @brief HDF5 file type.
+     * @enum    FileType
+     * @brief   HDF5 file type.
+     * @details HDF5 file type.
      */
-    enum THDF5_FileType       {
-                                hdf5_ft_input  = 0,
-                                hdf5_ft_output = 1,
-                                hdf5_ft_checkpoint = 2,
-                                hdf5_ft_unknown = 3
-                              };
+    enum class FileType
+    {
+      /// Input file.
+      kInput      = 0,
+      /// Output file.
+      kOutput     = 1,
+      /// Checkpoint file.
+      kCheckpoint = 2,
+      /// Unknown file.
+      kUnknown    = 3
+    };
 
     /**
-     * @enum  THDF5_FileVersion
-     * @brief HDF5 file version.
+     * @enum    FileVersion
+     * @brief   HDF5 file version.
+     * @details HDF5 file version.
      */
-    enum THDF5_FileVersion    {
-                                hdf5_fv_10 = 0,
-                                hdf5_fv_11 = 1,
-                                hdf5_fv_unknown = 2
-                              };
+    enum class FileVersion
+    {
+      /// Version 1.0.
+      kVersion10      = 0,
+      /// Version 1.1.
+      kVersion11      = 1,
+      /// Version unknown.
+      kVersionUnknown = 2
+    };
 
 
     /// Constructor.
-    THDF5_FileHeader();
-    /// Copy constructor.
-    THDF5_FileHeader(const THDF5_FileHeader & other);
+    Hdf5FileHeader();
+    /**
+     * @brief Copy constructor.
+     * @param [in] src - Source object.
+     */
+    Hdf5FileHeader(const Hdf5FileHeader& src);
     /// Destructor.
-    ~THDF5_FileHeader();
+    ~Hdf5FileHeader();
 
-    /// Read header from the input file.
-    void ReadHeaderFromInputFile(THDF5_File & InputFile);
-    /// Read Header from output file (necessary for checkpoint-restart).
-    void ReadHeaderFromOutputFile(THDF5_File & OutputFile);
-    /// Read Header from checkpoint file (necessary for checkpoint-restart).
-    void ReadHeaderFromCheckpointFile(THDF5_File & CheckpointFile);
+    /**
+     * @brief Read header from the input file.
+     *
+     * @param [in, out] inputFile - Input file handle.
+     * @throw ios:failure         - If error happens.
+     */
+    void readHeaderFromInputFile(Hdf5File& inputFile);
+    /**
+     * @brief Read header from output file (necessary for checkpoint-restart).
+     *
+     * Read only execution times (the others are read from the input file, or calculated based on the very last
+     * leg of the simulation). This function is called only if checkpoint-restart is enabled.
+     *
+     * @param [in, out] outputFile - Output file handle.
+     * @throw ios:failure          - If error happens.
+     */
+    void readHeaderFromOutputFile(Hdf5File& outputFile);
+    /**
+     * @brief Read the file header form the checkpoint file.
+     *
+     * We need the header to verify the file version and type.
+     * @param [in, out] checkpointFile - Checkpoint file handle.
+     * @throw ios:failure              - If error happens.
+     */
+    void readHeaderFromCheckpointFile(Hdf5File& checkpointFile);
 
-    /// Write header to the output file
-    void WriteHeaderToOutputFile(THDF5_File & OutputFile);
-    /// Write header to the output file
-    void WriteHeaderToCheckpointFile(THDF5_File & CheckpointFile);
+    /**
+     * @brief Write header into the output file.
+     *
+     * @param [in,out] outputFile - Output file handle.
+     * @throw ios:failure          - If error happens.
+     */
+    void writeHeaderToOutputFile(Hdf5File& outputFile);
+    /**
+     * @brief Write header to the output file (only a subset of all possible fields are written).
+     *
+     * @param [in, out] checkpointFile - Checkpoint file handle.
+     * @throw ios:failure              - If error happens.
+     */
+    void writeHeaderToCheckpointFile(Hdf5File& checkpointFile);
 
     /**
      * @brief Set code name.
-     * @details Set code name to the header.
-     * @param [in] CodeName - code version
+     * @param [in] codeName - Code version.
      */
-    void SetCodeName(const string& CodeName)
+    void setCodeName(const std::string& codeName)
     {
-      HDF5_FileHeaderValues[hdf5_fhi_created_by] = CodeName;
+      mHeaderValues[FileHeaderItems::kCreatedBy] = codeName;
     };
 
     /// Set creation time.
-    void SetActualCreationTime();
+    void setActualCreationTime();
 
     /**
-     * @brief   Get string version of current Major version.
-     * @details Get string version of current Major version.
-     * @return  current version
+     * @brief   Get string representing of current Major version of the file.
+     * @return  Current major file version.
      */
-    static string GetCurrentHDF5_MajorVersion()
+    static std::string getFileMajorVersion()
     {
-      return HDF5_MajorFileVersionsNames[0];
+      return kMajorFileVersionsNames[0];
     };
-
     /**
      * @brief   Get string version of current Minor version.
      * @details Get string version of current Minor version.
      * @return  current minor version
      */
-    static string GetCurrentHDF5_MinorVersion()
+    static string getFileMinorVersion()
     {
-      return HDF5_MinorFileVersionsNames[1];
+      return kMinorFileVersionsNames[1];
     };
 
     /// Set major file version.
-    void SetMajorFileVersion()
+    void setMajorFileVersion()
     {
-      HDF5_FileHeaderValues[hdf5_fhi_major_version] = GetCurrentHDF5_MajorVersion();
+      mHeaderValues[FileHeaderItems::kMajorVersion] = getFileMajorVersion();
     };
     /// Set minor file version.
-    void SetMinorFileVersion()
+    void setMinorFileVersion()
     {
-      HDF5_FileHeaderValues[hdf5_fhi_minor_version] = GetCurrentHDF5_MinorVersion();
+      mHeaderValues[FileHeaderItems::kMinorVersion] = getFileMinorVersion();
     };
-
-    /// Set major file version in a string.
-    THDF5_FileVersion GetFileVersion();
 
     /**
-     * @brief   Check major file version.
-     * @details Check major file version.
-     * @return true if ok
+     * @brief  Get file version as an enum.
+     * @return File version as an enum.
      */
-    bool CheckMajorFileVersion()
+    FileVersion getFileVersion();
+
+    /**
+     * @brief  Check major file version.
+     * @return true - If the file version is supported.
+     */
+    bool checkMajorFileVersion()
     {
-      return (HDF5_FileHeaderValues[hdf5_fhi_major_version] == GetCurrentHDF5_MajorVersion());
+      return (mHeaderValues[FileHeaderItems::kMajorVersion] == getFileMajorVersion());
     };
     /**
-     * @brief   Check minor file version.
-     * @details Check minor file version.
-     * @return true if ok
+     * @brief  Check minor file version.
+     * @return true - If the file version is supported.
      */
-    bool CheckMinorFileVersion()
+    bool checkMinorFileVersion()
     {
-      return (HDF5_FileHeaderValues[hdf5_fhi_minor_version] <= GetCurrentHDF5_MinorVersion());
+      return (mHeaderValues[FileHeaderItems::kMinorVersion] <= getFileMinorVersion());
     };
 
-    /// Get File type.
-    THDF5_FileHeader::THDF5_FileType GetFileType();
-    /// Set file type.
-    void SetFileType(const THDF5_FileHeader::THDF5_FileType FileType);
+    /**
+     * @brief  Get File type.
+     * @return File type.
+     */
+    Hdf5FileHeader::FileType getFileType();
+    /**
+     * @brief Set File type.
+     * @param [in] fileType - File type.
+     */
+    void setFileType(const Hdf5FileHeader::FileType fileType);
 
     /// Set host name.
-    void SetHostName();
-    /// Set memory consumption.
-    void SetMemoryConsumption(const size_t TotalMemory);
-    /// Set execution times.
-    void SetExecutionTimes(const double TotalTime,
-                           const double LoadTime,
-                           const double PreProcessingTime,
-                           const double SimulationTime,
-                           const double PostprocessingTime);
+    void setHostName();
+    /**
+     * @brief Set memory consumption.
+     * @param [in] totalMemory - Total memory consumption.
+     */
+    void setMemoryConsumption(const size_t totalMemory);
 
-    /// Get execution times stored in the output file header.
-    void GetExecutionTimes(double& TotalTime,
-                           double& LoadTime,
-                           double& PreProcessingTime,
-                           double& SimulationTime,
-                           double& PostprocessingTime);
+    /**
+     * @brief Set execution times in file header.
+     *
+     * @param [in] totalTime          - Total time.
+     * @param [in] loadTime           - Time to load data.
+     * @param [in] preProcessingTime  - Preprocessing time.
+     * @param [in] simulationTime     - Simulation time.
+     * @param [in] postprocessingTime - Post processing time.
+     */
+    void setExecutionTimes(const double totalTime,
+                           const double loadTime,
+                           const double preProcessingTime,
+                           const double simulationTime,
+                           const double postprocessingTime);
+    /**
+     * @brief Get execution times stored in the output file header.
+     *
+     * @param [out] totalTime          - Total time.
+     * @param [out] loadTime           - Time to load data.
+     * @param [out] preProcessingTime  - Preprocessing time.
+     * @param [out] simulationTime     - Simulation time.
+     * @param [out] postprocessingTime - Post processing time.
+     */
+    void getExecutionTimes(double& totalTime,
+                           double& loadTime,
+                           double& preProcessingTime,
+                           double& simulationTime,
+                           double& postprocessingTime);
     /// Set number of cores.
-    void SetNumberOfCores();
+    void setNumberOfCores();
 
-private:
-    /// Populate the map with the header items.
-    void PopulateHeaderFileMap();
+  private:
 
     /// map for the header values.
-    map<THDF5_FileHeaderItems, string> HDF5_FileHeaderValues;
+    std::map<FileHeaderItems, std::string> mHeaderValues;
     /// map for the header names.
-    map<THDF5_FileHeaderItems, string> HDF5_FileHeaderNames;
+    static std::map<FileHeaderItems, std::string> sHeaderNames;
 
     ///String representation of different file types.
-    static const string HDF5_FileTypesNames[];
+    static const std::string kFileTypesNames[];
     /// String representations of Major file versions.
-    static const string HDF5_MajorFileVersionsNames[];
+    static const std::string kMajorFileVersionsNames[];
     /// String representations of Major file versions.
-    static const string HDF5_MinorFileVersionsNames[];
+    static const std::string kMinorFileVersionsNames[];
 
-};// THDF5_FileHeader
-//------------------------------------------------------------------------------
+};// Hdf5FileHeader
+//----------------------------------------------------------------------------------------------------------------------
 
 
 #endif /* HDF5_FILE_HEADER_H */

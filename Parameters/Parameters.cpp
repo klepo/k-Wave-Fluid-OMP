@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2012, 13:39 (created) \n
- *              24 August    2017, 09:25 (revised)
+ *              24 August    2017, 12:23 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -123,7 +123,7 @@ void TParameters::ParseCommandLine(int argc, char** argv)
  * @param [in] HDF5_InputFile - Handle to an opened input file.
  * @throw ios:failure if the file cannot be open or is of a wrong type or version.
  */
-void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
+void TParameters::ReadScalarsFromHDF5InputFile(Hdf5File & HDF5_InputFile)
 {
   DimensionSizes ScalarSizes(1, 1, 1);
 
@@ -141,10 +141,10 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
     }
   }
 
-  HDF5_FileHeader.ReadHeaderFromInputFile(HDF5_InputFile);
+  HDF5_FileHeader.readHeaderFromInputFile(HDF5_InputFile);
 
   // check file type
-  if (HDF5_FileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_input)
+  if (HDF5_FileHeader.getFileType() != Hdf5FileHeader::FileType::kInput)
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage, kErrFmtBadInputFileFormat, GetInputFileName().c_str());
@@ -152,19 +152,19 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   }
 
   // check version
-  if (!HDF5_FileHeader.CheckMajorFileVersion())
+  if (!HDF5_FileHeader.checkMajorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage, kErrFmtBadMajorFileVersion, GetInputFileName().c_str(),
-            HDF5_FileHeader.GetCurrentHDF5_MajorVersion().c_str());
+            HDF5_FileHeader.getFileMajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
-  if (!HDF5_FileHeader.CheckMinorFileVersion())
+  if (!HDF5_FileHeader.checkMinorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage, kErrFmtBadMinorFileVersion, GetInputFileName().c_str(),
-            HDF5_FileHeader.GetCurrentHDF5_MinorVersion().c_str());
+            HDF5_FileHeader.getFileMinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
@@ -201,7 +201,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   ReducedDimensionSizes.nz = Z;
 
   // if the file is of version 1.0, there must be a sensor mask index (backward compatibility)
-  if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_10)
+  if (HDF5_FileHeader.getFileVersion() == Hdf5FileHeader::FileVersion::kVersion10)
   {
     sensor_mask_ind_size = HDF5_InputFile.GetDatasetElementCount(HDF5RootGroup, kSensorMaskIndexName);
 
@@ -213,7 +213,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   }
 
   // This is the current version 1.1
-  if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_11)
+  if (HDF5_FileHeader.getFileVersion() == Hdf5FileHeader::FileVersion::kVersion11)
   {
 
     // read sensor mask type as a size_t value to enum
@@ -359,7 +359,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
  * Save scalars into the output HDF5 file.
  * @param [in] HDF5_OutputFile - Handle to an opened output file where to store
  */
-void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
+void TParameters::SaveScalarsToHDF5File(Hdf5File & HDF5_OutputFile)
 {
   const hid_t HDF5RootGroup = HDF5_OutputFile.GetRootGroup();
 

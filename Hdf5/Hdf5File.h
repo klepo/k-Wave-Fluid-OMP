@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14 (created) \n
- *              24 August    2017, 11:07 (revised)
+ *              22 August    2017, 13:16 (revised)
  *
  *
  *
@@ -501,7 +501,7 @@ using namespace std;
  * contents (groups and datasets).
  *
  */
-class THDF5_File
+class Hdf5File
 {
   public:
 
@@ -519,7 +519,7 @@ class THDF5_File
 
 
     /// Constructor of the class
-    THDF5_File();
+    Hdf5File();
 
     //----------------------- Basic file operations --------------------------//
     /// Create the file, overwrite if exist.
@@ -689,10 +689,10 @@ class THDF5_File
                                const THDF5_MatrixDomainType & MatrixDomainType);
 
     /// Read matrix data type from the dataset.
-    THDF5_File::THDF5_MatrixDataType   ReadMatrixDataType(const hid_t ParentGroup,
+    Hdf5File::THDF5_MatrixDataType   ReadMatrixDataType(const hid_t ParentGroup,
                                                           const char * DatasetName);
     /// Read matrix domain type from the dataset under a specified group
-    THDF5_File::THDF5_MatrixDomainType ReadMatrixDomainType(const hid_t ParentGroup,
+    Hdf5File::THDF5_MatrixDomainType ReadMatrixDomainType(const hid_t ParentGroup,
                                                             const char * DatasetName);
 
     /// Write string attribute into the dataset under the root group.
@@ -706,14 +706,14 @@ class THDF5_File
                                 const char * AttributeName);
 
     /// Destructor
-    virtual ~THDF5_File();
+    virtual ~Hdf5File();
 
   protected:
 
     /// Copy constructor is not allowed for public.
-    THDF5_File(const THDF5_File& src);
+    Hdf5File(const Hdf5File& src);
     /// Operator = is not allowed for public.
-    THDF5_File & operator = (const THDF5_File& src);
+    Hdf5File & operator = (const Hdf5File& src);
 
 
   private:
@@ -734,5 +734,6 @@ class THDF5_File
 
 }; // THDF5_File
 //------------------------------------------------------------------------------
+
 
 #endif	/* THDF5_FILE_H */

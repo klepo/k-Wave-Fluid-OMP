@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              24 August    2017, 09:25 (revised)
+ *              24 August    2017, 12:19 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -142,9 +142,9 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   DataLoadTime.start();
 
   // get handles
-  THDF5_File& HDF5_InputFile      = Parameters->HDF5_InputFile; // file is opened (in Parameters)
-  THDF5_File& HDF5_OutputFile     = Parameters->HDF5_OutputFile;
-  THDF5_File& HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  Hdf5File& HDF5_InputFile      = Parameters->HDF5_InputFile; // file is opened (in Parameters)
+  Hdf5File& HDF5_OutputFile     = Parameters->HDF5_OutputFile;
+  Hdf5File& HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
 
   // Load data from disk
   MatrixContainer.LoadDataFromInputHDF5File(HDF5_InputFile);
@@ -154,7 +154,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
 
   // The simulation does not use checkpointing or this is the first turn
   bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               THDF5_File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
+                               Hdf5File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
 
   //-------------------- Read data from the checkpoint file -----------------//
   if (RecoverFromPrevState)
@@ -183,7 +183,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     // Reopen output file for RW access
     HDF5_OutputFile.Open(Parameters->GetOutputFileName().c_str(), H5F_ACC_RDWR);
     //Read file header of the output file
-    Parameters->HDF5_FileHeader.ReadHeaderFromOutputFile(HDF5_OutputFile);
+    Parameters->HDF5_FileHeader.readHeaderFromOutputFile(HDF5_OutputFile);
     // Check the checkpoint file
     CheckOutputFile();
     // Restore elapsed time
@@ -432,7 +432,7 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
 
   // The simulation does not use checkpointing or this is the first turn
   bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               THDF5_File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
+                               Hdf5File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
 
   // import FFTW wisdom if it is here
   if (RecoverFromPrevState)
@@ -2578,7 +2578,7 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
 
 
   // Create Checkpoint file
-  THDF5_File & HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  Hdf5File & HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
   // if it happens and the file is opened (from the recovery, close it)
   if (HDF5_CheckpointFile.IsOpened()) HDF5_CheckpointFile.Close();
   // Create the new file (overwrite the old one)
@@ -2607,13 +2607,13 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
 
 
   // Write checkpoint file header
-  THDF5_FileHeader CheckpointFileHeader = Parameters->HDF5_FileHeader;
+  Hdf5FileHeader CheckpointFileHeader = Parameters->HDF5_FileHeader;
 
-  CheckpointFileHeader.SetFileType(THDF5_FileHeader::hdf5_ft_checkpoint);
-  CheckpointFileHeader.SetCodeName(GetCodeName());
-  CheckpointFileHeader.SetActualCreationTime();
+  CheckpointFileHeader.setFileType(Hdf5FileHeader::FileType::kCheckpoint);
+  CheckpointFileHeader.setCodeName(GetCodeName());
+  CheckpointFileHeader.setActualCreationTime();
 
-  CheckpointFileHeader.WriteHeaderToCheckpointFile(HDF5_CheckpointFile);
+  CheckpointFileHeader.writeHeaderToCheckpointFile(HDF5_CheckpointFile);
 
   // Close the checkpoint file
   HDF5_CheckpointFile.Close();
@@ -2640,29 +2640,29 @@ void TKSpaceFirstOrder3DSolver::WriteOutputDataInfo()
 
   // Write scalars
   Parameters->SaveScalarsToHDF5File(Parameters->HDF5_OutputFile);
-  THDF5_FileHeader & HDF5_FileHeader = Parameters->HDF5_FileHeader;
+  Hdf5FileHeader & HDF5_FileHeader = Parameters->HDF5_FileHeader;
 
   // Write File header
 
-  HDF5_FileHeader.SetCodeName(GetCodeName());
-  HDF5_FileHeader.SetMajorFileVersion();
-  HDF5_FileHeader.SetMinorFileVersion();
-  HDF5_FileHeader.SetActualCreationTime();
-  HDF5_FileHeader.SetFileType(THDF5_FileHeader::hdf5_ft_output);
-  HDF5_FileHeader.SetHostName();
+  HDF5_FileHeader.setCodeName(GetCodeName());
+  HDF5_FileHeader.setMajorFileVersion();
+  HDF5_FileHeader.setMinorFileVersion();
+  HDF5_FileHeader.setActualCreationTime();
+  HDF5_FileHeader.setFileType(Hdf5FileHeader::FileType::kOutput);
+  HDF5_FileHeader.setHostName();
 
-  HDF5_FileHeader.SetMemoryConsumption(ShowMemoryUsageInMB());
+  HDF5_FileHeader.setMemoryConsumption(ShowMemoryUsageInMB());
 
   // Stop total timer here
   TotalTime.stop();
-  HDF5_FileHeader.SetExecutionTimes(GetCumulatedTotalTime(),
+  HDF5_FileHeader.setExecutionTimes(GetCumulatedTotalTime(),
                                     GetCumulatedDataLoadTime(),
                                     GetCumulatedPreProcessingTime(),
                                     GetCumulatedSimulationTime(),
                                     GetCumulatedPostProcessingTime());
 
-  HDF5_FileHeader.SetNumberOfCores();
-  HDF5_FileHeader.WriteHeaderToOutputFile(Parameters->HDF5_OutputFile);
+  HDF5_FileHeader.setNumberOfCores();
+  HDF5_FileHeader.writeHeaderToOutputFile(Parameters->HDF5_OutputFile);
 }// end of WriteOutputDataInfo
 //------------------------------------------------------------------------------
 
@@ -2678,7 +2678,7 @@ void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
          ElapsedSimulationTime, ElapsedPostProcessingTime;
 
   // Get execution times stored in the output file header
-  Parameters->HDF5_FileHeader.GetExecutionTimes(ElapsedTotalTime,
+  Parameters->HDF5_FileHeader.getExecutionTimes(ElapsedTotalTime,
                                                 ElapsedDataLoadTime,
                                                 ElapsedPreProcessingTime,
                                                 ElapsedSimulationTime,
@@ -2701,11 +2701,11 @@ void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
 void TKSpaceFirstOrder3DSolver::CheckOutputFile()
 {
   // The header has already been read
-  THDF5_FileHeader & OutputFileHeader = Parameters->HDF5_FileHeader;
-  THDF5_File       & OutputFile       = Parameters->HDF5_OutputFile;
+  Hdf5FileHeader & OutputFileHeader = Parameters->HDF5_FileHeader;
+  Hdf5File       & OutputFile       = Parameters->HDF5_OutputFile;
 
   // test file type
-  if (OutputFileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_output)
+  if (OutputFileHeader.getFileType() != Hdf5FileHeader::FileType::kOutput)
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
@@ -2715,24 +2715,24 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
   }
 
   // test file major version
-  if (!OutputFileHeader.CheckMajorFileVersion())
+  if (!OutputFileHeader.checkMajorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadMajorFileVersion,
             Parameters->GetCheckpointFileName().c_str(),
-            OutputFileHeader.GetCurrentHDF5_MajorVersion().c_str());
+            OutputFileHeader.getFileMajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // test file minor version
-  if (!OutputFileHeader.CheckMinorFileVersion())
+  if (!OutputFileHeader.checkMinorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadMinorFileVersion,
             Parameters->GetCheckpointFileName().c_str(),
-            OutputFileHeader.GetCurrentHDF5_MinorVersion().c_str());
+            OutputFileHeader.getFileMinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
@@ -2777,13 +2777,13 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
 void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
 {
   // read the header and check the file version
-  THDF5_FileHeader CheckpointFileHeader;
-  THDF5_File &     HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  Hdf5FileHeader CheckpointFileHeader;
+  Hdf5File &     HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
 
-  CheckpointFileHeader.ReadHeaderFromCheckpointFile(HDF5_CheckpointFile);
+  CheckpointFileHeader.readHeaderFromCheckpointFile(HDF5_CheckpointFile);
 
   // test file type
-  if (CheckpointFileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_checkpoint)
+  if (CheckpointFileHeader.getFileType() != Hdf5FileHeader::FileType::kCheckpoint)
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
@@ -2793,24 +2793,24 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
   }
 
   // test file major version
-  if (!CheckpointFileHeader.CheckMajorFileVersion())
+  if (!CheckpointFileHeader.checkMajorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadMajorFileVersion,
             Parameters->GetCheckpointFileName().c_str(),
-            CheckpointFileHeader.GetCurrentHDF5_MajorVersion().c_str());
+            CheckpointFileHeader.getFileMajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // test file minor version
-  if (!CheckpointFileHeader.CheckMinorFileVersion())
+  if (!CheckpointFileHeader.checkMinorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadMinorFileVersion,
             Parameters->GetCheckpointFileName().c_str(),
-            CheckpointFileHeader.GetCurrentHDF5_MinorVersion().c_str());
+            CheckpointFileHeader.getFileMinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 

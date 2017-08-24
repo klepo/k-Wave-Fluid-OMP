@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        08 December  2011, 16:34 (created) \n
- *              22 August    2017, 13:22 (revised)
+ *              24 August    2017, 12:23 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -77,9 +77,9 @@ class TParameters
     /// Parse command line.
     void ParseCommandLine(int argc, char** argv);
     /// Read scalar values from the input HDF5 file.
-    void ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile);
+    void ReadScalarsFromHDF5InputFile(Hdf5File & HDF5_InputFile);
     /// Save scalar values into the output HDF5 file.
-    void SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile);
+    void SaveScalarsToHDF5File(Hdf5File & HDF5_OutputFile);
 
     /// Full dimension sizes of the simulation (real classes).
     DimensionSizes GetFullDimensionSizes   () const {return FullDimensionSizes;};
@@ -260,14 +260,14 @@ class TParameters
 
 
     /// Handle to the input HDF5 file.
-    THDF5_File        HDF5_InputFile;
+    Hdf5File        HDF5_InputFile;
     /// Handle to the output HDF5 file.
-    THDF5_File        HDF5_OutputFile;
+    Hdf5File        HDF5_OutputFile;
     /// Handle to the checkpoint HDF5 file.
-    THDF5_File        HDF5_CheckpointFile;
+    Hdf5File        HDF5_CheckpointFile;
 
     /// Handle to file header.
-    THDF5_FileHeader  HDF5_FileHeader;
+    Hdf5FileHeader  HDF5_FileHeader;
 
 
   protected:
