@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <logicalFolder name="f1" displayName="HDF5" projectFiles="true">
-      <itemPath>HDF5/HDF5_File.cpp</itemPath>
-      <itemPath>HDF5/HDF5_File.h</itemPath>
+    <logicalFolder name="f1" displayName="Hdf5" projectFiles="true">
+      <itemPath>Hdf5/Hdf5File.cpp</itemPath>
+      <itemPath>Hdf5/Hdf5File.h</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -91,7 +91,7 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
           <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -124,9 +124,9 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -221,7 +221,7 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
+          <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
           <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -255,9 +255,9 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -352,7 +352,7 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <commandLine>-std=c++11 -O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
           <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -385,9 +385,9 @@
           <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -482,7 +482,7 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -Wall -fopenmp</commandLine>
+          <commandLine>-std=c++11 -O3 -Wall -fopenmp</commandLine>
           <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -516,9 +516,9 @@
           <commandLine>-O3 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -613,7 +613,7 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
           <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -649,9 +649,9 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -746,7 +746,7 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -ffast-math -fassociative-math</commandLine>
+          <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -ffast-math -fassociative-math</commandLine>
           <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -782,9 +782,9 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -879,7 +879,7 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -fopenmp -ffast-math -fassociative-math</commandLine>
+          <commandLine>-std=c++11 -O3 -fopenmp -ffast-math -fassociative-math</commandLine>
           <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -915,9 +915,9 @@
           <commandLine>-O3 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -1012,7 +1012,7 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <commandLine>-std=c++11 -O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
           <warningLevel>0</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -1048,9 +1048,9 @@
           <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"

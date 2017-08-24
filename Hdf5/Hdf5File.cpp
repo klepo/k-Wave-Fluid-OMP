@@ -1,5 +1,5 @@
 /**
- * @file        HDF5_File.cpp
+ * @file        Hdf5File.cpp
  * @author      Jiri Jaros              \n
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n
@@ -48,7 +48,7 @@
   #pragma comment(lib, "Ws2_32.lib")
 #endif
 
-#include <HDF5/HDF5_File.h>
+#include <Hdf5/Hdf5File.h>
 
 #include <Parameters/Parameters.h>
 #include <Utils/ErrorMessages.h>

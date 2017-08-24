@@ -1,5 +1,5 @@
 /**
- * @file        HDF5_File.h
+ * @file        Hdf5File.h
  * @author      Jiri Jaros              \n
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n

@@ -35,7 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/HDF5/HDF5_File.o \
+	${OBJECTDIR}/Hdf5/Hdf5File.o \
 	${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o \
 	${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o \
 	${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o \
@@ -55,8 +55,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-m64 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math
-CXXFLAGS=-m64 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math
+CCFLAGS=-m64 -std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math
+CXXFLAGS=-m64 -std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -87,10 +87,10 @@ ${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}
 	g++ -o ${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp ${OBJECTFILES} ${LDLIBSOPTIONS} -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native
 
-${OBJECTDIR}/HDF5/HDF5_File.o: HDF5/HDF5_File.cpp
-	${MKDIR} -p ${OBJECTDIR}/HDF5
+${OBJECTDIR}/Hdf5/Hdf5File.o: Hdf5/Hdf5File.cpp
+	${MKDIR} -p ${OBJECTDIR}/Hdf5
 	${RM} "$@.d"
-	$(COMPILE.cc) -w -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/HDF5/HDF5_File.o HDF5/HDF5_File.cpp
+	$(COMPILE.cc) -w -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hdf5/Hdf5File.o Hdf5/Hdf5File.cpp
 
 ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o: KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
 	${MKDIR} -p ${OBJECTDIR}/KSpaceSolver
