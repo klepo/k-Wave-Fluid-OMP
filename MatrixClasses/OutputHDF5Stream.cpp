@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              24 August    2017, 12:21 (revised)
+ *              24 August    2017, 14:42 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -267,19 +267,20 @@ void TIndexOutputHDF5Stream::Create()
   }
 
   // Create a dataset under the root group
-  HDF5_DatasetId = HDF5_File.CreateFloatDataset(HDF5_File.GetRootGroup(),
-                                                HDF5_RootObjectName,
-                                                DatasetSize,
-                                                ChunkSize,
-                                                Params->GetCompressionLevel());
+  HDF5_DatasetId = HDF5_File.createDataset(HDF5_File.getRootGroup(),
+                                           HDF5_RootObjectName,
+                                           DatasetSize,
+                                           ChunkSize,
+                                           Hdf5File::MatrixDataType::kFloat,
+                                           Params->GetCompressionLevel());
 
   // Write dataset parameters
-  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
+  HDF5_File.writeMatrixDomainType(HDF5_File.getRootGroup(),
                                   HDF5_RootObjectName,
-                                  Hdf5File::hdf5_mdt_real);
-  HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(),
+                                  Hdf5File::MatrixDomainType::kReal);
+  HDF5_File.writeMatrixDataType  (HDF5_File.getRootGroup(),
                                   HDF5_RootObjectName,
-                                  Hdf5File::hdf5_mdt_float);
+                                  Hdf5File::MatrixDataType::kFloat);
 
 
   // Sampled time step
@@ -308,7 +309,7 @@ void TIndexOutputHDF5Stream::Reopen()
   if (!BufferReuse) AllocateMemory();
 
   // Reopen the dataset
-  HDF5_DatasetId = HDF5_File.OpenDataset(HDF5_File.GetRootGroup(),
+  HDF5_DatasetId = HDF5_File.openDataset(HDF5_File.getRootGroup(),
                                          HDF5_RootObjectName);
 
 
@@ -325,7 +326,7 @@ void TIndexOutputHDF5Stream::Reopen()
     if (Params->Get_t_index() > Params->GetStartTimeIndex())
     {
       // Since there is only a single timestep in the dataset, I can read the whole dataset
-      HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
+      HDF5_File.readCompleteDataset(HDF5_File.getRootGroup(),
                                     HDF5_RootObjectName,
                                     DimensionSizes(BufferSize, 1, 1),
                                     StoreBuffer);
@@ -434,7 +435,7 @@ void TIndexOutputHDF5Stream::Close()
   // the dataset is still opened
   if (HDF5_DatasetId != H5I_BADID)
   {
-    HDF5_File.CloseDataset(HDF5_DatasetId);
+    HDF5_File.closeDataset(HDF5_DatasetId);
   }
 
   HDF5_DatasetId = H5I_BADID;
@@ -452,7 +453,7 @@ void TIndexOutputHDF5Stream::Close()
  */
 void TIndexOutputHDF5Stream::FlushBufferToFile()
 {
-  HDF5_File.WriteHyperSlab(HDF5_DatasetId,
+  HDF5_File.writeHyperSlab(HDF5_DatasetId,
                            DimensionSizes(0,SampledTimeStep,0),
                            DimensionSizes(BufferSize,1,1),
                            StoreBuffer);
@@ -518,7 +519,7 @@ TCuboidOutputHDF5Stream::~TCuboidOutputHDF5Stream()
 void TCuboidOutputHDF5Stream::Create()
 {
   // Create the HDF5 group and open it
-  HDF5_GroupId = HDF5_File.CreateGroup(HDF5_File.GetRootGroup(), HDF5_RootObjectName);
+  HDF5_GroupId = HDF5_File.createGroup(HDF5_File.getRootGroup(), HDF5_RootObjectName);
 
   // Create all datasets (sizes, chunks, and attributes)
   size_t NumberOfCuboids        = SensorMask.GetDimensionSizes().ny;
@@ -576,7 +577,7 @@ void TCuboidOutputHDF5Stream::Reopen()
   size_t ActualPositionInBuffer = 0;
 
   // Open the HDF5 group
-  HDF5_GroupId = HDF5_File.OpenGroup(HDF5_File.GetRootGroup(), HDF5_RootObjectName);
+  HDF5_GroupId = HDF5_File.openGroup(HDF5_File.getRootGroup(), HDF5_RootObjectName);
 
   for (size_t CuboidIndex = 0; CuboidIndex < NumberOfCuboids; CuboidIndex++)
   {
@@ -588,7 +589,7 @@ void TCuboidOutputHDF5Stream::Reopen()
     sprintf(HDF5_DatasetName, "%ld",CuboidIndex + 1);
 
     // open the dataset
-    CuboidInfo.HDF5_CuboidId = HDF5_File.OpenDataset(HDF5_GroupId,
+    CuboidInfo.HDF5_CuboidId = HDF5_File.openDataset(HDF5_GroupId,
                                                      HDF5_DatasetName);
     CuboidInfo.StartingPossitionInBuffer = ActualPositionInBuffer;
     CuboidsInfo.push_back(CuboidInfo);
@@ -602,7 +603,7 @@ void TCuboidOutputHDF5Stream::Reopen()
                                    (SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex)).ny,
                                    (SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex)).nz);
 
-        HDF5_File.ReadCompleteDataset(HDF5_GroupId,
+        HDF5_File.readCompleteDataset(HDF5_GroupId,
                                       HDF5_DatasetName,
                                       CuboidSize,
                                       StoreBuffer + ActualPositionInBuffer);
@@ -642,7 +643,7 @@ void TCuboidOutputHDF5Stream::Sample()
         CuboidSize = SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex);
         CuboidSize.nt = 1;
 
-        HDF5_File.WriteCuboidToHyperSlab(CuboidsInfo[CuboidIndex].HDF5_CuboidId,
+        HDF5_File.writeCuboidToHyperSlab(CuboidsInfo[CuboidIndex].HDF5_CuboidId,
                                          DatasetPosition,
                                          SensorMask.GetTopLeftCorner(CuboidIndex), // position in the SourceMatrix
                                          CuboidSize,
@@ -835,11 +836,11 @@ void TCuboidOutputHDF5Stream::Close()
     // Close all datasets and the group
     for (size_t CuboidIndex = 0; CuboidIndex < CuboidsInfo.size(); CuboidIndex++)
     {
-      HDF5_File.CloseDataset(CuboidsInfo[CuboidIndex].HDF5_CuboidId);
+      HDF5_File.closeDataset(CuboidsInfo[CuboidIndex].HDF5_CuboidId);
     }
     CuboidsInfo.clear();
 
-    HDF5_File.CloseGroup(HDF5_GroupId);
+    HDF5_File.closeGroup(HDF5_GroupId);
     HDF5_GroupId = H5I_BADID;
   }// if opened
 }// end of Close
@@ -887,20 +888,20 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
   char HDF5_DatasetName[32] = "";
   // Indexed from 1
   sprintf(HDF5_DatasetName, "%ld",Index+1);
-  hid_t HDF5_DatasetId = HDF5_File.CreateFloatDataset(HDF5_GroupId,
-                                                      HDF5_DatasetName,
-                                                      CuboidSize,
-                                                      CuboidChunkSize,
-                                                      Params->GetCompressionLevel()
-                                                     );
+  hid_t HDF5_DatasetId = HDF5_File.createDataset(HDF5_GroupId,
+                                                 HDF5_DatasetName,
+                                                 CuboidSize,
+                                                 CuboidChunkSize,
+                                                 Hdf5File::MatrixDataType::kFloat,
+                                                 Params->GetCompressionLevel());
 
   // Write dataset parameters
-  HDF5_File.WriteMatrixDomainType(HDF5_GroupId,
+  HDF5_File.writeMatrixDomainType(HDF5_GroupId,
                                   HDF5_DatasetName,
-                                  Hdf5File::hdf5_mdt_real);
-  HDF5_File.WriteMatrixDataType  (HDF5_GroupId,
+                                  Hdf5File::MatrixDomainType::kReal);
+  HDF5_File.writeMatrixDataType  (HDF5_GroupId,
                                   HDF5_DatasetName,
-                                  Hdf5File::hdf5_mdt_float);
+                                  Hdf5File::MatrixDataType::kFloat);
 
   return HDF5_DatasetId;
 }//end of CreateCuboidDatasets
@@ -924,7 +925,7 @@ void TCuboidOutputHDF5Stream::FlushBufferToFile()
     BlockSize = SensorMask.GetBottomRightCorner(CuboidIndex) - SensorMask.GetTopLeftCorner(CuboidIndex);
     BlockSize.nt = 1;
 
-    HDF5_File.WriteHyperSlab(CuboidsInfo[CuboidIndex].HDF5_CuboidId,
+    HDF5_File.writeHyperSlab(CuboidsInfo[CuboidIndex].HDF5_CuboidId,
                              Position,
                              BlockSize,
                              StoreBuffer + CuboidsInfo[CuboidIndex].StartingPossitionInBuffer
@@ -985,19 +986,20 @@ void TWholeDomainOutputHDF5Stream::Create()
   DimensionSizes ChunkSize(SourceMatrix.GetDimensionSizes().nx, SourceMatrix.GetDimensionSizes().ny, 1);
 
   // Create a dataset under the root group
-  HDF5_DatasetId = HDF5_File.CreateFloatDataset(HDF5_File.GetRootGroup(),
-                                                HDF5_RootObjectName,
-                                                SourceMatrix.GetDimensionSizes(),
-                                                ChunkSize,
-                                                TParameters::GetInstance()->GetCompressionLevel());
+  HDF5_DatasetId = HDF5_File.createDataset(HDF5_File.getRootGroup(),
+                                           HDF5_RootObjectName,
+                                           SourceMatrix.GetDimensionSizes(),
+                                           ChunkSize,
+                                           Hdf5File::MatrixDataType::kFloat,
+                                           TParameters::GetInstance()->GetCompressionLevel());
 
   // Write dataset parameters
-  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
+  HDF5_File.writeMatrixDomainType(HDF5_File.getRootGroup(),
                                   HDF5_RootObjectName,
-                                  Hdf5File::hdf5_mdt_real);
-  HDF5_File.WriteMatrixDataType  (HDF5_File.GetRootGroup(),
+                                  Hdf5File::MatrixDomainType::kReal);
+  HDF5_File.writeMatrixDataType  (HDF5_File.getRootGroup(),
                                   HDF5_RootObjectName,
-                                  Hdf5File::hdf5_mdt_float);
+                                  Hdf5File::MatrixDataType::kFloat);
 
   // Set buffer size
   BufferSize = SourceMatrix.GetTotalElementCount();
@@ -1022,7 +1024,7 @@ void TWholeDomainOutputHDF5Stream::Reopen()
   if (!BufferReuse) AllocateMemory();
 
   // Open the dataset under the root group
-  HDF5_DatasetId = HDF5_File.OpenDataset(HDF5_File.GetRootGroup(),
+  HDF5_DatasetId = HDF5_File.openDataset(HDF5_File.getRootGroup(),
                                          HDF5_RootObjectName);
 
   SampledTimeStep = 0;
@@ -1035,7 +1037,7 @@ void TWholeDomainOutputHDF5Stream::Reopen()
   { // reload data
     if (Params->Get_t_index() > Params->GetStartTimeIndex())
     {
-      HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
+      HDF5_File.readCompleteDataset(HDF5_File.getRootGroup(),
                                     HDF5_RootObjectName,
                                     SourceMatrix.GetDimensionSizes(),
                                     StoreBuffer);
@@ -1065,7 +1067,7 @@ void TWholeDomainOutputHDF5Stream::Sample()
       CuboidSize.nt = 1;
 
       // iterate over all cuboid to be sampled
-      HDF5_File.WriteCuboidToHyperSlab(HDF5_DatasetId,
+      HDF5_File.writeCuboidToHyperSlab(HDF5_DatasetId,
                                        DatasetPosition,
                                        DimensionSizes(0,0,0,0), // position in the SourceMatrix
                                        CuboidSize,
@@ -1152,7 +1154,7 @@ void TWholeDomainOutputHDF5Stream::Close()
   // the dataset is still opened
   if (HDF5_DatasetId != H5I_BADID)
   {
-    HDF5_File.CloseDataset(HDF5_DatasetId);
+    HDF5_File.closeDataset(HDF5_DatasetId);
   }
 
   HDF5_DatasetId = H5I_BADID;
@@ -1181,7 +1183,7 @@ void TWholeDomainOutputHDF5Stream::FlushBufferToFile()
     Size.nt = SampledTimeStep;
   }
 
-  HDF5_File.WriteHyperSlab(HDF5_DatasetId,
+  HDF5_File.writeHyperSlab(HDF5_DatasetId,
                            Position,
                            Size,
                            StoreBuffer);

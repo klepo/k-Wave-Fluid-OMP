@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
- *              24 August    2017, 12:20 (revised)
+ *              24 August    2017, 14:42 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -76,7 +76,7 @@ void TComplexMatrix::ReadDataFromHDF5File(Hdf5File & HDF5_File,
                                           const char * MatrixName)
 {
   // check data type
-  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(), MatrixName) != Hdf5File::hdf5_mdt_float)
+  if (HDF5_File.readMatrixDataType(HDF5_File.getRootGroup(), MatrixName) != Hdf5File::MatrixDataType::kFloat)
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage, kErrFmtMatrixNotFloat, MatrixName);
@@ -84,7 +84,7 @@ void TComplexMatrix::ReadDataFromHDF5File(Hdf5File & HDF5_File,
   }
 
   // check domain type
-  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != Hdf5File::hdf5_mdt_complex)
+  if (HDF5_File.readMatrixDomainType(HDF5_File.getRootGroup(), MatrixName) != Hdf5File::MatrixDomainType::kComplex)
   {
     char ErrorMessage[256];
     sprintf(ErrorMessage, kErrFmtMatrixNotComplex, MatrixName);
@@ -96,7 +96,7 @@ void TComplexMatrix::ReadDataFromHDF5File(Hdf5File & HDF5_File,
   ComplexDims.nx = 2 * ComplexDims.nx;
 
   // Read data from the file
-  HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
+  HDF5_File.readCompleteDataset(HDF5_File.getRootGroup(),
                                 MatrixName,
                                 ComplexDims,
                                 pMatrixData);
@@ -123,26 +123,27 @@ void TComplexMatrix::WriteDataToHDF5File(Hdf5File & HDF5_File,
   ComplexDims.nz = 1;
 
   // create a dataset
-  hid_t HDF5_Dataset_id = HDF5_File.CreateFloatDataset(HDF5_File.GetRootGroup(),
-                                                       MatrixName,
-                                                       ComplexDims,
-                                                       Chunks,
-                                                       CompressionLevel);
+  hid_t HDF5_Dataset_id = HDF5_File.createDataset(HDF5_File.getRootGroup(),
+                                                  MatrixName,
+                                                  ComplexDims,
+                                                  Chunks,
+                                                  Hdf5File::MatrixDataType::kFloat,
+                                                  CompressionLevel);
  // Write write the matrix at once.
-  HDF5_File.WriteHyperSlab(HDF5_Dataset_id,
+  HDF5_File.writeHyperSlab(HDF5_Dataset_id,
                            DimensionSizes(0, 0, 0),
                            pDimensionSizes,
                            pMatrixData);
-  HDF5_File.CloseDataset(HDF5_Dataset_id);
+  HDF5_File.closeDataset(HDF5_Dataset_id);
 
  // Write data and domain type
-  HDF5_File.WriteMatrixDataType(HDF5_File.GetRootGroup(),
+  HDF5_File.writeMatrixDataType(HDF5_File.getRootGroup(),
                                 MatrixName,
-                                Hdf5File::hdf5_mdt_float);
+                                Hdf5File::MatrixDataType::kFloat);
 
-  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
+  HDF5_File.writeMatrixDomainType(HDF5_File.getRootGroup(),
                                   MatrixName,
-                                  Hdf5File::hdf5_mdt_complex);
+                                  Hdf5File::MatrixDomainType::kComplex);
 }// end of WriteDataToHDF5File
 //---------------------------------------------------------------------------
 

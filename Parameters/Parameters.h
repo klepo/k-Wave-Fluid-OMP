@@ -42,6 +42,7 @@
 #include <Hdf5/Hdf5File.h>
 #include <Hdf5/Hdf5FileHeader.h>
 
+using namespace std;
 /**
  * @class TParameters
  * @brief Class storing all parameters of the simulation.

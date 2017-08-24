@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              24 August    2017, 12:19 (revised)
+ *              24 August    2017, 14:31 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -150,24 +150,24 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   MatrixContainer.LoadDataFromInputHDF5File(HDF5_InputFile);
 
   // close the input file
-  HDF5_InputFile.Close();
+  HDF5_InputFile.close();
 
   // The simulation does not use checkpointing or this is the first turn
   bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               Hdf5File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
+                               Hdf5File::canAccess(Parameters->GetCheckpointFileName()));
 
   //-------------------- Read data from the checkpoint file -----------------//
   if (RecoverFromPrevState)
   {
     // Open checkpoint file
-    HDF5_CheckpointFile.Open(Parameters->GetCheckpointFileName().c_str());
+    HDF5_CheckpointFile.open(Parameters->GetCheckpointFileName());
 
     // Check the checkpoint file
     CheckCheckpointFile();
 
     // read the actual value of t_index
     size_t new_t_index;
-    HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+    HDF5_CheckpointFile.readScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                         kTimeIndexName,
                                         new_t_index);
     Parameters->Set_t_index(new_t_index);
@@ -175,13 +175,13 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     // Read necessary matrices from the checkpoint file
     MatrixContainer.LoadDataFromCheckpointHDF5File(HDF5_CheckpointFile);
 
-    HDF5_CheckpointFile.Close();
+    HDF5_CheckpointFile.close();
 
 
     //------------- Read data from the output file -------------------------//
 
     // Reopen output file for RW access
-    HDF5_OutputFile.Open(Parameters->GetOutputFileName().c_str(), H5F_ACC_RDWR);
+    HDF5_OutputFile.open(Parameters->GetOutputFileName(), H5F_ACC_RDWR);
     //Read file header of the output file
     Parameters->HDF5_FileHeader.readHeaderFromOutputFile(HDF5_OutputFile);
     // Check the checkpoint file
@@ -194,7 +194,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   else
   { //-------------------- First round of multi-leg simulation ---------------//
     // Create the output file
-    HDF5_OutputFile.Create(Parameters->GetOutputFileName().c_str());
+    HDF5_OutputFile.create(Parameters->GetOutputFileName());
 
 
     // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
@@ -277,7 +277,7 @@ void TKSpaceFirstOrder3DSolver::Compute()
 
     WriteOutputDataInfo();
 
-  Parameters->HDF5_OutputFile.Close();
+  Parameters->HDF5_OutputFile.close();
 }// end of Compute()
 //------------------------------------------------------------------------------
 
@@ -432,7 +432,7 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
 
   // The simulation does not use checkpointing or this is the first turn
   bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               Hdf5File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
+                               Hdf5File::canAccess(Parameters->GetCheckpointFileName()));
 
   // import FFTW wisdom if it is here
   if (RecoverFromPrevState)
@@ -2514,14 +2514,14 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
 {
   if (Parameters->IsStore_p_final())
   {
-    Get_p().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kPressureFinalName, Parameters->GetCompressionLevel());
+    Get_p().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kPressureFinalName.c_str(), Parameters->GetCompressionLevel());
   }// p_final
 
   if (Parameters->IsStore_u_final())
   {
-    Get_ux_sgx().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUxFinalName, Parameters->GetCompressionLevel());
-    Get_uy_sgy().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUyFinalName, Parameters->GetCompressionLevel());
-    Get_uz_sgz().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUzFinalName, Parameters->GetCompressionLevel());
+    Get_ux_sgx().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUxFinalName.c_str(), Parameters->GetCompressionLevel());
+    Get_uy_sgy().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUyFinalName.c_str(), Parameters->GetCompressionLevel());
+    Get_uz_sgz().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUzFinalName.c_str(), Parameters->GetCompressionLevel());
   }// u_final
 
   // Apply post-processing and close
@@ -2535,13 +2535,13 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
     if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
     {
       Get_sensor_mask_index().RecomputeIndicesToMatlab();
-      Get_sensor_mask_index().WriteDataToHDF5File(Parameters->HDF5_OutputFile,kSensorMaskIndexName,
+      Get_sensor_mask_index().WriteDataToHDF5File(Parameters->HDF5_OutputFile,kSensorMaskIndexName.c_str(),
                                                   Parameters->GetCompressionLevel());
     }
     if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
     {
       Get_sensor_mask_corners().RecomputeIndicesToMatlab();
-      Get_sensor_mask_corners().WriteDataToHDF5File(Parameters->HDF5_OutputFile,kSensorMaskCornersName,
+      Get_sensor_mask_corners().WriteDataToHDF5File(Parameters->HDF5_OutputFile,kSensorMaskCornersName.c_str(),
                                                     Parameters->GetCompressionLevel());
     }
   }
@@ -2580,9 +2580,9 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   // Create Checkpoint file
   Hdf5File & HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
   // if it happens and the file is opened (from the recovery, close it)
-  if (HDF5_CheckpointFile.IsOpened()) HDF5_CheckpointFile.Close();
+  if (HDF5_CheckpointFile.isOpen()) HDF5_CheckpointFile.close();
   // Create the new file (overwrite the old one)
-  HDF5_CheckpointFile.Create(Parameters->GetCheckpointFileName().c_str());
+  HDF5_CheckpointFile.create(Parameters->GetCheckpointFileName());
 
 
   //--------------------- Store Matrices ------------------------------//
@@ -2591,17 +2591,17 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   MatrixContainer.StoreDataIntoCheckpointHDF5File(HDF5_CheckpointFile);
 
   // Write t_index
-  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+  HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                        kTimeIndexName,
                                        Parameters->Get_t_index());
   // store basic dimension sizes (Nx, Ny, Nz) - Nt is not necessary
-  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+  HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                        kNxName,
                                        Parameters->GetFullDimensionSizes().nx);
-  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+  HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                        kNyName,
                                        Parameters->GetFullDimensionSizes().ny);
-  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+  HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                        kNzName,
                                        Parameters->GetFullDimensionSizes().nz);
 
@@ -2616,7 +2616,7 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   CheckpointFileHeader.writeHeaderToCheckpointFile(HDF5_CheckpointFile);
 
   // Close the checkpoint file
-  HDF5_CheckpointFile.Close();
+  HDF5_CheckpointFile.close();
 
   // checkpoint only if necessary (t_index > start_index) - here we're at  step + 1
   if (Parameters->Get_t_index() > Parameters->GetStartTimeIndex())
@@ -2634,7 +2634,7 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
 void TKSpaceFirstOrder3DSolver::WriteOutputDataInfo()
 {
   // write t_index into the output file
-  Parameters->HDF5_OutputFile.WriteScalarValue(Parameters->HDF5_OutputFile.GetRootGroup(),
+  Parameters->HDF5_OutputFile.writeScalarValue(Parameters->HDF5_OutputFile.getRootGroup(),
                                                kTimeIndexName,
                                                Parameters->Get_t_index());
 
@@ -2739,15 +2739,15 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
 
   // Check dimension sizes
   DimensionSizes OutputDimSizes;
-  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
+  OutputFile.readScalarValue(OutputFile.getRootGroup(),
                              kNxName,
                              OutputDimSizes.nx);
 
-  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
+  OutputFile.readScalarValue(OutputFile.getRootGroup(),
                              kNyName,
                              OutputDimSizes.ny);
 
-  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
+  OutputFile.readScalarValue(OutputFile.getRootGroup(),
                              kNzName,
                              OutputDimSizes.nz);
 
@@ -2817,15 +2817,15 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
 
   // Check dimension sizes
   DimensionSizes CheckpointDimSizes;
-  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+  HDF5_CheckpointFile.readScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                       kNxName,
                                       CheckpointDimSizes.nx);
 
-  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+  HDF5_CheckpointFile.readScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                       kNyName,
                                       CheckpointDimSizes.ny);
 
-  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
+  HDF5_CheckpointFile.readScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                       kNzName,
                                       CheckpointDimSizes.nz);
 

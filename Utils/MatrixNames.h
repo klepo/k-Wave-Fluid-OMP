@@ -36,7 +36,7 @@
  * @brief   Datatype for matrix names.
  * @details Datatype for matrix names.
  */
-using MatrixName = const char*;
+using MatrixName = const std::string;
 
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -44,296 +44,296 @@ using MatrixName = const char*;
 //--------------------------------------------------------------------------------------------------------------------//
 
 /// Nt variable name
-MatrixName const kNtName         = "Nt";
+MatrixName kNtName         = "Nt";
 /// t_index name
-MatrixName const kTimeIndexName  = "t_index";
+MatrixName kTimeIndexName  = "t_index";
 /// dt variable name
-MatrixName const kDtName         = "dt";
+MatrixName kDtName         = "dt";
 /// dx variable name
-MatrixName const kDxName         = "dx";
+MatrixName kDxName         = "dx";
 /// dy variable name
-MatrixName const kDyName         = "dy";
+MatrixName kDyName         = "dy";
 /// dz variable name
-MatrixName const kDzName         = "dz";
+MatrixName kDzName         = "dz";
 
 /// c_ref variable name
-MatrixName const kCRefName       = "c_ref";
+MatrixName kCRefName       = "c_ref";
 /// c0 variable name
-MatrixName const kC0Name         = "c0";
+MatrixName kC0Name         = "c0";
 
 /// alpha_power variable name
-MatrixName const kAlphaPowerName = "alpha_power";
+MatrixName kAlphaPowerName = "alpha_power";
 /// alpha_coeff variable name
-MatrixName const kAlphaCoeffName = "alpha_coeff";
+MatrixName kAlphaCoeffName = "alpha_coeff";
 
 /// Nx variable name
-MatrixName const kNxName         = "Nx";
+MatrixName kNxName         = "Nx";
 /// Ny variable name
-MatrixName const kNyName         = "Ny";
+MatrixName kNyName         = "Ny";
 /// Nz variable name
-MatrixName const kNzName         = "Nz";
+MatrixName kNzName         = "Nz";
 
 /// x_shift_neg_r variable name
-MatrixName const kXShiftNegRName = "x_shift_neg_r";
+MatrixName kXShiftNegRName = "x_shift_neg_r";
 /// y_shift_neg_r variable name
-MatrixName const kYShiftNegRName = "y_shift_neg_r";
+MatrixName kYShiftNegRName = "y_shift_neg_r";
 /// z_shift_neg_r variable name
-MatrixName const kZShiftNegRName = "z_shift_neg_r";
+MatrixName kZShiftNegRName = "z_shift_neg_r";
 
 /// ux_shifted variable name
-MatrixName const kUxShiftedName  = "ux_shifted";
+MatrixName kUxShiftedName  = "ux_shifted";
 /// uy_shifted variable name
-MatrixName const kUyShiftedName  = "uy_shifted";
+MatrixName kUyShiftedName  = "uy_shifted";
 /// uz_shifted variable name
-MatrixName const kUzShiftedName  = "uz_shifted";
+MatrixName kUzShiftedName  = "uz_shifted";
 
 /// pml_x_size variable name
-MatrixName const kPmlXSizeName   = "pml_x_size";
+MatrixName kPmlXSizeName   = "pml_x_size";
 /// pml_y_size variable name
-MatrixName const kPmlYSizeName   = "pml_y_size";
+MatrixName kPmlYSizeName   = "pml_y_size";
 /// pml_z_size variable name
-MatrixName const kPmlZSizeName   = "pml_z_size";
+MatrixName kPmlZSizeName   = "pml_z_size";
 
 /// pml_x_sgx variable name
-MatrixName const kPmlXSgxName    = "pml_x_sgx";
+MatrixName kPmlXSgxName    = "pml_x_sgx";
 /// pml_y_sgy variable name
-MatrixName const kPmlYSgyName    = "pml_y_sgy";
+MatrixName kPmlYSgyName    = "pml_y_sgy";
 /// pml_z_sgz variable name
-MatrixName const kPmlZSgzName    = "pml_z_sgz";
+MatrixName kPmlZSgzName    = "pml_z_sgz";
 
-// pml_x variable name
-MatrixName const kPmlXName       = "pml_x";
+/// pml_x variable name
+MatrixName kPmlXName       = "pml_x";
 /// pml_y variable name
-MatrixName const kPmlYName       = "pml_y";
+MatrixName kPmlYName       = "pml_y";
 /// pml_z variable name
-MatrixName const kPmlZName       = "pml_z";
+MatrixName kPmlZName       = "pml_z";
 
 
 /// pml_x_alpha variable name
-MatrixName const kPmlXAlphaName    = "pml_x_alpha";
+MatrixName kPmlXAlphaName    = "pml_x_alpha";
 /// pml_y_alpha variable name
-MatrixName const kPmlYAlphaName    = "pml_y_alpha";
+MatrixName kPmlYAlphaName    = "pml_y_alpha";
 /// pml_z_alpha variable name
-MatrixName const kPmlZAlphaName    = "pml_z_alpha";
+MatrixName kPmlZAlphaName    = "pml_z_alpha";
 
 /// ux_source_flag variable name
-MatrixName const kVelocityXSourceFlagName = "ux_source_flag";
+MatrixName kVelocityXSourceFlagName = "ux_source_flag";
 /// uy_source_flag variable name
-MatrixName const kVelocityYSourceFlagName = "uy_source_flag";
+MatrixName kVelocityYSourceFlagName = "uy_source_flag";
 /// uz_source_flag variable name
-MatrixName const kVelocityZSourceFlagName = "uz_source_flag";
+MatrixName kVelocityZSourceFlagName = "uz_source_flag";
 
 /// u_source_many variable name
-MatrixName const kVelocitySourceManyName  = "u_source_many";
+MatrixName kVelocitySourceManyName  = "u_source_many";
 /// p_source_many variable name
-MatrixName const kPressureSourceManyName  = "p_source_many";
+MatrixName kPressureSourceManyName  = "p_source_many";
 
 /// p_source_flag variable name
-MatrixName const kPressureSourceFlagName        = "p_source_flag";
+MatrixName kPressureSourceFlagName        = "p_source_flag";
 /// p0_source_flag variable name
-MatrixName const kInitialPressureSourceFlagName = "p0_source_flag";
+MatrixName kInitialPressureSourceFlagName = "p0_source_flag";
 
 /// u_source_mode variable name
-MatrixName const kVelocitySourceModeName  = "u_source_mode";
+MatrixName kVelocitySourceModeName  = "u_source_mode";
 /// p_source_mode variable name
-MatrixName const kPressureSourceModeName  = "p_source_mode";
+MatrixName kPressureSourceModeName  = "p_source_mode";
 
 /// p_source_input variable name
-MatrixName const kPressureSourceInputName = "p_source_input";
+MatrixName kPressureSourceInputName = "p_source_input";
 /// p_source_index variable name
-MatrixName const kPressureSourceIndexName = "p_source_index";
+MatrixName kPressureSourceIndexName = "p_source_index";
 
 /// u_source_index variable name
-MatrixName const kVelocitySourceIndexName  = "u_source_index";
+MatrixName kVelocitySourceIndexName  = "u_source_index";
 /// ux_source_input variable name
-MatrixName const kVelocityXSourceInputName = "ux_source_input";
+MatrixName kVelocityXSourceInputName = "ux_source_input";
 /// uy_source_input variable name
-MatrixName const kVelocityYSourceInputName = "uy_source_input";
+MatrixName kVelocityYSourceInputName = "uy_source_input";
 /// uz_source_input variable name
-MatrixName const kVelocityZSourceInputName = "uz_source_input";
+MatrixName kVelocityZSourceInputName = "uz_source_input";
 
 /// nonuniform_grid_flag variable name
-MatrixName const kNonUniformGridFlagName   = "nonuniform_grid_flag";
+MatrixName kNonUniformGridFlagName   = "nonuniform_grid_flag";
 /// absorbing_flag variable name
-MatrixName const kAbsorbingFlagName        = "absorbing_flag";
+MatrixName kAbsorbingFlagName        = "absorbing_flag";
 /// nonlinear_flag variable name
-MatrixName const kNonLinearFlagName        = "nonlinear_flag";
+MatrixName kNonLinearFlagName        = "nonlinear_flag";
 
 /// transducer_source_flag variable name
-MatrixName const kTransducerSourceFlagName = "transducer_source_flag";
+MatrixName kTransducerSourceFlagName = "transducer_source_flag";
 /// sensor_mask_index variable name
-MatrixName const kSensorMaskIndexName      = "sensor_mask_index";
+MatrixName kSensorMaskIndexName      = "sensor_mask_index";
 /// sensor_mask_type variable name
-MatrixName const kSensorMaskTypeName       = "sensor_mask_type";
+MatrixName kSensorMaskTypeName       = "sensor_mask_type";
 /// sensor_mask_corners variable name
-MatrixName const kSensorMaskCornersName    = "sensor_mask_corners";
+MatrixName kSensorMaskCornersName    = "sensor_mask_corners";
 
 /// transducer_source_input variable name
-MatrixName const kTransducerSourceInputName = "transducer_source_input";
+MatrixName kTransducerSourceInputName = "transducer_source_input";
 
 /// p0_source_input variable name
-MatrixName const kInitialPressureSourceInputName = "p0_source_input";
+MatrixName kInitialPressureSourceInputName = "p0_source_input";
 /// delay_mask variable name
-MatrixName const kDelayMaskName                  = "delay_mask";
+MatrixName kDelayMaskName                  = "delay_mask";
 
 
 /// kappa_r variable name
-MatrixName const kKappaRName = "kappa_r";
+MatrixName kKappaRName = "kappa_r";
 /// BonA variable name
-MatrixName const kBonAName   = "BonA";
+MatrixName kBonAName   = "BonA";
 /// p variable name
-MatrixName const kPName      = "p";
+MatrixName kPName      = "p";
 /// rhox variable name
-MatrixName const kRhoXName   = "rhox";
+MatrixName kRhoXName   = "rhox";
 /// rhoy variable name
-MatrixName const kRhoYName   = "rhoy";
+MatrixName kRhoYName   = "rhoy";
 /// rhoz variable name
-MatrixName const kRhoZName   = "rhoz";
+MatrixName kRhoZName   = "rhoz";
 
 /// ux variable name
-MatrixName const kUxName     = "ux";
+MatrixName kUxName     = "ux";
 /// uy variable name
-MatrixName const kUyName     = "uy";
+MatrixName kUyName     = "uy";
 /// uz variable name
-MatrixName const kUzName     = "uz";
+MatrixName kUzName     = "uz";
 
 /// ux_sgx variable name
-MatrixName const kUxSgxName  = "ux_sgx";
+MatrixName kUxSgxName  = "ux_sgx";
 /// uy_sgy variable name
-MatrixName const kUySgyName  = "uy_sgy";
+MatrixName kUySgyName  = "uy_sgy";
 /// uz_sgz variable name
-MatrixName const kUzSgzName  = "uz_sgz";
+MatrixName kUzSgzName  = "uz_sgz";
 
 /// ux_non_staggered variable name
-MatrixName const kUxNonStaggeredName = "ux_non_staggered";
+MatrixName kUxNonStaggeredName = "ux_non_staggered";
 /// uy_non_staggered variable name
-MatrixName const kUyNonStaggeredName = "uy_non_staggered";
+MatrixName kUyNonStaggeredName = "uy_non_staggered";
 /// uz_non_staggered variable name
-MatrixName const kUzNonStaggeredName = "uz_non_staggered";
+MatrixName kUzNonStaggeredName = "uz_non_staggered";
 
 /// duxdx variable name
-MatrixName const kDuxdxName          = "duxdx";
+MatrixName kDuxdxName          = "duxdx";
 /// duydy variable name
-MatrixName const kDuydyName          = "duydy";
+MatrixName kDuydyName          = "duydy";
 /// duzdz variable name
-MatrixName const kDuzdzName          = "duzdz";
+MatrixName kDuzdzName          = "duzdz";
 
 /// dxudxn variable name
-MatrixName const kDxudxnName         = "dxudxn";
+MatrixName kDxudxnName         = "dxudxn";
 /// dyudyn variable name
-MatrixName const kDyudynName         = "dyudyn";
+MatrixName kDyudynName         = "dyudyn";
 /// dzudzn variable name
-MatrixName const kDzudznName         = "dzudzn";
+MatrixName kDzudznName         = "dzudzn";
 
 /// dxudxn_sgx variable name
-MatrixName const kDxudxnSgxName      = "dxudxn_sgx";
+MatrixName kDxudxnSgxName      = "dxudxn_sgx";
 /// dyudyn_sgy variable name
-MatrixName const kDyudynSgyName      = "dyudyn_sgy";
+MatrixName kDyudynSgyName      = "dyudyn_sgy";
 /// dzudzn_sgz variable name
-MatrixName const kDzudznSgzName      = "dzudzn_sgz";
+MatrixName kDzudznSgzName      = "dzudzn_sgz";
 
 /// ddx_k_shift_pos_r variable name
-MatrixName const kDdxKShiftPosRName  = "ddx_k_shift_pos_r";
+MatrixName kDdxKShiftPosRName  = "ddx_k_shift_pos_r";
 /// ddy_k_shift_pos variable name
-MatrixName const kDdyKShiftPosName   = "ddy_k_shift_pos";
+MatrixName kDdyKShiftPosName   = "ddy_k_shift_pos";
 /// ddz_k_shift_pos variable name
-MatrixName const kDdzKShiftPosName   = "ddz_k_shift_pos";
+MatrixName kDdzKShiftPosName   = "ddz_k_shift_pos";
 
 /// ddx_k_shift_neg_r variable name
-MatrixName const kDdxKShiftNegRName  = "ddx_k_shift_neg_r";
+MatrixName kDdxKShiftNegRName  = "ddx_k_shift_neg_r";
 /// ddy_k_shift_neg variable name
-MatrixName const kDdyKShiftNegName   = "ddy_k_shift_neg";
+MatrixName kDdyKShiftNegName   = "ddy_k_shift_neg";
 /// ddz_k_shift_neg variable name
-MatrixName const kDdzKShiftNegName   = "ddz_k_shift_neg";
+MatrixName kDdzKShiftNegName   = "ddz_k_shift_neg";
 
 /// rho0 variable name
-MatrixName const kRho0Name           = "rho0";
+MatrixName kRho0Name           = "rho0";
 /// rho0_sgx variable name
-MatrixName const kRho0SgxName        = "rho0_sgx";
+MatrixName kRho0SgxName        = "rho0_sgx";
 /// rho0_sgy variable name
-MatrixName const kRho0SgyName        = "rho0_sgy";
+MatrixName kRho0SgyName        = "rho0_sgy";
 /// rho0_sgz variable name
-MatrixName const kRho0SgzName        = "rho0_sgz";
+MatrixName kRho0SgzName        = "rho0_sgz";
 
 /// absorb_tau variable name
-MatrixName const kAbsorbTauName      = "absorb_tau";
+MatrixName kAbsorbTauName      = "absorb_tau";
 /// absorb_eta variable name
-MatrixName const kAbsorbEtaName      = "absorb_eta";
+MatrixName kAbsorbEtaName      = "absorb_eta";
 /// absorb_nabla1_r variable name
-MatrixName const kAbsorbNabla1RName  = "absorb_nabla1_r";
+MatrixName kAbsorbNabla1RName  = "absorb_nabla1_r";
 /// absorb_nabla2_r variable name
-MatrixName const kAbsorbNabla2RName  = "absorb_nabla2_r";
+MatrixName kAbsorbNabla2RName  = "absorb_nabla2_r";
 
 /// p variable name in the output file
-MatrixName const kPressureRawName    = "p";
+MatrixName kPressureRawName    = "p";
 /// p_rms variable name
-MatrixName const kPressureRmsName    = "p_rms";
+MatrixName kPressureRmsName    = "p_rms";
 /// p_max variable name
-MatrixName const kPressureMaxName    = "p_max";
+MatrixName kPressureMaxName    = "p_max";
 /// p_min variable name
-MatrixName const kPressureMinName    = "p_min";
+MatrixName kPressureMinName    = "p_min";
 /// p_max_all variable name
-MatrixName const kPressureMaxAllName = "p_max_all";
+MatrixName kPressureMaxAllName = "p_max_all";
 /// p_min_all variable name
-MatrixName const kPressureMinAllName = "p_min_all";
+MatrixName kPressureMinAllName = "p_min_all";
 /// p_final variable name
-MatrixName const kPressureFinalName  = "p_final";
+MatrixName kPressureFinalName  = "p_final";
 
 /// ux_rms variable name
-MatrixName const kUxRmsName = "ux_rms";
+MatrixName kUxRmsName = "ux_rms";
 /// uy_rms variable name
-MatrixName const kUyRmsName = "uy_rms";
+MatrixName kUyRmsName = "uy_rms";
 /// uz_rms variable name
-MatrixName const kUzRmsName = "uz_rms";
+MatrixName kUzRmsName = "uz_rms";
 
 /// ux_max variable name
-MatrixName const kUxMaxName = "ux_max";
+MatrixName kUxMaxName = "ux_max";
 /// uy_max variable name
-MatrixName const kUyMaxName = "uy_max";
+MatrixName kUyMaxName = "uy_max";
 /// uz_max variable name
-MatrixName const kUzMaxName = "uz_max";
+MatrixName kUzMaxName = "uz_max";
 /// ux_min variable name
-MatrixName const kUxMinName = "ux_min";
+MatrixName kUxMinName = "ux_min";
 /// uy_min variable name
-MatrixName const kUyMinName = "uy_min";
+MatrixName kUyMinName = "uy_min";
 /// uz_min variable name
-MatrixName const kUzMinName = "uz_min";
+MatrixName kUzMinName = "uz_min";
 
 /// ux_max_all variable name
-MatrixName const kUxMaxAllName = "ux_max_all";
+MatrixName kUxMaxAllName = "ux_max_all";
 /// uy_max_all variable name
-MatrixName const kUyMaxAllName = "uy_max_all";
+MatrixName kUyMaxAllName = "uy_max_all";
 /// uz_max_all variable name
-MatrixName const kUzMaxAllName = "uz_max_all";
+MatrixName kUzMaxAllName = "uz_max_all";
 /// ux_min_all variable name
-MatrixName const kUxMinAllName = "ux_min_all";
+MatrixName kUxMinAllName = "ux_min_all";
 /// uy_min_all variable name
-MatrixName const kUyMinAllName = "uy_min_all";
+MatrixName kUyMinAllName = "uy_min_all";
 /// uz_min_all variable name
-MatrixName const kUzMinAllName = "uz_min_all";
+MatrixName kUzMinAllName = "uz_min_all";
 
 /// ux_final variable name
-MatrixName const kUxFinalName = "ux_final";
+MatrixName kUxFinalName = "ux_final";
 /// uy_final variable name
-MatrixName const kUyFinalName = "uy_final";
+MatrixName kUyFinalName = "uy_final";
 /// uz_final variable name
-MatrixName const kUzFinalName = "uz_final";
+MatrixName kUzFinalName = "uz_final";
 
 /// Temp_1_RS3D variable name
-MatrixName const kTemp1Real3DName = "Temp_1_RS3D";
+MatrixName kTemp1Real3DName = "Temp_1_RS3D";
 /// Temp_2_RS3D variable name
-MatrixName const kTemp2Real3DName = "Temp_2_RS3D";
+MatrixName kTemp2Real3DName = "Temp_2_RS3D";
 /// Temp_3_RS3D variable name
-MatrixName const kTemp3Real3DName = "Temp_3_RS3D";
+MatrixName kTemp3Real3DName = "Temp_3_RS3D";
 
 
 /// CUFFT_shift_temp variable name
-MatrixName const kCufftShiftTempName = "CUFFT_shift_temp";
+MatrixName kCufftShiftTempName = "CUFFT_shift_temp";
 /// CUFFT_X_temp variable name
-MatrixName const kCufftXTempName     = "CUFFT_X_temp";
+MatrixName kCufftXTempName     = "CUFFT_X_temp";
 /// CUFFT_Y_temp variable name
-MatrixName const kCufftYTempName     = "CUFFT_Y_temp";
+MatrixName kCufftYTempName     = "CUFFT_Y_temp";
 /// CUFFT_Z_temp variable name
-MatrixName const kCufftZTempName     = "CUFFT_Z_temp";
+MatrixName kCufftZTempName     = "CUFFT_Z_temp";
 
 #endif	/* MATRIX_NAMES_H */

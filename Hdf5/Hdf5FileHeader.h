@@ -12,7 +12,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            24 August    2017, 11:25 (revised)
+ *            24 August    2017, 14:35 (revised)
  *
  * @section   Hdf5FileHeader HDF5 File Header Structure
  *
@@ -235,11 +235,10 @@ class Hdf5FileHeader
       return kMajorFileVersionsNames[0];
     };
     /**
-     * @brief   Get string version of current Minor version.
-     * @details Get string version of current Minor version.
-     * @return  current minor version
+     * @brief  Get string representing of current Minor version of the file.
+     * @return Current minor file version.
      */
-    static string getFileMinorVersion()
+    static std::string getFileMinorVersion()
     {
       return kMinorFileVersionsNames[1];
     };

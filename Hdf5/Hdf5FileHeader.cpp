@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 32.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            24 August    2017, 12:53 (revised)
+ *            24 August    2017, 14:35 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -125,26 +125,26 @@ Hdf5FileHeader::~Hdf5FileHeader()
 void Hdf5FileHeader::readHeaderFromInputFile(Hdf5File& inputFile)
 {
   // Get file root handle
-  hid_t rootGroup = inputFile.GetRootGroup();
+  hid_t rootGroup = inputFile.getRootGroup();
   // shortcut
   using FHI = FileHeaderItems;
 
   // read file type
   mHeaderValues[FHI::kFileType] =
-          inputFile.ReadStringAttribute(rootGroup,"/", sHeaderNames[FHI::kFileType].c_str());
+          inputFile.readStringAttribute(rootGroup,"/", sHeaderNames[FHI::kFileType]);
 
   if (getFileType() == FileType::kInput)
   {
     mHeaderValues[FHI::kCreatedBy]
-            = inputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kCreatedBy].c_str());
+            = inputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kCreatedBy]);
     mHeaderValues[FHI::kCreationDate]
-            = inputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kCreationDate].c_str());
+            = inputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kCreationDate]);
     mHeaderValues[FHI::kFileDescription]
-            = inputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileDescription].c_str());
+            = inputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileDescription]);
     mHeaderValues[FHI::kMajorVersion]
-            = inputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kMajorVersion].c_str());
+            = inputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kMajorVersion]);
     mHeaderValues[FHI::kMinorVersion]
-            = inputFile.ReadStringAttribute(rootGroup, "/",sHeaderNames[FHI::kMinorVersion].c_str());
+            = inputFile.readStringAttribute(rootGroup, "/",sHeaderNames[FHI::kMinorVersion]);
   }
   else
   {
@@ -160,30 +160,25 @@ void Hdf5FileHeader::readHeaderFromInputFile(Hdf5File& inputFile)
 void Hdf5FileHeader::readHeaderFromOutputFile(Hdf5File& outputFile)
 {
   // Get file root handle
-  hid_t rootGroup = outputFile.GetRootGroup();
+  hid_t rootGroup = outputFile.getRootGroup();
   // shortcut
   using FHI = FileHeaderItems;
 
   mHeaderValues[FHI::kFileType]
-          = outputFile.ReadStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileType].c_str());
+          = outputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileType]);
 
   if (getFileType() == FileType::kOutput)
   {
     mHeaderValues[FHI::kTotalExecutionTime]
-            = outputFile.ReadStringAttribute(rootGroup, "/",
-                                             sHeaderNames[FHI::kTotalExecutionTime].c_str());
+            = outputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kTotalExecutionTime]);
     mHeaderValues[FHI::kDataLoadTime]
-            = outputFile.ReadStringAttribute(rootGroup, "/",
-                                             sHeaderNames[FHI::kDataLoadTime].c_str());
+            = outputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kDataLoadTime]);
     mHeaderValues[FHI::kPreProcessingTime]
-            = outputFile.ReadStringAttribute(rootGroup, "/",
-                                             sHeaderNames[FHI::kPreProcessingTime].c_str());
+            = outputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kPreProcessingTime]);
     mHeaderValues[FHI::kSimulationTime]
-            = outputFile.ReadStringAttribute(rootGroup, "/",
-                                             sHeaderNames[FHI::kSimulationTime].c_str());
+            = outputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kSimulationTime]);
     mHeaderValues[FHI::kPostProcessingTime]
-            = outputFile.ReadStringAttribute(rootGroup, "/",
-                                             sHeaderNames[FHI::kPostProcessingTime].c_str());
+            = outputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kPostProcessingTime]);
   }
   else
   {
@@ -198,30 +193,25 @@ void Hdf5FileHeader::readHeaderFromOutputFile(Hdf5File& outputFile)
 void Hdf5FileHeader::readHeaderFromCheckpointFile(Hdf5File& checkpointFile)
 {
   // Get file root handle
-  hid_t rootGroup = checkpointFile.GetRootGroup();
+  hid_t rootGroup = checkpointFile.getRootGroup();
   // shortcut
   using FHI = FileHeaderItems;
   // read file type
   mHeaderValues[FHI::kFileType] =
-          checkpointFile.ReadStringAttribute(rootGroup,"/", sHeaderNames[FHI::kFileType].c_str());
+          checkpointFile.readStringAttribute(rootGroup,"/", sHeaderNames[FHI::kFileType]);
 
   if (getFileType() == FileType::kCheckpoint)
   {
     mHeaderValues[FHI::kCreatedBy]
-            = checkpointFile.ReadStringAttribute(rootGroup, "/",
-                                                 sHeaderNames[FHI::kCreatedBy].c_str());
+            = checkpointFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kCreatedBy]);
     mHeaderValues[FHI::kCreationDate]
-            = checkpointFile.ReadStringAttribute(rootGroup, "/",
-                                                 sHeaderNames[FHI::kCreationDate].c_str());
+            = checkpointFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kCreationDate]);
     mHeaderValues[FHI::kFileDescription]
-            = checkpointFile.ReadStringAttribute(rootGroup, "/",
-                                                 sHeaderNames[FHI::kFileDescription].c_str());
+            = checkpointFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileDescription]);
     mHeaderValues[FHI::kMajorVersion]
-            = checkpointFile.ReadStringAttribute(rootGroup, "/",
-                                                 sHeaderNames[FHI::kMajorVersion].c_str());
+            = checkpointFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kMajorVersion]);
     mHeaderValues[FHI::kMinorVersion]
-            = checkpointFile.ReadStringAttribute(rootGroup, "/",
-                                                 sHeaderNames[FHI::kMinorVersion].c_str());
+            = checkpointFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kMinorVersion]);
   }
   else
   {
@@ -236,11 +226,11 @@ void Hdf5FileHeader::readHeaderFromCheckpointFile(Hdf5File& checkpointFile)
 void Hdf5FileHeader::writeHeaderToOutputFile(Hdf5File& outputFile)
 {
   // Get file root handle
-  hid_t rootGroup = outputFile.GetRootGroup();
+  hid_t rootGroup = outputFile.getRootGroup();
 
   for (const auto& it : sHeaderNames)
   {
-    outputFile.WriteStringAttribute(rootGroup,  "/", it.second.c_str(), mHeaderValues[it.first].c_str());
+    outputFile.writeStringAttribute(rootGroup,  "/", it.second, mHeaderValues[it.first]);
   }
 }// end of writeHeaderToOutputFile
 //----------------------------------------------------------------------------------------------------------------------
@@ -252,40 +242,40 @@ void Hdf5FileHeader::writeHeaderToOutputFile(Hdf5File& outputFile)
 void Hdf5FileHeader::writeHeaderToCheckpointFile(Hdf5File& checkpointFile)
 {
   // Get file root handle
-  hid_t rootGroup = checkpointFile.GetRootGroup();
+  hid_t rootGroup = checkpointFile.getRootGroup();
   // shortcut
   using FHI = FileHeaderItems;
 
   // Write header
-  checkpointFile.WriteStringAttribute(rootGroup,
+  checkpointFile.writeStringAttribute(rootGroup,
                                       "/",
-                                      sHeaderNames [FHI::kFileType].c_str(),
-                                      mHeaderValues[FHI::kFileType].c_str());
+                                      sHeaderNames [FHI::kFileType],
+                                      mHeaderValues[FHI::kFileType]);
 
-  checkpointFile.WriteStringAttribute(rootGroup,
+  checkpointFile.writeStringAttribute(rootGroup,
                                       "/",
-                                      sHeaderNames [FHI::kCreatedBy].c_str(),
-                                      mHeaderValues[FHI::kCreatedBy].c_str());
+                                      sHeaderNames [FHI::kCreatedBy],
+                                      mHeaderValues[FHI::kCreatedBy]);
 
-  checkpointFile.WriteStringAttribute(rootGroup,
+  checkpointFile.writeStringAttribute(rootGroup,
                                       "/",
-                                      sHeaderNames [FHI::kCreationDate].c_str(),
-                                      mHeaderValues[FHI::kCreationDate].c_str());
+                                      sHeaderNames [FHI::kCreationDate],
+                                      mHeaderValues[FHI::kCreationDate]);
 
-  checkpointFile.WriteStringAttribute(rootGroup,
+  checkpointFile.writeStringAttribute(rootGroup,
                                       "/",
-                                      sHeaderNames [FHI::kFileDescription].c_str(),
-                                      mHeaderValues[FHI::kFileDescription].c_str());
+                                      sHeaderNames [FHI::kFileDescription],
+                                      mHeaderValues[FHI::kFileDescription]);
 
-  checkpointFile.WriteStringAttribute(rootGroup,
+  checkpointFile.writeStringAttribute(rootGroup,
                                       "/",
-                                      sHeaderNames [FHI::kMajorVersion].c_str(),
-                                      mHeaderValues[FHI::kMajorVersion].c_str());
+                                      sHeaderNames [FHI::kMajorVersion],
+                                      mHeaderValues[FHI::kMajorVersion]);
 
-  checkpointFile.WriteStringAttribute(rootGroup,
+  checkpointFile.writeStringAttribute(rootGroup,
                                       "/",
-                                      sHeaderNames [FHI::kMinorVersion].c_str(),
-                                      mHeaderValues[FHI::kMinorVersion].c_str());
+                                      sHeaderNames [FHI::kMinorVersion],
+                                      mHeaderValues[FHI::kMinorVersion]);
 }// end of writeHeaderToCheckpointFile
 //----------------------------------------------------------------------------------------------------------------------
 
