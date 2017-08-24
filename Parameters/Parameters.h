@@ -200,64 +200,64 @@ class TParameters
     float&  Get_rho0_sgz_scalar()                {return rho0_sgz_scalar;};
 
     /// Get input file name.
-    string GetInputFileName()      const {return CommandLinesParameters.GetInputFileName();};
+    string GetInputFileName()      const {return CommandLinesParameters.getInputFileName();};
     /// Get output file name.
-    string GetOutputFileName()     const {return CommandLinesParameters.GetOutputFileName();};
+    string GetOutputFileName()     const {return CommandLinesParameters.getOutputFileName();};
     /// Get checkpoint filename.
-    string GetCheckpointFileName() const {return CommandLinesParameters.GetCheckpointFileName();};
+    string GetCheckpointFileName() const {return CommandLinesParameters.getCheckpointFileName();};
 
     /// Get compression level.
-    size_t GetCompressionLevel()   const {return CommandLinesParameters.GetCompressionLevel();};
+    size_t GetCompressionLevel()   const {return CommandLinesParameters.getCompressionLevel();};
     /// Get number of threads.
-    size_t GetNumberOfThreads()    const {return CommandLinesParameters.GetNumberOfThreads();};
+    size_t GetNumberOfThreads()    const {return CommandLinesParameters.getNumberOfThreads();};
     /// Get verbose interval.
-    size_t GetVerboseInterval()    const {return CommandLinesParameters.GetVerboseInterval();};
+    size_t GetVerboseInterval()    const {return CommandLinesParameters.getProgressPrintInterval();};
 
     /// Get start time index for sensor recording.
-    size_t GetStartTimeIndex()     const {return CommandLinesParameters.GetStartTimeIndex();};
+    size_t GetStartTimeIndex()     const {return CommandLinesParameters.getSamplingStartTimeIndex();};
 
     /// Is checkpoint enabled.
-    bool   IsCheckpointEnabled()   const {return CommandLinesParameters.IsCheckpointEnabled();};
+    bool   IsCheckpointEnabled()   const {return CommandLinesParameters.isCheckpointEnabled();};
     /// Get checkpoint interval.
-    size_t GetCheckpointInterval() const {return CommandLinesParameters.GetCheckpointInterval();};
+    size_t GetCheckpointInterval() const {return CommandLinesParameters.getCheckpointInterval();};
 
     /// Is --version specified at the command line?
-    bool IsVersion()                    const {return CommandLinesParameters.IsVersion();};
+    bool IsVersion()                    const {return CommandLinesParameters.isPrintVersionOnly();};
     /// Is  -p or --p_raw specified at the command line?
-    bool IsStore_p_raw()                const {return CommandLinesParameters.IsStore_p_raw();};
+    bool IsStore_p_raw()                const {return CommandLinesParameters.getStorePressureRawFlag();};
     /// Is --p_rms specified at the command line?
-    bool IsStore_p_rms()                const {return CommandLinesParameters.IsStore_p_rms();};
+    bool IsStore_p_rms()                const {return CommandLinesParameters.getStorePressureRmsFlag();};
     /// Is --p_max specified at the command line?
-    bool IsStore_p_max()                const {return CommandLinesParameters.IsStore_p_max();};
+    bool IsStore_p_max()                const {return CommandLinesParameters.getStorePressureMaxFlag();};
     /// Is --p_min specified at the command line?
-    bool IsStore_p_min()                const {return CommandLinesParameters.IsStore_p_min();};
+    bool IsStore_p_min()                const {return CommandLinesParameters.getStorePressureMinFlag();};
     /// Is --p_max_all specified at the command line?
-    bool IsStore_p_max_all()            const {return CommandLinesParameters.IsStore_p_max_all();};
+    bool IsStore_p_max_all()            const {return CommandLinesParameters.getStorePressureMaxAllFlag();};
     /// Is --p_min_all specified at the command line?
-    bool IsStore_p_min_all()            const {return CommandLinesParameters.IsStore_p_min_all();};
+    bool IsStore_p_min_all()            const {return CommandLinesParameters.getStorePressureMinAllFlag();};
     /// Is  --p_final specified at the command line?
-    bool IsStore_p_final()              const {return CommandLinesParameters.IsStore_p_final();};
+    bool IsStore_p_final()              const {return CommandLinesParameters.getStorePressureFinalAllFlag();};
 
     /// Is -u or --u_raw specified at the command line?
-    bool IsStore_u_raw()                const {return CommandLinesParameters.IsStore_u_raw();};
+    bool IsStore_u_raw()                const {return CommandLinesParameters.getStoreVelocityRawFlag();};
     /// Is --u_non_staggered_raw set?
-    bool IsStore_u_non_staggered_raw()  const {return CommandLinesParameters.IsStore_u_non_staggered_raw();};
+    bool IsStore_u_non_staggered_raw()  const {return CommandLinesParameters.getStoreVelocityNonStaggeredRawFlag();};
     /// Is --u_raw specified at the command line?
-    bool IsStore_u_rms()                const {return CommandLinesParameters.IsStore_u_rms();};
+    bool IsStore_u_rms()                const {return CommandLinesParameters.getStoreVelocityRmsFlag();};
     /// Is --u_max specified at the command line?
-    bool IsStore_u_max()                const {return CommandLinesParameters.IsStore_u_max();};
+    bool IsStore_u_max()                const {return CommandLinesParameters.getStoreVelocityMaxFlag();};
     /// Is --u_min specified at the command line?
-    bool IsStore_u_min()                const {return CommandLinesParameters.IsStore_u_min();};
+    bool IsStore_u_min()                const {return CommandLinesParameters.getStoreVelocityMinFlag();};
     /// Is --u_max_all specified at the command line.
-    bool IsStore_u_max_all()            const {return CommandLinesParameters.IsStore_u_max_all();};
+    bool IsStore_u_max_all()            const {return CommandLinesParameters.getStoreVelocityMaxAllFlag();};
     /// Is --u_min_all specified at the command line?
-    bool IsStore_u_min_all()            const {return CommandLinesParameters.IsStore_u_min_all();};
+    bool IsStore_u_min_all()            const {return CommandLinesParameters.getStoreVelocityMinAllFlag();};
 
     /// Is --u_final specified at the command line.
-    bool IsStore_u_final()              const {return CommandLinesParameters.IsStore_u_final();};
+    bool IsStore_u_final()              const {return CommandLinesParameters.getStoreVelocityFinalAllFlag();};
 
     /// is --copy_mask set?
-    bool IsCopySensorMask()             const {return CommandLinesParameters.IsCopySensorMask();};
+    bool IsCopySensorMask()             const {return CommandLinesParameters.getCopySensorMaskFlag();};
 
 
     /// Handle to the input HDF5 file.
@@ -282,7 +282,7 @@ class TParameters
     TParameters& operator = (const TParameters& src );
 
     /// Class with commandline parameters.
-    TCommandLineParameters CommandLinesParameters;
+    CommandLineParameters CommandLinesParameters;
 
 
     /// Nt value.

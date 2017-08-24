@@ -93,25 +93,25 @@ TParameters* TParameters::GetInstance()
  */
 void TParameters::ParseCommandLine(int argc, char** argv)
 {
-  CommandLinesParameters.ParseCommandLine(argc, argv);
+  CommandLinesParameters.parseCommandLine(argc, argv);
 
-  if (CommandLinesParameters.IsVersion())
+  if (CommandLinesParameters.isPrintVersionOnly())
   {
     return;
   }
 
   ReadScalarsFromHDF5InputFile(HDF5_InputFile);
 
-  if (CommandLinesParameters.IsBenchmarkFlag())
+  if (CommandLinesParameters.isBenchmarkEnabled())
   {
-    Nt = CommandLinesParameters.GetBenchmarkTimeStepsCount();
+    Nt = CommandLinesParameters.getBenchmarkTimeStepsCount();
   }
 
-  if ((Nt <= (size_t) CommandLinesParameters.GetStartTimeIndex()) ||
-      ( 0 > CommandLinesParameters.GetStartTimeIndex()) )
+  if ((Nt <= (size_t) CommandLinesParameters.getSamplingStartTimeIndex()) ||
+      ( 0 > CommandLinesParameters.getSamplingStartTimeIndex()) )
   {
     fprintf(stderr,kErrFmtIllegalSamplingStartTimeStep, (size_t) 1, Nt);
-    CommandLinesParameters.PrintUsageAndExit();
+    CommandLinesParameters.printUsage();
   }
 }// end of ParseCommandLine
 //------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(Hdf5File & HDF5_InputFile)
     // Open file
     try
     {
-      HDF5_InputFile.open(CommandLinesParameters.GetInputFileName().c_str());
+      HDF5_InputFile.open(CommandLinesParameters.getInputFileName().c_str());
     }
     catch (ios::failure e)
     {
@@ -483,7 +483,7 @@ TParameters::TParameters() :
  */
 void TParameters::PrintUsageAndExit()
 {
-  CommandLinesParameters.PrintUsageAndExit();
+  CommandLinesParameters.printUsage();
 }// end of PrintUsage
 //------------------------------------------------------------------------------
 
