@@ -40,6 +40,7 @@
 
 #include <Utils/DimensionSizes.h>
 #include <Hdf5/Hdf5File.h>
+#include <Hdf5/Hdf5FileHeader.h>
 
 /**
  * @class TParameters
