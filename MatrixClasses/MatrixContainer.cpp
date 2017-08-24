@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created) \n
- *              22 August    2017, 15:35 (revised)
+ *              24 August    2017, 09:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -158,7 +158,7 @@ void TMatrixContainer::CreateAllObjects()
   {
     if (it->second.MatrixPtr != NULL)
     {
-      PrintErrorAndThrowException(MatrixContainer_ERR_FMT_ReloactaionError,
+      PrintErrorAndThrowException(kErrFmtRelocationError,
                                   it->second.HDF5MatrixName,
                                  __FILE__,__LINE__);
     }
@@ -197,7 +197,7 @@ void TMatrixContainer::CreateAllObjects()
 
       default:
       {
-        PrintErrorAndThrowException(MatrixContainer_ERR_FMT_RecordUnknownDistributionType,
+        PrintErrorAndThrowException(kErrFmtBadMatrixType,
                                     it->second.HDF5MatrixName,
                                     __FILE__,__LINE__);
         break;

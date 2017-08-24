@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 10:30 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              24 August    2017, 09:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -81,7 +81,7 @@ void TRealMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
   if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_float)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, Matrix_ERR_FMT_MatrixNotFloat, MatrixName);
+    sprintf(ErrorMessage, kErrFmtMatrixNotFloat, MatrixName);
     throw ios::failure(ErrorMessage);
   }
 
@@ -89,7 +89,7 @@ void TRealMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
   if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_real)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, Matrix_ERR_FMT_MatrixNotReal, MatrixName);
+    sprintf(ErrorMessage, kErrFmtMatrixNotReal, MatrixName);
     throw ios::failure(ErrorMessage);
   }
 

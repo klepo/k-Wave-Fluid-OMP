@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        09 August    2011, 13:10 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              24 August    2017, 09:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -124,7 +124,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_3D_R2C(TRealMatrix& InMatrix)
   if (!fftw_plan_3D_R2C)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_PlanNotCreated, "FFT_3D_R2C");
+    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_3D_R2C");
     throw runtime_error(ErrorMessage);
   }
 }// end of Create_FFT_Plan_3D_R2C
@@ -149,7 +149,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_3D_C2R(TRealMatrix& OutMatrix)
   if (!fftw_plan_3D_C2R)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_PlanNotCreated, "FFT_3D_C2R");
+    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_3D_C2R");
     throw runtime_error(ErrorMessage);
   }
 }//end of Create_FFT_Plan_3D_C2R
@@ -222,7 +222,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_R2C(TRealMatrix& InMatrix)
   if (!fftw_plan_1DX_R2C)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_PlanNotCreated, "FFT_1DX_R2C");
+    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DX_R2C");
     throw runtime_error(ErrorMessage);
   }
 }// end of Create_FFT_Plan_1DX_R2C
@@ -298,7 +298,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_R2C(TRealMatrix& InMatrix)
   if (!fftw_plan_1DY_R2C)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_PlanNotCreated, "FFT_1DY_R2C");
+    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DY_R2C");
     throw runtime_error(ErrorMessage);
   }
 }// end of Create_FFT_Plan_1DY_R2C
@@ -373,7 +373,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DZ_R2C(TRealMatrix& InMatrix)
   if (!fftw_plan_1DZ_R2C)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_PlanNotCreated, "FFT_1DZ_R2C");
+    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DZ_R2C");
     throw runtime_error(ErrorMessage);
   }
 }// end of Create_FFT_Plan_1DZ_R2C
@@ -447,7 +447,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DX_C2R(TRealMatrix& OutMatrix)
   if (!fftw_plan_1DX_C2R)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_PlanNotCreated, "FFT_1DX_C2R");
+    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DX_C2R");
     throw runtime_error(ErrorMessage);
   }
 }// end of Create_FFT_Plan_1DX_C2R
@@ -521,7 +521,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DY_C2R(TRealMatrix& OutMatrix)
   if (!fftw_plan_1DY_C2R)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_PlanNotCreated, "FFT_1DY_C2R");
+    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DY_C2R");
     throw runtime_error(ErrorMessage);
   }
 }// end of Create_FFT_Plan_1DY_C2R
@@ -593,7 +593,7 @@ void TFFTWComplexMatrix::Create_FFT_Plan_1DZ_C2R(TRealMatrix& OutMatrix)
   if (!fftw_plan_1DZ_C2R)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_PlanNotCreated, "FFT_1DZ_C2R");
+    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DZ_C2R");
     throw runtime_error(ErrorMessage);
   }
 }// end of Create_FFT_Plan_1DZ_C2R
@@ -614,7 +614,7 @@ void TFFTWComplexMatrix::Compute_FFT_3D_R2C(TRealMatrix & InMatrix)
   else //error
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_InvalidPlan, "FFT_3D_R2C");
+    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_3D_R2C");
     throw runtime_error(ErrorMessage);
   }
 }// end of Compute_FFT_3D_R2C
@@ -634,7 +634,7 @@ void TFFTWComplexMatrix::Compute_FFT_3D_C2R(TRealMatrix & OutMatrix)
   else // error
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_InvalidPlan, "FFT_3D_C2R");
+    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_3D_C2R");
     throw runtime_error(ErrorMessage);
   }
 }// end of Compute_FFT_3D_C2R
@@ -674,7 +674,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DX_R2C(TRealMatrix& InMatrix)
   else //error
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_InvalidPlan, "FFT_1DX_R2C");
+    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DX_R2C");
     throw runtime_error(ErrorMessage);
   }
 }// end of Compute_FFT_1DX_R2C
@@ -710,7 +710,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DY_R2C(TRealMatrix& InMatrix)
   else //error
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_InvalidPlan, "FFT_1DY_R2C");
+    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DY_R2C");
     throw runtime_error(ErrorMessage);
   }
 }// end of Compute_FFT_1DY_R2C
@@ -746,7 +746,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_R2C(TRealMatrix& InMatrix)
   else //error
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_InvalidPlan, "FFT_1DZ_R2C");
+    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DZ_R2C");
     throw runtime_error(ErrorMessage);
   }
 }// end of Compute_FFT_1DZ_R2C
@@ -783,7 +783,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DX_C2R(TRealMatrix& OutMatrix)
   else //error
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_InvalidPlan, "FFT_1DX_C2R");
+    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DX_C2R");
     throw runtime_error(ErrorMessage);
   }
 }// end of Compute_FFT_1DX_C2R
@@ -819,7 +819,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DY_C2R(TRealMatrix& OutMatrix)
   else //error
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_InvalidPlan, "FFT_1DY_C2R");
+    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DY_C2R");
     throw runtime_error(ErrorMessage);
   }
 }// end of Compute_FFT_1DY_C2R
@@ -855,7 +855,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_C2R(TRealMatrix& OutMatrix)
   else //error
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, FFTWComplexMatrix_ERR_FMT_InvalidPlan, "FFT_1DZ_C2R");
+    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DZ_C2R");
     throw runtime_error(ErrorMessage);
   }
 }// end of Compute_FFT_1DZ_C2R
@@ -873,7 +873,7 @@ void TFFTWComplexMatrix::ExportWisdom()
 
     if (success == 0)
     {
-      fprintf(stderr,FFTW_WARNING_FMT_WisdomNotExported);
+      fprintf(stderr,kErrFmtFftWisdomNotExported);
     }
   #endif
 }// end of ExportWisdom
@@ -891,7 +891,7 @@ void TFFTWComplexMatrix::ImportWisdom()
     int success = fftwf_import_wisdom_from_filename(GetWisdomFileName().c_str());
     if (success == 0)
     {
-      fprintf(stderr,FFTW_WARNING_FMT_WisdomNotImported);
+      fprintf(stderr,ErrFmtFftWisdomNotImported);
     }
   #endif
 }// end of Import wisdom
@@ -922,7 +922,7 @@ void TFFTWComplexMatrix::AllocateMemory()
 
   if (!pMatrixData)
   {
-    fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TFFTWComplexMatrix");
+    fprintf(stderr,kErrFmtNotEnoughMemory, "TFFTWComplexMatrix");
     throw bad_alloc();
   }
 

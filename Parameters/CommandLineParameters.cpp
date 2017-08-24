@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              29 September 2014, 12:23 (revised)
+ *              24 August    2017, 09:25 (revised)
  *
  *
  * @section License
@@ -264,7 +264,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if ((optarg == NULL) || (atol(optarg) <= 0))
         {
-          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoVerboseIntreval);
+          fprintf(stderr,"%s", kErrFmtNoProgressPrintInterval);
            PrintUsageAndExit();
         }
         else
@@ -278,7 +278,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if ((optarg == NULL) || (atol(optarg) <= 0))
         {
-          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoThreadNumbers);
+          fprintf(stderr,"%s", kErrFmtInvalidNumberOfThreads);
           PrintUsageAndExit();
         }
         else
@@ -292,7 +292,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if ((optarg == NULL) || (atol(optarg) < 0) || atol(optarg) > 9)
         {
-          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCompressionLevel);
+          fprintf(stderr,"%s", kErrFmtNoCompressionLevel);
           PrintUsageAndExit();
         }
         else
@@ -324,7 +324,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if ((optarg == NULL) || (atol(optarg) < 1))
         {
-          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoStartTimestep);
+          fprintf(stderr,"%s", kErrFmtNoSamplingStartTimeStep);
           PrintUsageAndExit();
         }
         StartTimeStep = (size_t) (atol(optarg) - 1);
@@ -339,7 +339,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           BenchmarkFlag = true;
           if ((optarg == NULL) || (atol(optarg) <= 0))
           {
-            fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoBenchmarkTimeStepCount);
+            fprintf(stderr,"%s", kErrFmtNoBenchmarkTimeStep);
             PrintUsageAndExit();
           }
           else
@@ -352,7 +352,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           CheckpointFlag = true;
           if ((optarg == NULL))
           {
-            fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCheckpointFile);
+            fprintf(stderr,"%s", kErrFmtNoCheckpointFile);
             PrintUsageAndExit();
           }
           else
@@ -365,7 +365,7 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           CheckpointFlag = true ;
           if ((optarg == NULL) || (atol(optarg) <= 0))
           {
-            fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCheckpointInterval);
+            fprintf(stderr,"%s", kErrFmtNoCheckpointInterval);
             PrintUsageAndExit();
           }
           else
@@ -457,14 +457,14 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
   //-- Post checks --//
   if (InputFileName == "")
   {
-    fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoInputFile);
+    fprintf(stderr, "%s", kErrFmtNoInputFile);
     PrintUsageAndExit();
   }
 
 
   if (OutputFileName == "")
   {
-    fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoOutputFile);
+    fprintf(stderr, "%s", kErrFmtNoOutputFile);
     PrintUsageAndExit();
   }
 
@@ -472,12 +472,12 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
   {
     if (CheckpointFileName == "")
     {
-      fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoCheckpointFile);
+      fprintf(stderr, "%s", kErrFmtNoCheckpointFile);
       PrintUsageAndExit();
     }
     if (CheckpointInterval == 0)
     {
-      fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoCheckpointInterval);
+      fprintf(stderr, "%s", kErrFmtNoCheckpointInterval);
       PrintUsageAndExit();
     }
   }

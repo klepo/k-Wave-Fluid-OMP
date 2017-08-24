@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              24 August    2017, 09:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -122,7 +122,7 @@ void TBaseOutputHDF5Stream::AllocateMemory()
 
   if (!StoreBuffer)
   {
-    fprintf(stderr, Matrix_ERR_FMT_NotEnoughMemory, "TBaseOutputHDF5Stream");
+    fprintf(stderr, kErrFmtNotEnoughMemory, "TBaseOutputHDF5Stream");
     throw bad_alloc();
   }
 

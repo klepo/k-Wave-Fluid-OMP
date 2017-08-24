@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 15:16 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              24 August    2017, 09:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -94,7 +94,7 @@ void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
   if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(),MatrixName) != THDF5_File::hdf5_mdt_long)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage,Matrix_ERR_FMT_MatrixNotLong,MatrixName);
+    sprintf(ErrorMessage,kErrFmtMatrixNotIndex,MatrixName);
     throw ios::failure(ErrorMessage);
   }
 
@@ -102,7 +102,7 @@ void TIndexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
   if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_real)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage,Matrix_ERR_FMT_MatrixNotReal,MatrixName);
+    sprintf(ErrorMessage,kErrFmtMatrixNotReal,MatrixName);
     throw ios::failure(ErrorMessage);
   }
 

@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 12:13 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              24 August    2017, 09:25 (revised)
  *
  * @section license
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -121,7 +121,7 @@ void TBaseFloatMatrix::AllocateMemory()
 
   if (!pMatrixData)
   {
-    fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseFloatMatrix");
+    fprintf(stderr,kErrFmtNotEnoughMemory, "TBaseFloatMatrix");
     throw bad_alloc();
   }
 

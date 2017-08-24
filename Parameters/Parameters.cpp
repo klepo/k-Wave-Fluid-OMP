@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2012, 13:39 (created) \n
- *              22 August    2017, 15:32 (revised)
+ *              24 August    2017, 09:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -110,7 +110,7 @@ void TParameters::ParseCommandLine(int argc, char** argv)
   if ((Nt <= (size_t) CommandLinesParameters.GetStartTimeIndex()) ||
       ( 0 > CommandLinesParameters.GetStartTimeIndex()) )
   {
-    fprintf(stderr,Parameters_ERR_FMT_Illegal_StartTime_value, (size_t) 1, Nt);
+    fprintf(stderr,kErrFmtIllegalSamplingStartTimeStep, (size_t) 1, Nt);
     CommandLinesParameters.PrintUsageAndExit();
   }
 }// end of ParseCommandLine
@@ -147,7 +147,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   if (HDF5_FileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_input)
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, Parameters_ERR_FMT_IncorrectInputFileFormat, GetInputFileName().c_str());
+    sprintf(ErrorMessage, kErrFmtBadInputFileFormat, GetInputFileName().c_str());
     throw ios::failure(ErrorMessage);
   }
 
@@ -155,7 +155,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   if (!HDF5_FileHeader.CheckMajorFileVersion())
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion, GetInputFileName().c_str(),
+    sprintf(ErrorMessage, kErrFmtBadMajorFileVersion, GetInputFileName().c_str(),
             HDF5_FileHeader.GetCurrentHDF5_MajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
@@ -163,7 +163,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
   if (!HDF5_FileHeader.CheckMinorFileVersion())
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion, GetInputFileName().c_str(),
+    sprintf(ErrorMessage, kErrFmtBadMinorFileVersion, GetInputFileName().c_str(),
             HDF5_FileHeader.GetCurrentHDF5_MinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
@@ -208,7 +208,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
     //if -u_non_staggered_raw enabled, throw an error - not supported
     if (IsStore_u_non_staggered_raw())
     {
-      throw ios::failure(Parameters_ERR_FMT_UNonStaggeredNotSupportedForFile10);
+      throw ios::failure(kErrFmtNonStaggeredVelocityNotSupportedFileVersion);
     }
   }
 
@@ -229,7 +229,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
         break;
       default:
       {
-        throw ios::failure(Parameters_ERR_FMT_WrongSensorMaskType);
+        throw ios::failure(kErrFmtBadSensorMaskType);
         break;
       }
     }//case
@@ -317,7 +317,7 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
     HDF5_InputFile.ReadScalarValue(HDF5RootGroup, kAlphaPowerName, alpha_power);
     if (alpha_power == 1.0f)
     {
-      fprintf(stderr, "%s", Parameters_ERR_FMT_Illegal_alpha_power_value);
+      fprintf(stderr, "%s", kErrFmtIllegalAlphaPowerValue);
       PrintUsageAndExit();
     }
 
