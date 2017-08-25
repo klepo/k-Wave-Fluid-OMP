@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        09 August    2011, 13:10 (created) \n
- *              24 August    2017, 09:25 (revised)
+ *              25 August    2017, 11:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -662,7 +662,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DX_R2C(TRealMatrix& InMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = Parameters::getInstance()->getFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
       {
         fftwf_execute_dft_r2c(fftw_plan_1DX_R2C,
@@ -698,7 +698,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DY_R2C(TRealMatrix& InMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = Parameters::getInstance()->getFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
       {
         fftwf_execute_dft_r2c(fftw_plan_1DY_R2C,
@@ -734,7 +734,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_R2C(TRealMatrix& InMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = Parameters::getInstance()->getFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Y; slab_id++)
       {
         fftwf_execute_dft_r2c(fftw_plan_1DZ_R2C,
@@ -771,7 +771,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DX_C2R(TRealMatrix& OutMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = Parameters::getInstance()->getFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
       {
         fftwf_execute_dft_c2r(fftw_plan_1DX_C2R,
@@ -807,7 +807,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DY_C2R(TRealMatrix& OutMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = Parameters::getInstance()->getFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Z; slab_id++)
       {
         fftwf_execute_dft_c2r(fftw_plan_1DY_C2R,
@@ -843,7 +843,7 @@ void TFFTWComplexMatrix::Compute_FFT_1DZ_C2R(TRealMatrix& OutMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes Dims = TParameters::GetInstance()->GetFullDimensionSizes();
+      const DimensionSizes Dims = Parameters::getInstance()->getFullDimensionSizes();
       for (size_t slab_id = 0; slab_id < Dims.Y; slab_id++)
       {
         fftwf_execute_dft_c2r(fftw_plan_1DZ_C2R,
@@ -952,7 +952,7 @@ void TFFTWComplexMatrix::FreeMemory()
  */
 string TFFTWComplexMatrix::GetWisdomFileName()
 {
-  string FileName = TParameters::GetInstance()->GetCheckpointFileName();
+  string FileName = Parameters::getInstance().getCheckpointFileName();
   FileName.erase(FileName.find_last_of("."), string::npos);
 
   FileName.append(".");

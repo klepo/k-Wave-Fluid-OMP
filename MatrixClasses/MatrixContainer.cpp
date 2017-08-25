@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created) \n
- *              24 August    2017, 14:42 (revised)
+ *              25 August    2017, 11:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -253,7 +253,7 @@ void TMatrixContainer::StoreDataIntoCheckpointHDF5File(Hdf5File & HDF5_File)
     {
       it->second.MatrixPtr->WriteDataToHDF5File(HDF5_File,
                                                 it->second.HDF5MatrixName.c_str(),
-                                                TParameters::GetInstance()->GetCompressionLevel());
+                                                Parameters::getInstance().getCompressionLevel());
     }
   }
 }// end of StoreDataIntoCheckpointHDF5File
@@ -287,10 +287,10 @@ void TMatrixContainer::FreeAllMatrices()
 void TMatrixContainer::AddMatricesIntoContainer()
 {
 
-  TParameters * Params = TParameters::GetInstance();
+  Parameters& Params = Parameters::getInstance();
 
-  DimensionSizes FullDims = Params->GetFullDimensionSizes();
-  DimensionSizes ReducedDims = Params->GetReducedDimensionSizes();
+  DimensionSizes FullDims = Params.getFullDimensionSizes();
+  DimensionSizes ReducedDims = Params.getReducedDimensionSizes();
 
   const bool LOAD         = true;
   const bool NOLOAD       = false;
@@ -301,7 +301,7 @@ void TMatrixContainer::AddMatricesIntoContainer()
   //----------------------Allocate all matrices ----------------------------//
 
   MatrixContainer[kappa] .SetAllValues(NULL ,TMatrixRecord::mdtReal, ReducedDims, NOLOAD, NOCHECKPOINT, kKappaRName);
-  if (!Params->Get_c0_scalar_flag())
+  if (!Params.getC0ScalarFlag())
   {
     MatrixContainer[c2]  .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   ,   LOAD, NOCHECKPOINT, kC0Name);
   }
@@ -319,7 +319,7 @@ void TMatrixContainer::AddMatricesIntoContainer()
   MatrixContainer[duydy] .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kDuydyName);
   MatrixContainer[duzdz] .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kDuzdzName);
 
-  if (!Params->Get_rho0_scalar_flag())
+  if (!Params.getRho0ScalarFlag())
   {
     MatrixContainer[rho0]       .SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims,  LOAD, NOCHECKPOINT, kRho0Name);
     MatrixContainer[dt_rho0_sgx].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims,  LOAD, NOCHECKPOINT, kRho0SgxName);
@@ -345,17 +345,17 @@ void TMatrixContainer::AddMatricesIntoContainer()
   MatrixContainer[pml_y]     .SetAllValues(NULL,TMatrixRecord::mdtReal,         DimensionSizes(1, FullDims.ny, 1),    LOAD, NOCHECKPOINT, kPmlYName);
   MatrixContainer[pml_z]     .SetAllValues(NULL,TMatrixRecord::mdtReal,         DimensionSizes(1, 1, FullDims.nz),    LOAD, NOCHECKPOINT, kPmlZName);
 
-  if (Params->Get_nonlinear_flag())
+  if (Params.getNonLinearFlag())
   {
-    if (! Params->Get_BonA_scalar_flag())
+    if (! Params.getBOnAScalarFlag())
     {
       MatrixContainer[BonA]      .SetAllValues   (NULL,TMatrixRecord::mdtReal, FullDims ,   LOAD, NOCHECKPOINT, kBonAName);
     }
   }
 
-  if (Params->Get_absorbing_flag() != 0)
+  if (Params.getAbsorbingFlag() != 0)
   {
-    if (!((Params->Get_c0_scalar_flag()) && (Params->Get_alpha_coeff_scallar_flag())))
+    if (!((Params.getC0ScalarFlag()) && (Params.getAlphaCoeffScalarFlag())))
     {
       MatrixContainer[absorb_tau].SetAllValues (NULL,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kAbsorbTauName);
       MatrixContainer[absorb_eta].SetAllValues (NULL,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kAbsorbEtaName);
@@ -365,125 +365,125 @@ void TMatrixContainer::AddMatricesIntoContainer()
   }
 
   // linear sensor mask
-  if (Params->Get_sensor_mask_type() == TParameters::smt_index)
+  if (Params.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
     MatrixContainer[sensor_mask_index].SetAllValues(NULL,TMatrixRecord::mdtIndex,
-                                                    DimensionSizes(Params->Get_sensor_mask_index_size(), 1, 1),
+                                                    DimensionSizes(Params.getSensorMaskIndexSize(), 1, 1),
                                                     LOAD, NOCHECKPOINT, kSensorMaskIndexName);
   }
 
   // cuboid sensor mask
-  if (Params->Get_sensor_mask_type() == TParameters::smt_corners)
+  if (Params.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
     MatrixContainer[sensor_mask_corners].SetAllValues(NULL,TMatrixRecord::mdtIndex,
-                                                      DimensionSizes(6 ,Params->Get_sensor_mask_corners_size(), 1),
+                                                      DimensionSizes(6 ,Params.getSensorMaskCornersSize(), 1),
                                                       LOAD, NOCHECKPOINT, kSensorMaskCornersName);
   }
 
 
   // if p0 source flag
-  if (Params->Get_p0_source_flag() == 1)
+  if (Params.getInitialPressureSourceFlag() == 1)
   {
     MatrixContainer[p0_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims, LOAD, NOCHECKPOINT, kInitialPressureSourceInputName);
   }
 
 
   // us_index
-  if ((Params->Get_transducer_source_flag() != 0) ||
-      (Params->Get_ux_source_flag() != 0)         ||
-      (Params->Get_uy_source_flag() != 0)         ||
-      (Params->Get_uz_source_flag() != 0))
+  if ((Params.getTransducerSourceFlag() != 0) ||
+      (Params.getVelocityXSourceFlag() != 0)         ||
+      (Params.getVelocityYSourceFlag() != 0)         ||
+      (Params.getVelocityZSourceFlag() != 0))
   {
     MatrixContainer[u_source_index].SetAllValues(NULL,TMatrixRecord::mdtIndex,
-                                                 DimensionSizes(1 ,1, Params->Get_u_source_index_size()),
+                                                 DimensionSizes(1 ,1, Params.getVelocitySourceIndexSize()),
                                                  LOAD, NOCHECKPOINT, kVelocitySourceIndexName);
   }
 
   //transducer source flag defined
-  if (Params->Get_transducer_source_flag() != 0)
+  if (Params.getTransducerSourceFlag() != 0)
   {
-    MatrixContainer[delay_mask]             .SetAllValues(NULL,TMatrixRecord::mdtIndex,DimensionSizes(1 ,1, Params->Get_u_source_index_size())         ,
+    MatrixContainer[delay_mask]             .SetAllValues(NULL,TMatrixRecord::mdtIndex,DimensionSizes(1 ,1, Params.getVelocitySourceIndexSize())         ,
                                                           LOAD, NOCHECKPOINT, kDelayMaskName);
-    MatrixContainer[transducer_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal ,DimensionSizes(1 ,1, Params->Get_transducer_source_input_size()),
+    MatrixContainer[transducer_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal ,DimensionSizes(1 ,1, Params.getTransducerSourceInputSize()),
                                                           LOAD, NOCHECKPOINT, kInitialPressureSourceInputName);
   }
 
   // p variables
-  if (Params->Get_p_source_flag() != 0)
+  if (Params.getPressureSourceFlag() != 0)
   {
-    if (Params->Get_p_source_many() == 0)
+    if (Params.getPressureSourceMany() == 0)
     { // 1D case
       MatrixContainer[p_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                   DimensionSizes(1 ,1, Params->Get_p_source_flag()),
+                                                   DimensionSizes(1 ,1, Params.getPressureSourceFlag()),
                                                    LOAD, NOCHECKPOINT, kPressureSourceInputName);
     }
     else
     { // 2D case
       MatrixContainer[p_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                   DimensionSizes(1 ,Params->Get_p_source_index_size(),Params->Get_p_source_flag()),
+                                                   DimensionSizes(1 ,Params.getPressureSourceIndexSize(),Params.getPressureSourceFlag()),
                                                    LOAD, NOCHECKPOINT, kPressureSourceInputName);
     }
 
     MatrixContainer[p_source_index].SetAllValues(NULL,TMatrixRecord::mdtIndex,
-                                                 DimensionSizes(1 ,1, Params->Get_p_source_index_size()),
+                                                 DimensionSizes(1 ,1, Params.getPressureSourceIndexSize()),
                                                  LOAD, NOCHECKPOINT, kPressureSourceIndexName);
   }
 
 
 
     //----------------------------uxyz source flags---------------------------//
-  if (Params->Get_ux_source_flag() != 0)
+  if (Params.getVelocityXSourceFlag() != 0)
   {
-    if (Params->Get_u_source_many() == 0)
+    if (Params.getVelocitySourceMany() == 0)
     { // 1D
       MatrixContainer[ux_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,1, Params->Get_ux_source_flag()),
+                                                    DimensionSizes(1 ,1, Params.getVelocityXSourceFlag()),
                                                     LOAD, NOCHECKPOINT, kVelocityXSourceInputName);
     }
     else
     { // 2D
       MatrixContainer[ux_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,Params->Get_u_source_index_size(),Params->Get_ux_source_flag()),
+                                                    DimensionSizes(1 ,Params.getVelocitySourceIndexSize(),Params.getVelocityXSourceFlag()),
                                                     LOAD, NOCHECKPOINT, kVelocityXSourceInputName);
     }
   }// ux_source_input
 
 
-  if (Params->Get_uy_source_flag() != 0)
+  if (Params.getVelocityYSourceFlag() != 0)
   {
-    if (Params->Get_u_source_many() == 0)
+    if (Params.getVelocitySourceMany() == 0)
     { // 1D
       MatrixContainer[uy_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,1, Params->Get_uy_source_flag()),
+                                                    DimensionSizes(1 ,1, Params.getVelocityYSourceFlag()),
                                                     LOAD, NOCHECKPOINT, kVelocityYSourceInputName);
     }
     else
     { // 2D
       MatrixContainer[uy_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,Params->Get_u_source_index_size(),Params->Get_uy_source_flag()),
+                                                    DimensionSizes(1 ,Params.getVelocitySourceIndexSize(),Params.getVelocityYSourceFlag()),
                                                     LOAD, NOCHECKPOINT, kVelocityYSourceInputName);
     }
   }// uy_source_input
 
-  if (Params->Get_uz_source_flag() != 0)
+  if (Params.getVelocityZSourceFlag() != 0)
   {
-    if (Params->Get_u_source_many() == 0)
+    if (Params.getVelocitySourceMany() == 0)
     { // 1D
       MatrixContainer[uz_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,1, Params->Get_uz_source_flag()),
+                                                    DimensionSizes(1 ,1, Params.getVelocityZSourceFlag()),
                                                     LOAD, NOCHECKPOINT, kVelocityZSourceInputName);
     }
     else
     { // 2D
       MatrixContainer[uz_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,Params->Get_u_source_index_size(),Params->Get_uz_source_flag()),
+                                                    DimensionSizes(1 ,Params.getVelocitySourceIndexSize(),Params.getVelocityZSourceFlag()),
                                                     LOAD, NOCHECKPOINT, kVelocityZSourceInputName);
     }
   }// uz_source_input
 
 
   //-- Nonlinear grid
-  if (Params->Get_nonuniform_grid_flag()!= 0)
+  if (Params.getNonUniformGridFlag()!= 0)
   {
     MatrixContainer[dxudxn]    .SetAllValues(NULL,TMatrixRecord::mdtReal, DimensionSizes(FullDims.nx, 1, 1), LOAD, NOCHECKPOINT, kDxudxnName);
     MatrixContainer[dyudyn]    .SetAllValues(NULL,TMatrixRecord::mdtReal, DimensionSizes(1, FullDims.ny, 1), LOAD, NOCHECKPOINT, kDyudynName);
@@ -495,7 +495,7 @@ void TMatrixContainer::AddMatricesIntoContainer()
   }
 
   //-- u_non_staggered_raw
-  if (Params->IsStore_u_non_staggered_raw())
+  if (Params.getStoreVelocityNonStaggeredRawFlag())
   {
     DimensionSizes ShiftDims = FullDims;
 
@@ -543,7 +543,7 @@ void TMatrixContainer::AddMatricesIntoContainer()
   //------------------------------------------------------------------------//
   // this matrix used to load alpha_coeff for absorb_tau pre-calculation
 
-  if ((Params->Get_absorbing_flag() != 0) && (!Params->Get_alpha_coeff_scallar_flag()))
+  if ((Params.getAbsorbingFlag() != 0) && (!Params.getAlphaCoeffScalarFlag()))
   {
     MatrixContainer[Temp_1_RS3D].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims ,   LOAD, NOCHECKPOINT, kAlphaCoeffName);
   }
@@ -622,14 +622,14 @@ TOutputStreamContainer::~TOutputStreamContainer()
 void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixContainer)
 {
 
-  TParameters * Params = TParameters::GetInstance();
+  Parameters& Params = Parameters::getInstance();
 
   float * TempBufferX = MatrixContainer.GetMatrix<TRealMatrix>(Temp_1_RS3D).GetRawData();
   float * TempBufferY = MatrixContainer.GetMatrix<TRealMatrix>(Temp_2_RS3D).GetRawData();
   float * TempBufferZ = MatrixContainer.GetMatrix<TRealMatrix>(Temp_3_RS3D).GetRawData();
 
   //--------------------- Pressure ------------------/
-  if (Params->IsStore_p_raw())
+  if (Params.getStorePressureRawFlag())
   {
     OutputStreamContainer[p_sensor_raw] = CreateNewOutputStream(MatrixContainer,
                                                                 p,
@@ -638,7 +638,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                 TempBufferX);
   }// IsStore_p_raw
 
-  if (Params->IsStore_p_rms())
+  if (Params.getStorePressureRmsFlag())
   {
     OutputStreamContainer[p_sensor_rms] = CreateNewOutputStream(MatrixContainer,
                                                                 p,
@@ -646,7 +646,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                 TBaseOutputHDF5Stream::roRMS);
   }
 
-  if (Params->IsStore_p_max())
+  if (Params.getStorePressureMaxFlag())
   {
     OutputStreamContainer[p_sensor_max] = CreateNewOutputStream(MatrixContainer,
                                                                 p,
@@ -654,7 +654,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                 TBaseOutputHDF5Stream::roMAX);
   }
 
-  if (Params->IsStore_p_min())
+  if (Params.getStorePressureMinFlag())
   {
     OutputStreamContainer[p_sensor_min] = CreateNewOutputStream(MatrixContainer,
                                                                 p,
@@ -662,26 +662,26 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                 TBaseOutputHDF5Stream::roMIN);
   }
 
-  if (Params->IsStore_p_max_all())
+  if (Params.getStorePressureMaxAllFlag())
   {
     OutputStreamContainer[p_sensor_max_all] =
-            new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
+            new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kPressureMaxAllName.c_str(),
                                              MatrixContainer.GetMatrix<TRealMatrix>(p),
                                              TBaseOutputHDF5Stream::roMAX);
   }
 
-  if (Params->IsStore_p_min_all())
+  if (Params.getStorePressureMinAllFlag())
   {
     OutputStreamContainer[p_sensor_min_all] =
-            new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
+            new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kPressureMinAllName.c_str(),
                                              MatrixContainer.GetMatrix<TRealMatrix>(p),
                                              TBaseOutputHDF5Stream::roMIN);
   }
 
   //--------------------- Velocity ------------------/
-  if (Params->IsStore_u_raw())
+  if (Params.getStoreVelocityRawFlag())
   {
     OutputStreamContainer[ux_sensor_raw] = CreateNewOutputStream(MatrixContainer,
                                                                  ux_sgx,
@@ -700,7 +700,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                  TempBufferZ);
   }
 
-  if (Params->IsStore_u_non_staggered_raw())
+  if (Params.getStoreVelocityNonStaggeredRawFlag())
   {
     OutputStreamContainer[ux_shifted_sensor_raw] = CreateNewOutputStream(MatrixContainer,
                                                                          ux_shifted,
@@ -719,7 +719,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                          TempBufferZ);
   }
 
-  if (Params->IsStore_u_rms())
+  if (Params.getStoreVelocityRmsFlag())
   {
     OutputStreamContainer[ux_sensor_rms] = CreateNewOutputStream(MatrixContainer,
                                                                  ux_sgx,
@@ -735,7 +735,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                  TBaseOutputHDF5Stream::roRMS);
   }
 
-  if (Params->IsStore_u_max())
+  if (Params.getStoreVelocityMaxFlag())
   {
     OutputStreamContainer[ux_sensor_max] = CreateNewOutputStream(MatrixContainer,
                                                                  ux_sgx,
@@ -751,7 +751,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                  TBaseOutputHDF5Stream::roMAX);
   }
 
-  if (Params->IsStore_u_min())
+  if (Params.getStoreVelocityMinFlag())
   {
     OutputStreamContainer[ux_sensor_min] = CreateNewOutputStream(MatrixContainer,
                                                                  ux_sgx,
@@ -767,39 +767,39 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
                                                                  TBaseOutputHDF5Stream::roMIN);
   }
 
-  if (Params->IsStore_u_max_all())
+  if (Params.getStoreVelocityMaxAllFlag())
   {
     OutputStreamContainer[ux_sensor_max_all] =
-            new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
+            new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUxMaxAllName.c_str(),
                                              MatrixContainer.GetMatrix<TRealMatrix>(ux_sgx),
                                              TBaseOutputHDF5Stream::roMAX);
     OutputStreamContainer[uy_sensor_max_all] =
-            new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
+            new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUyMaxAllName.c_str(),
                                              MatrixContainer.GetMatrix<TRealMatrix>(uy_sgy),
                                              TBaseOutputHDF5Stream::roMAX);
     OutputStreamContainer[uz_sensor_max_all] =
-            new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
+            new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUzMaxAllName.c_str(),
                                              MatrixContainer.GetMatrix<TRealMatrix>(uz_sgz),
                                              TBaseOutputHDF5Stream::roMAX);
   }
 
-  if (Params->IsStore_u_min_all())
+  if (Params.getStoreVelocityMinAllFlag())
   {
     OutputStreamContainer[ux_sensor_min_all] =
-            new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
+            new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUxMinAllName.c_str(),
                                              MatrixContainer.GetMatrix<TRealMatrix>(ux_sgx),
                                              TBaseOutputHDF5Stream::roMIN);
     OutputStreamContainer[uy_sensor_min_all] =
-            new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
+            new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUyMinAllName.c_str(),
                                              MatrixContainer.GetMatrix<TRealMatrix>(uy_sgy),
                                              TBaseOutputHDF5Stream::roMIN);
     OutputStreamContainer[uz_sensor_min_all] =
-            new TWholeDomainOutputHDF5Stream(Params->HDF5_OutputFile,
+            new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUzMinAllName.c_str(),
                                              MatrixContainer.GetMatrix<TRealMatrix>(uz_sgz),
                                              TBaseOutputHDF5Stream::roMIN);
@@ -937,13 +937,13 @@ TBaseOutputHDF5Stream * TOutputStreamContainer::CreateNewOutputStream(TMatrixCon
                                                                       const TBaseOutputHDF5Stream::TReductionOperator  ReductionOp,
                                                                       float *            BufferToReuse)
 {
-  TParameters * Params = TParameters::GetInstance();
+  Parameters& Params = Parameters::getInstance();
 
   TBaseOutputHDF5Stream * Stream = NULL;
 
-  if (Params->Get_sensor_mask_type() == TParameters::smt_index)
+  if (Params.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
-    Stream = new TIndexOutputHDF5Stream(Params->HDF5_OutputFile,
+    Stream = new TIndexOutputHDF5Stream(Params.getOutputFile(),
                                         HDF5_DatasetName,
                                         MatrixContainer.GetMatrix<TRealMatrix>(SampledMatrixID),
                                         MatrixContainer.GetMatrix<TIndexMatrix>(sensor_mask_index),
@@ -952,7 +952,7 @@ TBaseOutputHDF5Stream * TOutputStreamContainer::CreateNewOutputStream(TMatrixCon
   }
   else
   {
-    Stream = new TCuboidOutputHDF5Stream(Params->HDF5_OutputFile,
+    Stream = new TCuboidOutputHDF5Stream(Params.getOutputFile(),
                                          HDF5_DatasetName,
                                          MatrixContainer.GetMatrix<TRealMatrix>(SampledMatrixID),
                                          MatrixContainer.GetMatrix<TIndexMatrix>(sensor_mask_corners),

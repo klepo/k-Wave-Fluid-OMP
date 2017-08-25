@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              24 August    2017, 14:42 (revised)
+ *              25 August    2017, 11:19 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -77,7 +77,7 @@ void TBaseOutputHDF5Stream::PostProcess()
 
     case roRMS  :
     {
-      const float ScalingCoeff = 1.0f / (TParameters::GetInstance()->Get_Nt() - TParameters::GetInstance()->GetStartTimeIndex());
+      const float ScalingCoeff = 1.0f / (Parameters::getInstance().getNt() - Parameters::getInstance().getSamplingStartTimeIndex());
 
       #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
       for (size_t i = 0; i < BufferSize; i++)
@@ -251,11 +251,11 @@ void TIndexOutputHDF5Stream::Create()
 {
   size_t NumberOfSampledElementsPerStep = SensorMask.GetTotalElementCount();
 
-  TParameters * Params = TParameters::GetInstance();
+  Parameters& Params = Parameters::getInstance();
 
   // Derive dataset dimension sizes
   DimensionSizes DatasetSize(NumberOfSampledElementsPerStep,
-                              (ReductionOp == roNONE) ?  Params->Get_Nt() - Params->GetStartTimeIndex() : 1,
+                              (ReductionOp == roNONE) ?  Params.getNt() - Params.getSamplingStartTimeIndex() : 1,
                               1);
 
   // Set HDF5 chunk size
@@ -272,7 +272,7 @@ void TIndexOutputHDF5Stream::Create()
                                            DatasetSize,
                                            ChunkSize,
                                            Hdf5File::MatrixDataType::kFloat,
-                                           Params->GetCompressionLevel());
+                                           Params.getCompressionLevel());
 
   // Write dataset parameters
   HDF5_File.writeMatrixDomainType(HDF5_File.getRootGroup(),
@@ -300,7 +300,7 @@ void TIndexOutputHDF5Stream::Create()
 void TIndexOutputHDF5Stream::Reopen()
 {
   // Get parameters
-  TParameters * Params = TParameters::GetInstance();
+  Parameters& Params = Parameters::getInstance();
 
   // Set buffer size
   BufferSize = SensorMask.GetTotalElementCount();
@@ -315,15 +315,15 @@ void TIndexOutputHDF5Stream::Reopen()
 
   if (ReductionOp == roNONE)
   { // raw time series - just seek to the right place in the dataset
-    SampledTimeStep = (Params->Get_t_index() < Params->GetStartTimeIndex()) ?
-                              0 : (Params->Get_t_index() - Params->GetStartTimeIndex());
+    SampledTimeStep = (Params.getTimeIndex() < Params.getSamplingStartTimeIndex()) ?
+                              0 : (Params.getTimeIndex() - Params.getSamplingStartTimeIndex());
 
   }
   else
   { // aggregated quantities - reload data
     SampledTimeStep = 0;
     // read only if it is necessary (it is anything to read).
-    if (Params->Get_t_index() > Params->GetStartTimeIndex())
+    if (Params.getTimeIndex() > Params.getSamplingStartTimeIndex())
     {
       // Since there is only a single timestep in the dataset, I can read the whole dataset
       HDF5_File.readCompleteDataset(HDF5_File.getRootGroup(),
@@ -555,13 +555,13 @@ void TCuboidOutputHDF5Stream::Create()
 void TCuboidOutputHDF5Stream::Reopen()
 {
   // Get parameters
-  TParameters * Params = TParameters::GetInstance();
+  Parameters& Params = Parameters::getInstance();
 
   SampledTimeStep = 0;
   if (ReductionOp == roNONE) // set correct sampled timestep for raw data series
   {
-    SampledTimeStep = (Params->Get_t_index() < Params->GetStartTimeIndex()) ?
-                        0 : (Params->Get_t_index() - Params->GetStartTimeIndex());
+    SampledTimeStep = (Params.getTimeIndex() < Params.getSamplingStartTimeIndex()) ?
+                        0 : (Params.getTimeIndex() - Params.getSamplingStartTimeIndex());
   }
 
   // Create the memory buffer if necessary and set starting address
@@ -595,7 +595,7 @@ void TCuboidOutputHDF5Stream::Reopen()
     CuboidsInfo.push_back(CuboidInfo);
 
     // read only if there is anything to read
-    if (Params->Get_t_index() > Params->GetStartTimeIndex())
+    if (Params.getTimeIndex() > Params.getSamplingStartTimeIndex())
     {
       if (ReductionOp != roNONE)
       { // Reload data
@@ -860,11 +860,11 @@ void TCuboidOutputHDF5Stream::Close()
  */
 hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
 {
-  TParameters * Params = TParameters::GetInstance();
+  Parameters& Params = Parameters::getInstance();
 
   // if time series then Number of steps else 1
   size_t NumberOfSampledTimeSteps = (ReductionOp == roNONE)
-                                      ? Params->Get_Nt() - Params->GetStartTimeIndex()
+                                      ? Params.getNt() - Params.getSamplingStartTimeIndex()
                                       : 0; // will be a 3D dataset
   // Set cuboid dimensions (subtract two corners (add 1) and use the appropriate component)
   DimensionSizes CuboidSize((SensorMask.GetBottomRightCorner(Index) - SensorMask.GetTopLeftCorner(Index)).nx,
@@ -893,7 +893,7 @@ hid_t TCuboidOutputHDF5Stream::CreateCuboidDataset(const size_t Index)
                                                  CuboidSize,
                                                  CuboidChunkSize,
                                                  Hdf5File::MatrixDataType::kFloat,
-                                                 Params->GetCompressionLevel());
+                                                 Params.getCompressionLevel());
 
   // Write dataset parameters
   HDF5_File.writeMatrixDomainType(HDF5_GroupId,
@@ -991,7 +991,7 @@ void TWholeDomainOutputHDF5Stream::Create()
                                            SourceMatrix.GetDimensionSizes(),
                                            ChunkSize,
                                            Hdf5File::MatrixDataType::kFloat,
-                                           TParameters::GetInstance()->GetCompressionLevel());
+                                           Parameters::getInstance().getCompressionLevel());
 
   // Write dataset parameters
   HDF5_File.writeMatrixDomainType(HDF5_File.getRootGroup(),
@@ -1015,7 +1015,7 @@ void TWholeDomainOutputHDF5Stream::Create()
  */
 void TWholeDomainOutputHDF5Stream::Reopen()
 {
-  TParameters * Params = TParameters::GetInstance();
+  Parameters& Params = Parameters::getInstance();
 
   // Set buffer size
   BufferSize = SourceMatrix.GetTotalElementCount();
@@ -1030,12 +1030,12 @@ void TWholeDomainOutputHDF5Stream::Reopen()
   SampledTimeStep = 0;
   if (ReductionOp == roNONE)
   { // seek in the dataset
-    SampledTimeStep = (Params->Get_t_index() < Params->GetStartTimeIndex()) ?
-                        0 : (Params->Get_t_index() - Params->GetStartTimeIndex());
+    SampledTimeStep = (Params.getTimeIndex() < Params.getSamplingStartTimeIndex()) ?
+                        0 : (Params.getTimeIndex() - Params.getSamplingStartTimeIndex());
   }
   else
   { // reload data
-    if (Params->Get_t_index() > Params->GetStartTimeIndex())
+    if (Params.getTimeIndex() > Params.getSamplingStartTimeIndex())
     {
       HDF5_File.readCompleteDataset(HDF5_File.getRootGroup(),
                                     HDF5_RootObjectName,

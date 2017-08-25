@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:57 (created) \n
- *              02 October   2014, 10:06 (revised)
+ *              25 August    2017, 11:17 (revised)
  *
  *
  *
@@ -829,10 +829,10 @@ int main(int argc, char** argv)
   fprintf(stdout,"%s",FMT_SmallSeparator);
 
   // Create parameters and parse command line
-  TParameters* Parameters = TParameters::GetInstance();
+  Parameters& Parameters = Parameters::getInstance();
 
-  Parameters->ParseCommandLine(argc,argv);
-  if (Parameters->IsVersion())
+  Parameters.init(argc,argv);
+  if (Parameters.isPrintVersionOnly())
   {
     KSpaceSolver.PrintFullNameCodeAndLicense(stdout);
     return 0;
@@ -842,11 +842,11 @@ int main(int argc, char** argv)
   // set number of threads and bind them to cores
   #ifdef _OPENMP
     KSpaceSolver.SetProcessorAffinity();
-    omp_set_num_threads(Parameters->GetNumberOfThreads());
+    omp_set_num_threads(Parameters.getNumberOfThreads());
   #endif
 
 
-  fprintf(stdout, "Number of CPU threads:    %6ld\n", Parameters->GetNumberOfThreads());
+  fprintf(stdout, "Number of CPU threads:    %6ld\n", Parameters.getNumberOfThreads());
   KSpaceSolver.PrintParametersOfSimulation(stdout);
 
 
@@ -887,9 +887,9 @@ int main(int argc, char** argv)
 
   fprintf(stdout,"Elapsed time:          %8.2fs\n",KSpaceSolver.GetDataLoadTime());
 
-  if (Parameters->Get_t_index() > 0)
+  if (Parameters.getTimeIndex() > 0)
   {
-    fprintf(stdout, "Recovered from t_index: %8ld\n", Parameters->Get_t_index());
+    fprintf(stdout, "Recovered from t_index: %8ld\n", Parameters.getTimeIndex());
   }
 
   // start computation

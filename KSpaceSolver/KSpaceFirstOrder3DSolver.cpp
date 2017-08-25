@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              24 August    2017, 14:31 (revised)
+ *              25 August    2017, 11:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -83,13 +83,12 @@ using namespace std;
  */
 TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver():
         MatrixContainer(), OutputStreamContainer(),
+        mParameters(Parameters::getInstance()),
         ActPercent(0),
-        Parameters(NULL),
         TotalTime(), PreProcessingTime(), DataLoadTime (), SimulationTime(),
         PostProcessingTime(), IterationTime()
 {
   TotalTime.start();
-  Parameters = TParameters::GetInstance();
 
   //Switch off HDF5 error messages
   H5Eset_auto(H5E_DEFAULT, NULL, NULL);
@@ -142,9 +141,9 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   DataLoadTime.start();
 
   // get handles
-  Hdf5File& HDF5_InputFile      = Parameters->HDF5_InputFile; // file is opened (in Parameters)
-  Hdf5File& HDF5_OutputFile     = Parameters->HDF5_OutputFile;
-  Hdf5File& HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  Hdf5File& HDF5_InputFile      = mParameters.getInputFile(); // file is opened (in Parameters)
+  Hdf5File& HDF5_OutputFile     = mParameters.getOutputFile();
+  Hdf5File& HDF5_CheckpointFile = mParameters.getCheckpointFile();
 
   // Load data from disk
   MatrixContainer.LoadDataFromInputHDF5File(HDF5_InputFile);
@@ -153,14 +152,14 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   HDF5_InputFile.close();
 
   // The simulation does not use checkpointing or this is the first turn
-  bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               Hdf5File::canAccess(Parameters->GetCheckpointFileName()));
+  bool RecoverFromPrevState = (mParameters.isCheckpointEnabled() &&
+                               Hdf5File::canAccess(mParameters.getCheckpointFileName()));
 
   //-------------------- Read data from the checkpoint file -----------------//
   if (RecoverFromPrevState)
   {
     // Open checkpoint file
-    HDF5_CheckpointFile.open(Parameters->GetCheckpointFileName());
+    HDF5_CheckpointFile.open(mParameters.getCheckpointFileName());
 
     // Check the checkpoint file
     CheckCheckpointFile();
@@ -170,7 +169,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     HDF5_CheckpointFile.readScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                         kTimeIndexName,
                                         new_t_index);
-    Parameters->Set_t_index(new_t_index);
+    mParameters.setTimeIndex(new_t_index);
 
     // Read necessary matrices from the checkpoint file
     MatrixContainer.LoadDataFromCheckpointHDF5File(HDF5_CheckpointFile);
@@ -181,9 +180,9 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     //------------- Read data from the output file -------------------------//
 
     // Reopen output file for RW access
-    HDF5_OutputFile.open(Parameters->GetOutputFileName(), H5F_ACC_RDWR);
+    HDF5_OutputFile.open(mParameters.getOutputFileName(), H5F_ACC_RDWR);
     //Read file header of the output file
-    Parameters->HDF5_FileHeader.readHeaderFromOutputFile(HDF5_OutputFile);
+    mParameters.getFileHeader().readHeaderFromOutputFile(HDF5_OutputFile);
     // Check the checkpoint file
     CheckOutputFile();
     // Restore elapsed time
@@ -194,7 +193,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   else
   { //-------------------- First round of multi-leg simulation ---------------//
     // Create the output file
-    HDF5_OutputFile.create(Parameters->GetOutputFileName());
+    HDF5_OutputFile.create(mParameters.getOutputFileName());
 
 
     // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
@@ -246,7 +245,7 @@ void TKSpaceFirstOrder3DSolver::Compute()
   { // Checkpoint
     fprintf(stdout,"-------------------------------------------------------------\n");
     fprintf(stdout,".............. Interrupted to checkpoint! ...................\n");
-    fprintf(stdout,"Number of time steps completed:                    %10ld\n",  Parameters->Get_t_index());
+    fprintf(stdout,"Number of time steps completed:                    %10ld\n",  mParameters.getTimeIndex());
     fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.getElapsedTime());
     fprintf(stdout,"-------------------------------------------------------------\n");
     fprintf(stdout,"Checkpoint in progress......"); fflush(stdout);
@@ -263,9 +262,9 @@ void TKSpaceFirstOrder3DSolver::Compute()
     PostPorcessing();
 
     // if checkpointing is enabled and the checkpoint file was created created in the past, delete it
-    if (Parameters->IsCheckpointEnabled())
+    if (mParameters.isCheckpointEnabled())
     {
-      std::remove(Parameters->GetCheckpointFileName().c_str());
+      std::remove(mParameters.getCheckpointFileName().c_str());
       TFFTWComplexMatrix::DeleteStoredWisdom();
     }
   }
@@ -277,7 +276,7 @@ void TKSpaceFirstOrder3DSolver::Compute()
 
     WriteOutputDataInfo();
 
-  Parameters->HDF5_OutputFile.close();
+  mParameters.getOutputFile().close();
 }// end of Compute()
 //------------------------------------------------------------------------------
 
@@ -291,11 +290,11 @@ void TKSpaceFirstOrder3DSolver::Compute()
 void TKSpaceFirstOrder3DSolver::PrintParametersOfSimulation(FILE * file)
 {
   fprintf(file,"Domain dims:   [%4ld, %4ld,%4ld]\n",
-                Parameters->GetFullDimensionSizes().nx,
-                Parameters->GetFullDimensionSizes().ny,
-                Parameters->GetFullDimensionSizes().nz);
+                mParameters.getFullDimensionSizes().nx,
+                mParameters.getFullDimensionSizes().ny,
+                mParameters.getFullDimensionSizes().nz);
 
-  fprintf(file,"Simulation time steps:  %8ld\n", Parameters->Get_Nt());
+  fprintf(file,"Simulation time steps:  %8ld\n", mParameters.getNt());
 }// end of PrintParametersOfSimulation
 //------------------------------------------------------------------------------
 
@@ -427,12 +426,12 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
   // initialization of FFTW library
   #ifdef _OPENMP
     fftwf_init_threads();
-    fftwf_plan_with_nthreads(Parameters->GetNumberOfThreads());
+    fftwf_plan_with_nthreads(mParameters.getNumberOfThreads());
   #endif
 
   // The simulation does not use checkpointing or this is the first turn
-  bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               Hdf5File::canAccess(Parameters->GetCheckpointFileName()));
+  bool RecoverFromPrevState = (mParameters.isCheckpointEnabled() &&
+                               Hdf5File::canAccess(mParameters.getCheckpointFileName()));
 
   // import FFTW wisdom if it is here
   if (RecoverFromPrevState)
@@ -454,7 +453,7 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
   // if necessary, create 1D shift plans.
   // in this case, the matrix has a bit bigger dimensions to be able to store
   // shifted matrices.
-  if (TParameters::GetInstance()->IsStore_u_non_staggered_raw())
+  if (Parameters::getInstance().getStoreVelocityNonStaggeredRawFlag())
   {
     // X shifts
     Get_FFT_shift_temp().Create_FFT_Plan_1DX_R2C(Get_p());
@@ -481,61 +480,61 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
 void TKSpaceFirstOrder3DSolver::PreProcessingPhase()
 {
   // get the correct sensor mask and recompute indices
-  if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
     Get_sensor_mask_index().RecomputeIndicesToCPP();
   }
 
-  if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
     Get_sensor_mask_corners().RecomputeIndicesToCPP();
   }
 
 
-  if ((Parameters->Get_transducer_source_flag() != 0) ||
-      (Parameters->Get_ux_source_flag() != 0)         ||
-      (Parameters->Get_uy_source_flag() != 0)         ||
-      (Parameters->Get_uz_source_flag() != 0)
+  if ((mParameters.getTransducerSourceFlag() != 0) ||
+      (mParameters.getVelocityXSourceFlag() != 0)         ||
+      (mParameters.getVelocityYSourceFlag() != 0)         ||
+      (mParameters.getVelocityZSourceFlag() != 0)
      )
   {
     Get_u_source_index().RecomputeIndicesToCPP();
   }
 
-  if (Parameters->Get_transducer_source_flag() != 0)
+  if (mParameters.getTransducerSourceFlag() != 0)
   {
     Get_delay_mask().RecomputeIndicesToCPP();
   }
 
-  if (Parameters->Get_p_source_flag() != 0)
+  if (mParameters.getPressureSourceFlag() != 0)
   {
     Get_p_source_index().RecomputeIndicesToCPP();
   }
 
 
   // compute dt / rho0_sg...
-  if (Parameters->Get_rho0_scalar_flag())
+  if (mParameters.getRho0ScalarFlag())
   { // rho is scalar
-    Parameters->Get_rho0_sgx_scalar() = Parameters->Get_dt() / Parameters->Get_rho0_sgx_scalar();
-    Parameters->Get_rho0_sgy_scalar() = Parameters->Get_dt() / Parameters->Get_rho0_sgy_scalar();
-    Parameters->Get_rho0_sgz_scalar() = Parameters->Get_dt() / Parameters->Get_rho0_sgz_scalar();
+    mParameters.getRho0SgxScalar() = mParameters.getDt() / mParameters.getRho0SgxScalar();
+    mParameters.getRho0SgyScalar() = mParameters.getDt() / mParameters.getRho0SgyScalar();
+    mParameters.getRho0SgzScalar() = mParameters.getDt() / mParameters.getRho0SgzScalar();
   }
   else
   { // non-uniform grid cannot be pre-calculated :-(
     // rho is matrix
-    if (Parameters->Get_nonuniform_grid_flag())
+    if (mParameters.getNonUniformGridFlag())
     {
       Calculate_dt_rho0_non_uniform();
     }
     else
     {
-      Get_dt_rho0_sgx().ScalarDividedBy(Parameters->Get_dt());
-      Get_dt_rho0_sgy().ScalarDividedBy(Parameters->Get_dt());
-      Get_dt_rho0_sgz().ScalarDividedBy(Parameters->Get_dt());
+      Get_dt_rho0_sgx().ScalarDividedBy(mParameters.getDt());
+      Get_dt_rho0_sgy().ScalarDividedBy(mParameters.getDt());
+      Get_dt_rho0_sgz().ScalarDividedBy(mParameters.getDt());
     }
   }
 
   // generate different matrices
-  if (Parameters->Get_absorbing_flag() != 0)
+  if (mParameters.getAbsorbingFlag() != 0)
   {
     Generate_kappa_absorb_nabla1_absorb_nabla2();
     Generate_absorb_tau_absorb_eta_matrix();
@@ -559,20 +558,20 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa()
 {
   #pragma omp parallel
   {
-    const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
-    const float dy_sq_rec = 1.0f / (Parameters->Get_dy()*Parameters->Get_dy());
-    const float dz_sq_rec = 1.0f / (Parameters->Get_dz()*Parameters->Get_dz());
+    const float dx_sq_rec = 1.0f / (mParameters.getDx()*mParameters.getDx());
+    const float dy_sq_rec = 1.0f / (mParameters.getDy()*mParameters.getDy());
+    const float dz_sq_rec = 1.0f / (mParameters.getDz()*mParameters.getDz());
 
-    const float c_ref_dt_pi = Parameters->Get_c_ref() * Parameters->Get_dt() * float(M_PI);
+    const float c_ref_dt_pi = mParameters.getCRef() * mParameters.getDt() * float(M_PI);
 
-    const float Nx_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().nx;
-    const float Ny_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().ny;
-    const float Nz_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().nz;
+    const float Nx_rec   = 1.0f / (float) mParameters.getFullDimensionSizes().nx;
+    const float Ny_rec   = 1.0f / (float) mParameters.getFullDimensionSizes().ny;
+    const float Nz_rec   = 1.0f / (float) mParameters.getFullDimensionSizes().nz;
 
 
-    const size_t X_Size  = Parameters->GetReducedDimensionSizes().nx;
-    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().ny;
-    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().nz;
+    const size_t X_Size  = mParameters.getReducedDimensionSizes().nx;
+    const size_t Y_Size  = mParameters.getReducedDimensionSizes().ny;
+    const size_t Z_Size  = mParameters.getReducedDimensionSizes().nz;
 
     float * kappa = Get_kappa().GetRawData();
 
@@ -615,29 +614,29 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2()
 {
   #pragma omp parallel
   {
-    const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
-    const float dy_sq_rec = 1.0f / (Parameters->Get_dy()*Parameters->Get_dy());
-    const float dz_sq_rec = 1.0f / (Parameters->Get_dz()*Parameters->Get_dz());
+    const float dx_sq_rec = 1.0f / (mParameters.getDx()*mParameters.getDx());
+    const float dy_sq_rec = 1.0f / (mParameters.getDy()*mParameters.getDy());
+    const float dz_sq_rec = 1.0f / (mParameters.getDz()*mParameters.getDz());
 
-    const float c_ref_dt_2 = Parameters->Get_c_ref() * Parameters->Get_dt() * 0.5f;
+    const float c_ref_dt_2 = mParameters.getCRef() * mParameters.getDt() * 0.5f;
     const float pi_2       = float(M_PI) * 2.0f;
 
-    const size_t Nx = Parameters->GetFullDimensionSizes().nx;
-    const size_t Ny = Parameters->GetFullDimensionSizes().ny;
-    const size_t Nz = Parameters->GetFullDimensionSizes().nz;
+    const size_t Nx = mParameters.getFullDimensionSizes().nx;
+    const size_t Ny = mParameters.getFullDimensionSizes().ny;
+    const size_t Nz = mParameters.getFullDimensionSizes().nz;
 
     const float Nx_rec   = 1.0f / (float) Nx;
     const float Ny_rec   = 1.0f / (float) Ny;
     const float Nz_rec   = 1.0f / (float) Nz;
 
-    const size_t X_Size  = Parameters->GetReducedDimensionSizes().nx;
-    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().ny;
-    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().nz;
+    const size_t X_Size  = mParameters.getReducedDimensionSizes().nx;
+    const size_t Y_Size  = mParameters.getReducedDimensionSizes().ny;
+    const size_t Z_Size  = mParameters.getReducedDimensionSizes().nz;
 
     float * kappa           = Get_kappa().GetRawData();
     float * absorb_nabla1   = Get_absorb_nabla1().GetRawData();
     float * absorb_nabla2   = Get_absorb_nabla2().GetRawData();
-    const float alpha_power = Parameters->Get_alpha_power();
+    const float alpha_power = mParameters.getAlphaPower();
 
     #pragma omp for schedule (static)
     for (size_t z = 0; z < Z_Size; z++)
@@ -689,25 +688,26 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2()
 void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
 {
   // test for scalars
-  if ((Parameters->Get_alpha_coeff_scallar_flag()) && (Parameters->Get_c0_scalar_flag()))
+  if ((mParameters.getAlphaCoeffScalarFlag()) && (mParameters.getC0ScalarFlag()))
   {
-    const float alpha_power = Parameters->Get_alpha_power();
+    const float alpha_power = mParameters.getAlphaPower();
     const float tan_pi_y_2  = tan(float(M_PI_2)* alpha_power);
     const float alpha_db_neper_coeff = (100.0f * pow(1.0e-6f / (2.0f * (float) M_PI), alpha_power)) /
                                        (20.0f * (float) M_LOG10E);
 
-    const float alpha_coeff_2 = 2.0f * Parameters->Get_alpha_coeff_scallar() * alpha_db_neper_coeff;
+    const float alpha_coeff_2 = 2.0f * mParameters.getAlphaCoeffScalar() * alpha_db_neper_coeff;
 
-    Parameters->Get_absorb_tau_scalar() =  (-alpha_coeff_2) * pow(Parameters->Get_c0_scalar(),alpha_power-1);
-    Parameters->Get_absorb_eta_scalar() =    alpha_coeff_2  * pow(Parameters->Get_c0_scalar(),alpha_power) * tan_pi_y_2;
+    mParameters.setAbsorbTauScalar((-alpha_coeff_2) * pow(mParameters.getC0Scalar(),alpha_power-1));
+    mParameters.setAbsorbEtaScalar(  alpha_coeff_2  * pow(mParameters.getC0Scalar(),alpha_power) * tan_pi_y_2);
+
   }
   else
   {
     #pragma omp parallel
     {
-      const size_t Z_Size  = Parameters->GetFullDimensionSizes().nz;
-      const size_t Y_Size  = Parameters->GetFullDimensionSizes().ny;
-      const size_t X_Size  = Parameters->GetFullDimensionSizes().nx;
+      const size_t Z_Size  = mParameters.getFullDimensionSizes().nz;
+      const size_t Y_Size  = mParameters.getFullDimensionSizes().ny;
+      const size_t X_Size  = mParameters.getFullDimensionSizes().nx;
 
       float * absorb_tau = Get_absorb_tau().GetRawData();
       float * absorb_eta = Get_absorb_eta().GetRawData();
@@ -715,9 +715,9 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
       float * alpha_coeff;
       size_t  alpha_shift;
 
-      if (Parameters->Get_alpha_coeff_scallar_flag())
+      if (mParameters.getAlphaCoeffScalarFlag())
       {
-        alpha_coeff = &(Parameters->Get_alpha_coeff_scallar());
+        alpha_coeff = &(mParameters.getAlphaCoeffScalar());
         alpha_shift = 0;
       }
       else
@@ -728,9 +728,9 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
 
       float * c0;
       size_t  c0_shift;
-      if (Parameters->Get_c0_scalar_flag())
+      if (mParameters.getC0ScalarFlag())
       {
-        c0 = &(Parameters->Get_c0_scalar());
+        c0 = &(mParameters.getC0Scalar());
         c0_shift = 0;
       }
       else
@@ -739,7 +739,7 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
         c0_shift = 1;
       }
 
-      const float alpha_power = Parameters->Get_alpha_power();
+      const float alpha_power = mParameters.getAlphaPower();
       const float tan_pi_y_2  = tan(float(M_PI_2)* alpha_power);
 
       //alpha = 100*alpha.*(1e-6/(2*pi)).^y./
@@ -779,7 +779,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_dt_rho0_non_uniform()
     float * dt_rho0_sgy   = Get_dt_rho0_sgy().GetRawData();
     float * dt_rho0_sgz   = Get_dt_rho0_sgz().GetRawData();
 
-    const float dt = Parameters->Get_dt();
+    const float dt = mParameters.getDt();
 
     const float * duxdxn_sgx = Get_dxudxn_sgx().GetRawData();
     const float * duydyn_sgy = Get_dyudyn_sgy().GetRawData();
@@ -851,9 +851,9 @@ void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
   float * c2;
   size_t c2_shift;
 
-  if (Parameters->Get_c0_scalar_flag())
+  if (mParameters.getC0ScalarFlag())
   {
-    c2 = &Parameters->Get_c0_scalar();
+    c2 = &mParameters.getC0Scalar();
     c2_shift = 0;
   }
   else
@@ -888,25 +888,25 @@ void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
                           Get_ddx_k_shift_pos(),Get_ddy_k_shift_pos(),Get_ddz_k_shift_pos()
                           );
 
-  if (Parameters->Get_rho0_scalar_flag())
+  if (mParameters.getRho0ScalarFlag())
   {
-    if (Parameters->Get_nonuniform_grid_flag())
+    if (mParameters.getNonUniformGridFlag())
     { // non uniform grid
-      Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x(Parameters->Get_rho0_sgx_scalar(),
+      Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x(mParameters.getRho0SgxScalar(),
                                                                         Get_dxudxn_sgx(),
                                                                         Get_FFT_X_temp());
-      Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(Parameters->Get_rho0_sgy_scalar(),
+      Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(mParameters.getRho0SgyScalar(),
                                                                         Get_dyudyn_sgy(),
                                                                         Get_FFT_Y_temp());
-      Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z(Parameters->Get_rho0_sgz_scalar(),
+      Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z(mParameters.getRho0SgzScalar(),
                                                                         Get_dzudzn_sgz(),
                                                                         Get_FFT_Z_temp());
     }
     else
     { //uniform grid, heterogeneous
-      Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgx_scalar(), Get_FFT_X_temp());
-      Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgy_scalar(), Get_FFT_Y_temp());
-      Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgz_scalar(), Get_FFT_Z_temp());
+      Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2(mParameters.getRho0SgxScalar(), Get_FFT_X_temp());
+      Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2(mParameters.getRho0SgyScalar(), Get_FFT_Y_temp());
+      Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2(mParameters.getRho0SgzScalar(), Get_FFT_Z_temp());
     }
   }
   else
@@ -925,10 +925,10 @@ void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
  */
 void TKSpaceFirstOrder3DSolver::Compute_c2()
 {
-  if (Parameters->Get_c0_scalar_flag())
+  if (mParameters.getC0ScalarFlag())
   { //scalar
-    float c = Parameters->Get_c0_scalar();
-    Parameters->Get_c0_scalar() = c * c;
+    float c = mParameters.getC0Scalar();
+    mParameters.getC0Scalar() = c * c;
   }
   else
   {
@@ -1123,7 +1123,7 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
  //-------------------------------------------------------------------------//
  //--------------------- Non linear grid -----------------------------------//
  //-------------------------------------------------------------------------//
-  if (Parameters->Get_nonuniform_grid_flag() != 0)
+  if (mParameters.getNonUniformGridFlag() != 0)
   {
     #pragma omp parallel
     {
@@ -1200,8 +1200,8 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
   const size_t Y_Size = Get_rhox().GetDimensionSizes().ny;
   const size_t X_Size = Get_rhox().GetDimensionSizes().nx;
 
-  const float dt2   = 2.0f * Parameters->Get_dt();
-  const float dt_el = Parameters->Get_dt();
+  const float dt2   = 2.0f * mParameters.getDt();
+  const float dt_el = mParameters.getDt();
   const size_t SliceSize = Y_Size * X_Size;
 
   #pragma omp parallel
@@ -1216,9 +1216,9 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
     const float * duzdz_data = Get_duzdz().GetRawData();
 
     // rho0 is a scalar
-    if (Parameters->Get_rho0_scalar())
+    if (mParameters.getRho0Scalar())
     {
-      const float dt_rho0 = Parameters->Get_rho0_scalar() * dt_el;
+      const float dt_rho0 = mParameters.getRho0Scalar() * dt_el;
 
       #pragma omp for schedule (static)
       for (size_t z = 0; z < Z_Size; z++)
@@ -1364,7 +1364,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear()
   const size_t Y_Size = Get_rhox().GetDimensionSizes().ny;
   const size_t X_Size = Get_rhox().GetDimensionSizes().nx;
 
-  const float dt_el = Parameters->Get_dt();
+  const float dt_el = mParameters.getDt();
   const size_t SliceSize =  Y_Size * X_Size;
 
   #pragma omp parallel
@@ -1379,9 +1379,9 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear()
     const float * duzdz_data = Get_duzdz().GetRawData();
 
 
-    if (Parameters->Get_rho0_scalar())
+    if (mParameters.getRho0Scalar())
     { // rho0 is a scalar
-      const float dt_rho0 = Parameters->Get_rho0_scalar() * dt_el;
+      const float dt_rho0 = mParameters.getRho0Scalar() * dt_el;
 
       #pragma omp for schedule (static)
       for (size_t z = 0; z < Z_Size; z++)
@@ -1535,11 +1535,11 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
   // set BonA to be either scalar or a matrix
         float * BonA;
         size_t  BonA_shift;
-  const bool    BonA_flag = Parameters->Get_BonA_scalar_flag();
+  const bool    BonA_flag = mParameters.getBOnAScalarFlag();
 
   if (BonA_flag)
   {
-    BonA = &Parameters->Get_BonA_scalar();
+    BonA = &mParameters.getBOnAScalar();
     BonA_shift = 0;
   }
   else
@@ -1552,11 +1552,11 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
   // set rho0A to be either scalar or a matrix
         float * rho0_data;
         size_t  rho0_shift;
-  const bool    rho0_flag = Parameters->Get_rho0_scalar_flag();
+  const bool    rho0_flag = mParameters.getRho0ScalarFlag();
 
   if (rho0_flag)
   {
-    rho0_data = &Parameters->Get_rho0_scalar();
+    rho0_data = &mParameters.getRho0Scalar();
     rho0_shift = 0;
   }
   else
@@ -1574,8 +1574,8 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
 
 
     const __m128 Two_SSE   = _mm_set1_ps(2.0f);
-          __m128 BonA_SSE  = _mm_set1_ps(Parameters->Get_BonA_scalar());
-          __m128 rho0_SSE  = _mm_set1_ps(Parameters->Get_rho0_scalar());
+          __m128 BonA_SSE  = _mm_set1_ps(mParameters.getBOnAScalar());
+          __m128 rho0_SSE  = _mm_set1_ps(mParameters.getRho0Scalar());
 
 
    #pragma omp for schedule (static) nowait
@@ -1652,7 +1652,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
 void TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix & Sum_rhoxyz,
                                                            TRealMatrix & Sum_rho0_du)
  {
-  const size_t TotalElementCount = Parameters->GetFullDimensionSizes().nElements();
+  const size_t TotalElementCount = mParameters.getFullDimensionSizes().nElements();
 
   #pragma  omp parallel
   {
@@ -1666,8 +1666,8 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix & Sum_rhox
 
     const float * rho0_data = NULL;
 
-    const float rho0_data_el = Parameters->Get_rho0_scalar();
-    if (!Parameters->Get_rho0_scalar_flag())
+    const float rho0_data_el = mParameters.getRho0Scalar();
+    if (!mParameters.getRho0ScalarFlag())
     {
       rho0_data = Get_rho0().GetRawData();
     }
@@ -1683,7 +1683,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix & Sum_rhox
     }
 
 
-    if (Parameters->Get_rho0_scalar_flag())
+    if (mParameters.getRho0ScalarFlag())
     { // scalar
       #pragma omp for schedule (static) nowait
       for (size_t i = 0; i < TotalElementCount; i++)
@@ -1790,9 +1790,9 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(TRealMatrix& Absorb_tau_t
   const float  Divider = 1.0f / (float) TotalElementCount;
 
   // c2 scalar
-  if (Parameters->Get_c0_scalar_flag())
+  if (mParameters.getC0ScalarFlag())
   {
-    c2_data = &Parameters->Get_c0_scalar();
+    c2_data = &mParameters.getC0Scalar();
     c2_shift = 0;
   }
   else
@@ -1802,10 +1802,10 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(TRealMatrix& Absorb_tau_t
   }
 
   // eta and tau scalars
-  if (Parameters->Get_c0_scalar_flag() && Parameters->Get_alpha_coeff_scallar_flag())
+  if (mParameters.getC0ScalarFlag() && mParameters.getAlphaCoeffScalarFlag())
   {
-    tau_data = &Parameters->Get_absorb_tau_scalar();
-    eta_data = &Parameters->Get_absorb_eta_scalar();
+    tau_data = &mParameters.getAbsorbTauScalar();
+    eta_data = &mParameters.getAbsorbEtaScalar();
     tau_eta_shift = 0;
   }
   else
@@ -1856,13 +1856,13 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   const float * Absorb_tau_data = Absorb_tau_temp.GetRawData();
   const float * Absorb_eta_data = Absorb_eta_temp.GetRawData();
 
-  const size_t TotalElementCount = Parameters->GetFullDimensionSizes().nElements();
+  const size_t TotalElementCount = mParameters.getFullDimensionSizes().nElements();
   const float Divider = 1.0f / (float) TotalElementCount;
 
   // c2 scalar
-  if (Parameters->Get_c0_scalar_flag())
+  if (mParameters.getC0ScalarFlag())
   {
-    c2_data = &Parameters->Get_c0_scalar();
+    c2_data = &mParameters.getC0Scalar();
     c2_shift = 0;
   }
   else
@@ -1872,10 +1872,10 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   }
 
   // eta and tau scalars
-  if (Parameters->Get_c0_scalar_flag() && Parameters->Get_alpha_coeff_scallar_flag())
+  if (mParameters.getC0ScalarFlag() && mParameters.getAlphaCoeffScalarFlag())
   {
-    tau_data = &Parameters->Get_absorb_tau_scalar();
-    eta_data = &Parameters->Get_absorb_eta_scalar();
+    tau_data = &mParameters.getAbsorbTauScalar();
+    eta_data = &mParameters.getAbsorbEtaScalar();
     tau_eta_shift = 0;
   }
   else
@@ -1914,7 +1914,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
  {
   #pragma omp parallel
   {
-    const size_t TotalElementCount = Parameters->GetFullDimensionSizes().nElements();
+    const size_t TotalElementCount = mParameters.getFullDimensionSizes().nElements();
     float * p_data = Get_p().GetRawData();
 
     const float * rhox_data = Get_rhox().GetRawData();
@@ -1924,9 +1924,9 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     float * c2_data;
     size_t  c2_shift;
 
-    if (Parameters->Get_c0_scalar_flag())
+    if (mParameters.getC0ScalarFlag())
     {
-      c2_data = &Parameters->Get_c0_scalar();
+      c2_data = &mParameters.getC0Scalar();
       c2_shift = 0;
     }
     else
@@ -1938,9 +1938,9 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     float * BonA_data;
     size_t  BonA_shift;
 
-    if (Parameters->Get_BonA_scalar_flag())
+    if (mParameters.getBOnAScalarFlag())
     {
-      BonA_data = &Parameters->Get_BonA_scalar();
+      BonA_data = &mParameters.getBOnAScalar();
       BonA_shift = 0;
     }
     else
@@ -1952,9 +1952,9 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     float * rho0_data;
     size_t rho0_shift;
 
-    if (Parameters->Get_rho0_scalar_flag())
+    if (mParameters.getRho0ScalarFlag())
     {
-      rho0_data = &Parameters->Get_rho0_scalar();
+      rho0_data = &mParameters.getRho0Scalar();
       rho0_shift = 0;
     }
     else
@@ -1992,11 +1992,11 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     const float * rhoy = Get_rhoy().GetRawData();
     const float * rhoz = Get_rhoz().GetRawData();
           float * p_data = Get_p().GetRawData();
-    const size_t  TotalElementCount = Parameters->GetFullDimensionSizes().nElements();
+    const size_t  TotalElementCount = mParameters.getFullDimensionSizes().nElements();
 
-    if (Parameters->Get_c0_scalar_flag())
+    if (mParameters.getC0ScalarFlag())
     {
-      const float c2_element = Parameters->Get_c0_scalar();
+      const float c2_element = mParameters.getC0Scalar();
 
       #pragma omp for schedule (static)
       for (size_t i = 0; i < TotalElementCount; i++)
@@ -2025,7 +2025,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
  void TKSpaceFirstOrder3DSolver::Compute_new_p_nonlinear()
 {
   // rhox + rhoy + rhoz
-  if (Parameters->Get_absorbing_flag())
+  if (mParameters.getAbsorbingFlag())
   { // absorbing case
 
     TRealMatrix & Sum_rhoxyz = Get_Temp_1_RS3D();
@@ -2062,7 +2062,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
  void TKSpaceFirstOrder3DSolver::Compute_new_p_linear()
  {
   // rhox + rhoy + rhoz
-  if (Parameters->Get_absorbing_flag())
+  if (mParameters.getAbsorbingFlag())
   { // absorbing case
 
     TRealMatrix& Sum_rhoxyz = Get_Temp_1_RS3D();
@@ -2113,30 +2113,30 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
 
   #pragma omp parallel
   {
-    if (Parameters->Get_rho0_scalar_flag())
+    if (mParameters.getRho0ScalarFlag())
     { // scalars
-      if (Parameters->Get_nonuniform_grid_flag())
+      if (mParameters.getNonUniformGridFlag())
       {
         Get_ux_sgx().Compute_ux_sgx_normalize_scalar_nonuniform(Get_Temp_1_RS3D(),
-                                                                Parameters->Get_rho0_sgx_scalar(),
+                                                                mParameters.getRho0SgxScalar(),
                                                                 Get_dxudxn_sgx(), Get_pml_x_sgx());
         Get_uy_sgy().Compute_uy_sgy_normalize_scalar_nonuniform(Get_Temp_2_RS3D(),
-                                                                Parameters->Get_rho0_sgy_scalar(),
+                                                                mParameters.getRho0SgyScalar(),
                                                                 Get_dyudyn_sgy(), Get_pml_y_sgy());
         Get_uz_sgz().Compute_uz_sgz_normalize_scalar_nonuniform(Get_Temp_3_RS3D(),
-                                                                Parameters->Get_rho0_sgz_scalar(),
+                                                                mParameters.getRho0SgzScalar(),
                                                                 Get_dzudzn_sgz(), Get_pml_z_sgz());
        }
       else
       {
         Get_ux_sgx().Compute_ux_sgx_normalize_scalar_uniform(Get_Temp_1_RS3D(),
-                                                             Parameters->Get_rho0_sgx_scalar(),
+                                                             mParameters.getRho0SgxScalar(),
                                                              Get_pml_x_sgx());
         Get_uy_sgy().Compute_uy_sgy_normalize_scalar_uniform(Get_Temp_2_RS3D(),
-                                                             Parameters->Get_rho0_sgy_scalar(),
+                                                             mParameters.getRho0SgyScalar(),
                                                              Get_pml_y_sgy());
         Get_uz_sgz().Compute_uz_sgz_normalize_scalar_uniform(Get_Temp_3_RS3D(),
-                                                             Parameters->Get_rho0_sgz_scalar(),
+                                                             mParameters.getRho0SgzScalar(),
                                                              Get_pml_z_sgz());
       }
     }
@@ -2161,33 +2161,33 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
  */
 void TKSpaceFirstOrder3DSolver::Add_u_source()
 {
-  const size_t t_index = Parameters->Get_t_index();
+  const size_t t_index = mParameters.getTimeIndex();
 
-  if (Parameters->Get_ux_source_flag() > t_index)
+  if (mParameters.getVelocityXSourceFlag() > t_index)
   {
     Get_ux_sgx().Add_u_source(Get_ux_source_input(),
                               Get_u_source_index(),
                               t_index,
-                              Parameters->Get_u_source_mode(),
-                              Parameters->Get_u_source_many());
+                              mParameters.getVelocitySourceMode(),
+                              mParameters.getVelocitySourceMany());
   }
 
-  if (Parameters->Get_uy_source_flag() > t_index)
+  if (mParameters.getVelocityYSourceFlag() > t_index)
   {
     Get_uy_sgy().Add_u_source(Get_uy_source_input(),
                               Get_u_source_index(),
                               t_index,
-                              Parameters->Get_u_source_mode(),
-                              Parameters->Get_u_source_many());
+                              mParameters.getVelocitySourceMode(),
+                              mParameters.getVelocitySourceMany());
   }
 
-  if (Parameters->Get_uz_source_flag() > t_index)
+  if (mParameters.getVelocityZSourceFlag() > t_index)
   {
     Get_uz_sgz().Add_u_source(Get_uz_source_input(),
                               Get_u_source_index(),
                               t_index,
-                              Parameters->Get_u_source_mode(),
-                              Parameters->Get_u_source_many());
+                              mParameters.getVelocitySourceMode(),
+                              mParameters.getVelocitySourceMany());
   }
 }// end of Add_u_source
 //------------------------------------------------------------------------------
@@ -2200,9 +2200,9 @@ void TKSpaceFirstOrder3DSolver::Add_u_source()
   */
 void TKSpaceFirstOrder3DSolver::Add_p_source()
 {
-  const size_t t_index = Parameters->Get_t_index();
+  const size_t t_index = mParameters.getTimeIndex();
 
-  if (Parameters->Get_p_source_flag() > t_index)
+  if (mParameters.getPressureSourceFlag() > t_index)
   {
     float * rhox = Get_rhox().GetRawData();
     float * rhoy = Get_rhoy().GetRawData();
@@ -2211,12 +2211,12 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
     float  * p_source_input = Get_p_source_input().GetRawData();
     const size_t * p_source_index = Get_p_source_index().GetRawData();
 
-    const bool   Is_p_source_many  = (Parameters->Get_p_source_many() != 0);
+    const bool   Is_p_source_many  = (mParameters.getPressureSourceMany() != 0);
     const size_t Index2D           = (Is_p_source_many) ? t_index * Get_p_source_index().GetTotalElementCount() : t_index;
     const size_t p_source_size     = Get_p_source_index().GetTotalElementCount();
 
     // replacement
-    if (Parameters->Get_p_source_mode() == 0)
+    if (mParameters.getPressureSourceMode() == 0)
     {
       #pragma omp parallel for if (p_source_size > 16384)
       for (size_t i = 0; i < p_source_size; i++)
@@ -2264,19 +2264,19 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
 
 
   // sizes of frequency spaces
-  DimensionSizes XShiftDims = Parameters->GetFullDimensionSizes();
+  DimensionSizes XShiftDims = mParameters.getFullDimensionSizes();
                   XShiftDims.nx = XShiftDims.nx/2 + 1;
 
-  DimensionSizes YShiftDims = Parameters->GetFullDimensionSizes();
+  DimensionSizes YShiftDims = mParameters.getFullDimensionSizes();
                   YShiftDims.ny = YShiftDims.ny/2 + 1;
 
-  DimensionSizes ZShiftDims = Parameters->GetFullDimensionSizes();
+  DimensionSizes ZShiftDims = mParameters.getFullDimensionSizes();
                   ZShiftDims.nz = ZShiftDims.nz/2 + 1;
 
   // normalization constants for FFTs
-  const float DividerX = 1.0f / (float) Parameters->GetFullDimensionSizes().nx;
-  const float DividerY = 1.0f / (float) Parameters->GetFullDimensionSizes().ny;
-  const float DividerZ = 1.0f / (float) Parameters->GetFullDimensionSizes().nz;
+  const float DividerX = 1.0f / (float) mParameters.getFullDimensionSizes().nx;
+  const float DividerY = 1.0f / (float) mParameters.getFullDimensionSizes().ny;
+  const float DividerZ = 1.0f / (float) mParameters.getFullDimensionSizes().nz;
 
   //-------------------------- ux_shifted --------------------------------------
   Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
@@ -2381,32 +2381,32 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
 
   ActPercent = 0;
   // set ActPercent to correspond the t_index after recovery
-  if (Parameters->Get_t_index() > 0)
+  if (mParameters.getTimeIndex() > 0)
   {
-    ActPercent = (100 * Parameters->Get_t_index()) / Parameters->Get_Nt();
+    ActPercent = (100 * mParameters.getTimeIndex()) / mParameters.getNt();
   }
 
   PrintOtputHeader();
 
   IterationTime.start();
 
-  while (Parameters->Get_t_index() < Parameters->Get_Nt() && (!IsTimeToCheckpoint()))
+  while (mParameters.getTimeIndex() < mParameters.getNt() && (!IsTimeToCheckpoint()))
   {
-    const size_t t_index = Parameters->Get_t_index();
+    const size_t t_index = mParameters.getTimeIndex();
 
     Compute_uxyz();
     // add in the velocity u source term
     Add_u_source();
 
     // add in the transducer source term (t = t1) to ux
-    if (Parameters->Get_transducer_source_flag() > t_index)
+    if (mParameters.getTransducerSourceFlag() > t_index)
     {
      Get_ux_sgx().AddTransducerSource(Get_u_source_index(), Get_delay_mask(), Get_transducer_source_input());
     }
 
     Compute_duxyz();
 
-    if (Parameters->Get_nonlinear_flag())
+    if (mParameters.getNonLinearFlag())
     {
       Compute_rhoxyz_nonlinear();
     }
@@ -2419,7 +2419,7 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
      // add in the source pressure term
      Add_p_source();
 
-    if (Parameters->Get_nonlinear_flag())
+    if (mParameters.getNonLinearFlag())
     {
       Compute_new_p_nonlinear();
     }
@@ -2429,11 +2429,11 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
     }
 
     // calculate initial pressure
-    if ((t_index == 0) && (Parameters->Get_p0_source_flag() == 1)) Calculate_p0_source();
+    if ((t_index == 0) && (mParameters.getInitialPressureSourceFlag() == 1)) Calculate_p0_source();
 
     StoreSensorData();
     PrintStatisitcs();
-    Parameters->Increment_t_index();
+    mParameters.incrementTimeIndex();
 
   }// time loop
 }// end of Compute_Main_Loop()
@@ -2446,13 +2446,13 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
  */
 void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
 {
-  const size_t Nt =  Parameters->Get_Nt();
-  const size_t t_index = Parameters->Get_t_index();
+  const size_t Nt =  mParameters.getNt();
+  const size_t t_index = mParameters.getTimeIndex();
 
 
   if (t_index > ((ActPercent * Nt) / 100) )
   {
-    ActPercent += Parameters->GetVerboseInterval();
+    ActPercent += mParameters.getProgressPrintInterval();
 
     IterationTime.stop();
 
@@ -2495,11 +2495,11 @@ void TKSpaceFirstOrder3DSolver::PrintOtputHeader()
  */
 bool TKSpaceFirstOrder3DSolver::IsTimeToCheckpoint()
 {
-  if (!Parameters->IsCheckpointEnabled()) return false;
+  if (!mParameters.isCheckpointEnabled()) return false;
 
   TotalTime.stop();
 
-  return (TotalTime.getElapsedTime() > (float) Parameters->GetCheckpointInterval());
+  return (TotalTime.getElapsedTime() > (float) mParameters.getCheckpointInterval());
 
 }// end of IsTimeToCheckpoint
 //------------------------------------------------------------------------------
@@ -2512,16 +2512,16 @@ bool TKSpaceFirstOrder3DSolver::IsTimeToCheckpoint()
  */
 void TKSpaceFirstOrder3DSolver::PostPorcessing()
 {
-  if (Parameters->IsStore_p_final())
+  if (mParameters.getStorePressureFinalAllFlag())
   {
-    Get_p().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kPressureFinalName.c_str(), Parameters->GetCompressionLevel());
+    Get_p().WriteDataToHDF5File(mParameters.getOutputFile(), kPressureFinalName.c_str(), mParameters.getCompressionLevel());
   }// p_final
 
-  if (Parameters->IsStore_u_final())
+  if (mParameters.getStoreVelocityFinalAllFlag())
   {
-    Get_ux_sgx().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUxFinalName.c_str(), Parameters->GetCompressionLevel());
-    Get_uy_sgy().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUyFinalName.c_str(), Parameters->GetCompressionLevel());
-    Get_uz_sgz().WriteDataToHDF5File(Parameters->HDF5_OutputFile, kUzFinalName.c_str(), Parameters->GetCompressionLevel());
+    Get_ux_sgx().WriteDataToHDF5File(mParameters.getOutputFile(), kUxFinalName.c_str(), mParameters.getCompressionLevel());
+    Get_uy_sgy().WriteDataToHDF5File(mParameters.getOutputFile(), kUyFinalName.c_str(), mParameters.getCompressionLevel());
+    Get_uz_sgz().WriteDataToHDF5File(mParameters.getOutputFile(), kUzFinalName.c_str(), mParameters.getCompressionLevel());
   }// u_final
 
   // Apply post-processing and close
@@ -2530,19 +2530,19 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
 
 
   // store sensor mask if wanted
-  if (Parameters->IsCopySensorMask())
+  if (mParameters.getCopySensorMaskFlag())
   {
-    if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
     {
       Get_sensor_mask_index().RecomputeIndicesToMatlab();
-      Get_sensor_mask_index().WriteDataToHDF5File(Parameters->HDF5_OutputFile,kSensorMaskIndexName.c_str(),
-                                                  Parameters->GetCompressionLevel());
+      Get_sensor_mask_index().WriteDataToHDF5File(mParameters.getOutputFile(),kSensorMaskIndexName.c_str(),
+                                                  mParameters.getCompressionLevel());
     }
-    if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
     {
       Get_sensor_mask_corners().RecomputeIndicesToMatlab();
-      Get_sensor_mask_corners().WriteDataToHDF5File(Parameters->HDF5_OutputFile,kSensorMaskCornersName.c_str(),
-                                                    Parameters->GetCompressionLevel());
+      Get_sensor_mask_corners().WriteDataToHDF5File(mParameters.getOutputFile(),kSensorMaskCornersName.c_str(),
+                                                    mParameters.getCompressionLevel());
     }
   }
 }// end of PostPorcessing
@@ -2556,9 +2556,9 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
 void TKSpaceFirstOrder3DSolver::StoreSensorData()
 {
   // Unless the time for sampling has come, exit
-  if (Parameters->Get_t_index() >= Parameters->GetStartTimeIndex())
+  if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex())
   {
-    if (Parameters->IsStore_u_non_staggered_raw())
+    if (mParameters.getStoreVelocityNonStaggeredRawFlag())
     {
       Calculate_shifted_velocity();
     }
@@ -2578,11 +2578,11 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
 
 
   // Create Checkpoint file
-  Hdf5File & HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  Hdf5File & HDF5_CheckpointFile = mParameters.getCheckpointFile();
   // if it happens and the file is opened (from the recovery, close it)
   if (HDF5_CheckpointFile.isOpen()) HDF5_CheckpointFile.close();
   // Create the new file (overwrite the old one)
-  HDF5_CheckpointFile.create(Parameters->GetCheckpointFileName());
+  HDF5_CheckpointFile.create(mParameters.getCheckpointFileName());
 
 
   //--------------------- Store Matrices ------------------------------//
@@ -2593,21 +2593,21 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   // Write t_index
   HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                        kTimeIndexName,
-                                       Parameters->Get_t_index());
+                                       mParameters.getTimeIndex());
   // store basic dimension sizes (Nx, Ny, Nz) - Nt is not necessary
   HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                        kNxName,
-                                       Parameters->GetFullDimensionSizes().nx);
+                                       mParameters.getFullDimensionSizes().nx);
   HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                        kNyName,
-                                       Parameters->GetFullDimensionSizes().ny);
+                                       mParameters.getFullDimensionSizes().ny);
   HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
                                        kNzName,
-                                       Parameters->GetFullDimensionSizes().nz);
+                                       mParameters.getFullDimensionSizes().nz);
 
 
   // Write checkpoint file header
-  Hdf5FileHeader CheckpointFileHeader = Parameters->HDF5_FileHeader;
+  Hdf5FileHeader CheckpointFileHeader = mParameters.getFileHeader();
 
   CheckpointFileHeader.setFileType(Hdf5FileHeader::FileType::kCheckpoint);
   CheckpointFileHeader.setCodeName(GetCodeName());
@@ -2619,7 +2619,7 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   HDF5_CheckpointFile.close();
 
   // checkpoint only if necessary (t_index > start_index) - here we're at  step + 1
-  if (Parameters->Get_t_index() > Parameters->GetStartTimeIndex())
+  if (mParameters.getTimeIndex() > mParameters.getSamplingStartTimeIndex())
   {
     OutputStreamContainer.CheckpointStreams();
   }
@@ -2634,13 +2634,13 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
 void TKSpaceFirstOrder3DSolver::WriteOutputDataInfo()
 {
   // write t_index into the output file
-  Parameters->HDF5_OutputFile.writeScalarValue(Parameters->HDF5_OutputFile.getRootGroup(),
+  mParameters.getOutputFile().writeScalarValue(mParameters.getOutputFile().getRootGroup(),
                                                kTimeIndexName,
-                                               Parameters->Get_t_index());
+                                               mParameters.getTimeIndex());
 
   // Write scalars
-  Parameters->SaveScalarsToHDF5File(Parameters->HDF5_OutputFile);
-  Hdf5FileHeader & HDF5_FileHeader = Parameters->HDF5_FileHeader;
+  mParameters.saveScalarsToOutputFile();
+  Hdf5FileHeader & HDF5_FileHeader = mParameters.getFileHeader();
 
   // Write File header
 
@@ -2662,7 +2662,7 @@ void TKSpaceFirstOrder3DSolver::WriteOutputDataInfo()
                                     GetCumulatedPostProcessingTime());
 
   HDF5_FileHeader.setNumberOfCores();
-  HDF5_FileHeader.writeHeaderToOutputFile(Parameters->HDF5_OutputFile);
+  HDF5_FileHeader.writeHeaderToOutputFile(mParameters.getOutputFile());
 }// end of WriteOutputDataInfo
 //------------------------------------------------------------------------------
 
@@ -2678,7 +2678,7 @@ void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
          ElapsedSimulationTime, ElapsedPostProcessingTime;
 
   // Get execution times stored in the output file header
-  Parameters->HDF5_FileHeader.getExecutionTimes(ElapsedTotalTime,
+  mParameters.getFileHeader().getExecutionTimes(ElapsedTotalTime,
                                                 ElapsedDataLoadTime,
                                                 ElapsedPreProcessingTime,
                                                 ElapsedSimulationTime,
@@ -2701,8 +2701,8 @@ void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
 void TKSpaceFirstOrder3DSolver::CheckOutputFile()
 {
   // The header has already been read
-  Hdf5FileHeader & OutputFileHeader = Parameters->HDF5_FileHeader;
-  Hdf5File       & OutputFile       = Parameters->HDF5_OutputFile;
+  Hdf5FileHeader & OutputFileHeader = mParameters.getFileHeader();
+  Hdf5File       & OutputFile       = mParameters.getOutputFile();
 
   // test file type
   if (OutputFileHeader.getFileType() != Hdf5FileHeader::FileType::kOutput)
@@ -2710,7 +2710,7 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadOutputFileFormat,
-            Parameters->GetOutputFileName().c_str());
+            mParameters.getOutputFileName().c_str());
     throw ios::failure(ErrorMessage);
   }
 
@@ -2720,7 +2720,7 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadMajorFileVersion,
-            Parameters->GetCheckpointFileName().c_str(),
+            mParameters.getCheckpointFileName().c_str(),
             OutputFileHeader.getFileMajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
@@ -2731,7 +2731,7 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadMinorFileVersion,
-            Parameters->GetCheckpointFileName().c_str(),
+            mParameters.getCheckpointFileName().c_str(),
             OutputFileHeader.getFileMinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
@@ -2751,7 +2751,7 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
                              kNzName,
                              OutputDimSizes.nz);
 
- if (Parameters->GetFullDimensionSizes() != OutputDimSizes)
+ if (mParameters.getFullDimensionSizes() != OutputDimSizes)
  {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
@@ -2759,9 +2759,9 @@ void TKSpaceFirstOrder3DSolver::CheckOutputFile()
             OutputDimSizes.nx,
             OutputDimSizes.ny,
             OutputDimSizes.nz,
-            Parameters->GetFullDimensionSizes().nx,
-            Parameters->GetFullDimensionSizes().ny,
-            Parameters->GetFullDimensionSizes().nz);
+            mParameters.getFullDimensionSizes().nx,
+            mParameters.getFullDimensionSizes().ny,
+            mParameters.getFullDimensionSizes().nz);
 
    throw ios::failure(ErrorMessage);
  }
@@ -2778,7 +2778,7 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
 {
   // read the header and check the file version
   Hdf5FileHeader CheckpointFileHeader;
-  Hdf5File &     HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  Hdf5File &     HDF5_CheckpointFile = mParameters.getCheckpointFile();
 
   CheckpointFileHeader.readHeaderFromCheckpointFile(HDF5_CheckpointFile);
 
@@ -2788,7 +2788,7 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadCheckpointFileFormat,
-            Parameters->GetCheckpointFileName().c_str());
+            mParameters.getCheckpointFileName().c_str());
     throw ios::failure(ErrorMessage);
   }
 
@@ -2798,7 +2798,7 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadMajorFileVersion,
-            Parameters->GetCheckpointFileName().c_str(),
+            mParameters.getCheckpointFileName().c_str(),
             CheckpointFileHeader.getFileMajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
@@ -2809,7 +2809,7 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
             kErrFmtBadMinorFileVersion,
-            Parameters->GetCheckpointFileName().c_str(),
+            mParameters.getCheckpointFileName().c_str(),
             CheckpointFileHeader.getFileMinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
@@ -2829,7 +2829,7 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
                                       kNzName,
                                       CheckpointDimSizes.nz);
 
- if (Parameters->GetFullDimensionSizes() != CheckpointDimSizes)
+ if (mParameters.getFullDimensionSizes() != CheckpointDimSizes)
  {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
@@ -2837,9 +2837,9 @@ void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
             CheckpointDimSizes.nx,
             CheckpointDimSizes.ny,
             CheckpointDimSizes.nz,
-            Parameters->GetFullDimensionSizes().nx,
-            Parameters->GetFullDimensionSizes().ny,
-            Parameters->GetFullDimensionSizes().nz);
+            mParameters.getFullDimensionSizes().nx,
+            mParameters.getFullDimensionSizes().ny,
+            mParameters.getFullDimensionSizes().nz);
 
    throw ios::failure(ErrorMessage);
  }

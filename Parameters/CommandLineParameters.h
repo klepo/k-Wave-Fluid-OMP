@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              24 August    2017, 15:26 (revised)
+ *              25 August    2017, 11:20 (revised)
  *
  * @section Params Command Line Parameters
  *
@@ -186,7 +186,7 @@ class CommandLineParameters
 {
   public:
     /// Only Parameters can create this class.
-    friend class TParameters;
+    friend class Parameters;
 
     /// Copy constructor not allowed.
     CommandLineParameters(const CommandLineParameters&) = delete;

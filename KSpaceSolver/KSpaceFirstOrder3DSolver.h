@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        12 July      2012, 10:27 (created)\n
- *              22 August    2017, 11:48 (revised)
+ *              25 August    2017, 11:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -243,7 +243,7 @@ class TKSpaceFirstOrder3DSolver
     /// Was the loop interrupted to checkpoint?
     bool IsCheckpointInterruption() const
     {
-      return (Parameters->Get_t_index() != Parameters->Get_Nt());
+      return (mParameters.getTimeIndex() != mParameters.getNt());
     };
 
     /// Check the output file has the correct format and version.
@@ -618,7 +618,7 @@ class TKSpaceFirstOrder3DSolver
     size_t             ActPercent;
 
     /// Global parameters of the simulation.
-    TParameters *      Parameters;
+    Parameters&       mParameters;
 
     /// Total time of the simulation.
     TimeMeasure       TotalTime;

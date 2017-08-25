@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 32.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            24 August    2017, 14:35 (revised)
+ *            25 August    2017, 11:17 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -50,6 +50,8 @@
 #include <Parameters/Parameters.h>
 #include <Utils/ErrorMessages.h>
 
+using std::string;
+using std::ios;
 
 //--------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------- Constants -----------------------------------------------------//
@@ -384,7 +386,7 @@ void Hdf5FileHeader::setMemoryConsumption(const size_t totalMemory)
 
   mHeaderValues[FileHeaderItems::kTotalMemoryConsumption] = Text;
 
-  sprintf(Text, "%ld MB", totalMemory / TParameters::GetInstance()->GetNumberOfThreads());
+  sprintf(Text, "%ld MB", totalMemory / Parameters::getInstance().getNumberOfThreads());
   mHeaderValues[FileHeaderItems::kPeakMemoryConsumption]  = Text;
 }// end of setMemoryConsumption
 //----------------------------------------------------------------------------------------------------------------------
@@ -444,7 +446,7 @@ void Hdf5FileHeader::getExecutionTimes(double& totalTime,
 void Hdf5FileHeader::setNumberOfCores()
 {
   char text[12] = "";
-  sprintf(text, "%ld",TParameters::GetInstance()->GetNumberOfThreads());
+  sprintf(text, "%ld",Parameters::getInstance().getNumberOfThreads());
 
   mHeaderValues[FileHeaderItems::kNumberofCores] = text;
 }// end of setNumberOfCores
