@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              25 August    2017, 22:12 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -36,640 +36,548 @@
 
 
 using namespace std;
-//----------------------------------------------------------------------------//
-//                              Constants                                     //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
-
-
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
- * Compute dt ./ rho0_sgx .* the content of the matrix.
- * @param [in] dt_rho0_sg - matrix with the component of dt .* rho0_sg{x,y,z}
- * @param [in] FFT        - FFT matrix (data will be overwritten)
+ * Compute acoustic velocity for initial pressure problem.
  */
-void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2(const TRealMatrix & dt_rho0_sg,
-                                                         TFFTWComplexMatrix & FFT)
+void VelocityMatrix::computeInitialVelocity(const RealMatrix&  dtRho0Sgxyz,
+                                            FftwComplexMatrix& fftTemp)
 {
-  FFT.Compute_FFT_3D_C2R(*this);
+  fftTemp.computeC2RFft3D(*this);
 
-  const float Divider = 1.0f / (2.0f * pTotalElementCount);
+  const float divider = 1.0f / (2.0f * static_cast<float>(mSize));
 
-  //dt_rho0_sgx .* real...
- #pragma omp parallel for schedule (static)
-  for (size_t i = 0; i < pTotalElementCount; i++)
+  #pragma omp parallel for schedule (static) firstprivate(divider)
+  for (size_t i = 0; i < mSize; i++)
   {
-    pMatrixData[i] = dt_rho0_sg[i] * (pMatrixData[i] * Divider);
+    mData[i] *= dtRho0Sgxyz[i] * divider;
   }
-}// end of Compute_dt_rho_sg_mul_ifft_div_2
-//------------------------------------------------------------------------------
-
+}// end of computeInitialVelocity
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute dt./rho0_sgx .* ifft (FFT)
- * if rho0_sgx is scalar, uniform case
- * @param [in] dt_rho_0_sgx - scalar value
- * @param [in] FFT          - FFT matrix (data will be overwritten)
+ * Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
  */
-void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2(const float dt_rho_0_sgx,
-                                                         TFFTWComplexMatrix& FFT)
+void VelocityMatrix::computeInitialVelocityHomogeneousUniform(const float dtRho0Sgxyz,
+                                                              FftwComplexMatrix& fftTemp)
 {
-  FFT.Compute_FFT_3D_C2R(*this);
+  fftTemp.computeC2RFft3D(*this);
 
-  const float Divider = 1.0f / (2.0f * pTotalElementCount) * dt_rho_0_sgx;
+  const float divider = 1.0f / (2.0f * static_cast<float>(mSize)) * dtRho0Sgxyz;
 
-  //dt_rho0_sgx .* real...
-  #pragma omp parallel for schedule (static)
-  for (size_t i = 0; i < pTotalElementCount; i++)
+  #pragma omp parallel for schedule (static) firstprivate(divider)
+  for (size_t i = 0; i < mSize; i++)
   {
-    pMatrixData[i] = pMatrixData[i] * Divider;
+    mData[i] *= divider;
   }
-}// end of Compute_dt_rho_sg_mul_ifft_div_2
-//------------------------------------------------------------------------------
-
+}// end of computeInitialVelocityHomogeneousUniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute dt./rho0_sgx .* ifft (FFT)
- * if rho0_sgx is scalar, nonuniform  non uniform grid, x component.
- * @param [in] dt_rho_0_sgx - scalar value
- * @param [in] dxudxn_sgx   - non-uniform mapping
- * @param [in] FFT          - FFT matrix (data will be overwritten)
+ * Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, x direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x
-        (const float dt_rho_0_sgx,
-         const TRealMatrix & dxudxn_sgx,
-         TFFTWComplexMatrix& FFT)
+void VelocityMatrix::computeInitialVelocityXHomogeneousNonuniform(const float        dtRho0Sgx,
+                                                                  const RealMatrix&  dxudxnSgx,
+                                                                  FftwComplexMatrix& fftTemp)
 {
-  FFT.Compute_FFT_3D_C2R(*this);
+  fftTemp.computeC2RFft3D(*this);
 
-  const float Divider = 1.0f / (2.0f * pTotalElementCount) * dt_rho_0_sgx;
+  const float divider = 1.0f / (2.0f * static_cast<float>(mSize)) * dtRho0Sgx;
 
-  //dt_rho0_sgx .* real...
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * pDimensionSizes.ny * pDimensionSizes.nx;
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    size_t i = z * mDimensionSizes.ny * mDimensionSizes.nx;
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        pMatrixData[i] = pMatrixData[i] * Divider * dxudxn_sgx[x];
+        mData[i] *=  divider * dxudxnSgx[x];
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x
-//------------------------------------------------------------------------------
-
+}// end of computeInitialVelocityXHomogeneousNonuniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute dt./rho0_sgy .* ifft (FFT).
- * * if rho0_sgx is scalar, nonuniform  non uniform grid, y component.
- * @param [in] dt_rho_0_sgy - scalar value
- * @param [in] dyudyn_sgy   - non-uniform mapping
- * @param [in] FFT          - FFT matrix (data will be overwritten)
+ * Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, x direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y
-        (const float dt_rho_0_sgy,
-         const TRealMatrix & dyudyn_sgy,
-         TFFTWComplexMatrix& FFT)
+void VelocityMatrix::computeInitialVelocityYHomogeneousNonuniform(const float        dtRho0Sgy,
+                                                                  const RealMatrix&  dyudynSgy,
+                                                                  FftwComplexMatrix& fftTemp)
 {
-  FFT.Compute_FFT_3D_C2R(*this);
+  fftTemp.computeC2RFft3D(*this);
 
-  const float Divider = 1.0f / (2.0f * pTotalElementCount) * dt_rho_0_sgy;
+  const float divider = 1.0f / (2.0f * static_cast<float>(mSize)) * dtRho0Sgy;
 
-  //dt_rho0_sgx .* real...
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * pDimensionSizes.ny * pDimensionSizes.nx;
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    register size_t i = z * mDimensionSizes.ny * mDimensionSizes.nx;
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      const float dyudyn_sgy_data = dyudyn_sgy[y] * Divider;
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      const float eDyudynSgy = dyudynSgy[y] * divider;
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        pMatrixData[i] = pMatrixData[i] * dyudyn_sgy_data;
+        mData[i] *= eDyudynSgy;
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y
-//------------------------------------------------------------------------------
+}// end of computeInitialVelocityYHomogeneousNonuniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute dt./rho0_sgz .* ifft (FFT).
- * if rho0_sgx is scalar, non uniform grid, z component.
- * @param [in] dt_rho_0_sgz - scalar value
- * @param [in] dzudzn_sgz   - non-uniform mapping
- * @param [in] FFT          - FFT matrix (data will be overwritten)
+ * Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, z direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z
-    (const float dt_rho_0_sgz,
-     const  TRealMatrix & dzudzn_sgz,
-     TFFTWComplexMatrix& FFT)
+void VelocityMatrix::computeInitialVelocityZHomogeneousNonuniform(const float dtRho0Sgz,
+                                                                  const  RealMatrix& dzudznSgz,
+                                                                  FftwComplexMatrix& fftTemp)
 {
-  FFT.Compute_FFT_3D_C2R(*this);
+  fftTemp.computeC2RFft3D(*this);
 
-  const float Divider = 1.0f / (2.0f * pTotalElementCount) * dt_rho_0_sgz;
+  const float divider = 1.0f / (2.0f * static_cast<float>(mSize)) * dtRho0Sgz;
 
-  //dt_rho0_sgx .* real...
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * pDimensionSizes.ny * pDimensionSizes.nx;
-    const float dzudzn_sgz_data = dzudzn_sgz[z] * Divider;
+    size_t i = z * mDimensionSizes.ny * mDimensionSizes.nx;
+    const float eDzudznSgz = dzudznSgz[z] * divider;
 
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        pMatrixData[i] = pMatrixData[i] * dzudzn_sgz_data;
+        mData[i] *= eDzudznSgz;
         i++;
       } // x
     } // y
   } // z
- }// end of Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z
-//------------------------------------------------------------------------------
-
-
+ }// end of computeInitialVelocityZHomogeneousNonuniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute a new value for ux_sgx.
- * Default case (heterogenous).
- *
- * @param [in] FFT_p   - fft of pressure
- * @param [in] dt_rho0 - dt_rho0_sgx
- * @param [in] pml     - pml_x
+ * Compute acoustic velocity for heterogeneous medium and a uniform grid, x direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize(const TRealMatrix& FFT_p,
-                                                 const TRealMatrix& dt_rho0,
-                                                 const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityX(const RealMatrix& ifftX,
+                                      const RealMatrix& dtRho0Sgx,
+                                      const RealMatrix& pmlX)
 {
-  const float Divider = 1.0f / pTotalElementCount;
+  const float divider = 1.0f / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    register size_t i = z * mSlabSize;
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = Divider * FFT_p[i] * dt_rho0[i];
+        const float eIfftX = divider * ifftX[i] * dtRho0Sgx[i];
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixElement *= pml[x];
+        eData *= pmlX[x];
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftX;
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixData[i] = pMatrixElement * pml[x];
+        mData[i] = eData * pmlX[x];
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_ux_sgx_normalize
-//------------------------------------------------------------------------------
+}// end of computeVelocityX
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute a new value of ux_sgx.
- * This is the case for rho0 being a scalar and a uniform grid.
- * @param  [in] FFT_p   - matrix
- * @param  [in] dt_rho0 - scalar
- * @param  [in] pml     - matrix
+ * Compute acoustic velocity for homogeneous medium and a uniform grid, x direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize_scalar_uniform(const TRealMatrix& FFT_p,
-                                                                const float        dt_rho0,
-                                                                const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityXHomogeneousUniform(const RealMatrix& ifftX,
+                                                        const float       dtRho0,
+                                                        const RealMatrix& pmlX)
 {
-  const float Divider = dt_rho0 / pTotalElementCount;
+  const float divider = dtRho0 / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    register size_t i = z * mSlabSize;
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = Divider * FFT_p[i];
+        const float eIfftX = divider * ifftX[i];
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixElement *= pml[x];
+        eData *= pmlX[x];
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftX;
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixData[i] = pMatrixElement * pml[x];
+        mData[i] = eData * pmlX[x];
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_ux_sgx_normalize_scalar_uniform
-//------------------------------------------------------------------------------
-
+}// end of computeVelocityXHomogeneousUniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute a new value of ux_sgx.
- * This is the case for rho0 being a scalar and a non-uniform grid.
- * @param [in] FFT_p      - matrix
- * @param [in] dt_rho0    - scalar
- * @param [in] dxudxn_sgx - scalar
- * @param [in] pml        - matrix
+ * Compute acoustic velocity for homogenous medium and non-uniform grid, x direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
-                                                                   const float        dt_rho0,
-                                                                   const TRealMatrix& dxudxn_sgx,
-                                                                   const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityXHomogeneousNonuniform(const RealMatrix& ifftX,
+                                                           const float       dtRho0,
+                                                           const RealMatrix& dxudxnSgx,
+                                                           const RealMatrix& pmlX)
 {
-  const float Divider = dt_rho0 / pTotalElementCount;
+  const float divider = dtRho0 / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    register size_t i = z * mSlabSize;
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = (Divider * dxudxn_sgx[x]) * FFT_p[i];
+        const float eIfftX = (divider * dxudxnSgx[x]) * ifftX[i];
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixElement *= pml[x];
+        eData *= pmlX[x];
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftX;
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixData[i] = pMatrixElement * pml[x];
+        mData[i] = eData * pmlX[x];
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_ux_sgx_normalize_scalar_nonuniform
-//------------------------------------------------------------------------------
-
+}// end of computeVelocityXHomogeneousNonuniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute new value of uy_sgy.
- * Default case (heterogenous).
- *
- * @param [in] FFT_p   - fft of pressure
- * @param [in] dt_rho0 - dt_rh0_sgy
- * @param [in] pml     - pml_y
+ * Compute acoustic velocity for heterogeneous medium and a uniform grid, y direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_uy_sgy_normalize(const TRealMatrix& FFT_p,
-                                                 const TRealMatrix& dt_rho0,
-                                                 const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityY(const RealMatrix& ifftY,
+                                      const RealMatrix& dtRho0Sgy,
+                                      const RealMatrix& pmlY)
 {
-  const float Divider = 1.0f / pTotalElementCount;
+  const float divider = 1.0f / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    size_t i = z * mSlabSize;
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      const float pml_y = pml[y];
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      const float ePmlY = pmlY[y];
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = Divider * FFT_p[i] * dt_rho0[i];
+        const float eIfftY = divider * ifftY[i] * dtRho0Sgy[i];
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixElement *= pml_y;
+        eData *= ePmlY;
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftY;
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixData[i] = pMatrixElement * pml_y;
+        mData[i] = eData * ePmlY;
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_uy_sgy_normalize
-//------------------------------------------------------------------------------
-
+}// end of computeVelocityY
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute new value of uy_sgy.
- * This is the case for rho0 being a scalar and a uniform grid.
- * @param [in] FFT_p    - matrix
- * @param [in] dt_rho0  - scalar
- * @param [in] pml      - matrix
+ * Compute acoustic velocity for homogeneous medium and a uniform grid, y direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_uy_sgy_normalize_scalar_uniform(const TRealMatrix& FFT_p,
-                                                                const float        dt_rho0,
-                                                                const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityYHomogeneousUniform(const RealMatrix& ifftY,
+                                                        const float       dtRho0,
+                                                        const RealMatrix& pmlY)
 {
-  const float Divider = dt_rho0 / pTotalElementCount;
+  const float divider = dtRho0 / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    size_t i = z * mSlabSize;
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      const float pml_y = pml[y];
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      const float ePmlY = pmlY[y];
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = Divider * FFT_p[i];
+        const float eIfftY = divider * ifftY[i];
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixElement *= pml_y;
+        eData *= ePmlY;
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftY;
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixData[i] = pMatrixElement * pml_y;
+        mData[i] = eData * ePmlY;
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_uy_sgy_normalize_scalar_uniform
-//------------------------------------------------------------------------------
-
+}// end of computeVelocityYHomogeneousUniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute new value of uy_sgy,
- * This is the case for rho0 being a scalar and a non-uniform grid.
- * @param [in] FFT_p      - matrix
- * @param [in] dt_rho0    - scalar
- * @param [in] dyudyn_sgy - scalar
- * @param [in] pml        - matrix
+ * Compute acoustic velocity for homogenous medium and non-uniform grid, y direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_uy_sgy_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
-                                                                   const float        dt_rho0,
-                                                                   const TRealMatrix& dyudyn_sgy,
-                                                                   const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityYHomogeneousNonuniform(const RealMatrix& ifftY,
+                                                           const float       dtRho0,
+                                                           const RealMatrix& dyudynSgy,
+                                                           const RealMatrix& pmlY)
 {
-  const float Divider = dt_rho0 / pTotalElementCount;
+  const float divider = dtRho0 / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * p2DDataSliceSize;
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    size_t i = z * mSlabSize;
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      const float pml_y = pml[y];
-      const float dyudyn_sgy_data = dyudyn_sgy[y];
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      const float ePmlY      = pmlY[y];
+      const float eDyudynSgy = dyudynSgy[y];
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = (Divider * dyudyn_sgy_data) * FFT_p[i];
+        const float eIfftY = (divider * eDyudynSgy) * ifftY[i];
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixElement *= pml_y;
+        eData *= ePmlY;
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftY;
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixData[i] = pMatrixElement * pml_y;
+        mData[i] = eData * ePmlY;
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_uy_sgy_normalize_scalar_nonuniform
-//------------------------------------------------------------------------------
-
+}// end of computeVelocityYHomogeneousNonuniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute new value of uz_sgz.
- * Default case (heterogenous).
- *
- * @param [in] FFT_p   - fft of pressure
- * @param [in] dt_rho0 - dt_rh0_sgz
- * @param [in] pml     - pml_z
+ * Compute acoustic velocity for heterogeneous medium and a uniform grid, z direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_uz_sgz_normalize(const TRealMatrix& FFT_p,
-                                                 const TRealMatrix& dt_rho0,
-                                                 const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityZ(const RealMatrix& ifftZ,
+                                      const RealMatrix& dtRho0Sgz,
+                                      const RealMatrix& pmlZ)
 {
-  const float Divider = 1.0f / pTotalElementCount;
+  const float divider = 1.0f / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * p2DDataSliceSize;
-    const float pml_z = pml[z];
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    size_t i = z * mSlabSize;
+    const float ePmlZ = pmlZ[z];
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = Divider * FFT_p[i] * dt_rho0[i];
+        const float eIfftZ = divider * ifftZ[i] * dtRho0Sgz[i];
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixElement *= pml_z;
+        eData *= ePmlZ;
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftZ;
 
         //BSXElementRealMultiply_1D_X(pml);
-        pMatrixData[i] = pMatrixElement * pml_z;
+        mData[i] = eData * ePmlZ;
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_uz_sgz_normalize
-//------------------------------------------------------------------------------
+}// end of computeVelocityZ
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute a new value for uz_sgz.
- * This is the case for rho0 being a scalar and a uniform grid.
- *
- * @param [in] FFT_p   - matrix
- * @param [in] dt_rho0 - scalar
- * @param [in] pml     - matrix
+ * Compute acoustic velocity for homogeneous medium and a uniform grid, z direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_uz_sgz_normalize_scalar_uniform(const TRealMatrix& FFT_p,
-                                                                const float        dt_rho0,
-                                                                const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityZHomogeneousUniform(const RealMatrix& ifftZ,
+                                                        const float       dtRho0,
+                                                        const RealMatrix& pmlZ)
 {
-  const float Divider = dt_rho0 / pTotalElementCount;
+  const float divider = dtRho0 / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z* p2DDataSliceSize;
-    const float pml_z = pml[z];
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    size_t i = z* mSlabSize;
+    const float ePmlZ = pmlZ[z];
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = Divider * FFT_p[i];
+        const float eIfftZ = divider * ifftZ[i];
 
         //BSXElementRealMultiply_1D_X(abc);
-        pMatrixElement *= pml_z;
+        eData *= ePmlZ;
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftZ;
 
         //BSXElementRealMultiply_1D_X(abc);
 
-        pMatrixData[i] = pMatrixElement * pml_z;
+        mData[i] = eData * ePmlZ;
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_uz_sgz_normalize_scalar_uniform
-//------------------------------------------------------------------------------
-
+}// end of computeVelocityZHomogeneousUniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute a new value for uz_sgz.
- * This is the case for rho0 being a scalar and a non-uniform grid.
- * @param [in] FFT_p      - matrix
- * @param [in] dt_rho0    - scalar
- * @param [in] dzudzn_sgz - scalar
- * @param [in] pml        - matrix
+ * Compute acoustic velocity for homogenous medium and non-uniform grid, z direction.
  */
-void Tuxyz_sgxyzMatrix::Compute_uz_sgz_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
-                                                                   const float        dt_rho0,
-                                                                   const TRealMatrix& dzudzn_sgz,
-                                                                   const TRealMatrix& pml)
+void VelocityMatrix::computeVelocityZHomogeneousNonuniform(const RealMatrix& ifftZ,
+                                                           const float       dtRho0,
+                                                           const RealMatrix& dzudznSgz,
+                                                           const RealMatrix& pmlZ)
 {
-  const float Divider = dt_rho0 / pTotalElementCount;
+  const float divider = dtRho0 / static_cast<float>(mSize);
 
   #pragma omp for schedule (static)
-  for (size_t z = 0; z < pDimensionSizes.nz; z++)
+  for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * p2DDataSliceSize;
-    const float pml_z = pml[z];
-    const float dzudzn_sgz_data = dzudzn_sgz[z];
+    size_t i = z * mSlabSize;
+    const float ePmlZ = pmlZ[z];
+    const float eDzudznSgz_data = dzudznSgz[z];
 
-    for (size_t y = 0; y < pDimensionSizes.ny; y++)
+    for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
-      for (size_t x = 0; x < pDimensionSizes.nx; x++)
+      for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float pMatrixElement = pMatrixData[i];
+        register float eData = mData[i];
 
         //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float FFT_p_el = (Divider * dzudzn_sgz_data) * FFT_p[i];
+        const float eIfftZ = (divider * eDzudznSgz_data) * ifftZ[i];
 
         //BSXElementRealMultiply_1D_X(abc);
-        pMatrixElement *= pml_z;
+        eData *= ePmlZ;
 
         //ElementSubMatrices(FFT_p);
-        pMatrixElement -= FFT_p_el;
+        eData -= eIfftZ;
 
         //BSXElementRealMultiply_1D_X(abc);
 
-        pMatrixData[i] = pMatrixElement * pml_z;
+        mData[i] = eData * ePmlZ;
 
         i++;
       } // x
     } // y
   } // z
-}// end of Compute_uz_sgz_normalize_scalar_nonuniform
-//------------------------------------------------------------------------------
-
+}// end of computeVelocityZHomogeneousNonuniform
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Add transducer data to X dimension
- * @param [in] u_source_index    - Index matrix
- * @param [in, out] delay_mask   - Index matrix - all elements incremented by one
- * @param [in] transducer_signal - Transducer signal
+ * Add transducer data source to velocity x component.
  */
-void Tuxyz_sgxyzMatrix::AddTransducerSource(const TIndexMatrix& u_source_index,
-                                                  TIndexMatrix& delay_mask,
-                                            const TRealMatrix & transducer_signal)
+void VelocityMatrix::addTransducerSource(const IndexMatrix& velocitySourceIndex,
+                                         const RealMatrix&  transducerSourceInput,
+                                         const IndexMatrix& delayMask,
+                                         const size_t       timeIndex)
 {
-  #pragma omp parallel for schedule (static)  if (u_source_index.GetTotalElementCount() > 16384)
-  for (size_t i = 0; i < u_source_index.GetTotalElementCount(); i++)
+  const size_t sourceSize = velocitySourceIndex.size();
+  #pragma omp parallel for schedule(static) firstprivate(timeIndex, sourceSize) if (velocitySourceIndex.size() > 16384)
+  for (size_t i = 0; i < sourceSize; i++)
   {
-    pMatrixData[u_source_index[i]] += transducer_signal[delay_mask[i]];
-    delay_mask[i]++;
+    mData[velocitySourceIndex[i]] += transducerSourceInput[delayMask[i] + timeIndex];
   }
-}// end of AddTransducerSource
-//------------------------------------------------------------------------------
-
-
-
+}// end of addTransducerSource
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Add in velocity source terms.
- *
- * @param [in] u_source_input - Source input to add
- * @param [in] u_source_index - Index matrix
- * @param [in] t_index        - Actual time step
- * @param [in] u_source_mode  - Mode 0 = dirichlet boundary, 1 = add in
- * @param [in] u_source_many  - 0 = One series, 1 = multiple series
- *
  */
-void Tuxyz_sgxyzMatrix::Add_u_source(const TRealMatrix & u_source_input,
-                                     const TIndexMatrix& u_source_index,
-                                     const size_t        t_index,
-                                     const size_t        u_source_mode,
-                                     const size_t        u_source_many)
+void VelocityMatrix::addVelocitySource(const RealMatrix & velocitySourceInput,
+                                       const IndexMatrix& velocitySourceIndex,
+                                       const size_t       timeIndex,
+                                       const size_t       velocitySourceMode,
+                                       const size_t       velocitySourceMany)
 {
 
-  const size_t u_source_size = u_source_index.GetTotalElementCount();
-  const size_t Index2D = (u_source_many != 0) ? t_index * u_source_size : t_index;
+  const size_t sourceSize = velocitySourceIndex.size();
+  const size_t index2D    = (velocitySourceMany != 0) ? timeIndex * sourceSize : timeIndex;
 
-  if (u_source_mode == 0)
+  if (velocitySourceMode == 0)
   {
-    #pragma omp parallel for if (u_source_size > 16384)
-    for (size_t i = 0; i < u_source_size; i++)
+    #pragma omp parallel for if (sourceSize > 16384)
+    for (size_t i = 0; i < sourceSize; i++)
     {
-      const size_t SignalIndex = (u_source_many != 0) ? Index2D + i : Index2D;
-      pMatrixData[u_source_index[i]] = u_source_input[SignalIndex];
+      const size_t signalIndex = (velocitySourceMany != 0) ? index2D + i : index2D;
+      mData[velocitySourceIndex[i]] = velocitySourceInput[signalIndex];
     }
   }// end of Dirichlet
 
-  if (u_source_mode == 1)
+  if (velocitySourceMode == 1)
   {
-    #pragma omp parallel for if (u_source_size > 16384)
-    for (size_t i = 0; i < u_source_size; i++)
+    #pragma omp parallel for if (sourceSize > 16384)
+    for (size_t i = 0; i < sourceSize; i++)
     {
-      const size_t SignalIndex = (u_source_many != 0) ? Index2D + i : Index2D;
-      pMatrixData[u_source_index[i]] += u_source_input[SignalIndex];
+      const size_t signalIndex = (velocitySourceMany != 0) ? index2D + i : index2D;
+      mData[velocitySourceIndex[i]] += velocitySourceInput[signalIndex];
     }
   }// end of add
-}// end of Add_u_source
-//------------------------------------------------------------------------------
+}// end of addVelocitySource
+//----------------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              private methods                                //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//

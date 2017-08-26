@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 15:16 (created) \n
- *              24 August    2017, 14:42 (revised)
+ *              26 August    2017, 11:14 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -38,197 +38,203 @@
 
 #include <Utils/ErrorMessages.h>
 
-//----------------------------------------------------------------------------//
-//                              Constants                                     //
-//----------------------------------------------------------------------------//
+using std::ios;
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
-//----------------------------------------------------------------------------//
-//                              Definitions                                   //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
 
 /**
  * Constructor allocating memory.
- * @param [in] DimensionSizes - Dimension sizes
  */
-TIndexMatrix::TIndexMatrix(const DimensionSizes & DimensionSizes)
-              : TBaseIndexMatrix()
+IndexMatrix::IndexMatrix(const DimensionSizes& dimensionSizes)
+  : BaseIndexMatrix()
 {
-  pDimensionSizes = DimensionSizes;
+  initDimensions(dimensionSizes);
+  allocateMemory();
+}// end of IndexMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
-  pTotalElementCount = pDimensionSizes.nx *
-                       pDimensionSizes.ny *
-                       pDimensionSizes.nz;
-
-  pTotalAllocatedElementCount = pTotalElementCount;
-
-  pDataRowSize       = pDimensionSizes.nx;
-
-  p2DDataSliceSize   = pDimensionSizes.nx *
-                       pDimensionSizes.ny;
-
-  AllocateMemory();
-}// end of TIndexMatrix
-//-----------------------------------------------------------------------------
-
-
+/**
+ * Destructor.
+ */
+IndexMatrix::~IndexMatrix()
+{
+  freeMemory();
+}// end of ~IndexMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Read data from HDF5 file (only from the root group).
- * @param [in] HDF5_File  - HDF5 file handle
- * @param [in] MatrixName - HDF5 dataset name
- *
- * @throw ios:failure if there's an error
  */
-void TIndexMatrix::ReadDataFromHDF5File(Hdf5File & HDF5_File,
-                                        const char * MatrixName)
+void IndexMatrix::readData(Hdf5File&   file,
+                           MatrixName& matrixName)
 {
   // check the datatype
-  if (HDF5_File.readMatrixDataType(HDF5_File.getRootGroup(),MatrixName) != Hdf5File::MatrixDataType::kLong)
+  if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kLong)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtMatrixNotIndex,MatrixName);
+    sprintf(ErrorMessage, kErrFmtMatrixNotIndex,matrixName.c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // check the domain type
-  if (HDF5_File.readMatrixDomainType(HDF5_File.getRootGroup(), MatrixName) != Hdf5File::MatrixDomainType::kReal)
+  if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kReal)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtMatrixNotReal,MatrixName);
+    sprintf(ErrorMessage,kErrFmtMatrixNotReal, matrixName.c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // read data
-  HDF5_File.readCompleteDataset(HDF5_File.getRootGroup(),
-                                MatrixName,
-                                pDimensionSizes,
-                                pMatrixData);
+  file.readCompleteDataset(file.getRootGroup(), matrixName, mDimensionSizes, mData);
 
-}// end of LoadDataFromMatlabFile
-//------------------------------------------------------------------------------
+}// end of readData
+//----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Write data to HDF5 file.
+ */
+void IndexMatrix::writeData(Hdf5File&    file,
+                            MatrixName&  matrixName,
+                            const size_t compressionLevel)
+{
+  // set chunks - may be necessary for long index based sensor masks
+  DimensionSizes chunks = mDimensionSizes;
+  chunks.nz = 1;
+
+  //1D matrices
+  if ((mDimensionSizes.ny == 1) && (mDimensionSizes.nz == 1))
+  {
+    // Chunk = 4MB
+    if (mDimensionSizes.nx > 4 * kChunkSize1D4MB)
+    {
+      chunks.nx = kChunkSize1D4MB;
+    }
+    else if (mDimensionSizes.nx > 4 * kChunkSize1D1MB)
+    {
+      chunks.nx = kChunkSize1D1MB;
+    }
+    else if (mDimensionSizes.nx > 4 * kChunkSize1D256kB)
+    {
+      chunks.nx = kChunkSize1D256kB;
+    }
+  }
+
+  // create dataset and write a slab
+  hid_t dataset = file.createDataset(file.getRootGroup(),
+                                     matrixName,
+                                     mDimensionSizes,
+                                     chunks,
+                                     Hdf5File::MatrixDataType::kLong,
+                                     compressionLevel);
+
+  file.writeHyperSlab(dataset, DimensionSizes(0, 0, 0), mDimensionSizes, mData);
+
+  file.closeDataset(dataset);
+
+  // write data and domain types
+  file.writeMatrixDataType(file.getRootGroup(),   matrixName, Hdf5File::MatrixDataType::kLong);
+  file.writeMatrixDomainType(file.getRootGroup(), matrixName, Hdf5File::MatrixDomainType::kReal);
+}// end of writeData
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get the top left corner of the index-th cuboid. Cuboids are stored as 6-tuples (two 3D
+ * coordinates). This gives the first three coordinates.
+ */
+DimensionSizes IndexMatrix::getTopLeftCorner(const size_t& index) const
+{
+  size_t x =  mData[6 * index    ];
+  size_t y =  mData[6 * index + 1];
+  size_t z =  mData[6 * index + 2];
+
+  return DimensionSizes(x, y, z);
+}// end of getTopLeftCorner
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get the top bottom right of the index-th cuboid. Cuboids are stored as 6-tuples (two 3D
+ * coordinates). This gives the first three coordinates. This routine works only on the CPU side.
+*/
+DimensionSizes IndexMatrix::getBottomRightCorner(const size_t& index) const
+{
+  size_t x =  mData[6 * index + 3];
+  size_t y =  mData[6 * index + 4];
+  size_t z =  mData[6 * index + 5];
+
+  return DimensionSizes(x, y, z);
+}// end of GetBottomRightCorner
+//----------------------------------------------------------------------------------------------------------------------
 
 
 
 /**
  * Recompute indeces, MATLAB -> C++.
  */
-void TIndexMatrix::RecomputeIndicesToCPP()
+void IndexMatrix::recomputeIndicesToCPP()
 {
-  #pragma omp parallel for if (pTotalElementCount > 1e5)
-  for (size_t i = 0; i < pTotalElementCount; i++)
+  #pragma omp parallel for simd
+  for (size_t i = 0; i < mSize; i++)
   {
-    pMatrixData[i]--;
+    mData[i]--;
   }
-}// end of RecomputeIndices
-//------------------------------------------------------------------------------
+}// end of recomputeIndices
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Recompute indeces, C++ -> MATLAB.
  */
-void TIndexMatrix::RecomputeIndicesToMatlab()
+void IndexMatrix::recomputeIndicesToMatlab()
 {
-  #pragma omp parallel for if (pTotalElementCount > 1e5)
-  for (size_t i = 0; i < pTotalElementCount; i++)
+  #pragma omp parallel for simd
+  for (size_t i = 0; i < mSize; i++)
   {
-    pMatrixData[i]++;
+    mData[i]++;
   }
-}// end of RecomputeIndicesToMatlab
-//------------------------------------------------------------------------------
-
+}// end of recomputeIndicesToMatlab
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get total number of elements in all cuboids to be able to allocate output file.
- * @return Total sampled grid points
  */
-size_t TIndexMatrix::GetTotalNumberOfElementsInAllCuboids() const
+size_t IndexMatrix::getSizeOfAllCuboids() const
 {
-  size_t ElementSum = 0;
-  for (size_t cuboidIdx = 0; cuboidIdx < pDimensionSizes.ny; cuboidIdx++)
+  size_t elementSum = 0;
+  for (size_t cuboidIdx = 0; cuboidIdx < mDimensionSizes.ny; cuboidIdx++)
   {
-    ElementSum += (GetBottomRightCorner(cuboidIdx) - GetTopLeftCorner(cuboidIdx)).nElements();
+    elementSum += (getBottomRightCorner(cuboidIdx) - getTopLeftCorner(cuboidIdx)).nElements();
   }
 
-  return ElementSum;
-}// end of GetTotalNumberOfElementsInAllCuboids
-//------------------------------------------------------------------------------
+  return elementSum;
+}// end of getSizeOfAllCuboids
+//----------------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
- * Write data to HDF5 file
- *
- * @param [in] HDF5_File        - HDF5 file handle
- * @param [in] MatrixName       - HDF5 Dataset name
- * @param [in] CompressionLevel - Compression level
- *
- * @throw ios:failure if there's an error
+ * Set necessary dimensions and auxiliary variables.
  */
-void TIndexMatrix::WriteDataToHDF5File(Hdf5File & HDF5_File,
-                                      const char * MatrixName,
-                                      const size_t CompressionLevel)
+void IndexMatrix::initDimensions(const DimensionSizes& dimensionSizes)
 {
-  // set chunks - may be necessary for long index based sensor masks
-  DimensionSizes Chunks = pDimensionSizes;
-  Chunks.nz = 1;
+  mDimensionSizes = dimensionSizes;
 
-  //1D matrices
-  if ((pDimensionSizes.ny == 1) && (pDimensionSizes.nz == 1))
-  {
-    // Chunk = 4MB
-    if (pDimensionSizes.nx > 4 * ChunkSize_1D_4MB)
-    {
-      Chunks.nx = ChunkSize_1D_4MB;
-    }
-    else if (pDimensionSizes.nx > 4 * ChunkSize_1D_1MB)
-    {
-      Chunks.nx = ChunkSize_1D_1MB;
-    }
-    else if (pDimensionSizes.nx > 4 * ChunkSize_1D_256KB)
-    {
-      Chunks.nx = ChunkSize_1D_256KB;
-    }
-  }
+  mSize = dimensionSizes.nx * dimensionSizes.ny * dimensionSizes.nz;
 
-  hid_t HDF5_Dataset_id = HDF5_File.createDataset(HDF5_File.getRootGroup(),
-                                                  MatrixName,
-                                                  pDimensionSizes,
-                                                  Chunks,
-                                                  Hdf5File::MatrixDataType::kLong,
-                                                  CompressionLevel);
+  mCapacity = mSize;
 
-  HDF5_File.writeHyperSlab(HDF5_Dataset_id,
-                           DimensionSizes(0, 0, 0),
-                           pDimensionSizes,
-                           pMatrixData);
-
-  HDF5_File.closeDataset(HDF5_Dataset_id);
-
-  // write data and domain types
-  HDF5_File.writeMatrixDataType  (HDF5_File.getRootGroup(),
-                                  MatrixName,
-                                  Hdf5File::MatrixDataType::kLong);
-
-  HDF5_File.writeMatrixDomainType(HDF5_File.getRootGroup(),
-                                  MatrixName,
-                                  Hdf5File::MatrixDomainType::kReal);
-}// end of WriteDataToHDF5File
-//---------------------------------------------------------------------------
-
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                             protected methods                              //
-//----------------------------------------------------------------------------//
-
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              private methods                               //
-//----------------------------------------------------------------------------//
+  mRowSize  = dimensionSizes.nx;
+  mSlabSize = dimensionSizes.nx * dimensionSizes.ny;
+}// end of initDimensions
+//----------------------------------------------------------------------------------------------------------------------

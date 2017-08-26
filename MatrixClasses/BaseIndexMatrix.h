@@ -2,7 +2,7 @@
  * @file        BaseIndexMatrix.h
  * @author      Jiri Jaros              \n
  *              Faculty of Information Technology\n
- *              Brno University of Technology \n
+  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
  * @brief       The header file containing the base class for index matrices
@@ -11,8 +11,8 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  *
- * @date        26 July      2011, 2:17  (created) \n
- *              22 August    2017, 13:17 (revised)
+ * @date        26 July      2011, 12:17  (created) \n
+ *              25 August    2017, 12:54 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -33,103 +33,94 @@
  */
 
 
-#ifndef BASEINDEXMATRIXDATA_H
-#define	BASEINDEXMATRIXDATA_H
+#ifndef BASE_INDEX_MATRIX_H
+#define BASE_INDEX_MATRIX_H
 
 
 #include <MatrixClasses/BaseMatrix.h>
 #include <Utils/DimensionSizes.h>
 
-
-using namespace std;
-
 /**
- * @class TBaseIndexMatrix
- * @brief Abstract base class for index based matrices defining basic interface.
- *        Higher dimensional matrices stored as 1D arrays, row-major order.
-
- * @details Abstract base class for index based matrices defining basic interface.
+ * @class   BaseIndexMatrix
+ * @brief   Abstract base class for index based matrices defining basic interface.
  *          Higher dimensional matrices stored as 1D arrays, row-major order.
+
+ * @details Abstract base class for index based matrices defining basic interface. Higher
+ *          dimensional matrices stored as 1D arrays, row-major order. The I/O is done via HDF5 files.
  */
-class TBaseIndexMatrix : public TBaseMatrix
+class BaseIndexMatrix : public BaseMatrix
 {
   public:
-    /// Default constructor
-    TBaseIndexMatrix(): TBaseMatrix(),
-            pTotalElementCount(0), pTotalAllocatedElementCount(0),
-            pDimensionSizes(), pDataRowSize(0), p2DDataSliceSize (0),
-            pMatrixData (NULL)
-    {};
-
-    /// Get dimension sizes of the matrix.
-    inline struct DimensionSizes GetDimensionSizes() const
-    {
-      return pDimensionSizes;
-    }
-
-    /// Get total element count of the matrix.
-    virtual size_t GetTotalElementCount() const
-    {
-      return pTotalElementCount;
-    };
-
-    /// Get total allocated element count (might differ from total element count used for the simulation because of padding).
-    virtual size_t GetTotalAllocatedElementCount() const
-    {
-      return pTotalAllocatedElementCount;
-    };
-
+    /// Default constructor.
+    BaseIndexMatrix();
+    /// Copy constructor is not allowed.
+    BaseIndexMatrix(const BaseIndexMatrix&) = delete;
     /// Destructor.
-    virtual ~TBaseIndexMatrix(){};
+    virtual ~BaseIndexMatrix() {};
 
+    /// operator= is not allowed.
+    BaseIndexMatrix& operator=(const BaseIndexMatrix&) = delete;
+
+    /**
+     * @brief  Get dimension sizes of the matrix.
+     * @return Dimension sizes of the matrix.
+     */
+    virtual const DimensionSizes& getDimensionSizes() const { return mDimensionSizes; };
+
+    /**
+     * @brief  Size of the matrix.
+     * @return Number of elements.
+     */
+    virtual size_t size()                             const { return mSize; };
+    /**
+     * @brief  The capacity of the matrix (this may differ from size due to padding, etc.).
+     * @return Capacity of the currently allocated storage.
+     */
+    virtual size_t capacity()                         const { return mCapacity; };
 
     /// Zero all elements of the matrix (NUMA first touch).
-    virtual void ZeroMatrix();
+    virtual void   zeroMatrix();
 
-    /// Get raw data out of the class (for direct kernel access).
-    virtual size_t * GetRawData()
-    {
-      return pMatrixData;
-    }
+    /**
+     * @brief Get raw data out of the class (for direct kernel access).
+     * @return Mutable matrix data
+     */
+    virtual size_t* getData()                               { return mData; };
 
-    /// Get raw data out of the class (for direct kernel access).
-    virtual const size_t * GetRawData() const
-    {
-      return pMatrixData;
-    }
+    /**
+     * @brief Get raw data out of the class (for direct kernel access), const version.
+     * @return Immutable matrix data.
+     */
+    virtual const size_t* getData()                   const { return mData; };
 
   protected:
+   /**
+    * @brief Aligned memory allocation (both on CPU and GPU).
+    * @throw std::bad_alloc - If there's not enough memory.
+    */
+    virtual void allocateMemory();
+    /// Memory deallocation (both on CPU and GPU)
+    virtual void freeMemory();
+
     /// Total number of elements.
-    size_t pTotalElementCount;
-    /// Total number of allocated elements (the array size).
-    size_t pTotalAllocatedElementCount;
+    size_t mSize;
+    /// Total number of allocated elements (in terms of size_t).
+    size_t mCapacity;
 
     /// Dimension sizes.
-    struct DimensionSizes pDimensionSizes;
+    DimensionSizes mDimensionSizes;
 
     /// Size of 1D row in X dimension.
-    size_t pDataRowSize;
-    /// Size of 2D slab (X,Y).
-    size_t p2DDataSliceSize;
+    size_t mRowSize;
+    /// Size of a XY slab.
+    size_t mSlabSize;
 
     /// Raw matrix data.
-    size_t * pMatrixData;
-
-
-    /// Memory allocation.
-    virtual void AllocateMemory();
-
-    /// Memory deallocation.
-    virtual void FreeMemory() ;
-
-    /// Copy constructor is not directly allowed.
-    TBaseIndexMatrix(const TBaseIndexMatrix& src);
-    /// operator =  is not directly allowed.
-    TBaseIndexMatrix & operator =(const TBaseIndexMatrix& src);
+    size_t* mData;
 
   private:
 
-};// end of TBaseIndexMatrix
-//------------------------------------------------------------------------------
+};// end of BaseIndexMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* TBASEINTDATA_H */
+#endif	/* BASE_INDEX_MATRIX_H */

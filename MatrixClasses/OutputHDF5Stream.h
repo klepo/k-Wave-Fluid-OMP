@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              24 August    2017, 12:21 (revised)
+ *              26 August    2017, 11:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -89,7 +89,7 @@ class TBaseOutputHDF5Stream
      */
     TBaseOutputHDF5Stream(Hdf5File &             HDF5_File,
                           const char *             HDF5_RootObjectName,
-                          const TRealMatrix &      SourceMatrix,
+                          const RealMatrix &      SourceMatrix,
                           const TReductionOperator ReductionOp,
                           float *                  BufferToReuse = NULL)
             : HDF5_File          (HDF5_File),
@@ -150,7 +150,7 @@ class TBaseOutputHDF5Stream
     /// Dataset name.
     char *                   HDF5_RootObjectName;
     /// Source matrix to be sampled.
-    const TRealMatrix&       SourceMatrix;
+    const RealMatrix&       SourceMatrix;
     /// Reduction operator.
     const TReductionOperator ReductionOp;
 
@@ -185,8 +185,8 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
     /// Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together.
     TIndexOutputHDF5Stream(Hdf5File &             HDF5_File,
                            const char *             HDF5_ObjectName,
-                           const TRealMatrix &      SourceMatrix,
-                           const TIndexMatrix &     SensorMask,
+                           const RealMatrix &      SourceMatrix,
+                           const IndexMatrix &     SensorMask,
                            const TReductionOperator ReductionOp,
                            float *                  BufferToReuse = NULL);
 
@@ -218,7 +218,7 @@ class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
     virtual void FlushBufferToFile();
 
     /// Sensor mask to sample data.
-    const TIndexMatrix & SensorMask;
+    const IndexMatrix & SensorMask;
     /// Handle to a HDF5 dataset.
     hid_t  HDF5_DatasetId;
 
@@ -242,8 +242,8 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
     /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together.
     TCuboidOutputHDF5Stream(Hdf5File &             HDF5_File,
                             const char *             HDF5_GroupName,
-                            const TRealMatrix &      SourceMatrix,
-                            const TIndexMatrix &     SensorMask,
+                            const RealMatrix &      SourceMatrix,
+                            const IndexMatrix &     SensorMask,
                             const TReductionOperator ReductionOp,
                             float *                  BufferToReuse = NULL);
 
@@ -289,7 +289,7 @@ class TCuboidOutputHDF5Stream : public TBaseOutputHDF5Stream
     virtual void FlushBufferToFile();
 
     /// Sensor mask to sample data.
-    const TIndexMatrix &     SensorMask;
+    const IndexMatrix &     SensorMask;
 
     /// Handle to a HDF5 dataset.
     hid_t                    HDF5_GroupId;
@@ -319,7 +319,7 @@ class TWholeDomainOutputHDF5Stream : public TBaseOutputHDF5Stream
     /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together.
     TWholeDomainOutputHDF5Stream(Hdf5File &             HDF5_File,
                                  const char *             HDF5_DatasetName,
-                                 const TRealMatrix &      SourceMatrix,
+                                 const RealMatrix &      SourceMatrix,
                                  const TReductionOperator ReductionOp,
                                  float *                  BufferToReuse = NULL);
 

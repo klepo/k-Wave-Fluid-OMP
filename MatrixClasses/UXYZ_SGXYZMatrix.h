@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              22 August    2017, 13:17 (revised)
+ *              25 August    2017, 22:02 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,8 +31,8 @@
  */
 
 
-#ifndef UXYZ_SGXYZREALMATRIX_H
-#define	UXYZ_SGXYZREALMATRIX_H
+#ifndef UXYZ_SGXYZ_REAL_MATRIX_H
+#define UXYZ_SGXYZ_REAL_MATRIX_H
 
 
 #include <MatrixClasses/RealMatrix.h>
@@ -40,121 +40,247 @@
 #include <MatrixClasses/IndexMatrix.h>
 
 /**
- * @class Tuxyz_sgxyzMatrix.
- * @brief The velocity matrix
- * @details The velocity matrix. This class implements a couple of kernels that
- *          modify the particle velocity.
+ * @class   VelocityMatrix.
+ * @brief   The velocity matrix
+ * @details The velocity matrix. This class implements a couple of kernels that modify the particle velocity.
  */
-class Tuxyz_sgxyzMatrix : public TRealMatrix
+class VelocityMatrix : public RealMatrix
 {
   public:
 
+   // Default constructor not allowed for public.
+    VelocityMatrix() = delete;
     /**
-     * @brief Constructor.
+     * @brief   Constructor.
      * @details Constructor allocating memory.
-     * @param [in] DimensionSizes
+     * @param [in] dimensionSizes - Dimension sizes
      */
-    Tuxyz_sgxyzMatrix(struct DimensionSizes DimensionSizes) :
-            TRealMatrix(DimensionSizes)
-    {};
-
-
-   /// Compute dt ./ rho0_sgx .* ifft (FFT).
-   void Compute_dt_rho_sg_mul_ifft_div_2(const TRealMatrix & dt_rho_0_sgx,
-                                         TFFTWComplexMatrix& FFT);
-   /// Compute dt ./ rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, uniform grid.
-   void Compute_dt_rho_sg_mul_ifft_div_2(const float dt_rho_0_sgx,
-                                         TFFTWComplexMatrix& FFT);
-
-   /// Compute dt ./ rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, x component.
-   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x(const float         dt_rho_0_sgx,
-                                                             const TRealMatrix & dxudxn_sgx,
-                                                             TFFTWComplexMatrix& FFT);
-   /// Compute dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, y component.
-   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(const float          dt_rho_0_sgy,
-                                                             const TRealMatrix & dyudyn_sgy,
-                                                             TFFTWComplexMatrix& FFT);
-   /// Compute dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, z component.
-   void Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z(const float         dt_rho_0_sgz,
-                                                             const TRealMatrix & dzudzn_sgz,
-                                                             TFFTWComplexMatrix& FFT);
-
-   //------------------------- X dimension -----------------------------------//
-   /// Compute a new value of ux_sgx, default case
-   void Compute_ux_sgx_normalize(const TRealMatrix& FFT_p,
-                                 const TRealMatrix& dt_rho0,
-                                 const TRealMatrix& pml);
-   /// Compute a new value of ux_sgx, scalar, uniform case
-   void Compute_ux_sgx_normalize_scalar_uniform(const TRealMatrix& FFT_p,
-                                                const float        dt_rho0,
-                                                const TRealMatrix& pml);
-   /// Compute a new value of ux_sgx, scalar, non-uniform case
-   void Compute_ux_sgx_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
-                                                   const float        dt_rho0,
-                                                   const TRealMatrix& dxudxn_sgx,
-                                                   const TRealMatrix& pml);
-
-  //------------------------- Y dimension ------------------------------------//
-   /// Compute a new value of uy_sgy, default case
-   void Compute_uy_sgy_normalize(const TRealMatrix& FFT_p,
-                                 const TRealMatrix& dt_rho0,
-                                 const TRealMatrix& pml);
-   /// Compute a new value of uy_sgy, scalar, uniform case
-   void Compute_uy_sgy_normalize_scalar_uniform(const TRealMatrix& FFT_p,
-                                                const float        dt_rho0,
-                                                const TRealMatrix& pml);
-   /// Compute a new value of uy_sgy, scalar, non-uniform case
-   void Compute_uy_sgy_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
-                                                   const float        dt_rho0,
-                                                   const TRealMatrix& dyudyn_sgy,
-                                                   const TRealMatrix& pml);
-
-   //------------------------- Z dimension -----------------------------------//
-   /// Compute a new value for uz_sgz, default case.
-   void Compute_uz_sgz_normalize(const TRealMatrix& FFT_p,
-                                 const TRealMatrix& dt_rho0,
-                                 const TRealMatrix& pml);
-   /// Compute a new value for uz_sgz, scalar, uniform case.
-   void Compute_uz_sgz_normalize_scalar_uniform(const TRealMatrix& FFT_p,
-                                                const float        dt_rho0,
-                                                const TRealMatrix& pml);
-   /// Compute a new value for uz_sgz, scalar, non-uniform case.
-   void Compute_uz_sgz_normalize_scalar_nonuniform(const TRealMatrix& FFT_p,
-                                                   const float        dt_rho0,
-                                                   const TRealMatrix& dzudzn_sgz,
-                                                   const TRealMatrix& pml);
-
-
-   /// Add transducer data  source to X component.
-   void AddTransducerSource(const TIndexMatrix& u_source_index,
-                                  TIndexMatrix& delay_mask,
-                            const TRealMatrix & transducer_signal);
-
-   /// Add in velocity source terms.
-   void Add_u_source(const TRealMatrix & u_source_input,
-                     const TIndexMatrix& u_source_index,
-                     const size_t        t_index,
-                     const size_t        u_source_mode,
-                     const size_t        u_source_many);
-
-   /// Destructor
-   virtual ~Tuxyz_sgxyzMatrix() {};
-
-protected:
-    // Default constructor not allowed for public.
-    Tuxyz_sgxyzMatrix() : TRealMatrix() {};
-
-    /**
-     * Copy constructor not allowed for public.
-     * @param src
-     */
-    Tuxyz_sgxyzMatrix(const Tuxyz_sgxyzMatrix& src);
-
+    VelocityMatrix(const DimensionSizes& dimensionSizes) : RealMatrix(dimensionSizes) {};
+    /// Copy constructor is not allowed.
+    VelocityMatrix(const VelocityMatrix& src) = delete;
+    /// Destructor
+    virtual ~VelocityMatrix() {};
     /// operator = not allowed for public.
-    Tuxyz_sgxyzMatrix& operator = (const Tuxyz_sgxyzMatrix& src);
-private:
+    VelocityMatrix& operator= (const VelocityMatrix& src) = delete;
 
-}; // end of Tuxyz_sgxyzMatrix
 
-#endif	/* UX_SGREALMATRIX_H */
+   /**
+    * @brief Compute velocity for the initial pressure problem, heterogeneous medium, uniform grid.
+    *
+    * <b> Matlab code: </b>
+    *
+    * \verbatim
+        ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
+        uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
+        uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
+     \endverbatim
+     *
+     * @param [in] dtRho0Sgxyz - Density matrix in x, y or z direction
+     * @param [in] fftTemp     - temporary FFT matrix.
+     */
+   void computeInitialVelocity(const RealMatrix&  dtRho0Sgxyz,
+                               FftwComplexMatrix& fftTemp);
+   /**
+    * @brief Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
+    *
+    * <b> Matlab code: </b>
+    *
+    * \verbatim
+        ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
+        uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
+        uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
+    \endverbatim
+    *
+    * @param [in] dtRho0Sgxyz - Scalar density in x, y or z direction
+    * @param [in] fftTemp     - temporary FFT matrix.
+    */
+   void computeInitialVelocityHomogeneousUniform(const float        dtRho0Sgxyz,
+                                                 FftwComplexMatrix& fftTemp);
+
+   /**
+    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, x direction.
+    *
+    * <b> Matlab code: </b>
+    *
+    * \verbatim
+        ux_sgx = dt ./ rho0_sgx .* dxudxn_sgx .* ifft(ux_sgx).
+    \endverbatim
+    *
+    * @param [in] dtRho0Sgx - Scalar density in x direction
+    * @param [in] dxudxnSgx - Non uniform grid shift in x direction.
+    * @param [in] fftTemp   - temporary FFT matrix.
+    */
+   void computeInitialVelocityXHomogeneousNonuniform(const float        dtRho0Sgx,
+                                                     const RealMatrix&  dxudxnSgx,
+                                                     FftwComplexMatrix& fftTemp);
+   /**
+    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, y direction.
+    *
+    * <b> Matlab code: </b>
+    *
+    * \verbatim
+        uy_sgy = dt ./ rho0_sgy .* dyudxn_sgy .* ifft(uy_sgy).
+    \endverbatim
+    *
+    * @param [in] dtRho0Sgy - Scalar density in y direction
+    * @param [in] dyudynSgy - Non uniform grid shift in y direction.
+    * @param [in] fftTemp   - temporary FFT matrix.
+    */
+   void computeInitialVelocityYHomogeneousNonuniform(const float        dtRho0Sgy,
+                                                     const RealMatrix&  dyudynSgy,
+                                                     FftwComplexMatrix& fftTemp);
+   /**
+    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, z direction.
+    *
+    * <b> Matlab code: </b>
+    *
+    * \verbatim
+        uz_sgz = dt ./ rho0_sgz .* dzudzn_sgz .* ifft(uz_sgz).
+    \endverbatim
+    *
+    * @param [in] dtRho0Sgz - Scalar density in z direction
+    * @param [in] dzudznSgz - Non uniform grid shift in z direction.
+    * @param [in] fftTemp   - temporary FFT matrix.
+    */
+   void computeInitialVelocityZHomogeneousNonuniform(const float        dtRho0Sgz,
+                                                     const RealMatrix&  dzudznSgz,
+                                                     FftwComplexMatrix& fftTemp);
+
+    //------------------------------------------------- X dimension --------------------------------------------------//
+    /**
+     * @brief Compute acoustic velocity for heterogeneous medium and a uniform grid, x direction.
+     *
+     * @param [in] ifftX     - ifftn( bsxfun(\@times, ddx_k_shift_pos, kappa .* p_k))
+     * @param [in] dtRho0Sgx - Acoustic density on staggered grid in x direction.
+     * @param [in] pmlX      - Perfectly matched layer in x direction.
+     */
+    void computeVelocityX(const RealMatrix& ifftX,
+                          const RealMatrix& dtRho0Sgx,
+                          const RealMatrix& pmlX);
+    /**
+     * @brief Compute acoustic velocity for homogeneous medium and a uniform grid, x direction.
+     *
+     * @param [in] ifftX  - ifftn( bsxfun(\@times, ddx_k_shift_pos, kappa .* p_k))
+     * @param [in] dtRho0 - precomputed dt .* rho0 scalar value
+     * @param [in] pmlX    - Perfectly matched layer in x direction.
+     */
+    void computeVelocityXHomogeneousUniform(const RealMatrix& ifftX,
+                                            const float       dtRho0,
+                                            const RealMatrix& pmlX);
+    /**
+     * @brief Compute acoustic velocity for homogenous medium and non-uniform grid, x direction.
+     *
+     * @param [in]     ifftX     - ifftn( bsxfun(\@times, ddx_k_shift_pos, kappa .* p_k))
+     * @param [in]     dtRho0    - precomputed dt .* rho0 scalar value
+     * @param [in]     dxudxnSgx - Non uniform grid shift in x direction.
+     * @param [in]     pmlX      - Perfectly matched layer in x direction.
+     */
+    void computeVelocityXHomogeneousNonuniform(const RealMatrix& ifftX,
+                                               const float       dtRho0,
+                                               const RealMatrix& dxudxnSgx,
+                                               const RealMatrix& pmlX);
+
+    //------------------------------------------------- Y dimension --------------------------------------------------//
+    /**
+     * @brief Compute acoustic velocity for heterogeneous medium and a uniform grid, y direction.
+     *
+     * @param [in] ifftY     - ifftn( bsxfun(\@times, ddy_k_shift_pos, kappa .* p_k))
+     * @param [in] dtRho0Sgy - Acoustic density on staggered grid in y direction.
+     * @param [in] pmlY      - Perfectly matched layer in y direction.
+     */
+    void computeVelocityY(const RealMatrix& ifftY,
+                          const RealMatrix& dtRho0Sgy,
+                          const RealMatrix& pmlY);
+    /**
+     * @brief Compute acoustic velocity for homogeneous medium and a uniform grid, y direction.
+     *
+     * @param [in] ifftY  - ifftn( bsxfun(\@times, ddy_k_shift_pos, kappa .* p_k))
+     * @param [in] dtRho0 - precomputed dt .* rho0 scalar value
+     * @param [in] pmlY    - Perfectly matched layer in y direction.
+     */
+    void computeVelocityYHomogeneousUniform(const RealMatrix& ifftY,
+                                            const float       dtRho0,
+                                            const RealMatrix& pmlY);
+    /**
+     * @brief Compute acoustic velocity for homogenous medium and non-uniform grid, y direction.
+     *
+     * @param [in]     ifftY     - ifftn( bsxfun(\@times, ddy_k_shift_pos, kappa .* p_k))
+     * @param [in]     dtRho0    - precomputed dt .* rho0 scalar value
+     * @param [in]     dyudynSgy - Non uniform grid shift in y direction.
+     * @param [in]     pmlY      - Perfectly matched layer in y direction.
+     */
+    void computeVelocityYHomogeneousNonuniform(const RealMatrix& ifftY,
+                                               const float       dtRho0,
+                                               const RealMatrix& dyudynSgy,
+                                               const RealMatrix& pmlY);
+
+    //------------------------------------------------- Z dimension --------------------------------------------------//
+    /**
+     * @brief Compute acoustic velocity for heterogeneous medium and a uniform grid, z direction.
+     * @param [in] ifftZ     - ifftn( bsxfun(\@times, ddz_k_shift_pos, kappa .* p_k))
+     * @param [in] dtRho0Sgz - Acoustic density on staggered grid in z direction.
+     * @param [in] pmlZ      - Perfectly matched layer in z direction.
+     */
+    void computeVelocityZ(const RealMatrix& ifftZ,
+                          const RealMatrix& dtRho0Sgz,
+                          const RealMatrix& pmlZ);
+    /**
+     * @brief Compute acoustic velocity for homogeneous medium and a uniform grid, z direction
+     *
+     * @param [in] ifftZ  - ifftn( bsxfun(\@times, ddz_k_shift_pos, kappa .* p_k))
+     * @param [in] dtRho0 - precomputed dt .* rho0 scalar value
+     * @param [in] pmlZ    - Perfectly matched layer in z direction.
+     */
+    void computeVelocityZHomogeneousUniform(const RealMatrix& ifftZ,
+                                            const float       dtRho0,
+                                            const RealMatrix& pmlZ);
+    /**
+     * @brief Compute acoustic velocity for homogenous medium and non-uniform grid, z direction.
+     *
+     * @param [in]     ifftZ     - ifftn( bsxfun(\@times, ddz_k_shift_pos, kappa .* p_k))
+     * @param [in]     dtRho0    - precomputed dt .* rho0 scalar value
+     * @param [in]     dzudznSgz - Non uniform grid shift in z direction.
+     * @param [in]     pmlZ      - Perfectly matched layer in z direction.
+     */
+    void computeVelocityZHomogeneousNonuniform(const RealMatrix& ifftZ,
+                                               const float       dtRho0,
+                                               const RealMatrix& dzudznSgz,
+                                               const RealMatrix& pmlZ);
+
+    //--------------------------------------------------- Sources ----------------------------------------------------//
+    /**
+     * @brief Add transducer data source to velocity x component.
+     *
+     * @param [in] velocitySourceIndex   - Where to add the signal (source geometry).
+     * @param [in] transducerSourceInput - Transducer signal.
+     * @param [in] delayMask             - Delay mask to push the signal in the domain (incremented per invocation).
+     * @param [in] timeIndex             - Actual time step.
+     */
+     void addTransducerSource(const IndexMatrix& velocitySourceIndex,
+                              const RealMatrix&  transducerSourceInput,
+                              const IndexMatrix& delayMask,
+                              const size_t       timeIndex);
+
+     /**
+      * @brief Add in velocity source terms.
+      * @param [in] velocitySourceInput - Source input to add.
+      * @param [in] velocitySourceIndex - Source geometry index matrix.
+      * @param [in] timeIndex           - Actual time step.
+      * @param [in] velocitySourceMode  - Velocity source mode (0 = Dirichlet boundary, 1 = add in).
+      * @param [in] velocitySourceMany  - Velocity source mode (0 = One series, 1 = multiple series).
+      */
+     void addVelocitySource(const RealMatrix & velocitySourceInput,
+                            const IndexMatrix& velocitySourceIndex,
+                            const size_t       timeIndex,
+                            const size_t       velocitySourceMode,
+                            const size_t       velocitySourceMany);
+
+  protected:
+
+  private:
+
+}; // end of VelocityMatrix
+//----------------------------------------------------------------------------------------------------------------------
+
+#endif	/* UXYZ_SGXYZ_REAL_MATRIX_H */
 

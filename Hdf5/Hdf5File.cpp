@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14      (created) \n
- *              24 August    2017, 14:22      (revised)
+ *              26 August    2017, 08:27      (revised)
  *
 
  * @section License
@@ -115,7 +115,7 @@ void Hdf5File::create(const string& fileName,
   if (mFile < 0)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotCreateFile,fileName);
+    sprintf(ErrorMessage,kErrFmtCannotCreateFile,fileName.c_str());
     throw ios::failure(ErrorMessage);
   }
 }// end of create
@@ -170,8 +170,6 @@ bool Hdf5File::canAccess(const string& fileName)
   #endif
 }// end of canAccess
 //----------------------------------------------------------------------------------------------------------------------
-
-
 
 /**
  * Close the HDF5 file.
@@ -349,7 +347,6 @@ hid_t Hdf5File::createDataset(const hid_t                    parentGroup,
 }// end of createDataset
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Close dataset.
  */
@@ -358,7 +355,6 @@ void  Hdf5File::closeDataset(const hid_t dataset)
   H5Dclose(dataset);
 }// end of closeDataset
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Write a hyperslab into the dataset, float version.
@@ -902,7 +898,7 @@ Hdf5File::MatrixDataType Hdf5File::readMatrixDataType(const hid_t parentGroup,
 
   char ErrorMessage[256];
   sprintf(ErrorMessage, kErrFmtBadAttributeValue, datasetName.c_str(),
-          kMatrixDataTypeName, paramValue.c_str());
+          kMatrixDataTypeName.c_str(), paramValue.c_str());
   throw ios::failure(ErrorMessage);
 
 // this will never be executed (just to prevent warning)
@@ -928,7 +924,8 @@ Hdf5File::MatrixDomainType Hdf5File::readMatrixDomainType(const hid_t parentGrou
   }
 
   char ErrorMessage[256];
-  sprintf(ErrorMessage, kErrFmtBadAttributeValue, datasetName.c_str(), kMatrixDomainTypeName, paramValue.c_str());
+  sprintf(ErrorMessage, kErrFmtBadAttributeValue, datasetName.c_str(),
+          kMatrixDomainTypeName.c_str(), paramValue.c_str());
   throw ios::failure(ErrorMessage);
 
   // This line will never be executed (just to prevent warning)

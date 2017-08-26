@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 12:13 (created) \n
- *              24 August    2017, 09:25 (revised)
+ *              25 August    2017, 12:47 (revised)
  *
  * @section license
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -42,106 +42,109 @@
 #include <Utils/DimensionSizes.h>
 #include <Utils/ErrorMessages.h>
 
+using std::string;
 
-//----------------------------------------------------------------------------//
-//                              Constants                                     //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-//                              Definitions                                   //
-//----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+/**
+ * Default constructor.
+ */
+BaseFloatMatrix::BaseFloatMatrix()
+  : BaseMatrix(),
+    mSize(0), mCapacity(0),
+    mDimensionSizes(),
+    mRowSize(0), mSlabSize(0),
+    mData(nullptr)
+{
+
+}// end of BaseFloatMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Copy data from another matrix with same size.
- *
- * @param [in] src - source matrix
- *
  */
-void TBaseFloatMatrix::CopyData(const TBaseFloatMatrix & src)
+void BaseFloatMatrix::copyData(const BaseFloatMatrix& src)
 {
-  memcpy(pMatrixData, src.pMatrixData, sizeof(float) * pTotalAllocatedElementCount);
-}// end of CopyDataSameSize
-//------------------------------------------------------------------------------
+  const float* srcData = src.getData();
+
+  #pragma omp parallel for simd schedule(static) firstprivate(srcData)
+  for (size_t i = 0; i < mCapacity; i++)
+    mData[i] = srcData[i];
+}// end of copyData
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
- * Zero all allocated elements in parallel. \n
- * Also work as the first touch strategy on NUMA machines
- *
+ * Zero all allocated elements in parallel for NUMA first touch.
  */
-void TBaseFloatMatrix::ZeroMatrix()
+void BaseFloatMatrix::zeroMatrix()
 {
-  #pragma omp parallel for schedule (static)
-  for (size_t i=0; i < pTotalAllocatedElementCount; i++)
+  #pragma omp parallel for simd schedule(static)
+  for (size_t i = 0; i < mCapacity; i++)
   {
-    pMatrixData[i] = 0.0f;
+    mData[i] = 0.0f;
   }
-}// end of ZeroMatrix
-//------------------------------------------------------------------------------
+}// end of zeroMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
- * Divide a scalar by the elements of matrix.
- * @param [in] scalar - scalar to be divided
- *
+ * Calculate matrix = scalar / matrix.
  */
-void TBaseFloatMatrix::ScalarDividedBy(const float  scalar)
+void BaseFloatMatrix::scalarDividedBy(const float scalar)
 {
-  #pragma omp parallel for schedule (static)
-  for (size_t i=0; i < pTotalAllocatedElementCount; i++)
+  #pragma omp parallel for simd schedule(static) firstprivate(scalar)
+  for (size_t i = 0; i < mCapacity; i++)
   {
-    pMatrixData[i] = scalar / pMatrixData[i];
+    mData[i] = scalar / mData[i];
   }
-}// end of ScalarDividedBy
-//------------------------------------------------------------------------------
+}// end of scalarDividedBy
+//----------------------------------------------------------------------------------------------------------------------
 
 
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                             protected methods                              //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
- * Memory allocation based on the total number of elements. \n
- * Memory is aligned by the DATA_ALIGNMENT and all elements are zeroed.
+ * Memory allocation based on the capacity and aligned at kDataAlignment
  */
-void TBaseFloatMatrix::AllocateMemory()
+void BaseFloatMatrix::allocateMemory()
 {
-  /* No memory allocated before this function*/
-  assert(pMatrixData == NULL);
+  // No memory allocated before this function
+  assert(mData == nullptr);
 
-  pMatrixData = (float *) _mm_malloc(pTotalAllocatedElementCount * sizeof (float), kDataAlignment);
+  mData = (float*) _mm_malloc(mCapacity * sizeof (float), kDataAlignment);
 
-  if (!pMatrixData)
+  if (!mData)
   {
-    fprintf(stderr,kErrFmtNotEnoughMemory, "TBaseFloatMatrix");
-    throw bad_alloc();
+    fprintf(stderr,kErrFmtNotEnoughMemory, "BaseFloatMatrix");
+    throw std::bad_alloc();
   }
 
-  ZeroMatrix();
-}// end of AllocateMemory
-//------------------------------------------------------------------------------
+  zeroMatrix();
+}// end of allocateMemory
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Free memory.
  */
- void TBaseFloatMatrix::FreeMemory()
+ void BaseFloatMatrix::freeMemory()
  {
-  if (pMatrixData) _mm_free(pMatrixData);
+  if (mData) _mm_free(mData);
 
-  pMatrixData = NULL;
-}// end of MemoryDealocation
-//------------------------------------------------------------------------------
+  mData = nullptr;
+}// end of freeMemory
+//----------------------------------------------------------------------------------------------------------------------
 
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              private methods                               //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//

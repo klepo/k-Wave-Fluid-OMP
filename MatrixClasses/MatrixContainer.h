@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              24 August    2017, 12:21 (revised)
+ *              26 August    2017, 11:22 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -116,7 +116,7 @@ struct TMatrixRecord
   enum TMatrixDataType {mdtReal, mdtComplex, mdtIndex, mdtFFTW, mdtUxyz};
 
   /// Pointer to the matrix object.
-  TBaseMatrix   * MatrixPtr;
+  BaseMatrix   * MatrixPtr;
   /// Matrix data type.
   TMatrixDataType MatrixDataType;
   /// Matrix dimension sizes.
@@ -141,7 +141,7 @@ struct TMatrixRecord
   TMatrixRecord& operator = (const TMatrixRecord& src);
 
   /// Set all values of the record.
-  void SetAllValues(TBaseMatrix *          MatrixPtr,
+  void SetAllValues(BaseMatrix *          MatrixPtr,
                     const TMatrixDataType  MatrixDataType,
                     const DimensionSizes  dimensionSizes,
                     const bool             LoadData,

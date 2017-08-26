@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              25 August    2017, 11:17 (revised)
+ *              26 August    2017, 08:29 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -265,7 +265,7 @@ void TKSpaceFirstOrder3DSolver::Compute()
     if (mParameters.isCheckpointEnabled())
     {
       std::remove(mParameters.getCheckpointFileName().c_str());
-      TFFTWComplexMatrix::DeleteStoredWisdom();
+      FftwComplexMatrix::deleteStoredWisdom();
     }
   }
 
@@ -437,18 +437,18 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
   if (RecoverFromPrevState)
   {
      // try to find the wisdom in the file that has the same name as the checkpoint file (different extension)
-    TFFTWComplexMatrix::ImportWisdom();
+    FftwComplexMatrix::importWisdom();
   }
 
   // create real to complex plans
-  Get_FFT_X_temp().Create_FFT_Plan_3D_R2C(Get_p());
-  Get_FFT_Y_temp().Create_FFT_Plan_3D_R2C(Get_p());
-  Get_FFT_Z_temp().Create_FFT_Plan_3D_R2C(Get_p());
+  Get_FFT_X_temp().createR2CFftPlan3D(Get_p());
+  Get_FFT_Y_temp().createR2CFftPlan3D(Get_p());
+  Get_FFT_Z_temp().createR2CFftPlan3D(Get_p());
 
   // create real to complex plans
-  Get_FFT_X_temp().Create_FFT_Plan_3D_C2R(Get_p());
-  Get_FFT_Y_temp().Create_FFT_Plan_3D_C2R(Get_p());
-  Get_FFT_Z_temp().Create_FFT_Plan_3D_C2R(Get_p());
+  Get_FFT_X_temp().createC2RFftPlan3D(Get_p());
+  Get_FFT_Y_temp().createC2RFftPlan3D(Get_p());
+  Get_FFT_Z_temp().createC2RFftPlan3D(Get_p());
 
   // if necessary, create 1D shift plans.
   // in this case, the matrix has a bit bigger dimensions to be able to store
@@ -456,16 +456,16 @@ void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
   if (Parameters::getInstance().getStoreVelocityNonStaggeredRawFlag())
   {
     // X shifts
-    Get_FFT_shift_temp().Create_FFT_Plan_1DX_R2C(Get_p());
-    Get_FFT_shift_temp().Create_FFT_Plan_1DX_C2R(Get_p());
+    Get_FFT_shift_temp().createR2CFftPlan1DX(Get_p());
+    Get_FFT_shift_temp().createC2RFftPlan1DX(Get_p());
 
     // Y shifts
-    Get_FFT_shift_temp().Create_FFT_Plan_1DY_R2C(Get_p());
-    Get_FFT_shift_temp().Create_FFT_Plan_1DY_C2R(Get_p());
+    Get_FFT_shift_temp().createR2CFftPlan1DY(Get_p());
+    Get_FFT_shift_temp().createC2RFftPlan1DY(Get_p());
 
     // Z shifts
-    Get_FFT_shift_temp().Create_FFT_Plan_1DZ_R2C(Get_p());
-    Get_FFT_shift_temp().Create_FFT_Plan_1DZ_C2R(Get_p());
+    Get_FFT_shift_temp().createR2CFftPlan1DZ(Get_p());
+    Get_FFT_shift_temp().createC2RFftPlan1DZ(Get_p());
   }// end u_non_staggered
 }// end of InitializeFFTWPlans
 //------------------------------------------------------------------------------
@@ -482,12 +482,12 @@ void TKSpaceFirstOrder3DSolver::PreProcessingPhase()
   // get the correct sensor mask and recompute indices
   if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
-    Get_sensor_mask_index().RecomputeIndicesToCPP();
+    Get_sensor_mask_index().recomputeIndicesToCPP();
   }
 
   if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
-    Get_sensor_mask_corners().RecomputeIndicesToCPP();
+    Get_sensor_mask_corners().recomputeIndicesToCPP();
   }
 
 
@@ -497,17 +497,17 @@ void TKSpaceFirstOrder3DSolver::PreProcessingPhase()
       (mParameters.getVelocityZSourceFlag() != 0)
      )
   {
-    Get_u_source_index().RecomputeIndicesToCPP();
+    Get_u_source_index().recomputeIndicesToCPP();
   }
 
   if (mParameters.getTransducerSourceFlag() != 0)
   {
-    Get_delay_mask().RecomputeIndicesToCPP();
+    Get_delay_mask().recomputeIndicesToCPP();
   }
 
   if (mParameters.getPressureSourceFlag() != 0)
   {
-    Get_p_source_index().RecomputeIndicesToCPP();
+    Get_p_source_index().recomputeIndicesToCPP();
   }
 
 
@@ -527,9 +527,9 @@ void TKSpaceFirstOrder3DSolver::PreProcessingPhase()
     }
     else
     {
-      Get_dt_rho0_sgx().ScalarDividedBy(mParameters.getDt());
-      Get_dt_rho0_sgy().ScalarDividedBy(mParameters.getDt());
-      Get_dt_rho0_sgz().ScalarDividedBy(mParameters.getDt());
+      Get_dt_rho0_sgx().scalarDividedBy(mParameters.getDt());
+      Get_dt_rho0_sgy().scalarDividedBy(mParameters.getDt());
+      Get_dt_rho0_sgz().scalarDividedBy(mParameters.getDt());
     }
   }
 
@@ -573,7 +573,7 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa()
     const size_t Y_Size  = mParameters.getReducedDimensionSizes().ny;
     const size_t Z_Size  = mParameters.getReducedDimensionSizes().nz;
 
-    float * kappa = Get_kappa().GetRawData();
+    float * kappa = Get_kappa().getData();
 
     #pragma omp for schedule (static)
     for (size_t z = 0; z < Z_Size; z++)
@@ -633,9 +633,9 @@ void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2()
     const size_t Y_Size  = mParameters.getReducedDimensionSizes().ny;
     const size_t Z_Size  = mParameters.getReducedDimensionSizes().nz;
 
-    float * kappa           = Get_kappa().GetRawData();
-    float * absorb_nabla1   = Get_absorb_nabla1().GetRawData();
-    float * absorb_nabla2   = Get_absorb_nabla2().GetRawData();
+    float * kappa           = Get_kappa().getData();
+    float * absorb_nabla1   = Get_absorb_nabla1().getData();
+    float * absorb_nabla2   = Get_absorb_nabla2().getData();
     const float alpha_power = mParameters.getAlphaPower();
 
     #pragma omp for schedule (static)
@@ -709,8 +709,8 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
       const size_t Y_Size  = mParameters.getFullDimensionSizes().ny;
       const size_t X_Size  = mParameters.getFullDimensionSizes().nx;
 
-      float * absorb_tau = Get_absorb_tau().GetRawData();
-      float * absorb_eta = Get_absorb_eta().GetRawData();
+      float * absorb_tau = Get_absorb_tau().getData();
+      float * absorb_eta = Get_absorb_eta().getData();
 
       float * alpha_coeff;
       size_t  alpha_shift;
@@ -722,7 +722,7 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
       }
       else
       {
-        alpha_coeff = Get_Temp_1_RS3D().GetRawData();
+        alpha_coeff = Get_Temp_1_RS3D().getData();
         alpha_shift = 1;
       }
 
@@ -735,7 +735,7 @@ void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
       }
       else
       {
-        c0 = Get_c2().GetRawData();
+        c0 = Get_c2().getData();
         c0_shift = 1;
       }
 
@@ -775,19 +775,19 @@ void TKSpaceFirstOrder3DSolver::Calculate_dt_rho0_non_uniform()
 {
   #pragma omp parallel
   {
-    float * dt_rho0_sgx   = Get_dt_rho0_sgx().GetRawData();
-    float * dt_rho0_sgy   = Get_dt_rho0_sgy().GetRawData();
-    float * dt_rho0_sgz   = Get_dt_rho0_sgz().GetRawData();
+    float * dt_rho0_sgx   = Get_dt_rho0_sgx().getData();
+    float * dt_rho0_sgy   = Get_dt_rho0_sgy().getData();
+    float * dt_rho0_sgz   = Get_dt_rho0_sgz().getData();
 
     const float dt = mParameters.getDt();
 
-    const float * duxdxn_sgx = Get_dxudxn_sgx().GetRawData();
-    const float * duydyn_sgy = Get_dyudyn_sgy().GetRawData();
-    const float * duzdzn_sgz = Get_dzudzn_sgz().GetRawData();
+    const float * duxdxn_sgx = Get_dxudxn_sgx().getData();
+    const float * duydyn_sgy = Get_dyudyn_sgy().getData();
+    const float * duzdzn_sgz = Get_dzudzn_sgz().getData();
 
-    const size_t Z_Size = Get_dt_rho0_sgx().GetDimensionSizes().nz;
-    const size_t Y_Size = Get_dt_rho0_sgx().GetDimensionSizes().ny;
-    const size_t X_Size = Get_dt_rho0_sgx().GetDimensionSizes().nx;
+    const size_t Z_Size = Get_dt_rho0_sgx().getDimensionSizes().nz;
+    const size_t Y_Size = Get_dt_rho0_sgx().getDimensionSizes().ny;
+    const size_t X_Size = Get_dt_rho0_sgx().getDimensionSizes().nx;
 
     const size_t SliceSize = (X_Size * Y_Size );
 
@@ -844,9 +844,9 @@ void TKSpaceFirstOrder3DSolver::Calculate_dt_rho0_non_uniform()
  */
 void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
 {
-  Get_p().CopyData(Get_p0_source_input());
+  Get_p().copyData(Get_p0_source_input());
 
-  const float * p0 = Get_p0_source_input().GetRawData();
+  const float * p0 = Get_p0_source_input().getData();
 
   float * c2;
   size_t c2_shift;
@@ -858,19 +858,19 @@ void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
   }
   else
   {
-    c2 = Get_c2().GetRawData();
+    c2 = Get_c2().getData();
     c2_shift = 1;
   }
 
-  float * rhox = Get_rhox().GetRawData();
-  float * rhoy = Get_rhoy().GetRawData();
-  float * rhoz = Get_rhoz().GetRawData();
+  float * rhox = Get_rhox().getData();
+  float * rhoy = Get_rhoy().getData();
+  float * rhoz = Get_rhoz().getData();
 
   //  add the initial pressure to rho as a mass source
   float tmp;
 
   #pragma omp parallel for schedule (static) private(tmp)
-  for (size_t i = 0; i < Get_rhox().GetTotalElementCount(); i++)
+  for (size_t i = 0; i < Get_rhox().size(); i++)
   {
     tmp = p0[i] / (3.0f* c2[i * c2_shift]);
     rhox[i] = tmp;
@@ -892,29 +892,29 @@ void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
   {
     if (mParameters.getNonUniformGridFlag())
     { // non uniform grid
-      Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x(mParameters.getRho0SgxScalar(),
+      Get_ux_sgx().computeInitialVelocityXHomogeneousNonuniform(mParameters.getRho0SgxScalar(),
                                                                         Get_dxudxn_sgx(),
                                                                         Get_FFT_X_temp());
-      Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(mParameters.getRho0SgyScalar(),
+      Get_uy_sgy().computeInitialVelocityYHomogeneousNonuniform(mParameters.getRho0SgyScalar(),
                                                                         Get_dyudyn_sgy(),
                                                                         Get_FFT_Y_temp());
-      Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z(mParameters.getRho0SgzScalar(),
+      Get_uz_sgz().computeInitialVelocityZHomogeneousNonuniform(mParameters.getRho0SgzScalar(),
                                                                         Get_dzudzn_sgz(),
                                                                         Get_FFT_Z_temp());
     }
     else
     { //uniform grid, heterogeneous
-      Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2(mParameters.getRho0SgxScalar(), Get_FFT_X_temp());
-      Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2(mParameters.getRho0SgyScalar(), Get_FFT_Y_temp());
-      Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2(mParameters.getRho0SgzScalar(), Get_FFT_Z_temp());
+      Get_ux_sgx().computeInitialVelocityHomogeneousUniform(mParameters.getRho0SgxScalar(), Get_FFT_X_temp());
+      Get_uy_sgy().computeInitialVelocityHomogeneousUniform(mParameters.getRho0SgyScalar(), Get_FFT_Y_temp());
+      Get_uz_sgz().computeInitialVelocityHomogeneousUniform(mParameters.getRho0SgzScalar(), Get_FFT_Z_temp());
     }
   }
   else
-  { // homogeneous, non-unifrom grid
+  { // homogeneous, unifrom grid
     // divide the matrix by 2 and multiply with st./rho0_sg
-    Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2(Get_dt_rho0_sgx(), Get_FFT_X_temp());
-    Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2(Get_dt_rho0_sgy(), Get_FFT_Y_temp());
-    Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2(Get_dt_rho0_sgz(), Get_FFT_Z_temp());
+    Get_ux_sgx().computeInitialVelocity(Get_dt_rho0_sgx(), Get_FFT_X_temp());
+    Get_uy_sgy().computeInitialVelocity(Get_dt_rho0_sgy(), Get_FFT_Y_temp());
+    Get_uz_sgz().computeInitialVelocity(Get_dt_rho0_sgz(), Get_FFT_Z_temp());
   }
 }// end of Calculate_p0_source
 //------------------------------------------------------------------------------
@@ -932,10 +932,10 @@ void TKSpaceFirstOrder3DSolver::Compute_c2()
   }
   else
   {
-    float * c2 =  Get_c2().GetRawData();
+    float * c2 =  Get_c2().getData();
 
     #pragma omp parallel for schedule (static)
-    for (size_t i=0; i< Get_c2().GetTotalElementCount(); i++)
+    for (size_t i=0; i< Get_c2().size(); i++)
     {
       c2[i] = c2[i] * c2[i];
     }
@@ -959,32 +959,32 @@ void TKSpaceFirstOrder3DSolver::Compute_c2()
  * @param [in]  ddy - precomputed value of ddy_k_shift_pos
  * @param [in]  ddz - precomputed value of ddz_k_shift_pos
  */
-void TKSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(TRealMatrix&        X_Matrix,
-                                                        TFFTWComplexMatrix& FFT_X,
-                                                        TFFTWComplexMatrix& FFT_Y,
-                                                        TFFTWComplexMatrix& FFT_Z,
-                                                        const TRealMatrix&  kappa,
-                                                        const TComplexMatrix& ddx,
-                                                        const TComplexMatrix& ddy,
-                                                        const TComplexMatrix& ddz)
+void TKSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(RealMatrix&        X_Matrix,
+                                                        FftwComplexMatrix& FFT_X,
+                                                        FftwComplexMatrix& FFT_Y,
+                                                        FftwComplexMatrix& FFT_Z,
+                                                        const RealMatrix&  kappa,
+                                                        const ComplexMatrix& ddx,
+                                                        const ComplexMatrix& ddy,
+                                                        const ComplexMatrix& ddz)
 {
   // Compute FFT of X
-  FFT_X.Compute_FFT_3D_R2C(X_Matrix);
+  FFT_X.computeR2CFft3D(X_Matrix);
 
   #pragma omp parallel
   {
-    float * p_k_x_data = FFT_X.GetRawData();
-    float * p_k_y_data = FFT_Y.GetRawData();
-    float * p_k_z_data = FFT_Z.GetRawData();
+    float * p_k_x_data = FFT_X.getData();
+    float * p_k_y_data = FFT_Y.getData();
+    float * p_k_z_data = FFT_Z.getData();
 
-    const float * kappa_data = kappa.GetRawData();
-    const float * ddx_data   = ddx.GetRawData();
-    const float * ddy_data   = ddy.GetRawData();
-    const float * ddz_data   = ddz.GetRawData();
+    const float * kappa_data = kappa.getData();
+    const float * ddx_data   = ddx.getData();
+    const float * ddy_data   = ddy.getData();
+    const float * ddz_data   = ddz.getData();
 
-    const size_t Z_Size = FFT_X.GetDimensionSizes().nz;
-    const size_t Y_Size = FFT_X.GetDimensionSizes().ny;
-    const size_t X_Size = FFT_X.GetDimensionSizes().nx;
+    const size_t Z_Size = FFT_X.getDimensionSizes().nz;
+    const size_t Y_Size = FFT_X.getDimensionSizes().ny;
+    const size_t X_Size = FFT_X.getDimensionSizes().nx;
 
     const size_t SliceSize = (X_Size * Y_Size ) << 1;
 
@@ -1031,28 +1031,28 @@ void TKSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(TRealMatrix&        X_Ma
  */
 void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
 {
-  Get_FFT_X_temp().Compute_FFT_3D_R2C(Get_ux_sgx());
-  Get_FFT_Y_temp().Compute_FFT_3D_R2C(Get_uy_sgy());
-  Get_FFT_Z_temp().Compute_FFT_3D_R2C(Get_uz_sgz());
+  Get_FFT_X_temp().computeR2CFft3D(Get_ux_sgx());
+  Get_FFT_Y_temp().computeR2CFft3D(Get_uy_sgy());
+  Get_FFT_Z_temp().computeR2CFft3D(Get_uz_sgz());
 
   #pragma omp parallel
   {
-    float * Temp_FFT_X_Data  = Get_FFT_X_temp().GetRawData();
-    float * Temp_FFT_Y_Data  = Get_FFT_Y_temp().GetRawData();
-    float * Temp_FFT_Z_Data  = Get_FFT_Z_temp().GetRawData();
+    float * Temp_FFT_X_Data  = Get_FFT_X_temp().getData();
+    float * Temp_FFT_Y_Data  = Get_FFT_Y_temp().getData();
+    float * Temp_FFT_Z_Data  = Get_FFT_Z_temp().getData();
 
-    const float * kappa   = Get_kappa().GetRawData();
+    const float * kappa   = Get_kappa().getData();
 
-    const size_t FFT_Z_dim = Get_FFT_X_temp().GetDimensionSizes().nz;
-    const size_t FFT_Y_dim = Get_FFT_X_temp().GetDimensionSizes().ny;
-    const size_t FFT_X_dim = Get_FFT_X_temp().GetDimensionSizes().nx;
+    const size_t FFT_Z_dim = Get_FFT_X_temp().getDimensionSizes().nz;
+    const size_t FFT_Y_dim = Get_FFT_X_temp().getDimensionSizes().ny;
+    const size_t FFT_X_dim = Get_FFT_X_temp().getDimensionSizes().nx;
 
     const size_t SliceSize = (FFT_X_dim * FFT_Y_dim) << 1;
-    const float  Divider = 1.0f / Get_ux_sgx().GetTotalElementCount();
+    const float  Divider = 1.0f / Get_ux_sgx().size();
 
-    const TFloatComplex * ddx = (TFloatComplex *) Get_ddx_k_shift_neg().GetRawData();
-    const TFloatComplex * ddy = (TFloatComplex *) Get_ddy_k_shift_neg().GetRawData();
-    const TFloatComplex * ddz = (TFloatComplex *) Get_ddz_k_shift_neg().GetRawData();
+    const FloatComplex * ddx = (FloatComplex *) Get_ddx_k_shift_neg().getData();
+    const FloatComplex * ddy = (FloatComplex *) Get_ddy_k_shift_neg().getData();
+    const FloatComplex * ddz = (FloatComplex *) Get_ddz_k_shift_neg().getData();
 
 
     #pragma omp for schedule (static)
@@ -1116,9 +1116,9 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
     } // z
   } // parallel;
 
-  Get_FFT_X_temp().Compute_FFT_3D_C2R(Get_duxdx());
-  Get_FFT_Y_temp().Compute_FFT_3D_C2R(Get_duydy());
-  Get_FFT_Z_temp().Compute_FFT_3D_C2R(Get_duzdz());
+  Get_FFT_X_temp().computeC2RFft3D(Get_duxdx());
+  Get_FFT_Y_temp().computeC2RFft3D(Get_duydy());
+  Get_FFT_Z_temp().computeC2RFft3D(Get_duzdz());
 
  //-------------------------------------------------------------------------//
  //--------------------- Non linear grid -----------------------------------//
@@ -1127,17 +1127,17 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
   {
     #pragma omp parallel
     {
-      float * duxdx = Get_duxdx().GetRawData();
-      float * duydy = Get_duydy().GetRawData();
-      float * duzdz = Get_duzdz().GetRawData();
+      float * duxdx = Get_duxdx().getData();
+      float * duydy = Get_duydy().getData();
+      float * duzdz = Get_duzdz().getData();
 
-      const float * duxdxn = Get_dxudxn().GetRawData();
-      const float * duydyn = Get_dyudyn().GetRawData();
-      const float * duzdzn = Get_dzudzn().GetRawData();
+      const float * duxdxn = Get_dxudxn().getData();
+      const float * duydyn = Get_dyudyn().getData();
+      const float * duzdzn = Get_dzudzn().getData();
 
-      const size_t Z_Size = Get_duxdx().GetDimensionSizes().nz;
-      const size_t Y_Size = Get_duxdx().GetDimensionSizes().ny;
-      const size_t X_Size = Get_duxdx().GetDimensionSizes().nx;
+      const size_t Z_Size = Get_duxdx().getDimensionSizes().nz;
+      const size_t Y_Size = Get_duxdx().getDimensionSizes().ny;
+      const size_t X_Size = Get_duxdx().getDimensionSizes().nx;
 
       const size_t SliceSize = (X_Size * Y_Size );
 
@@ -1196,9 +1196,9 @@ void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
  */
 void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
 {
-  const size_t Z_Size = Get_rhox().GetDimensionSizes().nz;
-  const size_t Y_Size = Get_rhox().GetDimensionSizes().ny;
-  const size_t X_Size = Get_rhox().GetDimensionSizes().nx;
+  const size_t Z_Size = Get_rhox().getDimensionSizes().nz;
+  const size_t Y_Size = Get_rhox().getDimensionSizes().ny;
+  const size_t X_Size = Get_rhox().getDimensionSizes().nx;
 
   const float dt2   = 2.0f * mParameters.getDt();
   const float dt_el = mParameters.getDt();
@@ -1206,14 +1206,14 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
 
   #pragma omp parallel
   {
-    float * rhox_data  = Get_rhox().GetRawData();
-    float * rhoy_data  = Get_rhoy().GetRawData();
-    float * rhoz_data  = Get_rhoz().GetRawData();
+    float * rhox_data  = Get_rhox().getData();
+    float * rhoy_data  = Get_rhoy().getData();
+    float * rhoz_data  = Get_rhoz().getData();
 
-    const float * pml_x_data = Get_pml_x().GetRawData();
-    const float * duxdx_data = Get_duxdx().GetRawData();
-    const float * duydy_data = Get_duydy().GetRawData();
-    const float * duzdz_data = Get_duzdz().GetRawData();
+    const float * pml_x_data = Get_pml_x().getData();
+    const float * duxdx_data = Get_duxdx().getData();
+    const float * duydy_data = Get_duydy().getData();
+    const float * duzdz_data = Get_duzdz().getData();
 
     // rho0 is a scalar
     if (mParameters.getRho0Scalar())
@@ -1284,7 +1284,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
     else
     { //----------------------------------------------------------------//
       // rho0 is a matrix
-      const float * rho0_data  = Get_rho0().GetRawData();
+      const float * rho0_data  = Get_rho0().getData();
 
       #pragma omp for schedule (static)
       for (size_t z = 0; z < Z_Size; z++)
@@ -1360,23 +1360,23 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
  */
 void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear()
 {
-  const size_t Z_Size = Get_rhox().GetDimensionSizes().nz;
-  const size_t Y_Size = Get_rhox().GetDimensionSizes().ny;
-  const size_t X_Size = Get_rhox().GetDimensionSizes().nx;
+  const size_t Z_Size = Get_rhox().getDimensionSizes().nz;
+  const size_t Y_Size = Get_rhox().getDimensionSizes().ny;
+  const size_t X_Size = Get_rhox().getDimensionSizes().nx;
 
   const float dt_el = mParameters.getDt();
   const size_t SliceSize =  Y_Size * X_Size;
 
   #pragma omp parallel
   {
-    float * rhox_data  = Get_rhox().GetRawData();
-    float * rhoy_data  = Get_rhoy().GetRawData();
-    float * rhoz_data  = Get_rhoz().GetRawData();
+    float * rhox_data  = Get_rhox().getData();
+    float * rhoy_data  = Get_rhoy().getData();
+    float * rhoz_data  = Get_rhoz().getData();
 
-    const float * pml_x_data = Get_pml_x().GetRawData();
-    const float * duxdx_data = Get_duxdx().GetRawData();
-    const float * duydy_data = Get_duydy().GetRawData();
-    const float * duzdz_data = Get_duzdz().GetRawData();
+    const float * pml_x_data = Get_pml_x().getData();
+    const float * duxdx_data = Get_duxdx().getData();
+    const float * duydy_data = Get_duydy().getData();
+    const float * duzdz_data = Get_duzdz().getData();
 
 
     if (mParameters.getRho0Scalar())
@@ -1440,7 +1440,7 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear()
     else
     { //-----------------------------------------------------//
       // rho0 is a matrix
-      const float * rho0_data  = Get_rho0().GetRawData();
+      const float * rho0_data  = Get_rho0().getData();
 
       #pragma omp for schedule (static)
       for (size_t z = 0; z < Z_Size; z++)
@@ -1516,20 +1516,20 @@ void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear()
  * @param [out] BonA_Temp - BonA + rho ^2 / 2 rho0  + (rhox_sgx + rhoy_sgy + rhoz_sgz)
  * @param [out] Sum_du    - rho0* (duxdx + duydy + duzdz)
  */
-void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & RHO_Temp,
-                                                                  TRealMatrix & BonA_Temp,
-                                                                  TRealMatrix & Sum_du)
+void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(RealMatrix & RHO_Temp,
+                                                                  RealMatrix & BonA_Temp,
+                                                                  RealMatrix & Sum_du)
 {
   // step of 4
-  const size_t TotalElementCount_4 = (RHO_Temp.GetTotalElementCount() >> 2) << 2;
+  const size_t TotalElementCount_4 = (RHO_Temp.size() >> 2) << 2;
 
-  const float * rhox_data = Get_rhox().GetRawData();
-  const float * rhoy_data = Get_rhoy().GetRawData();
-  const float * rhoz_data = Get_rhoz().GetRawData();
+  const float * rhox_data = Get_rhox().getData();
+  const float * rhoy_data = Get_rhoy().getData();
+  const float * rhoz_data = Get_rhoz().getData();
 
-  const float * dux_data = Get_duxdx().GetRawData();
-  const float * duy_data = Get_duydy().GetRawData();
-  const float * duz_data = Get_duzdz().GetRawData();
+  const float * dux_data = Get_duxdx().getData();
+  const float * duy_data = Get_duydy().getData();
+  const float * duz_data = Get_duzdz().getData();
 
 
   // set BonA to be either scalar or a matrix
@@ -1544,7 +1544,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
   }
   else
   {
-    BonA = Get_BonA().GetRawData();
+    BonA = Get_BonA().getData();
     BonA_shift = 1;
   }
 
@@ -1561,16 +1561,16 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
   }
   else
   {
-    rho0_data = Get_rho0().GetRawData();
+    rho0_data = Get_rho0().getData();
     rho0_shift = 1;
   }
 
   // compute loop
   #pragma  omp parallel
   {
-    float * RHO_Temp_Data  = RHO_Temp.GetRawData();
-    float * BonA_Temp_Data = BonA_Temp.GetRawData();
-    float * SumDU_Temp_Data= Sum_du.GetRawData();
+    float * RHO_Temp_Data  = RHO_Temp.getData();
+    float * BonA_Temp_Data = BonA_Temp.getData();
+    float * SumDU_Temp_Data= Sum_du.getData();
 
 
     const __m128 Two_SSE   = _mm_set1_ps(2.0f);
@@ -1628,7 +1628,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
       if (omp_get_thread_num() == omp_get_num_threads() -1)
     #endif
     {
-      for (size_t i = TotalElementCount_4; i < RHO_Temp.GetTotalElementCount() ; i++)
+      for (size_t i = TotalElementCount_4; i < RHO_Temp.size() ; i++)
       {
         register const float rho_xyz_el = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
 
@@ -1649,32 +1649,32 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
   * @param [out] Sum_rhoxyz  - rhox_sgx + rhoy_sgy + rhoz_sgz
   * @param [out] Sum_rho0_du - rho0* (duxdx + duydy + duzdz);
   */
-void TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix & Sum_rhoxyz,
-                                                           TRealMatrix & Sum_rho0_du)
+void TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(RealMatrix & Sum_rhoxyz,
+                                                           RealMatrix & Sum_rho0_du)
  {
   const size_t TotalElementCount = mParameters.getFullDimensionSizes().nElements();
 
   #pragma  omp parallel
   {
-    const float * rhox_data = Get_rhox().GetRawData();
-    const float * rhoy_data = Get_rhoy().GetRawData();
-    const float * rhoz_data = Get_rhoz().GetRawData();
+    const float * rhox_data = Get_rhox().getData();
+    const float * rhoy_data = Get_rhoy().getData();
+    const float * rhoz_data = Get_rhoz().getData();
 
-    const float * dux_data = Get_duxdx().GetRawData();
-    const float * duy_data = Get_duydy().GetRawData();
-    const float * duz_data = Get_duzdz().GetRawData();
+    const float * dux_data = Get_duxdx().getData();
+    const float * duy_data = Get_duydy().getData();
+    const float * duz_data = Get_duzdz().getData();
 
     const float * rho0_data = NULL;
 
     const float rho0_data_el = mParameters.getRho0Scalar();
     if (!mParameters.getRho0ScalarFlag())
     {
-      rho0_data = Get_rho0().GetRawData();
+      rho0_data = Get_rho0().getData();
     }
 
 
-    float * Sum_rhoxyz_Data  = Sum_rhoxyz.GetRawData();
-    float * Sum_rho0_du_Data = Sum_rho0_du.GetRawData();
+    float * Sum_rhoxyz_Data  = Sum_rhoxyz.getData();
+    float * Sum_rho0_du_Data = Sum_rho0_du.getData();
 
     #pragma omp for schedule (static)
     for (size_t i = 0; i < TotalElementCount; i++)
@@ -1712,19 +1712,19 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix & Sum_rhox
   * @param [in,out] FFT_1
   * @param [in,out] FFT_2
   */
-void TKSpaceFirstOrder3DSolver::Compute_Absorb_nabla1_2_SSE2(TFFTWComplexMatrix& FFT_1,
-                                                              TFFTWComplexMatrix& FFT_2)
+void TKSpaceFirstOrder3DSolver::Compute_Absorb_nabla1_2_SSE2(FftwComplexMatrix& FFT_1,
+                                                              FftwComplexMatrix& FFT_2)
 {
-  const float * nabla1 = Get_absorb_nabla1().GetRawData();
-  const float * nabla2 = Get_absorb_nabla2().GetRawData();
+  const float * nabla1 = Get_absorb_nabla1().getData();
+  const float * nabla2 = Get_absorb_nabla2().getData();
 
-  const size_t TotalElementCount     = FFT_1.GetTotalElementCount();
-  const size_t TotalElementCount_SSE = (FFT_1.GetTotalElementCount() >> 1) << 1;
+  const size_t TotalElementCount     = FFT_1.size();
+  const size_t TotalElementCount_SSE = (FFT_1.size() >> 1) << 1;
 
   #pragma omp parallel
   {
-    float * FFT_1_data  = FFT_1.GetRawData();
-    float * FFT_2_data  = FFT_2.GetRawData();
+    float * FFT_1_data  = FFT_1.getData();
+    float * FFT_2_data  = FFT_2.getData();
 
     #pragma omp for schedule (static) nowait
     for (size_t i = 0; i < TotalElementCount_SSE; i+=2)
@@ -1772,9 +1772,9 @@ void TKSpaceFirstOrder3DSolver::Compute_Absorb_nabla1_2_SSE2(TFFTWComplexMatrix&
   * @param [in] Absorb_eta_temp - BonA + rho ^2 / 2 rho0  + (rhox_sgx + rhoy_sgy + rhoz_sgz)
   * @param [in] BonA_temp       - rho0* (duxdx + duydy + duzdz)
   */
-void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(TRealMatrix& Absorb_tau_temp,
-                                                       TRealMatrix& Absorb_eta_temp,
-                                                       TRealMatrix& BonA_temp)
+void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(RealMatrix& Absorb_tau_temp,
+                                                       RealMatrix& Absorb_eta_temp,
+                                                       RealMatrix& BonA_temp)
 {
   float * tau_data;
   float * eta_data;
@@ -1783,10 +1783,10 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(TRealMatrix& Absorb_tau_t
   size_t  c2_shift;
   size_t  tau_eta_shift;
 
-  const float * Absorb_tau_data = Absorb_tau_temp.GetRawData();
-  const float * Absorb_eta_data = Absorb_eta_temp.GetRawData();
+  const float * Absorb_tau_data = Absorb_tau_temp.getData();
+  const float * Absorb_eta_data = Absorb_eta_temp.getData();
 
-  const size_t TotalElementCount = Get_p().GetTotalElementCount();
+  const size_t TotalElementCount = Get_p().size();
   const float  Divider = 1.0f / (float) TotalElementCount;
 
   // c2 scalar
@@ -1797,7 +1797,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(TRealMatrix& Absorb_tau_t
   }
   else
   {
-    c2_data  = Get_c2().GetRawData();
+    c2_data  = Get_c2().getData();
     c2_shift = 1;
   }
 
@@ -1810,15 +1810,15 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(TRealMatrix& Absorb_tau_t
   }
   else
   {
-    tau_data = Get_absorb_tau().GetRawData();
-    eta_data = Get_absorb_eta().GetRawData();
+    tau_data = Get_absorb_tau().getData();
+    eta_data = Get_absorb_eta().getData();
     tau_eta_shift = 1;
   }
 
   #pragma omp parallel
   {
-    const float * BonA_data = BonA_temp.GetRawData();
-    float * p_data  = Get_p().GetRawData();
+    const float * BonA_data = BonA_temp.getData();
+    float * p_data  = Get_p().getData();
 
     #pragma omp for schedule (static)
     for (size_t i = 0; i < TotalElementCount; i++)
@@ -1842,9 +1842,9 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(TRealMatrix& Absorb_tau_t
   * @param [in] Absorb_eta_temp - sub-term with absorb_eta
   * @param [in] Sum_rhoxyz      - rhox_sgx + rhoy_sgy + rhoz_sgz
   */
-void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp,
-                                                    TRealMatrix& Absorb_eta_temp,
-                                                    TRealMatrix& Sum_rhoxyz)
+void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(RealMatrix& Absorb_tau_temp,
+                                                    RealMatrix& Absorb_eta_temp,
+                                                    RealMatrix& Sum_rhoxyz)
 {
   const float *  tau_data = NULL;
   const float *  eta_data = NULL;
@@ -1853,8 +1853,8 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   size_t c2_shift      = 0;
   size_t tau_eta_shift = 0;
 
-  const float * Absorb_tau_data = Absorb_tau_temp.GetRawData();
-  const float * Absorb_eta_data = Absorb_eta_temp.GetRawData();
+  const float * Absorb_tau_data = Absorb_tau_temp.getData();
+  const float * Absorb_eta_data = Absorb_eta_temp.getData();
 
   const size_t TotalElementCount = mParameters.getFullDimensionSizes().nElements();
   const float Divider = 1.0f / (float) TotalElementCount;
@@ -1867,7 +1867,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   }
   else
   {
-    c2_data = Get_c2().GetRawData();
+    c2_data = Get_c2().getData();
     c2_shift = 1;
   }
 
@@ -1880,15 +1880,15 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   }
   else
   {
-    tau_data = Get_absorb_tau().GetRawData();
-    eta_data = Get_absorb_eta().GetRawData();
+    tau_data = Get_absorb_tau().getData();
+    eta_data = Get_absorb_eta().getData();
     tau_eta_shift = 1;
   }
 
   #pragma omp parallel
   {
-    const float * Sum_rhoxyz_Data = Sum_rhoxyz.GetRawData();
-          float * p_data  = Get_p().GetRawData();
+    const float * Sum_rhoxyz_Data = Sum_rhoxyz.getData();
+          float * p_data  = Get_p().getData();
 
     #pragma omp for schedule (static)
     for (size_t i = 0; i < TotalElementCount; i++)
@@ -1915,11 +1915,11 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   #pragma omp parallel
   {
     const size_t TotalElementCount = mParameters.getFullDimensionSizes().nElements();
-    float * p_data = Get_p().GetRawData();
+    float * p_data = Get_p().getData();
 
-    const float * rhox_data = Get_rhox().GetRawData();
-    const float * rhoy_data = Get_rhoy().GetRawData();
-    const float * rhoz_data = Get_rhoz().GetRawData();
+    const float * rhox_data = Get_rhox().getData();
+    const float * rhoy_data = Get_rhoy().getData();
+    const float * rhoz_data = Get_rhoz().getData();
 
     float * c2_data;
     size_t  c2_shift;
@@ -1931,7 +1931,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     }
     else
     {
-      c2_data = Get_c2().GetRawData();
+      c2_data = Get_c2().getData();
       c2_shift = 1;
     }
 
@@ -1945,7 +1945,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     }
     else
     {
-      BonA_data = Get_BonA().GetRawData();
+      BonA_data = Get_BonA().getData();
       BonA_shift = 1;
     }
 
@@ -1959,7 +1959,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     }
     else
     {
-      rho0_data = Get_rho0().GetRawData();
+      rho0_data = Get_rho0().getData();
       rho0_shift = 1;
     }
 
@@ -1988,10 +1988,10 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
 {
   #pragma omp parallel
   {
-    const float * rhox = Get_rhox().GetRawData();
-    const float * rhoy = Get_rhoy().GetRawData();
-    const float * rhoz = Get_rhoz().GetRawData();
-          float * p_data = Get_p().GetRawData();
+    const float * rhox = Get_rhox().getData();
+    const float * rhoy = Get_rhoy().getData();
+    const float * rhoz = Get_rhoz().getData();
+          float * p_data = Get_p().getData();
     const size_t  TotalElementCount = mParameters.getFullDimensionSizes().nElements();
 
     if (mParameters.getC0ScalarFlag())
@@ -2006,7 +2006,7 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     }
     else
     {
-      const float * c2_data = Get_c2().GetRawData();
+      const float * c2_data = Get_c2().getData();
 
       #pragma omp for schedule (static)
       for (size_t i = 0; i < TotalElementCount; i++)
@@ -2028,23 +2028,23 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   if (mParameters.getAbsorbingFlag())
   { // absorbing case
 
-    TRealMatrix & Sum_rhoxyz = Get_Temp_1_RS3D();
-    TRealMatrix & BonA_rho_rhoxyz = Get_Temp_2_RS3D();
-    TRealMatrix & Sum_du = Get_Temp_3_RS3D();
+    RealMatrix & Sum_rhoxyz = Get_Temp_1_RS3D();
+    RealMatrix & BonA_rho_rhoxyz = Get_Temp_2_RS3D();
+    RealMatrix & Sum_du = Get_Temp_3_RS3D();
 
     Calculate_SumRho_BonA_SumDu_SSE2(Sum_rhoxyz, BonA_rho_rhoxyz, Sum_du);
 
     // ifftn ( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
-    Get_FFT_X_temp().Compute_FFT_3D_R2C(Sum_du);
-    Get_FFT_Y_temp().Compute_FFT_3D_R2C(Sum_rhoxyz);
+    Get_FFT_X_temp().computeR2CFft3D(Sum_du);
+    Get_FFT_Y_temp().computeR2CFft3D(Sum_rhoxyz);
 
     Compute_Absorb_nabla1_2_SSE2(Get_FFT_X_temp(), Get_FFT_Y_temp());
 
-    TRealMatrix& Absorb_tau_temp = Sum_du;
-    TRealMatrix& Absorb_eta_temp = Sum_rhoxyz;
+    RealMatrix& Absorb_tau_temp = Sum_du;
+    RealMatrix& Absorb_eta_temp = Sum_rhoxyz;
 
-    Get_FFT_X_temp().Compute_FFT_3D_C2R(Absorb_tau_temp);
-    Get_FFT_Y_temp().Compute_FFT_3D_C2R(Absorb_eta_temp);
+    Get_FFT_X_temp().computeC2RFft3D(Absorb_tau_temp);
+    Get_FFT_Y_temp().computeC2RFft3D(Absorb_eta_temp);
 
     Sum_Subterms_nonlinear(Absorb_tau_temp, Absorb_eta_temp, BonA_rho_rhoxyz);
   }
@@ -2065,23 +2065,23 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
   if (mParameters.getAbsorbingFlag())
   { // absorbing case
 
-    TRealMatrix& Sum_rhoxyz = Get_Temp_1_RS3D();
-    TRealMatrix& Sum_rho0_du = Get_Temp_2_RS3D();
+    RealMatrix& Sum_rhoxyz = Get_Temp_1_RS3D();
+    RealMatrix& Sum_rho0_du = Get_Temp_2_RS3D();
 
     Calculate_SumRho_SumRhoDu(Sum_rhoxyz, Sum_rho0_du);
 
     // ifftn ( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
 
-    Get_FFT_X_temp().Compute_FFT_3D_R2C(Sum_rho0_du);
-    Get_FFT_Y_temp().Compute_FFT_3D_R2C(Sum_rhoxyz);
+    Get_FFT_X_temp().computeR2CFft3D(Sum_rho0_du);
+    Get_FFT_Y_temp().computeR2CFft3D(Sum_rhoxyz);
 
     Compute_Absorb_nabla1_2_SSE2(Get_FFT_X_temp(), Get_FFT_Y_temp());
 
-    TRealMatrix& Absorb_tau_temp = Get_Temp_2_RS3D(); // override Sum_rho0_dx
-    TRealMatrix& Absorb_eta_temp = Get_Temp_3_RS3D();
+    RealMatrix& Absorb_tau_temp = Get_Temp_2_RS3D(); // override Sum_rho0_dx
+    RealMatrix& Absorb_eta_temp = Get_Temp_3_RS3D();
 
-    Get_FFT_X_temp().Compute_FFT_3D_C2R(Absorb_tau_temp);
-    Get_FFT_Y_temp().Compute_FFT_3D_C2R(Absorb_eta_temp);
+    Get_FFT_X_temp().computeC2RFft3D(Absorb_tau_temp);
+    Get_FFT_Y_temp().computeC2RFft3D(Absorb_eta_temp);
 
     Sum_Subterms_linear(Absorb_tau_temp, Absorb_eta_temp, Sum_rhoxyz);
   }
@@ -2107,9 +2107,9 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
                           Get_kappa(),
                           Get_ddx_k_shift_pos(),Get_ddy_k_shift_pos(),Get_ddz_k_shift_pos());
 
-   Get_FFT_X_temp().Compute_FFT_3D_C2R(Get_Temp_1_RS3D());
-   Get_FFT_Y_temp().Compute_FFT_3D_C2R(Get_Temp_2_RS3D());
-   Get_FFT_Z_temp().Compute_FFT_3D_C2R(Get_Temp_3_RS3D());
+   Get_FFT_X_temp().computeC2RFft3D(Get_Temp_1_RS3D());
+   Get_FFT_Y_temp().computeC2RFft3D(Get_Temp_2_RS3D());
+   Get_FFT_Z_temp().computeC2RFft3D(Get_Temp_3_RS3D());
 
   #pragma omp parallel
   {
@@ -2117,38 +2117,38 @@ void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp
     { // scalars
       if (mParameters.getNonUniformGridFlag())
       {
-        Get_ux_sgx().Compute_ux_sgx_normalize_scalar_nonuniform(Get_Temp_1_RS3D(),
+        Get_ux_sgx().computeVelocityXHomogeneousNonuniform(Get_Temp_1_RS3D(),
                                                                 mParameters.getRho0SgxScalar(),
                                                                 Get_dxudxn_sgx(), Get_pml_x_sgx());
-        Get_uy_sgy().Compute_uy_sgy_normalize_scalar_nonuniform(Get_Temp_2_RS3D(),
+        Get_uy_sgy().computeVelocityYHomogeneousNonuniform(Get_Temp_2_RS3D(),
                                                                 mParameters.getRho0SgyScalar(),
                                                                 Get_dyudyn_sgy(), Get_pml_y_sgy());
-        Get_uz_sgz().Compute_uz_sgz_normalize_scalar_nonuniform(Get_Temp_3_RS3D(),
+        Get_uz_sgz().computeVelocityZHomogeneousNonuniform(Get_Temp_3_RS3D(),
                                                                 mParameters.getRho0SgzScalar(),
                                                                 Get_dzudzn_sgz(), Get_pml_z_sgz());
        }
       else
       {
-        Get_ux_sgx().Compute_ux_sgx_normalize_scalar_uniform(Get_Temp_1_RS3D(),
+        Get_ux_sgx().computeVelocityXHomogeneousUniform(Get_Temp_1_RS3D(),
                                                              mParameters.getRho0SgxScalar(),
                                                              Get_pml_x_sgx());
-        Get_uy_sgy().Compute_uy_sgy_normalize_scalar_uniform(Get_Temp_2_RS3D(),
+        Get_uy_sgy().computeVelocityYHomogeneousUniform(Get_Temp_2_RS3D(),
                                                              mParameters.getRho0SgyScalar(),
                                                              Get_pml_y_sgy());
-        Get_uz_sgz().Compute_uz_sgz_normalize_scalar_uniform(Get_Temp_3_RS3D(),
+        Get_uz_sgz().computeVelocityZHomogeneousUniform(Get_Temp_3_RS3D(),
                                                              mParameters.getRho0SgzScalar(),
                                                              Get_pml_z_sgz());
       }
     }
     else
     {// matrices
-      Get_ux_sgx().Compute_ux_sgx_normalize(Get_Temp_1_RS3D(),
+      Get_ux_sgx().computeVelocityX(Get_Temp_1_RS3D(),
                                             Get_dt_rho0_sgx(),
                                             Get_pml_x_sgx());
-      Get_uy_sgy().Compute_uy_sgy_normalize(Get_Temp_2_RS3D(),
+      Get_uy_sgy().computeVelocityY(Get_Temp_2_RS3D(),
                                             Get_dt_rho0_sgy(),
                                             Get_pml_y_sgy());
-      Get_uz_sgz().Compute_uz_sgz_normalize(Get_Temp_3_RS3D(),
+      Get_uz_sgz().computeVelocityZ(Get_Temp_3_RS3D(),
                                             Get_dt_rho0_sgz(),
                                             Get_pml_z_sgz());
     }
@@ -2165,7 +2165,7 @@ void TKSpaceFirstOrder3DSolver::Add_u_source()
 
   if (mParameters.getVelocityXSourceFlag() > t_index)
   {
-    Get_ux_sgx().Add_u_source(Get_ux_source_input(),
+    Get_ux_sgx().addVelocitySource(Get_ux_source_input(),
                               Get_u_source_index(),
                               t_index,
                               mParameters.getVelocitySourceMode(),
@@ -2174,7 +2174,7 @@ void TKSpaceFirstOrder3DSolver::Add_u_source()
 
   if (mParameters.getVelocityYSourceFlag() > t_index)
   {
-    Get_uy_sgy().Add_u_source(Get_uy_source_input(),
+    Get_uy_sgy().addVelocitySource(Get_uy_source_input(),
                               Get_u_source_index(),
                               t_index,
                               mParameters.getVelocitySourceMode(),
@@ -2183,7 +2183,7 @@ void TKSpaceFirstOrder3DSolver::Add_u_source()
 
   if (mParameters.getVelocityZSourceFlag() > t_index)
   {
-    Get_uz_sgz().Add_u_source(Get_uz_source_input(),
+    Get_uz_sgz().addVelocitySource(Get_uz_source_input(),
                               Get_u_source_index(),
                               t_index,
                               mParameters.getVelocitySourceMode(),
@@ -2204,16 +2204,16 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
 
   if (mParameters.getPressureSourceFlag() > t_index)
   {
-    float * rhox = Get_rhox().GetRawData();
-    float * rhoy = Get_rhoy().GetRawData();
-    float * rhoz = Get_rhoz().GetRawData();
+    float * rhox = Get_rhox().getData();
+    float * rhoy = Get_rhoy().getData();
+    float * rhoz = Get_rhoz().getData();
 
-    float  * p_source_input = Get_p_source_input().GetRawData();
-    const size_t * p_source_index = Get_p_source_index().GetRawData();
+    float  * p_source_input = Get_p_source_input().getData();
+    const size_t * p_source_index = Get_p_source_index().getData();
 
     const bool   Is_p_source_many  = (mParameters.getPressureSourceMany() != 0);
-    const size_t Index2D           = (Is_p_source_many) ? t_index * Get_p_source_index().GetTotalElementCount() : t_index;
-    const size_t p_source_size     = Get_p_source_index().GetTotalElementCount();
+    const size_t Index2D           = (Is_p_source_many) ? t_index * Get_p_source_index().size() : t_index;
+    const size_t p_source_size     = Get_p_source_index().size();
 
     // replacement
     if (mParameters.getPressureSourceMode() == 0)
@@ -2256,11 +2256,11 @@ void TKSpaceFirstOrder3DSolver::Add_p_source()
  */
 void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
 {
-  const TFloatComplex * x_shift_neg_r  = (TFloatComplex *) Get_x_shift_neg_r().GetRawData();
-  const TFloatComplex * y_shift_neg_r  = (TFloatComplex *) Get_y_shift_neg_r().GetRawData();
-  const TFloatComplex * z_shift_neg_r  = (TFloatComplex *) Get_z_shift_neg_r().GetRawData();
+  const FloatComplex * x_shift_neg_r  = (FloatComplex *) Get_x_shift_neg_r().getData();
+  const FloatComplex * y_shift_neg_r  = (FloatComplex *) Get_y_shift_neg_r().getData();
+  const FloatComplex * z_shift_neg_r  = (FloatComplex *) Get_z_shift_neg_r().getData();
 
-        TFloatComplex * FFT_shift_temp = (TFloatComplex *) Get_FFT_shift_temp().GetRawData();
+        FloatComplex * FFT_shift_temp = (FloatComplex *) Get_FFT_shift_temp().getData();
 
 
   // sizes of frequency spaces
@@ -2279,7 +2279,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
   const float DividerZ = 1.0f / (float) mParameters.getFullDimensionSizes().nz;
 
   //-------------------------- ux_shifted --------------------------------------
-  Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
+  Get_FFT_shift_temp().computeR2CFft1DX(Get_ux_sgx());
 
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < XShiftDims.nz; z++)
@@ -2289,7 +2289,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
     {
       for (size_t x = 0; x < XShiftDims.nx; x++)
       {
-        TFloatComplex Temp;
+        FloatComplex Temp;
 
         Temp.real = ((FFT_shift_temp[i].real * x_shift_neg_r[x].real) -
                      (FFT_shift_temp[i].imag * x_shift_neg_r[x].imag)
@@ -2306,11 +2306,11 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
       } // x
     } // y
   }//z*/
-  Get_FFT_shift_temp().Compute_FFT_1DX_C2R(Get_ux_shifted());
+  Get_FFT_shift_temp().computeC2RFft1DX(Get_ux_shifted());
 
 
   //-------------------------- uy_shifted --------------------------------------
-  Get_FFT_shift_temp().Compute_FFT_1DY_R2C(Get_uy_sgy());
+  Get_FFT_shift_temp().computeR2CFft1DY(Get_uy_sgy());
 
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < YShiftDims.nz; z++)
@@ -2320,7 +2320,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
     {
       for (size_t x = 0; x < YShiftDims.nx; x++)
       {
-        TFloatComplex Temp;
+        FloatComplex Temp;
 
         Temp.real = ((FFT_shift_temp[i].real * y_shift_neg_r[y].real) -
                      (FFT_shift_temp[i].imag * y_shift_neg_r[y].imag)) *
@@ -2337,11 +2337,11 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
       } // x
     } // y
   }//z
-  Get_FFT_shift_temp().Compute_FFT_1DY_C2R(Get_uy_shifted());
+  Get_FFT_shift_temp().computeC2RFft1DY(Get_uy_shifted());
 
 
   //-------------------------- uz_shifted --------------------------------------
-  Get_FFT_shift_temp().Compute_FFT_1DZ_R2C(Get_uz_sgz());
+  Get_FFT_shift_temp().computeR2CFft1DZ(Get_uz_sgz());
   #pragma omp parallel for schedule (static)
   for (size_t z = 0; z < ZShiftDims.nz; z++)
   {
@@ -2350,7 +2350,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
     {
       for (size_t x = 0; x < ZShiftDims.nx; x++)
       {
-        TFloatComplex Temp;
+        FloatComplex Temp;
 
         Temp.real = ((FFT_shift_temp[i].real * z_shift_neg_r[z].real) -
                      (FFT_shift_temp[i].imag * z_shift_neg_r[z].imag)) *
@@ -2367,7 +2367,7 @@ void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
       } // x
     } // y
   }//z
-  Get_FFT_shift_temp().Compute_FFT_1DZ_C2R(Get_uz_shifted());
+  Get_FFT_shift_temp().computeC2RFft1DZ(Get_uz_shifted());
 }// end of Calculate_shifted_velocity()
 //------------------------------------------------------------------------------
 
@@ -2401,7 +2401,10 @@ void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
     // add in the transducer source term (t = t1) to ux
     if (mParameters.getTransducerSourceFlag() > t_index)
     {
-     Get_ux_sgx().AddTransducerSource(Get_u_source_index(), Get_delay_mask(), Get_transducer_source_input());
+     Get_ux_sgx().addTransducerSource(Get_u_source_index(),
+                                      Get_transducer_source_input(),
+                                      Get_delay_mask(),
+                                      mParameters.getTimeIndex());
     }
 
     Compute_duxyz();
@@ -2514,14 +2517,14 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
 {
   if (mParameters.getStorePressureFinalAllFlag())
   {
-    Get_p().WriteDataToHDF5File(mParameters.getOutputFile(), kPressureFinalName.c_str(), mParameters.getCompressionLevel());
+    Get_p().writeData(mParameters.getOutputFile(), kPressureFinalName.c_str(), mParameters.getCompressionLevel());
   }// p_final
 
   if (mParameters.getStoreVelocityFinalAllFlag())
   {
-    Get_ux_sgx().WriteDataToHDF5File(mParameters.getOutputFile(), kUxFinalName.c_str(), mParameters.getCompressionLevel());
-    Get_uy_sgy().WriteDataToHDF5File(mParameters.getOutputFile(), kUyFinalName.c_str(), mParameters.getCompressionLevel());
-    Get_uz_sgz().WriteDataToHDF5File(mParameters.getOutputFile(), kUzFinalName.c_str(), mParameters.getCompressionLevel());
+    Get_ux_sgx().writeData(mParameters.getOutputFile(), kUxFinalName.c_str(), mParameters.getCompressionLevel());
+    Get_uy_sgy().writeData(mParameters.getOutputFile(), kUyFinalName.c_str(), mParameters.getCompressionLevel());
+    Get_uz_sgz().writeData(mParameters.getOutputFile(), kUzFinalName.c_str(), mParameters.getCompressionLevel());
   }// u_final
 
   // Apply post-processing and close
@@ -2534,14 +2537,14 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
   {
     if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
     {
-      Get_sensor_mask_index().RecomputeIndicesToMatlab();
-      Get_sensor_mask_index().WriteDataToHDF5File(mParameters.getOutputFile(),kSensorMaskIndexName.c_str(),
+      Get_sensor_mask_index().recomputeIndicesToMatlab();
+      Get_sensor_mask_index().writeData(mParameters.getOutputFile(),kSensorMaskIndexName.c_str(),
                                                   mParameters.getCompressionLevel());
     }
     if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
     {
-      Get_sensor_mask_corners().RecomputeIndicesToMatlab();
-      Get_sensor_mask_corners().WriteDataToHDF5File(mParameters.getOutputFile(),kSensorMaskCornersName.c_str(),
+      Get_sensor_mask_corners().recomputeIndicesToMatlab();
+      Get_sensor_mask_corners().writeData(mParameters.getOutputFile(),kSensorMaskCornersName.c_str(),
                                                     mParameters.getCompressionLevel());
     }
   }
@@ -2574,7 +2577,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData()
 void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
 {
   // export FFTW wisdom
-  TFFTWComplexMatrix::ExportWisdom();
+  FftwComplexMatrix::exportWisdom();
 
 
   // Create Checkpoint file

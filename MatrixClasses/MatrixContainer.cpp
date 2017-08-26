@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created) \n
- *              25 August    2017, 11:17 (revised)
+ *              26 August    2017, 11:22 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -102,7 +102,7 @@ TMatrixRecord& TMatrixRecord::operator = (const TMatrixRecord& src)
  * @param [in] Checkpoint       - Checkpoint this matrix?
  * @param [in] HDF5MatrixName   - HDF5 matrix name
  */
-void TMatrixRecord::SetAllValues(TBaseMatrix *          MatrixPtr,
+void TMatrixRecord::SetAllValues(BaseMatrix *          MatrixPtr,
                                  const TMatrixDataType  MatrixDataType,
                                  const DimensionSizes   dimensionSizes,
                                  const bool             LoadData,
@@ -167,31 +167,31 @@ void TMatrixContainer::CreateAllObjects()
     {
       case TMatrixRecord::mdtReal:
       {
-        it->second.MatrixPtr = new TRealMatrix(it->second.dimensionSizes);
+        it->second.MatrixPtr = new RealMatrix(it->second.dimensionSizes);
         break;
       }
 
       case TMatrixRecord::mdtComplex:
       {
-        it->second.MatrixPtr = new TComplexMatrix(it->second.dimensionSizes);
+        it->second.MatrixPtr = new ComplexMatrix(it->second.dimensionSizes);
         break;
       }
 
       case TMatrixRecord::mdtIndex:
       {
-        it->second.MatrixPtr = new TIndexMatrix(it->second.dimensionSizes);
+        it->second.MatrixPtr = new IndexMatrix(it->second.dimensionSizes);
         break;
       }
 
       case TMatrixRecord::mdtFFTW:
       {
-        it->second.MatrixPtr = new TFFTWComplexMatrix(it->second.dimensionSizes);
+        it->second.MatrixPtr = new FftwComplexMatrix(it->second.dimensionSizes);
         break;
       }
 
       case TMatrixRecord::mdtUxyz:
       {
-        it->second.MatrixPtr = new Tuxyz_sgxyzMatrix(it->second.dimensionSizes);
+        it->second.MatrixPtr = new VelocityMatrix(it->second.dimensionSizes);
         break;
       }
 
@@ -218,7 +218,7 @@ void TMatrixContainer::LoadDataFromInputHDF5File(Hdf5File & HDF5_File)
   {
     if (it->second.LoadData)
     {
-      it->second.MatrixPtr->ReadDataFromHDF5File(HDF5_File, it->second.HDF5MatrixName.c_str());
+      it->second.MatrixPtr->readData(HDF5_File, it->second.HDF5MatrixName.c_str());
     }
   }
 }// end of LoadMatricesDataFromDisk
@@ -235,7 +235,7 @@ void TMatrixContainer::LoadDataFromCheckpointHDF5File(Hdf5File & HDF5_File)
   {
     if (it->second.Checkpoint)
     {
-      it->second.MatrixPtr->ReadDataFromHDF5File(HDF5_File, it->second.HDF5MatrixName.c_str());
+      it->second.MatrixPtr->readData(HDF5_File, it->second.HDF5MatrixName.c_str());
     }
   }
 }// end of LoadDataFromCheckpointHDF5File
@@ -251,7 +251,7 @@ void TMatrixContainer::StoreDataIntoCheckpointHDF5File(Hdf5File & HDF5_File)
   {
     if (it->second.Checkpoint)
     {
-      it->second.MatrixPtr->WriteDataToHDF5File(HDF5_File,
+      it->second.MatrixPtr->writeData(HDF5_File,
                                                 it->second.HDF5MatrixName.c_str(),
                                                 Parameters::getInstance().getCompressionLevel());
     }
@@ -624,9 +624,9 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
 
   Parameters& Params = Parameters::getInstance();
 
-  float * TempBufferX = MatrixContainer.GetMatrix<TRealMatrix>(Temp_1_RS3D).GetRawData();
-  float * TempBufferY = MatrixContainer.GetMatrix<TRealMatrix>(Temp_2_RS3D).GetRawData();
-  float * TempBufferZ = MatrixContainer.GetMatrix<TRealMatrix>(Temp_3_RS3D).GetRawData();
+  float * TempBufferX = MatrixContainer.GetMatrix<RealMatrix>(Temp_1_RS3D).getData();
+  float * TempBufferY = MatrixContainer.GetMatrix<RealMatrix>(Temp_2_RS3D).getData();
+  float * TempBufferZ = MatrixContainer.GetMatrix<RealMatrix>(Temp_3_RS3D).getData();
 
   //--------------------- Pressure ------------------/
   if (Params.getStorePressureRawFlag())
@@ -667,7 +667,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
     OutputStreamContainer[p_sensor_max_all] =
             new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kPressureMaxAllName.c_str(),
-                                             MatrixContainer.GetMatrix<TRealMatrix>(p),
+                                             MatrixContainer.GetMatrix<RealMatrix>(p),
                                              TBaseOutputHDF5Stream::roMAX);
   }
 
@@ -676,7 +676,7 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
     OutputStreamContainer[p_sensor_min_all] =
             new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kPressureMinAllName.c_str(),
-                                             MatrixContainer.GetMatrix<TRealMatrix>(p),
+                                             MatrixContainer.GetMatrix<RealMatrix>(p),
                                              TBaseOutputHDF5Stream::roMIN);
   }
 
@@ -772,17 +772,17 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
     OutputStreamContainer[ux_sensor_max_all] =
             new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUxMaxAllName.c_str(),
-                                             MatrixContainer.GetMatrix<TRealMatrix>(ux_sgx),
+                                             MatrixContainer.GetMatrix<RealMatrix>(ux_sgx),
                                              TBaseOutputHDF5Stream::roMAX);
     OutputStreamContainer[uy_sensor_max_all] =
             new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUyMaxAllName.c_str(),
-                                             MatrixContainer.GetMatrix<TRealMatrix>(uy_sgy),
+                                             MatrixContainer.GetMatrix<RealMatrix>(uy_sgy),
                                              TBaseOutputHDF5Stream::roMAX);
     OutputStreamContainer[uz_sensor_max_all] =
             new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUzMaxAllName.c_str(),
-                                             MatrixContainer.GetMatrix<TRealMatrix>(uz_sgz),
+                                             MatrixContainer.GetMatrix<RealMatrix>(uz_sgz),
                                              TBaseOutputHDF5Stream::roMAX);
   }
 
@@ -791,17 +791,17 @@ void TOutputStreamContainer::AddStreamsIntoContainer(TMatrixContainer & MatrixCo
     OutputStreamContainer[ux_sensor_min_all] =
             new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUxMinAllName.c_str(),
-                                             MatrixContainer.GetMatrix<TRealMatrix>(ux_sgx),
+                                             MatrixContainer.GetMatrix<RealMatrix>(ux_sgx),
                                              TBaseOutputHDF5Stream::roMIN);
     OutputStreamContainer[uy_sensor_min_all] =
             new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUyMinAllName.c_str(),
-                                             MatrixContainer.GetMatrix<TRealMatrix>(uy_sgy),
+                                             MatrixContainer.GetMatrix<RealMatrix>(uy_sgy),
                                              TBaseOutputHDF5Stream::roMIN);
     OutputStreamContainer[uz_sensor_min_all] =
             new TWholeDomainOutputHDF5Stream(Params.getOutputFile(),
                                              kUzMinAllName.c_str(),
-                                             MatrixContainer.GetMatrix<TRealMatrix>(uz_sgz),
+                                             MatrixContainer.GetMatrix<RealMatrix>(uz_sgz),
                                              TBaseOutputHDF5Stream::roMIN);
   }
 }// end of AddStreamsdIntoContainer
@@ -945,8 +945,8 @@ TBaseOutputHDF5Stream * TOutputStreamContainer::CreateNewOutputStream(TMatrixCon
   {
     Stream = new TIndexOutputHDF5Stream(Params.getOutputFile(),
                                         HDF5_DatasetName,
-                                        MatrixContainer.GetMatrix<TRealMatrix>(SampledMatrixID),
-                                        MatrixContainer.GetMatrix<TIndexMatrix>(sensor_mask_index),
+                                        MatrixContainer.GetMatrix<RealMatrix>(SampledMatrixID),
+                                        MatrixContainer.GetMatrix<IndexMatrix>(sensor_mask_index),
                                         ReductionOp,
                                         BufferToReuse);
   }
@@ -954,8 +954,8 @@ TBaseOutputHDF5Stream * TOutputStreamContainer::CreateNewOutputStream(TMatrixCon
   {
     Stream = new TCuboidOutputHDF5Stream(Params.getOutputFile(),
                                          HDF5_DatasetName,
-                                         MatrixContainer.GetMatrix<TRealMatrix>(SampledMatrixID),
-                                         MatrixContainer.GetMatrix<TIndexMatrix>(sensor_mask_corners),
+                                         MatrixContainer.GetMatrix<RealMatrix>(SampledMatrixID),
+                                         MatrixContainer.GetMatrix<IndexMatrix>(sensor_mask_corners),
                                          ReductionOp,
                                          BufferToReuse);
   }
