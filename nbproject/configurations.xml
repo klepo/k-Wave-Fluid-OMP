@@ -29,12 +29,22 @@
       <itemPath>MatrixClasses/IndexMatrix.h</itemPath>
       <itemPath>MatrixClasses/MatrixContainer.cpp</itemPath>
       <itemPath>MatrixClasses/MatrixContainer.h</itemPath>
-      <itemPath>MatrixClasses/OutputHDF5Stream.cpp</itemPath>
-      <itemPath>MatrixClasses/OutputHDF5Stream.h</itemPath>
       <itemPath>MatrixClasses/RealMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/RealMatrix.h</itemPath>
       <itemPath>MatrixClasses/VelocityMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/VelocityMatrix.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="OutputStreams"
+                   displayName="OutputStreams"
+                   projectFiles="true">
+      <itemPath>OutputStreams/BaseOutputStream.cpp</itemPath>
+      <itemPath>OutputStreams/BaseOutputStream.h</itemPath>
+      <itemPath>OutputStreams/CuboidOutputStream.cpp</itemPath>
+      <itemPath>OutputStreams/CuboidOutputStream.h</itemPath>
+      <itemPath>OutputStreams/IndexOutputStream.cpp</itemPath>
+      <itemPath>OutputStreams/IndexOutputStream.h</itemPath>
+      <itemPath>OutputStreams/WholeDomainOutputStream.cpp</itemPath>
+      <itemPath>OutputStreams/WholeDomainOutputStream.h</itemPath>
     </logicalFolder>
     <logicalFolder name="f3" displayName="Parameters" projectFiles="true">
       <itemPath>Parameters/CommandLineParameters.cpp</itemPath>
@@ -71,6 +81,9 @@
       <itemPath>change.log</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>OutputStreams</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug-pcjaros-dynamic" type="1">
@@ -173,10 +186,6 @@
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
@@ -184,6 +193,34 @@
       <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -308,10 +345,6 @@
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
@@ -319,6 +352,34 @@
       <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -442,10 +503,6 @@
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
@@ -453,6 +510,34 @@
       <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -577,10 +662,6 @@
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
@@ -588,6 +669,34 @@
       <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -714,10 +823,6 @@
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
@@ -725,6 +830,34 @@
       <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -851,10 +984,6 @@
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
@@ -862,6 +991,34 @@
       <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -988,10 +1145,6 @@
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
@@ -999,6 +1152,34 @@
       <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -1125,10 +1306,6 @@
       </item>
       <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
@@ -1136,6 +1313,34 @@
       <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"

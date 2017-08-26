@@ -44,9 +44,12 @@ OBJECTFILES= \
 	${OBJECTDIR}/MatrixClasses/FftwComplexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/IndexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/MatrixContainer.o \
-	${OBJECTDIR}/MatrixClasses/OutputHDF5Stream.o \
 	${OBJECTDIR}/MatrixClasses/RealMatrix.o \
 	${OBJECTDIR}/MatrixClasses/VelocityMatrix.o \
+	${OBJECTDIR}/OutputStreams/BaseOutputStream.o \
+	${OBJECTDIR}/OutputStreams/CuboidOutputStream.o \
+	${OBJECTDIR}/OutputStreams/IndexOutputStream.o \
+	${OBJECTDIR}/OutputStreams/WholeDomainOutputStream.o \
 	${OBJECTDIR}/Parameters/CommandLineParameters.o \
 	${OBJECTDIR}/Parameters/Parameters.o \
 	${OBJECTDIR}/main.o
@@ -133,11 +136,6 @@ ${OBJECTDIR}/MatrixClasses/MatrixContainer.o: MatrixClasses/MatrixContainer.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/MatrixContainer.o MatrixClasses/MatrixContainer.cpp
 
-${OBJECTDIR}/MatrixClasses/OutputHDF5Stream.o: MatrixClasses/OutputHDF5Stream.cpp
-	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
-	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/OutputHDF5Stream.o MatrixClasses/OutputHDF5Stream.cpp
-
 ${OBJECTDIR}/MatrixClasses/RealMatrix.o: MatrixClasses/RealMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
@@ -147,6 +145,26 @@ ${OBJECTDIR}/MatrixClasses/VelocityMatrix.o: MatrixClasses/VelocityMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
 	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/VelocityMatrix.o MatrixClasses/VelocityMatrix.cpp
+
+${OBJECTDIR}/OutputStreams/BaseOutputStream.o: OutputStreams/BaseOutputStream.cpp
+	${MKDIR} -p ${OBJECTDIR}/OutputStreams
+	${RM} "$@.d"
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/BaseOutputStream.o OutputStreams/BaseOutputStream.cpp
+
+${OBJECTDIR}/OutputStreams/CuboidOutputStream.o: OutputStreams/CuboidOutputStream.cpp
+	${MKDIR} -p ${OBJECTDIR}/OutputStreams
+	${RM} "$@.d"
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/CuboidOutputStream.o OutputStreams/CuboidOutputStream.cpp
+
+${OBJECTDIR}/OutputStreams/IndexOutputStream.o: OutputStreams/IndexOutputStream.cpp
+	${MKDIR} -p ${OBJECTDIR}/OutputStreams
+	${RM} "$@.d"
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/IndexOutputStream.o OutputStreams/IndexOutputStream.cpp
+
+${OBJECTDIR}/OutputStreams/WholeDomainOutputStream.o: OutputStreams/WholeDomainOutputStream.cpp
+	${MKDIR} -p ${OBJECTDIR}/OutputStreams
+	${RM} "$@.d"
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/WholeDomainOutputStream.o OutputStreams/WholeDomainOutputStream.cpp
 
 ${OBJECTDIR}/Parameters/CommandLineParameters.o: Parameters/CommandLineParameters.cpp
 	${MKDIR} -p ${OBJECTDIR}/Parameters
