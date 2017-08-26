@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              26 August    2017, 17:14 (revised)
+ *              26 August    2017, 22:48 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -51,6 +51,8 @@
 
 #include <Utils/MatrixNames.h>
 #include <Utils/DimensionSizes.h>
+
+using namespace std;
 
 /**
  * @enum TMatrixID
@@ -311,7 +313,7 @@ class TOutputStreamContainer
      * @param [in] MatrixID
      * @return Ouptut stream
      */
-    TBaseOutputHDF5Stream & operator [] (const TMatrixID MatrixID)
+    BaseOutputStream & operator [] (const TMatrixID MatrixID)
     {
       return (* (OutputStreamContainer[MatrixID]));
     };
@@ -339,10 +341,10 @@ class TOutputStreamContainer
 
   protected:
     /// Create a new output stream.
-    TBaseOutputHDF5Stream * CreateNewOutputStream(TMatrixContainer & MatrixContainer,
+    BaseOutputStream * CreateNewOutputStream(TMatrixContainer & MatrixContainer,
                                                   const TMatrixID    SampledMatrixID,
                                                   const char *       HDF5_DatasetName,
-                                                  const TBaseOutputHDF5Stream::TReductionOperator ReductionOp,
+                                                  const BaseOutputStream::ReduceOperator ReductionOp,
                                                   float *            BufferToReuse = NULL);
 
     /// Copy constructor not allowed for public.
@@ -352,7 +354,7 @@ class TOutputStreamContainer
 
   private:
     /// Output stream map.
-    typedef map < TMatrixID, TBaseOutputHDF5Stream * > TOutputStreamMap;
+    typedef map < TMatrixID, BaseOutputStream * > TOutputStreamMap;
     /// Map with output streams.
     TOutputStreamMap OutputStreamContainer;
 

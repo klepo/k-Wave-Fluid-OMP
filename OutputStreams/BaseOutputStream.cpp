@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              25 August    2017, 17:00 (revised)
+ *              26 August    2017, 18:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,163 +31,166 @@
  */
 
 
-#include <string.h>
+#include <cstring>
 #include <cmath>
 #include <immintrin.h>
 #include <limits>
-#include <OutputStreams/BaseOutputStream.h>
 
+#include <OutputStreams/BaseOutputStream.h>
 #include <Parameters/Parameters.h>
 #include <Utils/ErrorMessages.h>
 
 
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-using namespace std;
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-//                              Constants                                     //
-//----------------------------------------------------------------------------//
+/**
+ * Constructor - there is no sensor mask by default!
+ */
+BaseOutputStream::BaseOutputStream(Hdf5File&            file,
+                                   MatrixName&          rootObjectName,
+                                   const RealMatrix&    sourceMatrix,
+                                   const ReduceOperator reduceOp,
+                                   float*               bufferToReuse)
+  : mFile(file),
+    mRootObjectName(rootObjectName),
+    mSourceMatrix(sourceMatrix),
+    mReduceOp(reduceOp),
+    mBufferReuse(bufferToReuse != nullptr),
+    mBufferSize(0),
+    mStoreBuffer(bufferToReuse)
+{
 
-
-
-//----------------------------------------------------------------------------//
-//                              Definitions                                   //
-//----------------------------------------------------------------------------//
-
-
-//----------------------------------------------------------------------------//
-//                  TBaseOutputHDF5Stream implementation                      //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
+};
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Apply post-processing on the buffer. It supposes the elements are independent.
- *
  */
-void TBaseOutputHDF5Stream::PostProcess()
+void BaseOutputStream::postProcess()
 {
-  switch (ReductionOp)
+  switch (mReduceOp)
   {
-    case roNONE :
+    case ReduceOperator::kNone:
     {
       // do nothing
       break;
     }
-
-    case roRMS  :
+    case ReduceOperator::kRms:
     {
-      const float ScalingCoeff = 1.0f / (Parameters::getInstance().getNt() - Parameters::getInstance().getSamplingStartTimeIndex());
+      const float scalingCoeff = 1.0f / (Parameters::getInstance().getNt() -
+                                         Parameters::getInstance().getSamplingStartTimeIndex());
 
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        StoreBuffer[i] = sqrt(StoreBuffer[i] * ScalingCoeff);
+        mStoreBuffer[i] = sqrt(mStoreBuffer[i] * scalingCoeff);
       }
       break;
     }
-
-    case roMAX  :
+    case ReduceOperator::kMax:
     {
       // do nothing
       break;
     }
-
-    case roMIN  :
+    case ReduceOperator::kMin:
     {
       // do nothing
       break;
     }
   }// switch
 
-}// end of ApplyPostProcessing
-//------------------------------------------------------------------------------
+}// end of postProcess
+//----------------------------------------------------------------------------------------------------------------------
 
 
 
-//----------------------------------------------------------------------------//
-//                  TBaseOutputHDF5Stream implementation                      //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
-
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
  * Allocate memory using a proper memory alignment.
- * @warning This can routine is not used in the base class (should be used in
- *          derived ones).
  */
-void TBaseOutputHDF5Stream::AllocateMemory()
+void BaseOutputStream::allocateMemory()
 {
-  StoreBuffer = (float *) _mm_malloc(BufferSize * sizeof (float), kDataAlignment);
+  mStoreBuffer = (float*) _mm_malloc(mBufferSize * sizeof(float), kDataAlignment);
 
-  if (!StoreBuffer)
+  if (!mStoreBuffer)
   {
-    fprintf(stderr, kErrFmtNotEnoughMemory, "TBaseOutputHDF5Stream");
-    throw bad_alloc();
+    fprintf(stderr, kErrFmtNotEnoughMemory, "BaseOutputHDF5Stream");
+    throw std::bad_alloc();
   }
 
   // we need different initialization for different reduction ops
-  switch (ReductionOp)
+  switch (mReduceOp)
   {
-    case roNONE :
+    case ReduceOperator::kNone:
     {
       // zero the matrix
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        StoreBuffer[i] = 0.0f;
+        mStoreBuffer[i] = 0.0f;
       }
       break;
     }
 
-    case roRMS  :
+    case ReduceOperator::kRms:
     {
       // zero the matrix
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        StoreBuffer[i] = 0.0f;
+        mStoreBuffer[i] = 0.0f;
       }
       break;
     }
 
-    case roMAX  :
+    case ReduceOperator::kMax:
     {
       // set the values to the highest negative float value
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        StoreBuffer[i] = -1 * std::numeric_limits<float>::max();
+        mStoreBuffer[i] = -1.0f * std::numeric_limits<float>::max();
       }
       break;
     }
 
-    case roMIN  :
+    case ReduceOperator::kMin:
     {
       // set the values to the highest float value
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        StoreBuffer[i] = std::numeric_limits<float>::max();
+        mStoreBuffer[i] = std::numeric_limits<float>::max();
       }
       break;
     }
   }// switch
-}// end of AllocateMemory
-//------------------------------------------------------------------------------
+}// end of allocateMemory
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Free memory.
- * @warning This can routine is not used in the base class (should be used in
- *          derived ones).
  */
-void TBaseOutputHDF5Stream::FreeMemory()
+void BaseOutputStream::freeMemory()
 {
-  if (StoreBuffer)
+  if (mStoreBuffer)
   {
-    _mm_free(StoreBuffer);
-    StoreBuffer = NULL;
+    _mm_free(mStoreBuffer);
+    mStoreBuffer = nullptr;
   }
-}// end of FreeMemory
-//------------------------------------------------------------------------------
+}// end of freeMemory
+//----------------------------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//

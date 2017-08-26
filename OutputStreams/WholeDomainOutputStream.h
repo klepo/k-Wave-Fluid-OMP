@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 16:55 (created) \n
- *              26 August    2017, 16:55 (revised)
+ *              26 August    2017, 22:14 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -36,53 +36,68 @@
 #include <OutputStreams/BaseOutputStream.h>
 
 /**
- * @class TWholeDomainOutputHDF5Stream
- * @brief Output stream for quantities sampled in the whole domain.
- * @details Output stream for quantities sampled in the whole domain.
- *          The data is stored in a single dataset (aggregated quantities only).
+ * @class  WholeDomainOutputStream
+ * @brief  Output stream for quantities sampled in the whole domain.
+ *
+ * Output stream for quantities sampled in the whole domain. The data is stored in a single dataset
+ * (aggregated quantities only).
  */
-class TWholeDomainOutputHDF5Stream : public TBaseOutputHDF5Stream
+class WholeDomainOutputStream : public BaseOutputStream
 {
-
   public:
-    /// Constructor - links the HDF5 File, SourceMatrix, and SensorMask together.
-    TWholeDomainOutputHDF5Stream(Hdf5File &             HDF5_File,
-                                 const char *             HDF5_DatasetName,
-                                 const RealMatrix &      SourceMatrix,
-                                 const TReductionOperator ReductionOp,
-                                 float *                  BufferToReuse = NULL);
+    /// Default constructor not allowed.
+    WholeDomainOutputStream() = delete;
+
+    /** @brief Constructor links the HDF5 File, SourceMatrix, and SensorMask together.
+      * @param [in] file          - HDF5 file to write the output to
+      * @param [in] datasetName   - The name of the HDF5 group. This group contains datasets for particular cuboids
+      * @param [in] sourceMatrix  - Source matrix to be sampled
+      * @param [in] reductionOp   - Reduction operator
+      * @param [in] bufferToReuse - If there is a memory space to be reused, provide a pointer
+      */
+    WholeDomainOutputStream(Hdf5File&            file,
+                            MatrixName&          datasetName,
+                            const RealMatrix&    sourceMatrix,
+                            const ReduceOperator reductionOp,
+                            float*               bufferToReuse=nullptr);
+
+    /// Copy constructor not allowed.
+    WholeDomainOutputStream(const WholeDomainOutputStream&) = delete;
 
     /// Destructor.
-    virtual ~TWholeDomainOutputHDF5Stream();
+    virtual ~WholeDomainOutputStream();
+
+    /// operator= is not allowed.
+    WholeDomainOutputStream& operator=(const WholeDomainOutputStream&) = delete;
 
     /// Create a HDF5 stream and allocate data for it.
-    virtual void Create();
+    virtual void create();
 
     /// Reopen the output stream after restart and reload data.
-    virtual void Reopen();
+    virtual void reopen();
 
     /// Sample data into buffer and apply reduction, or flush to disk (no sensor mask here).
-    virtual void Sample();
+    virtual void sample();
 
     /// Apply post-processing on the buffer and flush it to the file.
-    virtual void PostProcess();
+    virtual void postProcess();
 
     ///Checkpoint the stream and close.
-    virtual void Checkpoint();
+    virtual void checkpoint();
 
     /// Close stream (apply post-processing if necessary, flush data and close).
-    virtual void Close();
+    virtual void close();
 
   protected:
     /// Flush the buffer to the file.
-    virtual void FlushBufferToFile();
+    virtual void flushBufferToFile();
 
     /// Handle to a HDF5 dataset.
-    hid_t  HDF5_DatasetId;
+    hid_t  mDataset;
 
     /// Time step to store (N/A for aggregated).
-    size_t SampledTimeStep;
-};// end of TWholeDomainOutputHDF5Stream
-//------------------------------------------------------------------------------
+    size_t mSampledTimeStep;
+};// end of WholeDomainOutputStream
+//----------------------------------------------------------------------------------------------------------------------
 
 #endif	/* WHOLE_DOMAIN_OUTPUT_STREAM_H */

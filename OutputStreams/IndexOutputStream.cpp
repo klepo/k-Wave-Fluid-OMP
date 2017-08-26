@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 17:03 (created) \n
- *              26 August    2017, 17:03 (revised)
+ *              26 August    2017, 18:50 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,178 +31,153 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-
 #include <OutputStreams/IndexOutputStream.h>
-
 #include <Parameters/Parameters.h>
 
 
 
-//----------------------------------------------------------------------------//
-//                 TIndexOutputHDF5Stream implementation                      //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
- * Constructor - links the HDF5 dataset, source (sampled matrix), Sensor mask
- * and the reduction operator together. The constructor DOES NOT allocate memory
- * because the size of the sensor mask is not known at the time the instance of
- * the class is being created.
- *
- * @param [in] HDF5_File       - Handle to the HDF5 (output) file
- * @param [in] HDF5_ObjectName - The dataset's name (index based sensor data
- *                                is store in a single dataset)
- * @param [in] SourceMatrix    - The source matrix (only real matrices are
- *                               supported)
- * @param [in] SensorMask      - Index based sensor mask
- * @param [in] ReductionOp     - Reduction operator
- * @param [in] BufferToReuse   - An external buffer can be used to line up
- *                               the grid points
+ * Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together.
  */
-TIndexOutputHDF5Stream::TIndexOutputHDF5Stream(Hdf5File &             HDF5_File,
-                                               const char *             HDF5_ObjectName,
-                                               const RealMatrix &      SourceMatrix,
-                                               const IndexMatrix &     SensorMask,
-                                               const TReductionOperator ReductionOp,
-                                               float *                  BufferToReuse)
-        : TBaseOutputHDF5Stream(HDF5_File, HDF5_ObjectName, SourceMatrix, ReductionOp, BufferToReuse),
-          SensorMask(SensorMask),
-          HDF5_DatasetId(H5I_BADID),
-          SampledTimeStep(0)
+IndexOutputStream::IndexOutputStream(Hdf5File&            file,
+                                     MatrixName&          datasetName,
+                                     const RealMatrix&    sourceMatrix,
+                                     const IndexMatrix&   sensorMask,
+                                     const ReduceOperator reduceOp,
+                                     float *              bufferToReuse)
+  : BaseOutputStream(file, datasetName, sourceMatrix, reduceOp, bufferToReuse),
+    sensorMask(sensorMask),
+    mDataset(H5I_BADID),
+    mSampledTimeStep(0)
 {
 
-}// end of TIndexOutputHDF5Stream
-//------------------------------------------------------------------------------
-
+}// end of IndexOutputStream
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Destructor.
- * If the file is still opened, it applies the post processing and flush the data.
- * Then, the object memory is freed and the object destroyed.
  */
-TIndexOutputHDF5Stream::~TIndexOutputHDF5Stream()
+IndexOutputStream::~IndexOutputStream()
 {
-  Close();
+  close();
   // free memory only if it was allocated
-  if (!BufferReuse) FreeMemory();
+  if (!mBufferReuse) freeMemory();
 }// end of Destructor
-//------------------------------------------------------------------------------
-
-
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Create a HDF5 stream, create a dataset, and allocate data for it.
  */
-void TIndexOutputHDF5Stream::Create()
+void IndexOutputStream::create()
 {
-  size_t NumberOfSampledElementsPerStep = SensorMask.size();
+  size_t nSampledElementsPerStep = sensorMask.size();
 
-  Parameters& Params = Parameters::getInstance();
+  const Parameters& params = Parameters::getInstance();
 
   // Derive dataset dimension sizes
-  DimensionSizes DatasetSize(NumberOfSampledElementsPerStep,
-                              (ReductionOp == roNONE) ?  Params.getNt() - Params.getSamplingStartTimeIndex() : 1,
-                              1);
+  DimensionSizes datasetSize(nSampledElementsPerStep,
+                             (mReduceOp == ReduceOperator::kNone) ?
+                               params.getNt() - params.getSamplingStartTimeIndex() : 1,
+                             1);
 
   // Set HDF5 chunk size
-  DimensionSizes ChunkSize(NumberOfSampledElementsPerStep, 1, 1);
-  // for chunks bigger than 32 MB
-  if (NumberOfSampledElementsPerStep > (ChunkSize_4MB * 8))
+  DimensionSizes chunkSize(nSampledElementsPerStep, 1, 1);
+  // for data bigger than 32 MB
+  if (nSampledElementsPerStep > (kChunkSize4MB * 8))
   {
-    ChunkSize.nx = ChunkSize_4MB; // set chunk size to MB
+    chunkSize.nx = kChunkSize4MB; // set chunk size to MB
   }
 
   // Create a dataset under the root group
-  HDF5_DatasetId = HDF5_File.createDataset(HDF5_File.getRootGroup(),
-                                           HDF5_RootObjectName,
-                                           DatasetSize,
-                                           ChunkSize,
-                                           Hdf5File::MatrixDataType::kFloat,
-                                           Params.getCompressionLevel());
+  mDataset = mFile.createDataset(mFile.getRootGroup(),
+                                 mRootObjectName,
+                                 datasetSize,
+                                 chunkSize,
+                                 Hdf5File::MatrixDataType::kFloat,
+                                 params.getCompressionLevel());
 
   // Write dataset parameters
-  HDF5_File.writeMatrixDomainType(HDF5_File.getRootGroup(),
-                                  HDF5_RootObjectName,
-                                  Hdf5File::MatrixDomainType::kReal);
-  HDF5_File.writeMatrixDataType  (HDF5_File.getRootGroup(),
-                                  HDF5_RootObjectName,
-                                  Hdf5File::MatrixDataType::kFloat);
-
+  mFile.writeMatrixDomainType(mFile.getRootGroup(), mRootObjectName, Hdf5File::MatrixDomainType::kReal);
+  mFile.writeMatrixDataType  (mFile.getRootGroup(), mRootObjectName, Hdf5File::MatrixDataType::kFloat);
 
   // Sampled time step
-  SampledTimeStep = 0;
+  mSampledTimeStep = 0;
 
   // Set buffer size
-  BufferSize = NumberOfSampledElementsPerStep;
+  mBufferSize = nSampledElementsPerStep;
 
   // Allocate memory if needed
-  if (!BufferReuse) AllocateMemory();
-}// end of Create
-//------------------------------------------------------------------------------
+  if (!mBufferReuse) allocateMemory();
+}// end of create
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Reopen the output stream after restart.
  */
-void TIndexOutputHDF5Stream::Reopen()
+void IndexOutputStream::reopen()
 {
   // Get parameters
-  Parameters& Params = Parameters::getInstance();
+  const Parameters& params = Parameters::getInstance();
 
   // Set buffer size
-  BufferSize = SensorMask.size();
+  mBufferSize = sensorMask.size();
 
   // Allocate memory if needed
-  if (!BufferReuse) AllocateMemory();
+  if (!mBufferReuse) allocateMemory();
 
   // Reopen the dataset
-  HDF5_DatasetId = HDF5_File.openDataset(HDF5_File.getRootGroup(),
-                                         HDF5_RootObjectName);
+  mDataset = mFile.openDataset(mFile.getRootGroup(), mRootObjectName);
 
-
-  if (ReductionOp == roNONE)
+  if (mReduceOp == ReduceOperator::kNone)
   { // raw time series - just seek to the right place in the dataset
-    SampledTimeStep = (Params.getTimeIndex() < Params.getSamplingStartTimeIndex()) ?
-                              0 : (Params.getTimeIndex() - Params.getSamplingStartTimeIndex());
-
+    mSampledTimeStep = (params.getTimeIndex() < params.getSamplingStartTimeIndex()) ?
+                          0 : (params.getTimeIndex() - params.getSamplingStartTimeIndex());
   }
   else
   { // aggregated quantities - reload data
-    SampledTimeStep = 0;
+    mSampledTimeStep = 0;
     // read only if it is necessary (it is anything to read).
-    if (Params.getTimeIndex() > Params.getSamplingStartTimeIndex())
+    if (params.getTimeIndex() > params.getSamplingStartTimeIndex())
     {
       // Since there is only a single timestep in the dataset, I can read the whole dataset
-      HDF5_File.readCompleteDataset(HDF5_File.getRootGroup(),
-                                    HDF5_RootObjectName,
-                                    DimensionSizes(BufferSize, 1, 1),
-                                    StoreBuffer);
+      mFile.readCompleteDataset(mFile.getRootGroup(),
+                                mRootObjectName,
+                                DimensionSizes(mBufferSize, 1, 1),
+                                mStoreBuffer);
     }
   }
-}// end of Reopen
-//------------------------------------------------------------------------------
+}// end of reopen
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
- * Sample grid points, line them up in the buffer an flush to the disk unless a
- * reduction operator is applied.
+ * Sample grid points, line them up in the buffer an flush to the disk unless a reduction operator is applied.
  */
-void TIndexOutputHDF5Stream::Sample()
+void IndexOutputStream::sample()
 {
-  const float  * SourceData = SourceMatrix.getData();
-  const size_t * SensorData = SensorMask.getData();
+  const float*  sourceData = mSourceMatrix.getData();
+  const size_t* sensorData = sensorMask.getData();
 
-  switch (ReductionOp)
+  switch (mReduceOp)
   {
-    case roNONE :
+    case ReduceOperator::kNone :
     {
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        StoreBuffer[i] = SourceData[SensorData[i]];
+        mStoreBuffer[i] = sourceData[sensorData[i]];
       }
       // only raw time series are flushed down to the disk every time step
-      FlushBufferToFile();
+      flushBufferToFile();
       /* - for future use when offloading the sampling work to HDF5 - now it seem to be slower
       HDF5_File.WriteSensorbyMaskToHyperSlab(HDF5_DatasetId,
                                              Position,        // position in the dataset
@@ -213,99 +188,105 @@ void TIndexOutputHDF5Stream::Sample()
       Position.Y++;
        */
       break;
-    }// case roNONE
+    }// case kNone
 
-    case roRMS  :
+    case ReduceOperator::kRms  :
     {
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        StoreBuffer[i] += (SourceData[SensorData[i]] * SourceData[SensorData[i]]);
+        mStoreBuffer[i] += (sourceData[sensorData[i]] * sourceData[sensorData[i]]);
       }
       break;
-    }// case roRMS
+    }// case kRms
 
-    case roMAX  :
+    case ReduceOperator::kMax  :
     {
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        if (StoreBuffer[i] < SourceData[SensorData[i]])
-          StoreBuffer[i] = SourceData[SensorData[i]];
+        mStoreBuffer[i] = std::max(mStoreBuffer[i], sourceData[sensorData[i]]);
       }
       break;
-    }// case roMAX
+    }// case kMax
 
-    case roMIN  :
+    case ReduceOperator::kMin  :
     {
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        if (StoreBuffer[i] > SourceData[SensorData[i]])
-          StoreBuffer[i] = SourceData[SensorData[i]];
+        mStoreBuffer[i] = std::min(mStoreBuffer[i], sourceData[sensorData[i]]);
       }
       break;
-    } //case roMIN
+    } //case kMin
   }// switch
-}// end of Sample
-//------------------------------------------------------------------------------
+}// end of sample
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Apply post-processing on the buffer and flush it to the file.
  */
-void TIndexOutputHDF5Stream::PostProcess()
+void IndexOutputStream::postProcess()
 {
   // run inherited method
-  TBaseOutputHDF5Stream::PostProcess();
+  BaseOutputStream::postProcess();
   // When no reduction operator is applied, the data is flushed after every time step
-  if (ReductionOp != roNONE) FlushBufferToFile();
-}// end of PostProcessing
-//------------------------------------------------------------------------------
+  if (mReduceOp != ReduceOperator::kNone)
+  {
+    flushBufferToFile();
+  }
+}// end of postProcessing
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Checkpoint the stream and close.
  */
-void TIndexOutputHDF5Stream::Checkpoint()
+void IndexOutputStream::checkpoint()
 {
-  // raw data has already been flushed, others has to be fushed here
-  if (ReductionOp != roNONE) FlushBufferToFile();
-
-}// end of Checkpoint
-//------------------------------------------------------------------------------
+  // raw data has already been flushed, others has to be flushed here
+  if (mReduceOp != ReduceOperator::kNone)
+  {
+    flushBufferToFile();
+  }
+}// end of checkpoint
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Close stream (apply post-processing if necessary, flush data and close).
  */
-void TIndexOutputHDF5Stream::Close()
+void IndexOutputStream::close()
 {
   // the dataset is still opened
-  if (HDF5_DatasetId != H5I_BADID)
+  if (mDataset != H5I_BADID)
   {
-    HDF5_File.closeDataset(HDF5_DatasetId);
+    mFile.closeDataset(mDataset);
   }
 
-  HDF5_DatasetId = H5I_BADID;
-}// end of Close
-//------------------------------------------------------------------------------
+  mDataset = H5I_BADID;
+}// end of close
+//----------------------------------------------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------//
-//                 TIndexOutputHDF5Stream implementation                      //
-//                            protected methods                               //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
 
 
 /**
  * Flush the buffer down to the file at the actual position.
  */
-void TIndexOutputHDF5Stream::FlushBufferToFile()
+void IndexOutputStream::flushBufferToFile()
 {
-  HDF5_File.writeHyperSlab(HDF5_DatasetId,
-                           DimensionSizes(0,SampledTimeStep,0),
-                           DimensionSizes(BufferSize,1,1),
-                           StoreBuffer);
-  SampledTimeStep++;
-}// end of FlushToFile
-//------------------------------------------------------------------------------
+  mFile.writeHyperSlab(mDataset,
+                       DimensionSizes(0, mSampledTimeStep, 0),
+                       DimensionSizes(mBufferSize, 1, 1),
+                       mStoreBuffer);
+  mSampledTimeStep++;
+}// end of flushToFile
+//----------------------------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 

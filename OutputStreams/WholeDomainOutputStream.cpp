@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 17:03 (created) \n
- *              26 August    2017, 17:03 (revised)
+ *              26 August    2017, 22:14 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,147 +31,145 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
 #include <OutputStreams/WholeDomainOutputStream.h>
 #include <Parameters/Parameters.h>
 
+//--------------------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------- Constants ------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-//             TWholeDomainOutputHDF5Stream implementation                    //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
 
 /**
  * Constructor - links the HDF5 dataset and SourceMatrix.
- * @param [in] HDF5_File        - HDF5 file to write the output to
- * @param [in] HDF5_DatasetName - The name of the HDF5 group. This group contains datasets for particular cuboids
- * @param [in] SourceMatrix     - Source matrix to be sampled
- * @param [in] ReductionOp      - Reduction operator
- * @param [in] BufferToReuse    - If there is a memory space to be reused, provide a pointer
+ * @param [in] file          - HDF5 file to write the output to
+ * @param [in] datasetName   - The name of the HDF5 group. This group contains datasets for particular cuboids
+ * @param [in] sourceMatrix  - Source matrix to be sampled
+ * @param [in] reductionOp   - Reduction operator
+ * @param [in] bufferToReuse - If there is a memory space to be reused, provide a pointer
  */
-TWholeDomainOutputHDF5Stream::TWholeDomainOutputHDF5Stream(Hdf5File &             HDF5_File,
-                                                           const char *             HDF5_DatasetName,
-                                                           const RealMatrix &      SourceMatrix,
-                                                           const TReductionOperator ReductionOp,
-                                                           float *                  BufferToReuse)
-        : TBaseOutputHDF5Stream(HDF5_File, HDF5_DatasetName, SourceMatrix, ReductionOp, BufferToReuse),
-          HDF5_DatasetId(H5I_BADID),
-          SampledTimeStep(0)
+WholeDomainOutputStream::WholeDomainOutputStream(Hdf5File&            file,
+                                                 MatrixName&          datasetName,
+                                                 const RealMatrix&    sourceMatrix,
+                                                 const ReduceOperator reductionOp,
+                                                 float*               bufferToReuse)
+  : BaseOutputStream(file, datasetName, sourceMatrix, reductionOp, bufferToReuse),
+    mDataset(H5I_BADID),
+    mSampledTimeStep(0)
 {
 
-}// end of TWholeDomainOutputHDF5Stream
-//------------------------------------------------------------------------------
+}// end of WholeDomainOutputStream
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Destructor.
- * if the file is still opened, it applies the post processing and flush the data.
- * Then, the object memory is freed and the object destroyed.
  */
-TWholeDomainOutputHDF5Stream::~TWholeDomainOutputHDF5Stream()
+WholeDomainOutputStream::~WholeDomainOutputStream()
 {
-  Close();
+  close();
   // free memory only if it was allocated
-  if (!BufferReuse) FreeMemory();
+  if (!mBufferReuse) freeMemory();
 }// end of Destructor
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Create a HDF5 stream for the whole domain and allocate data for it.
  */
-void TWholeDomainOutputHDF5Stream::Create()
+void WholeDomainOutputStream::create()
 {
-  DimensionSizes ChunkSize(SourceMatrix.getDimensionSizes().nx, SourceMatrix.getDimensionSizes().ny, 1);
+  DimensionSizes chunkSize(mSourceMatrix.getDimensionSizes().nx, mSourceMatrix.getDimensionSizes().ny, 1);
 
   // Create a dataset under the root group
-  HDF5_DatasetId = HDF5_File.createDataset(HDF5_File.getRootGroup(),
-                                           HDF5_RootObjectName,
-                                           SourceMatrix.getDimensionSizes(),
-                                           ChunkSize,
-                                           Hdf5File::MatrixDataType::kFloat,
-                                           Parameters::getInstance().getCompressionLevel());
+  mDataset = mFile.createDataset(mFile.getRootGroup(),
+                                 mRootObjectName,
+                                 mSourceMatrix.getDimensionSizes(),
+                                 chunkSize,
+                                 Hdf5File::MatrixDataType::kFloat,
+                                 Parameters::getInstance().getCompressionLevel());
 
   // Write dataset parameters
-  HDF5_File.writeMatrixDomainType(HDF5_File.getRootGroup(),
-                                  HDF5_RootObjectName,
-                                  Hdf5File::MatrixDomainType::kReal);
-  HDF5_File.writeMatrixDataType  (HDF5_File.getRootGroup(),
-                                  HDF5_RootObjectName,
-                                  Hdf5File::MatrixDataType::kFloat);
+  mFile.writeMatrixDomainType(mFile.getRootGroup(),
+                              mRootObjectName,
+                              Hdf5File::MatrixDomainType::kReal);
+  mFile.writeMatrixDataType  (mFile.getRootGroup(),
+                              mRootObjectName,
+                              Hdf5File::MatrixDataType::kFloat);
 
   // Set buffer size
-  BufferSize = SourceMatrix.size();
+  mBufferSize = mSourceMatrix.size();
 
   // Allocate memory if needed
-  if (!BufferReuse) AllocateMemory();
-}//end of Create
-//------------------------------------------------------------------------------
+  if (!mBufferReuse) allocateMemory();
+}//end of create
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Reopen the output stream after restart and reload data.
  */
-void TWholeDomainOutputHDF5Stream::Reopen()
+void WholeDomainOutputStream::reopen()
 {
-  Parameters& Params = Parameters::getInstance();
+  const Parameters& params = Parameters::getInstance();
 
   // Set buffer size
-  BufferSize = SourceMatrix.size();
+  mBufferSize = mSourceMatrix.size();
 
   // Allocate memory if needed
-  if (!BufferReuse) AllocateMemory();
+  if (!mBufferReuse) allocateMemory();
 
   // Open the dataset under the root group
-  HDF5_DatasetId = HDF5_File.openDataset(HDF5_File.getRootGroup(),
-                                         HDF5_RootObjectName);
+  mDataset = mFile.openDataset(mFile.getRootGroup(), mRootObjectName);
 
-  SampledTimeStep = 0;
-  if (ReductionOp == roNONE)
+  mSampledTimeStep = 0;
+  if (mReduceOp == ReduceOperator::kNone)
   { // seek in the dataset
-    SampledTimeStep = (Params.getTimeIndex() < Params.getSamplingStartTimeIndex()) ?
-                        0 : (Params.getTimeIndex() - Params.getSamplingStartTimeIndex());
+    mSampledTimeStep = (params.getTimeIndex() < params.getSamplingStartTimeIndex()) ?
+                        0 : (params.getTimeIndex() - params.getSamplingStartTimeIndex());
   }
   else
   { // reload data
-    if (Params.getTimeIndex() > Params.getSamplingStartTimeIndex())
+    if (params.getTimeIndex() > params.getSamplingStartTimeIndex())
     {
-      HDF5_File.readCompleteDataset(HDF5_File.getRootGroup(),
-                                    HDF5_RootObjectName,
-                                    SourceMatrix.getDimensionSizes(),
-                                    StoreBuffer);
+      mFile.readCompleteDataset(mFile.getRootGroup(),
+                                mRootObjectName,
+                                mSourceMatrix.getDimensionSizes(),
+                                mStoreBuffer);
     }
   }
-}// end of Reopen
-//------------------------------------------------------------------------------
+}// end of reopen
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
- * Sample all grid points, line them up in the buffer an flush to the disk unless
- * a reduction operator is applied.
+ * Sample all grid points, line them up in the buffer an flush to the disk unless a reduction operator is applied.
  */
-void TWholeDomainOutputHDF5Stream::Sample()
+void WholeDomainOutputStream::sample()
 {
-  const float * SourceData = SourceMatrix.getData();
+  const float* sourceData = mSourceMatrix.getData();
 
-  switch (ReductionOp)
+  switch (mReduceOp)
   {
-    case roNONE :
+    case ReduceOperator::kNone :
     {
+      // We sample it as a single cuboid of full dimensions.
+      /* We use here direct HDF5 offload using MEMSPACE - seems to be faster for bigger datasets*/
+      const DimensionSizes datasetPosition(0, 0, 0, mSampledTimeStep); //4D position in the dataset
 
-       /* We use here direct HDF5 offload using MEMSPACE - seems to be faster for bigger datasets*/
-      const DimensionSizes DatasetPosition(0,0,0,SampledTimeStep); //4D position in the dataset
-
-      DimensionSizes CuboidSize(SourceMatrix.getDimensionSizes());// Size of the cuboid
-      CuboidSize.nt = 1;
+      DimensionSizes cuboidSize(mSourceMatrix.getDimensionSizes());// Size of the cuboid
+      cuboidSize.nt = 1;
 
       // iterate over all cuboid to be sampled
-      HDF5_File.writeCuboidToHyperSlab(HDF5_DatasetId,
-                                       DatasetPosition,
-                                       DimensionSizes(0,0,0,0), // position in the SourceMatrix
-                                       CuboidSize,
-                                       SourceMatrix.getDimensionSizes(),
-                                       SourceMatrix.getData());
+      mFile.writeCuboidToHyperSlab(mDataset,
+                                   datasetPosition,
+                                   DimensionSizes(0, 0, 0, 0), // position in the SourceMatrix
+                                   cuboidSize,
+                                   mSourceMatrix.getDimensionSizes(),
+                                   mSourceMatrix.getData());
 
-      SampledTimeStep++;   // Move forward in time
+      mSampledTimeStep++;   // Move forward in time
 
       // This version is obsolete (needs one more data movement)
       /*
@@ -185,106 +183,104 @@ void TWholeDomainOutputHDF5Stream::Sample()
       */
 
       break;
-    }// case roNONE
+    }// case kNone
 
-    case roRMS  :
+    case ReduceOperator::kRms:
     {
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        StoreBuffer[i] += (SourceData[i] * SourceData[i]);
+        mStoreBuffer[i] += (sourceData[i] * sourceData[i]);
       }
       break;
-    }// case roRMS
+    }// case kRms
 
-    case roMAX  :
+    case ReduceOperator::kMax:
     {
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        if (StoreBuffer[i] < SourceData[i])  StoreBuffer[i] = SourceData[i];
+        mStoreBuffer[i] = std::max(mStoreBuffer[i], sourceData[i]);
       }
       break;
     }//case roMAX
 
-    case roMIN  :
+    case ReduceOperator::kMin:
     {
-      #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
       {
-        if (StoreBuffer[i] > SourceData[i]) StoreBuffer[i] = SourceData[i];
+        mStoreBuffer[i] = std::min(mStoreBuffer[i], sourceData[i]);
       }
       break;
-    } //case roMIN
+    } //case kMin
   }// switch
-}// end of Sample
-//------------------------------------------------------------------------------
+}// end of sample
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Apply post-processing on the buffer and flush it to the file.
  */
-void TWholeDomainOutputHDF5Stream::PostProcess()
+void WholeDomainOutputStream::postProcess()
 {
   // run inherited method
-  TBaseOutputHDF5Stream::PostProcess();
+  BaseOutputStream::postProcess();
   // When no reduction operator is applied, the data is flushed after every time step
-  if (ReductionOp != roNONE) FlushBufferToFile();
-}// end of PostProcessing
-//------------------------------------------------------------------------------
+  if (mReduceOp != ReduceOperator::kNone) flushBufferToFile();
+}// end of postProcessing
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Checkpoint the stream
  */
-void TWholeDomainOutputHDF5Stream::Checkpoint()
+void WholeDomainOutputStream::checkpoint()
 {
   // raw data has already been flushed, others has to be flushed here.
-  if (ReductionOp != roNONE) FlushBufferToFile();
-}// end of Checkpoint
-//------------------------------------------------------------------------------
+  if (mReduceOp != ReduceOperator::kNone) flushBufferToFile();
+}// end of checkpoint
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Close stream (apply post-processing if necessary, flush data and close).
  */
-void TWholeDomainOutputHDF5Stream::Close()
+void WholeDomainOutputStream::close()
 {
   // the dataset is still opened
-  if (HDF5_DatasetId != H5I_BADID)
+  if (mDataset != H5I_BADID)
   {
-    HDF5_File.closeDataset(HDF5_DatasetId);
+    mFile.closeDataset(mDataset);
   }
 
-  HDF5_DatasetId = H5I_BADID;
-}// end of Close
-//------------------------------------------------------------------------------
+  mDataset = H5I_BADID;
+}// end of close
+//----------------------------------------------------------------------------------------------------------------------
 
-
-//----------------------------------------------------------------------------//
-//                TWholeDomainOutputHDF5Stream implementation                 //
-//                            protected methods                               //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
 /**
  * Flush the buffer down to the file at the actual position.
  */
-void TWholeDomainOutputHDF5Stream::FlushBufferToFile()
+void WholeDomainOutputStream::flushBufferToFile()
 {
-  DimensionSizes Size = SourceMatrix.getDimensionSizes();
-  DimensionSizes Position(0,0,0);
+  DimensionSizes size = mSourceMatrix.getDimensionSizes();
+  DimensionSizes position(0, 0, 0);
 
   // Not used for roNONE now!
-  if (ReductionOp == roNONE)
+  if (mReduceOp == ReduceOperator::kNone)
   {
-    Position.nt = SampledTimeStep;
-    Size.nt = SampledTimeStep;
+    position.nt = mSampledTimeStep;
+    size.nt = mSampledTimeStep;
   }
 
-  HDF5_File.writeHyperSlab(HDF5_DatasetId,
-                           Position,
-                           Size,
-                           StoreBuffer);
-  SampledTimeStep++;
-}// end of FlushToFile
-//------------------------------------------------------------------------------
+  mFile.writeHyperSlab(mDataset, position, size, mStoreBuffer);
+  mSampledTimeStep++;
+}// end of flushToFile
+//----------------------------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//

@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 16:55 (created) \n
- *              26 August    2017, 16:55 (revised)
+ *              26 August    2017, 18:50 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -35,64 +35,82 @@
 
 #include <OutputStreams/BaseOutputStream.h>
 
-
 /**
- * @class TIndexOutputHDF5Stream.
+ * @class   IndexOutputStream.
  * @brief   Output stream for quantities sampled by an index sensor mask.
- * @details Output stream for quantities sampled by an index sensor mask.
- *        This class writes data to a single dataset in a root group of the HDF5
- *        file (time-series as well as aggregations).
  *
+ * Output stream for quantities sampled by an index sensor mask. This class writes data to a single dataset in a
+ * root group of the HDF5 file (time-series as well as aggregations).
  */
-class TIndexOutputHDF5Stream : public TBaseOutputHDF5Stream
+class IndexOutputStream : public BaseOutputStream
 {
   public:
+    /// Default constructor not allowed.
+    IndexOutputStream() = delete;
 
-    /// Constructor - links the HDF5 dataset, SourceMatrix, and SensorMask together.
-    TIndexOutputHDF5Stream(Hdf5File &             HDF5_File,
-                           const char *             HDF5_ObjectName,
-                           const RealMatrix &      SourceMatrix,
-                           const IndexMatrix &     SensorMask,
-                           const TReductionOperator ReductionOp,
-                           float *                  BufferToReuse = NULL);
+    /**
+     * @brief Constructor links the HDF5 dataset, SourceMatrix, and SensorMask together.
+     *
+     * Constructor - links the HDF5 dataset, source (sampled matrix), Sensor mask and the reduction operator together.
+     * The constructor DOES NOT allocate memory because the size of the sensor mask is not known at the time the
+     * instance of the class is being created.
+     *
+     * @param [in] file          - Handle to the HDF5 (output) file.
+     * @param [in] datasetName   - The dataset's name (index based sensor data is store in a single dataset).
+     * @param [in] sourceMatrix  - The source matrix (only real matrices are supported).
+     * @param [in] sensorMask    - Index based sensor mask.
+     * @param [in] reduceOp      - Reduction operator.
+     * @param [in] bufferToReuse - An external buffer can be used to line up the grid points.
+     */
+    IndexOutputStream(Hdf5File&            file,
+                      MatrixName&          datasetName,
+                      const RealMatrix&    sourceMatrix,
+                      const IndexMatrix&   sensorMask,
+                      const ReduceOperator reduceOp,
+                      float*               bufferToReuse = nullptr);
 
+    /// Copy constructor not allowed.
+    IndexOutputStream(const IndexOutputStream&) = delete;
 
-    /// Destructor.
-    virtual ~TIndexOutputHDF5Stream();
+    /**
+     * @brief Destructor.
+     *
+     * If the file is still opened, it applies the post processing and flush the data.
+     * Then, the object memory is freed and the object destroyed.
+     */
+    virtual ~IndexOutputStream();
 
     /// Create a HDF5 stream and allocate data for it.
-    virtual void Create();
+    virtual void create();
 
     /// Reopen the output stream after restart and reload data.
-    virtual void Reopen();
+    virtual void reopen();
 
     /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask.
-    virtual void Sample();
+    virtual void sample();
 
     /// Apply post-processing on the buffer and flush it to the file.
-    virtual void PostProcess();
+    virtual void postProcess();
 
     /// Checkpoint the stream.
-    virtual void Checkpoint();
+    virtual void checkpoint();
 
     /// Close stream (apply post-processing if necessary, flush data and close).
-    virtual void Close();
+    virtual void close();
 
   protected:
 
     /// Flush the buffer to the file.
-    virtual void FlushBufferToFile();
+    virtual void flushBufferToFile();
 
     /// Sensor mask to sample data.
-    const IndexMatrix & SensorMask;
+    const IndexMatrix& sensorMask;
     /// Handle to a HDF5 dataset.
-    hid_t  HDF5_DatasetId;
+    hid_t  mDataset;
 
     /// Time step to store (N/A for aggregated).
-    size_t SampledTimeStep;
-}; // end of TIndexOutputHDF5Stream
-//------------------------------------------------------------------------------
-
+    size_t mSampledTimeStep;
+}; // end of IndexOutputStream
+//----------------------------------------------------------------------------------------------------------------------
 
 #endif	/* INDEX_OUTPUT_STREAM_H */
-

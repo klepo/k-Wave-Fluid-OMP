@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              26 August    2017, 11:21 (revised)
+ *              26 August    2017, 18:21 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,143 +30,128 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef BASE_OUTPUT_STREAM_H
 #define BASE_OUTPUT_STREAM_H
 
-#include <string>
-#include <vector>
-#include <stdexcept>
 
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/IndexMatrix.h>
-
 #include <Hdf5/Hdf5File.h>
 
-using namespace std;
-
 /**
- * @class TBaseOutputHDF5Stream
+ * @class   BaseOutputStream
  * @brief   Abstract base class for output data streams (sampled data).
- * @details Abstract base class for output data streams (sampled data).
  *
+ * Data are sampled based on the the sensor mask and the reduction operator. The sampled data is stored in the output
+ * HDF5 file.
  */
-class TBaseOutputHDF5Stream
+class BaseOutputStream
 {
   public:
 
     /**
-     * @enum TReductionOperator
+     * @enum  ReduceOperator
      * @brief How to aggregate data.
-     * @details How to aggregate data \n
-     *           roNONE - store actual data (time series)
-     *           roRMS  - calculate root mean square \n
-     *           roMAX  - store maximum
-     *           roMIN  - store minimum
      */
-    enum TReductionOperator
+    enum class ReduceOperator
     {
-      roNONE, roRMS, roMAX, roMIN
+      /// Store actual data (time series).
+      kNone,
+       /// Calculate root mean square.
+      kRms,
+      /// Store maximum.
+      kMax,
+      /// Store minimum.
+      kMin
     };
+
+    /// Default constructor not allowed.
+    BaseOutputStream() = delete;
 
     /**
-     * @brief   Constructor - there is no sensor mask by default!
-     * @details Constructor - there is no sensor mask by default!
-     * it links the HDF5 dataset, source (sampled matrix) and the reduction
-     * operator together. The constructor DOES NOT allocate memory because the
-     * size of the sensor mask is not known at the time the instance of
-     * the class is being created.
+     * @brief Constructor
      *
-     * @param [in] HDF5_File           - Handle to the HDF5 (output) file
-     * @param [in] HDF5_RootObjectName - The root object that stores the sample
-     *                                   data (dataset or group)
-     * @param [in] SourceMatrix        - The source matrix (only real matrices
-     *                                   are supported)
-     * @param [in] ReductionOp         - Reduction operator
-     * @param [in] BufferToReuse       - An external buffer can be used to line
-     *                                   up the grid points
+     * There is no sensor mask by default to support both sensor mask and whole domain sampling. 
+     * The constructor links the HDF5 dataset, source (sampled matrix) and the reduction operator together. The
+     * constructor DOES NOT allocate memory because the size of the sensor mask is not known at the time the instance
+     * of the class is being created.
+     *
+     * @param [in] file           - Handle to the output HDF5 file.
+     * @param [in] rootObjectName - The root object that stores the sample data (dataset or group).
+     * @param [in] sourceMatrix   - The source matrix (only real matrices  are supported).
+     * @param [in] reduceOp       - Reduction operator.
+     * @param [in] bufferToReuse  - An external buffer can be used to line up the grid points.
      */
-    TBaseOutputHDF5Stream(Hdf5File &             HDF5_File,
-                          const char *             HDF5_RootObjectName,
-                          const RealMatrix &      SourceMatrix,
-                          const TReductionOperator ReductionOp,
-                          float *                  BufferToReuse = NULL)
-            : HDF5_File          (HDF5_File),
-              HDF5_RootObjectName(NULL),
-              SourceMatrix       (SourceMatrix),
-              ReductionOp        (ReductionOp),
-              BufferReuse        (BufferToReuse != NULL),
-              BufferSize         (0),
-              StoreBuffer        (BufferToReuse)
-    {
-      // copy the dataset name (just for sure)
-      this->HDF5_RootObjectName = new char[strlen(HDF5_RootObjectName)];
-      strcpy(this->HDF5_RootObjectName, HDF5_RootObjectName);
-    };
+    BaseOutputStream(Hdf5File&            file,
+                     MatrixName&          rootObjectName,
+                     const RealMatrix&    sourceMatrix,
+                     const ReduceOperator reduceOp,
+                     float*               bufferToReuse = nullptr);
 
+    /// Copy constructor not allowed.
+    BaseOutputStream(const BaseOutputStream& src);
     /**
      * @brief Destructor.
-     * @details Destructor.
+     *
+     * If the file is still opened, it applies the post processing and flush the data.
+     * Then, the object memory is freed and the object destroyed.
      */
-    virtual ~TBaseOutputHDF5Stream()
-    {
-      delete [] HDF5_RootObjectName;
-    };
+    virtual ~BaseOutputStream() {};
+
+    /// Operator = not allowed (we don't want any data movements).
+    BaseOutputStream& operator = (const BaseOutputStream& src);
 
     /// Create a HDF5 stream and allocate data for it.
-    virtual void Create() = 0;
+    virtual void create() = 0;
 
     /// Reopen the output stream after restart.
-    virtual void Reopen() = 0;
+    virtual void reopen() = 0;
 
     /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask.
-    virtual void Sample() = 0;
+    virtual void sample() = 0;
 
     /// Apply post-processing on the buffer and flush it to the file.
-    virtual void PostProcess();
+    virtual void postProcess();
 
     /// Checkpoint the stream.
-    virtual void Checkpoint() = 0;
+    virtual void checkpoint() = 0;
 
     /// Close stream (apply post-processing if necessary, flush data and close).
-    virtual void Close() = 0;
+    virtual void close() = 0;
 
   protected:
-    /// Default constructor not allowed.
-    TBaseOutputHDF5Stream();
-    /// Copy constructor not allowed.
-    TBaseOutputHDF5Stream(const TBaseOutputHDF5Stream & src);
-    /// Operator = not allowed (we don't want any data movements).
-    TBaseOutputHDF5Stream & operator = (const TBaseOutputHDF5Stream & src);
 
-    /// A generic function to allocate memory - not used in the base class.
-    virtual void AllocateMemory();
-    /// A generic function to free memory - not used in the base class.
-    virtual void FreeMemory();
+    /**
+     * @brief    Allocate memory using proper memory alignment.
+     * @throw    std::bad_alloc - If there's not enough memory.
+     * @warning  This can routine is not used in the base class (should be used in derived ones).
+     */
+    virtual void allocateMemory();
+    /**
+     * @brief   Free memory.
+     * @warning This can routine is not used in the base class (should be used in derived ones).
+     */
+    virtual void freeMemory();
 
-    /// HDF5 file handle.
-    Hdf5File &             HDF5_File;
-    /// Dataset name.
-    char *                   HDF5_RootObjectName;
+    /// Handle to HDF5 output file.
+    Hdf5File&            mFile;
+    /// HDF5 group/dataset in the output file where to store data in.
+    std::string          mRootObjectName;
     /// Source matrix to be sampled.
-    const RealMatrix&       SourceMatrix;
+    const RealMatrix&    mSourceMatrix;
     /// Reduction operator.
-    const TReductionOperator ReductionOp;
+    const ReduceOperator mReduceOp;
 
-    /// if true, the container reuses e.g. Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D.
-    bool    BufferReuse;
+    /// if true, the container reuses another matrix as scratch place, e.g. Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D.
+    bool   mBufferReuse;
     /// Buffer size.
-    size_t  BufferSize;
+    size_t mBufferSize;
     /// Temporary buffer for store - only if Buffer Reuse = false!
-    float * StoreBuffer;
+    float* mStoreBuffer;
 
     /// chunk size of 4MB in number of float elements.
-    static const size_t ChunkSize_4MB = 1048576;
-
-    /// The minimum number of elements to start sampling in parallel (4MB).
-    static const size_t MinGridpointsToSampleInParallel = 1048576;
-};// end of TOutputHDF5Stream
-//------------------------------------------------------------------------------
+    static constexpr size_t kChunkSize4MB = 1048576;
+};// end of BaseOutputStream
+//----------------------------------------------------------------------------------------------------------------------
 
 #endif	/* BASE_OUTPUT_STREAM_H */
-
