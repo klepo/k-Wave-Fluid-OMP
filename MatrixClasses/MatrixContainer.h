@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              26 August    2017, 11:22 (revised)
+ *              26 August    2017, 12:54 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -40,8 +40,8 @@
 #include <MatrixClasses/BaseFloatMatrix.h>
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/ComplexMatrix.h>
-#include <MatrixClasses/FFTWComplexMatrix.h>
-#include <MatrixClasses/UXYZ_SGXYZMatrix.h>
+#include <MatrixClasses/FftwComplexMatrix.h>
+#include <MatrixClasses/VelocityMatrix.h>
 #include <MatrixClasses/IndexMatrix.h>
 #include <MatrixClasses/OutputHDF5Stream.h>
 

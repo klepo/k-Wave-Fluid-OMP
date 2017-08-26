@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              26 August    2017, 08:29 (revised)
+ *              26 August    2017, 12:54 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -61,7 +61,7 @@
 
 #include <Utils/ErrorMessages.h>
 
-#include <MatrixClasses/FFTWComplexMatrix.h>
+#include <MatrixClasses/FftwComplexMatrix.h>
 #include <MatrixClasses/MatrixContainer.h>
 
 using namespace std;

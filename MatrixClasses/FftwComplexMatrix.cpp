@@ -1,5 +1,5 @@
 /**
- * @file        FFTWComplexMatrix.cpp
+ * @file        FftwComplexMatrix.cpp
  * @author      Jiri Jaros              \n
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n
@@ -30,7 +30,7 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <MatrixClasses/FFTWComplexMatrix.h>
+#include <MatrixClasses/FftwComplexMatrix.h>
 #include <MatrixClasses/RealMatrix.h>
 
 #include <Parameters/Parameters.h>

@@ -1,5 +1,5 @@
 /**
- * @file        UXYZ_SGXYZMatrix.h
+ * @file        VelocityMatrix.h
  * @author      Jiri Jaros
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n
@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              25 August    2017, 22:02 (revised)
+ *              26 August    2017, 12:54 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,12 +31,12 @@
  */
 
 
-#ifndef UXYZ_SGXYZ_REAL_MATRIX_H
-#define UXYZ_SGXYZ_REAL_MATRIX_H
+#ifndef VELOCITY_MATRIX_H
+#define VELOCITY_MATRIX_H
 
 
 #include <MatrixClasses/RealMatrix.h>
-#include <MatrixClasses/FFTWComplexMatrix.h>
+#include <MatrixClasses/FftwComplexMatrix.h>
 #include <MatrixClasses/IndexMatrix.h>
 
 /**
@@ -282,5 +282,5 @@ class VelocityMatrix : public RealMatrix
 }; // end of VelocityMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* UXYZ_SGXYZ_REAL_MATRIX_H */
+#endif	/* VELOCITY_MATRIX_H */
 

@@ -23,8 +23,8 @@
       <itemPath>MatrixClasses/BaseMatrix.h</itemPath>
       <itemPath>MatrixClasses/ComplexMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/ComplexMatrix.h</itemPath>
-      <itemPath>MatrixClasses/FFTWComplexMatrix.cpp</itemPath>
-      <itemPath>MatrixClasses/FFTWComplexMatrix.h</itemPath>
+      <itemPath>MatrixClasses/FftwComplexMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/FftwComplexMatrix.h</itemPath>
       <itemPath>MatrixClasses/IndexMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/IndexMatrix.h</itemPath>
       <itemPath>MatrixClasses/MatrixContainer.cpp</itemPath>
@@ -33,8 +33,8 @@
       <itemPath>MatrixClasses/OutputHDF5Stream.h</itemPath>
       <itemPath>MatrixClasses/RealMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/RealMatrix.h</itemPath>
-      <itemPath>MatrixClasses/UXYZ_SGXYZMatrix.cpp</itemPath>
-      <itemPath>MatrixClasses/UXYZ_SGXYZMatrix.h</itemPath>
+      <itemPath>MatrixClasses/VelocityMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/VelocityMatrix.h</itemPath>
     </logicalFolder>
     <logicalFolder name="f3" displayName="Parameters" projectFiles="true">
       <itemPath>Parameters/CommandLineParameters.cpp</itemPath>
@@ -94,7 +94,7 @@
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
           <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -158,12 +158,12 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -181,9 +181,9 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -228,7 +228,7 @@
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
           <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
-          <warningLevel>0</warningLevel>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -293,12 +293,12 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -316,9 +316,9 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -363,7 +363,7 @@
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
           <commandLine>-std=c++11 -O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -427,12 +427,12 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -450,9 +450,9 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -497,7 +497,7 @@
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
           <commandLine>-std=c++11 -O3 -Wall -fopenmp</commandLine>
-          <warningLevel>0</warningLevel>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -562,12 +562,12 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -585,9 +585,9 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -632,7 +632,7 @@
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
           <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -699,12 +699,12 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -722,9 +722,9 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -769,7 +769,7 @@
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
           <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -836,12 +836,12 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -859,9 +859,9 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -906,7 +906,7 @@
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
           <commandLine>-std=c++11 -O3 -fopenmp -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -973,12 +973,12 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -996,9 +996,9 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -1043,7 +1043,7 @@
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
           <commandLine>-std=c++11 -O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -1110,12 +1110,12 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -1133,9 +1133,9 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
