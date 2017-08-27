@@ -35,6 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Containers/MatrixContainer.o \
+	${OBJECTDIR}/Containers/MatrixRecord.o \
+	${OBJECTDIR}/Containers/OutputStreamContainer.o \
 	${OBJECTDIR}/Hdf5/Hdf5File.o \
 	${OBJECTDIR}/Hdf5/Hdf5FileHeader.o \
 	${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o \
@@ -43,7 +46,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/MatrixClasses/ComplexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/FftwComplexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/IndexMatrix.o \
-	${OBJECTDIR}/MatrixClasses/MatrixContainer.o \
 	${OBJECTDIR}/MatrixClasses/RealMatrix.o \
 	${OBJECTDIR}/MatrixClasses/VelocityMatrix.o \
 	${OBJECTDIR}/OutputStreams/BaseOutputStream.o \
@@ -78,6 +80,21 @@ LDLIBSOPTIONS=-L./ -L${EBROOTHDF5}/lib -L${EBROOTFFTW}/lib -Wl,-rpath,'./' -Wl,-
 ${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}
 	g++ -o ${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp ${OBJECTFILES} ${LDLIBSOPTIONS} -O3 -Wall -fopenmp
+
+${OBJECTDIR}/Containers/MatrixContainer.o: Containers/MatrixContainer.cpp
+	${MKDIR} -p ${OBJECTDIR}/Containers
+	${RM} "$@.d"
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/MatrixContainer.o Containers/MatrixContainer.cpp
+
+${OBJECTDIR}/Containers/MatrixRecord.o: Containers/MatrixRecord.cpp
+	${MKDIR} -p ${OBJECTDIR}/Containers
+	${RM} "$@.d"
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/MatrixRecord.o Containers/MatrixRecord.cpp
+
+${OBJECTDIR}/Containers/OutputStreamContainer.o: Containers/OutputStreamContainer.cpp
+	${MKDIR} -p ${OBJECTDIR}/Containers
+	${RM} "$@.d"
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/OutputStreamContainer.o Containers/OutputStreamContainer.cpp
 
 ${OBJECTDIR}/Hdf5/Hdf5File.o: Hdf5/Hdf5File.cpp
 	${MKDIR} -p ${OBJECTDIR}/Hdf5
@@ -118,11 +135,6 @@ ${OBJECTDIR}/MatrixClasses/IndexMatrix.o: MatrixClasses/IndexMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
 	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/IndexMatrix.o MatrixClasses/IndexMatrix.cpp
-
-${OBJECTDIR}/MatrixClasses/MatrixContainer.o: MatrixClasses/MatrixContainer.cpp
-	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
-	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/MatrixContainer.o MatrixClasses/MatrixContainer.cpp
 
 ${OBJECTDIR}/MatrixClasses/RealMatrix.o: MatrixClasses/RealMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses

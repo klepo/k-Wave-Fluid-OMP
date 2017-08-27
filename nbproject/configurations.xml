@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="Containers" displayName="Containers" projectFiles="true">
+      <itemPath>Containers/MatrixContainer.cpp</itemPath>
+      <itemPath>Containers/MatrixContainer.h</itemPath>
+      <itemPath>Containers/MatrixRecord.cpp</itemPath>
+      <itemPath>Containers/MatrixRecord.h</itemPath>
+      <itemPath>Containers/OutputStreamContainer.cpp</itemPath>
+      <itemPath>Containers/OutputStreamContainer.h</itemPath>
+    </logicalFolder>
     <logicalFolder name="f1" displayName="Hdf5" projectFiles="true">
       <itemPath>Hdf5/Hdf5File.cpp</itemPath>
       <itemPath>Hdf5/Hdf5File.h</itemPath>
@@ -27,8 +35,6 @@
       <itemPath>MatrixClasses/FftwComplexMatrix.h</itemPath>
       <itemPath>MatrixClasses/IndexMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/IndexMatrix.h</itemPath>
-      <itemPath>MatrixClasses/MatrixContainer.cpp</itemPath>
-      <itemPath>MatrixClasses/MatrixContainer.h</itemPath>
       <itemPath>MatrixClasses/RealMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/RealMatrix.h</itemPath>
       <itemPath>MatrixClasses/VelocityMatrix.cpp</itemPath>
@@ -83,6 +89,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>OutputStreams</Elem>
+    <Elem>Containers</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -139,6 +146,21 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
@@ -181,10 +203,6 @@
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -298,6 +316,21 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
@@ -340,10 +373,6 @@
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -456,6 +485,21 @@
           <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
@@ -498,10 +542,6 @@
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -615,6 +655,21 @@
           <commandLine>-O3 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
@@ -657,10 +712,6 @@
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -776,6 +827,21 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
@@ -818,10 +884,6 @@
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -937,6 +999,21 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
@@ -979,10 +1056,6 @@
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -1098,6 +1171,21 @@
           <commandLine>-O3 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
@@ -1140,10 +1228,6 @@
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -1259,6 +1343,21 @@
           <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
@@ -1301,10 +1400,6 @@
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>

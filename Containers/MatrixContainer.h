@@ -1,6 +1,6 @@
 /**
  * @file        MatrixContainer.h
- * @author      Jiri Jaros              \n
+ * @author      Jiri Jaros \n
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              26 August    2017, 22:48 (revised)
+ *              27 August    2017, 09:29 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,24 +30,14 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATRIXCONTAINER_H
-#define	MATRIXCONTAINER_H
+#ifndef MATRIX_CONTAINER_H
+#define MATRIX_CONTAINER_H
 
 #include <string.h>
 #include <map>
 
 #include <MatrixClasses/BaseMatrix.h>
-#include <MatrixClasses/BaseFloatMatrix.h>
-#include <MatrixClasses/RealMatrix.h>
-#include <MatrixClasses/ComplexMatrix.h>
-#include <MatrixClasses/FftwComplexMatrix.h>
-#include <MatrixClasses/VelocityMatrix.h>
-#include <MatrixClasses/IndexMatrix.h>
-
-#include <OutputStreams/BaseOutputStream.h>
-#include <OutputStreams/IndexOutputStream.h>
-#include <OutputStreams/CuboidOutputStream.h>
-#include <OutputStreams/WholeDomainOutputStream.h>
+#include <Containers/MatrixRecord.h>
 
 #include <Utils/MatrixNames.h>
 #include <Utils/DimensionSizes.h>
@@ -105,59 +95,6 @@ enum TMatrixID
 }; // enum TMatrixID
 //------------------------------------------------------------------------------
 
-
-/**
- * @struct TMatrixRecord
- * @brief  A structure storing details about the matrix. The matrix container
- * stores this structures.
- * @details A structure storing details about the matrix. The matrix container
- * stores the list of these records with the data.
- */
-struct TMatrixRecord
-{
-  /**
-   * @enum TMatrixDataType
-   * @brief All possible types of the matrix.
-   */
-  enum TMatrixDataType {mdtReal, mdtComplex, mdtIndex, mdtFFTW, mdtUxyz};
-
-  /// Pointer to the matrix object.
-  BaseMatrix   * MatrixPtr;
-  /// Matrix data type.
-  TMatrixDataType MatrixDataType;
-  /// Matrix dimension sizes.
-  DimensionSizes dimensionSizes;
-  /// Is the matrix content loaded from the HDF5 file.
-  bool            LoadData;
-  /// Is the matrix necessary to be preserver when checkpoint is enabled.
-  bool            Checkpoint;
-  /// HDF5 matrix name.
-  string          HDF5MatrixName;
-
-  /// Default constructor.
-  TMatrixRecord() : MatrixPtr(NULL), MatrixDataType(mdtReal),
-          dimensionSizes(), LoadData(false), Checkpoint(false),
-          HDF5MatrixName("")
-  {};
-
-  /// Copy constructor.
-  TMatrixRecord(const TMatrixRecord& src);
-
-  /// operator =
-  TMatrixRecord& operator = (const TMatrixRecord& src);
-
-  /// Set all values of the record.
-  void SetAllValues(BaseMatrix *          MatrixPtr,
-                    const TMatrixDataType  MatrixDataType,
-                    const DimensionSizes  dimensionSizes,
-                    const bool             LoadData,
-                    const bool             Checkpoint,
-                    const string           HDF5MatrixName);
-
-  // Destructor.
-  virtual ~TMatrixRecord() {};
-};// end of TMatrixRecord
-//------------------------------------------------------------------------------
 
 
 
@@ -274,91 +211,4 @@ class TMatrixContainer
 };// end of TMatrixContainer
 //------------------------------------------------------------------------------
 
-
-/**
- * @class TOutputStreamContainer
- * @brief A container for output streams.
- * @details The output stream container maintains matrices used for sampling data.
- * These may or may not require some scratch place or reuse temp matrices.
- */
-class TOutputStreamContainer
-{
-  public:
-    /// Constructor.
-    TOutputStreamContainer() {};
-    /// Destructor.
-    virtual ~TOutputStreamContainer();
-
-    /**
-     * @brief Get size of the container.
-     * @details Get size of the container.
-     */
-    size_t size() const
-    {
-      return OutputStreamContainer.size();
-    };
-
-    /**
-     * @brief  Is the container empty?
-     * @details  Is the container empty?
-     */
-    bool empty() const
-    {
-      return OutputStreamContainer.empty();
-    };
-
-    /**
-     * @brief Operator [].
-     * @details Operator [].
-     * @param [in] MatrixID
-     * @return Ouptut stream
-     */
-    BaseOutputStream & operator [] (const TMatrixID MatrixID)
-    {
-      return (* (OutputStreamContainer[MatrixID]));
-    };
-
-    /// Create all streams in container (no file manipulation).
-    void AddStreamsIntoContainer(TMatrixContainer & MatrixContainer);
-
-    /// Create all streams - opens the datasets.
-    void CreateStreams();
-    /// Reopen streams after checkpoint file (datasets).
-    void ReopenStreams();
-
-    /// Sample all streams.
-    void SampleStreams();
-    /// Post-process all streams and flush them to the file.
-    void PostProcessStreams();
-    /// Checkpoint streams.
-    void CheckpointStreams();
-
-    /// Close all streams.
-    void CloseStreams();
-
-    /// Free all streams - destroy them.
-    void FreeAllStreams();
-
-  protected:
-    /// Create a new output stream.
-    BaseOutputStream * CreateNewOutputStream(TMatrixContainer & MatrixContainer,
-                                                  const TMatrixID    SampledMatrixID,
-                                                  const char *       HDF5_DatasetName,
-                                                  const BaseOutputStream::ReduceOperator ReductionOp,
-                                                  float *            BufferToReuse = NULL);
-
-    /// Copy constructor not allowed for public.
-    TOutputStreamContainer(const TOutputStreamContainer &);
-    /// Operator = not allowed for public.
-    TOutputStreamContainer & operator = (TOutputStreamContainer &);
-
-  private:
-    /// Output stream map.
-    typedef map < TMatrixID, BaseOutputStream * > TOutputStreamMap;
-    /// Map with output streams.
-    TOutputStreamMap OutputStreamContainer;
-
-}; // end of TOutputStreamContainer
-//------------------------------------------------------------------------------
-
-#endif	/* MATRIXCONTAINER_H */
+#endif	/* MATRIX_CONTAINER_H */
