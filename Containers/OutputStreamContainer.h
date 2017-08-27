@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        27 August    2017, 08:58 (created) \n
- *              27 August    2017, 09:58 (revised)
+ *              27 August    2017, 11:47 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -41,90 +41,171 @@
 #include <Utils/MatrixNames.h>
 #include <Utils/DimensionSizes.h>
 
+
+
+
 /**
- * @class TOutputStreamContainer
- * @brief A container for output streams.
- * @details The output stream container maintains matrices used for sampling data.
+ * @class   OutputStreamContainer
+ * @brief   A container for output streams.
+ * @details The output stream container maintains matrices used to sample data.
  * These may or may not require some scratch place or reuse temp matrices.
  */
-class TOutputStreamContainer
+class OutputStreamContainer
 {
   public:
+    /**
+      * @enum    OutputStreamIdx
+      * @brief   Output streams identifiers in k-Wave.
+      * @details Output streams identifiers in k-Wave.
+      */
+    enum class OutputStreamIdx
+    {
+        /// Pressure time series.
+      kPressureRaw,
+      /// RMS of pressure over sensor mask.
+      kPressureRms,
+      /// Max of pressure over sensor mask.
+      kPressureMax,
+      /// Min of pressure over sensor mask.
+      kPressureMin,
+      /// Max of pressure over all domain.
+      kPressureMaxAll,
+      /// Min of pressure over all domain.
+      kPressureMinAll,
+
+      /// Velocity x time series.
+      kVelocityXRaw,
+      /// Velocity y time series.
+      kVelocityYRaw,
+      /// Velocity z time series.
+      kVelocityZRaw,
+      /// Non staggered velocity x time series.
+      kVelocityXNonStaggeredRaw,
+      /// Non staggered velocity y time series.
+      kVelocityYNonStaggeredRaw,
+      /// Non staggered velocity z time series.
+      kVelocityZNonStaggeredRaw,
+
+      /// RMS of velocity x over sensor mask.
+      kVelocityXRms,
+      /// RMS of velocity y over sensor mask.
+      kVelocityYRms,
+      /// RMS of velocity z over sensor mask.
+      kVelocityZRms,
+      /// Max of velocity x over sensor mask.
+      kVelocityXMax,
+      /// Max of velocity y over sensor mask.
+      kVelocityYMax,
+      /// Max of velocity z over sensor mask.
+      kVelocityZMax,
+      /// Min of velocity x over sensor mask.
+      kVelocityXMin,
+      /// Min of velocity y over sensor mask.
+      kVelocityYMin,
+      /// Min of velocity z over sensor mask.
+      kVelocityZMin,
+
+      /// Max of velocity x over all domain.
+      kVelocityXMaxAll,
+      /// Max of velocity y over all domain.
+      kVelocityYMaxAll,
+      /// Max of velocity z over all domain.
+      kVelocityZMaxAll,
+      /// Min of velocity x over all domain.
+      kVelocityXMinAll,
+      /// Min of velocity y over all domain.
+      kVelocityYMinAll,
+      /// Min of velocity z over all domain.
+      kVelocityZMinAll,
+    };// end of OutputStreamIdx
+
+
     /// Constructor.
-    TOutputStreamContainer() {};
+    OutputStreamContainer();
+    /// Copy constructor not allowed.
+    OutputStreamContainer(const OutputStreamContainer&) = delete;
     /// Destructor.
-    virtual ~TOutputStreamContainer();
+    ~OutputStreamContainer();
+
+    /// Operator = not allowed.
+    OutputStreamContainer& operator=(OutputStreamContainer&) = delete;
 
     /**
-     * @brief Get size of the container.
-     * @details Get size of the container.
+     * @brief  Get size of the container.
+     * @return the size of the container
      */
     size_t size() const
     {
-      return OutputStreamContainer.size();
+      return mContainer.size();
     };
 
     /**
-     * @brief  Is the container empty?
-     * @details  Is the container empty?
+     * @brief   Is the container empty?
+     * @return  true - If the container is empty.
      */
     bool empty() const
     {
-      return OutputStreamContainer.empty();
+      return mContainer.empty();
     };
 
     /**
-     * @brief Operator [].
-     * @details Operator [].
-     * @param [in] MatrixID
-     * @return Ouptut stream
+     * @brief operator []
+     * @param [in] outputStreamIdx - Id of the output stream.
+     * @return An element of the container.
      */
-    BaseOutputStream & operator [] (const TMatrixID MatrixID)
+    BaseOutputStream& operator[](const OutputStreamIdx outputStreamIdx)
     {
-      return (* (OutputStreamContainer[MatrixID]));
+      return (* (mContainer[outputStreamIdx]));
     };
 
-    /// Create all streams in container (no file manipulation).
-    void AddStreamsIntoContainer(TMatrixContainer & MatrixContainer);
+    /**
+     * @brief Add all streams in simulation in the container, set all streams records here!
+     *
+     * Please note, the matrix container has to be populated before calling this routine.
+     *
+     * @param [in] matrixContainer - matrix container to link the steams with sampled matrices and sensor masks.
+     */
+    void addStreams(MatrixContainer& matrixContainer);
 
     /// Create all streams - opens the datasets.
-    void CreateStreams();
+    void createStreams();
     /// Reopen streams after checkpoint file (datasets).
-    void ReopenStreams();
+    void reopenStreams();
 
     /// Sample all streams.
-    void SampleStreams();
+    void sampleStreams();
     /// Post-process all streams and flush them to the file.
-    void PostProcessStreams();
+    void postProcessStreams();
     /// Checkpoint streams.
-    void CheckpointStreams();
+    void checkpointStreams();
 
     /// Close all streams.
-    void CloseStreams();
+    void closeStreams();
 
     /// Free all streams - destroy them.
-    void FreeAllStreams();
+    void freeStreams();
 
   protected:
-    /// Create a new output stream.
-    BaseOutputStream * CreateNewOutputStream(TMatrixContainer & MatrixContainer,
-                                                  const TMatrixID    SampledMatrixID,
-                                                  const char *       HDF5_DatasetName,
-                                                  const BaseOutputStream::ReduceOperator ReductionOp,
-                                                  float *            BufferToReuse = NULL);
-
-    /// Copy constructor not allowed for public.
-    TOutputStreamContainer(const TOutputStreamContainer &);
-    /// Operator = not allowed for public.
-    TOutputStreamContainer & operator = (TOutputStreamContainer &);
+    /**
+     * @brief  Create a new output stream.
+     * @param [in] matrixContainer  - name of the HDF5 dataset or group
+     * @param [in] sampledMatrixIdx - code id of the matrix
+     * @param [in] fileObjectName   - name of the HDF5 dataset or group
+     * @param [in] reduceOp         - reduction operator
+     * @param [in] bufferToReuse    - buffer to reuse
+     * @return New output stream with defined links.
+     */
+    BaseOutputStream* createOutputStream(MatrixContainer&                       matrixContainer,
+                                         const MatrixContainer::MatrixIdx       sampledMatrixIdx,
+                                         const MatrixName&                      fileObjectName,
+                                         const BaseOutputStream::ReduceOperator reduceOp,
+                                         float*                                 bufferToReuse = nullptr);
 
   private:
-    /// Output stream map.
-    typedef map < TMatrixID, BaseOutputStream * > TOutputStreamMap;
     /// Map with output streams.
-    TOutputStreamMap OutputStreamContainer;
+    std::map<OutputStreamIdx, BaseOutputStream*> mContainer;
 
-}; // end of TOutputStreamContainer
-//------------------------------------------------------------------------------
+}; // end of OutputStreamContainer
+//----------------------------------------------------------------------------------------------------------------------
 
 #endif	/* OUTPUT_STREAM_CONTAINER_H */

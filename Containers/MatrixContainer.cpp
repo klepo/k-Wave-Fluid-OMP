@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created) \n
- *              27 August    2017, 09:29 (revised)
+ *              27 August    2017, 12:54 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -42,477 +42,470 @@
 #include <MatrixClasses/VelocityMatrix.h>
 #include <MatrixClasses/IndexMatrix.h>
 
-//----------------------------------------------------------------------------//
-//----------------------------- CONSTANTS ------------------------------------//
-//----------------------------------------------------------------------------//
+using std::string;
 
+//--------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------- Public methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
+/**
+ * Constructor.
+ */
+MatrixContainer::MatrixContainer()
+  : mContainer()
+{
 
-
-
-
-
-//============================================================================//
-//                              TMatrixContainer                              //
-//============================================================================//
-
-//----------------------------------------------------------------------------//
-//--------------------------- Public methods ---------------------------------//
-//----------------------------------------------------------------------------//
+}// end of Constructor.
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
- * Destructor of TMatrixContainer.
+ * Destructor.
+ * No need for virtual destructor (no polymorphism).
  */
-TMatrixContainer::~TMatrixContainer()
+MatrixContainer::~MatrixContainer()
 {
-  MatrixContainer.clear();
-}// end of ~TMatrixContainer
-//------------------------------------------------------------------------------
+  mContainer.clear();
+}// end of ~MatrixContainer
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Create all matrix objects in the container.
- * @throw errors cause an exception bad_alloc.
  */
-void TMatrixContainer::CreateAllObjects()
+void MatrixContainer::createMatrices()
 {
-  for (TMatrixRecordContainer::iterator it = MatrixContainer.begin(); it != MatrixContainer.end(); it++)
+  using MatrixType = MatrixRecord::MatrixType;
+
+  for (auto& it : mContainer)
   {
-    if (it->second.MatrixPtr != NULL)
+    if (it.second.matrixPtr != nullptr)
     {
-      PrintErrorAndThrowException(kErrFmtRelocationError,
-                                  it->second.HDF5MatrixName,
-                                 __FILE__,__LINE__);
+      printErrorAndThrowException(kErrFmtRelocationError, it.second.matrixName, __FILE__,__LINE__);
     }
 
-    switch (it->second.MatrixDataType)
+    switch (it.second.matrixType)
     {
-      case TMatrixRecord::mdtReal:
+      case MatrixType::kReal:
       {
-        it->second.MatrixPtr = new RealMatrix(it->second.dimensionSizes);
+        it.second.matrixPtr = new RealMatrix(it.second.dimensionSizes);
         break;
       }
 
-      case TMatrixRecord::mdtComplex:
+      case MatrixType::kComplex:
       {
-        it->second.MatrixPtr = new ComplexMatrix(it->second.dimensionSizes);
+        it.second.matrixPtr = new ComplexMatrix(it.second.dimensionSizes);
         break;
       }
 
-      case TMatrixRecord::mdtIndex:
+      case MatrixType::kIndex:
       {
-        it->second.MatrixPtr = new IndexMatrix(it->second.dimensionSizes);
+        it.second.matrixPtr = new IndexMatrix(it.second.dimensionSizes);
         break;
       }
 
-      case TMatrixRecord::mdtFFTW:
+      case MatrixType::kFftw:
       {
-        it->second.MatrixPtr = new FftwComplexMatrix(it->second.dimensionSizes);
+        it.second.matrixPtr = new FftwComplexMatrix(it.second.dimensionSizes);
         break;
       }
 
-      case TMatrixRecord::mdtUxyz:
+      case MatrixType::kVelocity:
       {
-        it->second.MatrixPtr = new VelocityMatrix(it->second.dimensionSizes);
+        it.second.matrixPtr = new VelocityMatrix(it.second.dimensionSizes);
         break;
       }
 
       default:
       {
-        PrintErrorAndThrowException(kErrFmtBadMatrixType,
-                                    it->second.HDF5MatrixName,
-                                    __FILE__,__LINE__);
+        printErrorAndThrowException(kErrFmtBadMatrixType, it.second.matrixName, __FILE__, __LINE__);
         break;
       }
     }// switch
   }// end for
-}// end of CreateAllObjects
-//-----------------------------------------------------------------------------
+}// end of createMatrices
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
- * Load all marked matrices from the HDF5 file.
- * @param [in] HDF5_File - HDF5 file handle
+ * This function creates the list of matrices being used in the simulation. It is done based on the
+ * simulation parameters. All matrices records are created here.
  */
-void TMatrixContainer::LoadDataFromInputHDF5File(Hdf5File & HDF5_File)
+void MatrixContainer::addMatrices()
 {
-  for (TMatrixRecordContainer::iterator it = MatrixContainer.begin(); it != MatrixContainer.end(); it++)
+  using MT = MatrixRecord::MatrixType;
+  using MI = MatrixContainer::MatrixIdx;
+
+  const Parameters& params = Parameters::getInstance();
+
+  DimensionSizes fullDims = params.getFullDimensionSizes();
+  DimensionSizes reducedDims = params.getReducedDimensionSizes();
+
+  constexpr bool kLoad         = true;
+  constexpr bool kNoLoad       = false;
+  constexpr bool kCheckpoint   = true;
+  constexpr bool kNoCheckpoint = false;
+
+  //--------------------------------------------- Allocate all matrices ----------------------------------------------//
+
+  mContainer[MI::kKappa].set(MT::kReal, reducedDims, kNoLoad, kNoCheckpoint, kKappaRName);
+
+  if (!params.getC0ScalarFlag())
   {
-    if (it->second.LoadData)
+    mContainer[MI::kC2] .set(MT::kReal, fullDims   ,   kLoad, kNoCheckpoint, kC0Name);
+  }
+
+  mContainer[MI::kP]    .set(MT::kReal, fullDims   , kNoLoad,   kCheckpoint, kPName);
+
+  mContainer[MI::kRhoX] .set(MT::kReal, fullDims   , kNoLoad,   kCheckpoint, kRhoXName);
+  mContainer[MI::kRhoY] .set(MT::kReal, fullDims   , kNoLoad,   kCheckpoint, kRhoYName);
+  mContainer[MI::kRhoZ] .set(MT::kReal, fullDims   , kNoLoad,   kCheckpoint, kRhoZName);
+
+  mContainer[MI::kUxSgx].set(MT::kReal, fullDims   , kNoLoad,   kCheckpoint, kUxSgxName);
+  mContainer[MI::kUySgy].set(MT::kReal, fullDims   , kNoLoad,   kCheckpoint, kUySgyName);
+  mContainer[MI::kUzSgz].set(MT::kReal, fullDims   , kNoLoad,   kCheckpoint, kUzSgzName);
+
+  mContainer[MI::kDuxdx].set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kDuxdxName);
+  mContainer[MI::kDuydy].set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kDuydyName);
+  mContainer[MI::kDuzdz].set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kDuzdzName);
+
+  if (!params.getRho0ScalarFlag())
+  {
+    mContainer[MI::kRho0]     .set(MT::kReal, fullDims,  kLoad, kNoCheckpoint, kRho0Name);
+    mContainer[MI::kDtRho0Sgx].set(MT::kReal, fullDims,  kLoad, kNoCheckpoint, kRho0SgxName);
+    mContainer[MI::kDtRho0Sgy].set(MT::kReal, fullDims,  kLoad, kNoCheckpoint, kRho0SgyName);
+    mContainer[MI::kDtRho0Sgz].set(MT::kReal, fullDims,  kLoad, kNoCheckpoint, kRho0SgzName);
+  }
+
+
+  mContainer[MI::kDdxKShiftPosR].set(MT::kComplex, DimensionSizes(reducedDims.nx, 1, 1),
+                                     kLoad, kNoCheckpoint, kDdxKShiftPosRName);
+  mContainer[MI::kDdyKShiftPos] .set(MT::kComplex, DimensionSizes(1, reducedDims.ny, 1),
+                                     kLoad, kNoCheckpoint, kDdyKShiftPosName);
+  mContainer[MI::kDdzKShiftPos] .set(MT::kComplex, DimensionSizes(1, 1, reducedDims.nz),
+                                     kLoad, kNoCheckpoint, kDdzKShiftPosName);
+
+  mContainer[MI::kDdxKShiftNegR].set(MT::kComplex, DimensionSizes(reducedDims.nx ,1, 1),
+                                     kLoad, kNoCheckpoint, kDdxKShiftNegRName);
+  mContainer[MI::kDdyKShiftNeg] .set(MT::kComplex, DimensionSizes(1, reducedDims.ny, 1),
+                                     kLoad, kNoCheckpoint, kDdyKShiftNegName);
+  mContainer[MI::kDdzKShiftNeg] .set(MT::kComplex, DimensionSizes(1, 1, reducedDims.nz),
+                                     kLoad, kNoCheckpoint, kDdzKShiftNegName);
+
+
+  mContainer[MI::kPmlXSgx].set(MT::kReal, DimensionSizes(fullDims.nx, 1, 1),    kLoad, kNoCheckpoint, kPmlXSgxName);
+  mContainer[MI::kPmlYSgy].set(MT::kReal, DimensionSizes(1, fullDims.ny, 1),    kLoad, kNoCheckpoint, kPmlYSgyName);
+  mContainer[MI::kPmlZSgz].set(MT::kReal, DimensionSizes(1, 1, fullDims.nz),    kLoad, kNoCheckpoint, kPmlZSgzName);
+
+  mContainer[MI::kPmlX]   .set(MT::kReal, DimensionSizes(fullDims.nx, 1, 1),    kLoad, kNoCheckpoint, kPmlXName);
+  mContainer[MI::kPmlY]   .set(MT::kReal, DimensionSizes(1, fullDims.ny, 1),    kLoad, kNoCheckpoint, kPmlYName);
+  mContainer[MI::kPmlZ]   .set(MT::kReal, DimensionSizes(1, 1, fullDims.nz),    kLoad, kNoCheckpoint, kPmlZName);
+
+  if (params.getNonLinearFlag())
+  {
+    if (! params.getBOnAScalarFlag())
     {
-      it->second.MatrixPtr->readData(HDF5_File, it->second.HDF5MatrixName.c_str());
-    }
-  }
-}// end of LoadMatricesDataFromDisk
-//------------------------------------------------------------------------------
-
-
-/**
- * Load selected matrices from checkpoint HDF5 file.
- * @param [in] HDF5_File - HDF5 file handle
- */
-void TMatrixContainer::LoadDataFromCheckpointHDF5File(Hdf5File & HDF5_File)
-{
-  for (TMatrixRecordContainer::iterator it = MatrixContainer.begin(); it != MatrixContainer.end(); it++)
-  {
-    if (it->second.Checkpoint)
-    {
-      it->second.MatrixPtr->readData(HDF5_File, it->second.HDF5MatrixName.c_str());
-    }
-  }
-}// end of LoadDataFromCheckpointHDF5File
-//------------------------------------------------------------------------------
-
-/**
- * Store selected matrices into the checkpoint file.
- * @param [in] HDF5_File
- */
-void TMatrixContainer::StoreDataIntoCheckpointHDF5File(Hdf5File & HDF5_File)
-{
-  for (TMatrixRecordContainer::iterator it = MatrixContainer.begin(); it != MatrixContainer.end(); it++)
-  {
-    if (it->second.Checkpoint)
-    {
-      it->second.MatrixPtr->writeData(HDF5_File,
-                                                it->second.HDF5MatrixName.c_str(),
-                                                Parameters::getInstance().getCompressionLevel());
-    }
-  }
-}// end of StoreDataIntoCheckpointHDF5File
-//------------------------------------------------------------------------------
-
-
-/**
- * Free all matrix objects.
- *
- */
-void TMatrixContainer::FreeAllMatrices()
-{
-  for (TMatrixRecordContainer::iterator it = MatrixContainer.begin(); it != MatrixContainer.end(); it++)
-  {
-    if (it->second.MatrixPtr)
-    {
-      delete it->second.MatrixPtr;
-      it->second.MatrixPtr = NULL;
-    }
-  }
-}// end of FreeAllMatrices
-//------------------------------------------------------------------------------
-
-
-
-
-/**
- * This function defines common matrices in K-Wave.
- * All matrices records are created here.
- */
-void TMatrixContainer::AddMatricesIntoContainer()
-{
-
-  Parameters& Params = Parameters::getInstance();
-
-  DimensionSizes FullDims = Params.getFullDimensionSizes();
-  DimensionSizes ReducedDims = Params.getReducedDimensionSizes();
-
-  const bool LOAD         = true;
-  const bool NOLOAD       = false;
-  const bool CHECKPOINT   = true;
-  const bool NOCHECKPOINT = false;
-
-
-  //----------------------Allocate all matrices ----------------------------//
-
-  MatrixContainer[kappa] .SetAllValues(NULL ,TMatrixRecord::mdtReal, ReducedDims, NOLOAD, NOCHECKPOINT, kKappaRName);
-  if (!Params.getC0ScalarFlag())
-  {
-    MatrixContainer[c2]  .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   ,   LOAD, NOCHECKPOINT, kC0Name);
-  }
-  MatrixContainer[p]     .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD,   CHECKPOINT, kPName);
-
-  MatrixContainer[rhox]  .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD,   CHECKPOINT, kRhoXName);
-  MatrixContainer[rhoy]  .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD,   CHECKPOINT, kRhoYName);
-  MatrixContainer[rhoz]  .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD,   CHECKPOINT, kRhoZName);
-
-  MatrixContainer[ux_sgx].SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD,   CHECKPOINT, kUxSgxName);
-  MatrixContainer[uy_sgy].SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD,   CHECKPOINT, kUySgyName);
-  MatrixContainer[uz_sgz].SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD,   CHECKPOINT, kUzSgzName);
-
-  MatrixContainer[duxdx] .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kDuxdxName);
-  MatrixContainer[duydy] .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kDuydyName);
-  MatrixContainer[duzdz] .SetAllValues(NULL ,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kDuzdzName);
-
-  if (!Params.getRho0ScalarFlag())
-  {
-    MatrixContainer[rho0]       .SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims,  LOAD, NOCHECKPOINT, kRho0Name);
-    MatrixContainer[dt_rho0_sgx].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims,  LOAD, NOCHECKPOINT, kRho0SgxName);
-    MatrixContainer[dt_rho0_sgy].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims,  LOAD, NOCHECKPOINT, kRho0SgyName);
-    MatrixContainer[dt_rho0_sgz].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims,  LOAD, NOCHECKPOINT, kRho0SgzName);
-  }
-
-
-  MatrixContainer[ddx_k_shift_pos].SetAllValues(NULL,TMatrixRecord::mdtComplex, DimensionSizes(ReducedDims.nx, 1, 1), LOAD, NOCHECKPOINT, kDdxKShiftPosRName);
-  MatrixContainer[ddy_k_shift_pos].SetAllValues(NULL,TMatrixRecord::mdtComplex, DimensionSizes(1, ReducedDims.ny, 1), LOAD, NOCHECKPOINT, kDdyKShiftPosName);
-  MatrixContainer[ddz_k_shift_pos].SetAllValues(NULL,TMatrixRecord::mdtComplex, DimensionSizes(1, 1, ReducedDims.nz), LOAD, NOCHECKPOINT, kDdzKShiftPosName);
-
-  MatrixContainer[ddx_k_shift_neg].SetAllValues(NULL,TMatrixRecord::mdtComplex, DimensionSizes(ReducedDims.nx ,1, 1), LOAD, NOCHECKPOINT, kDdxKShiftNegRName);
-  MatrixContainer[ddy_k_shift_neg].SetAllValues(NULL,TMatrixRecord::mdtComplex, DimensionSizes(1, ReducedDims.ny, 1), LOAD, NOCHECKPOINT, kDdyKShiftNegName);
-  MatrixContainer[ddz_k_shift_neg].SetAllValues(NULL,TMatrixRecord::mdtComplex, DimensionSizes(1, 1, ReducedDims.nz), LOAD, NOCHECKPOINT, kDdzKShiftNegName);
-
-
-  MatrixContainer[pml_x_sgx] .SetAllValues(NULL,TMatrixRecord::mdtReal,         DimensionSizes(FullDims.nx, 1, 1),    LOAD, NOCHECKPOINT, kPmlXSgxName);
-  MatrixContainer[pml_y_sgy] .SetAllValues(NULL,TMatrixRecord::mdtReal,         DimensionSizes(1, FullDims.ny, 1),    LOAD, NOCHECKPOINT, kPmlYSgyName);
-  MatrixContainer[pml_z_sgz] .SetAllValues(NULL,TMatrixRecord::mdtReal,         DimensionSizes(1, 1, FullDims.nz),    LOAD, NOCHECKPOINT, kPmlZSgzName);
-
-  MatrixContainer[pml_x]     .SetAllValues(NULL,TMatrixRecord::mdtReal,         DimensionSizes(FullDims.nx, 1, 1),    LOAD, NOCHECKPOINT, kPmlXName);
-  MatrixContainer[pml_y]     .SetAllValues(NULL,TMatrixRecord::mdtReal,         DimensionSizes(1, FullDims.ny, 1),    LOAD, NOCHECKPOINT, kPmlYName);
-  MatrixContainer[pml_z]     .SetAllValues(NULL,TMatrixRecord::mdtReal,         DimensionSizes(1, 1, FullDims.nz),    LOAD, NOCHECKPOINT, kPmlZName);
-
-  if (Params.getNonLinearFlag())
-  {
-    if (! Params.getBOnAScalarFlag())
-    {
-      MatrixContainer[BonA]      .SetAllValues   (NULL,TMatrixRecord::mdtReal, FullDims ,   LOAD, NOCHECKPOINT, kBonAName);
+      mContainer[MI::kBOnA].set(MT::kReal, fullDims ,   kLoad, kNoCheckpoint, kBonAName);
     }
   }
 
-  if (Params.getAbsorbingFlag() != 0)
+  if (params.getAbsorbingFlag() != 0)
   {
-    if (!((Params.getC0ScalarFlag()) && (Params.getAlphaCoeffScalarFlag())))
+    if (!((params.getC0ScalarFlag()) && (params.getAlphaCoeffScalarFlag())))
     {
-      MatrixContainer[absorb_tau].SetAllValues (NULL,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kAbsorbTauName);
-      MatrixContainer[absorb_eta].SetAllValues (NULL,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kAbsorbEtaName);
+      mContainer[MI::kAbsorbTau] .set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kAbsorbTauName);
+      mContainer[MI::kAbsorbEta] .set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kAbsorbEtaName);
     }
-    MatrixContainer[absorb_nabla1].SetAllValues(NULL,TMatrixRecord::mdtReal, ReducedDims, NOLOAD, NOCHECKPOINT, kAbsorbNabla1RName);
-    MatrixContainer[absorb_nabla2].SetAllValues(NULL,TMatrixRecord::mdtReal, ReducedDims, NOLOAD, NOCHECKPOINT, kAbsorbNabla2RName);
+    mContainer[MI::kAbsorbNabla1].set(MT::kReal, reducedDims, kNoLoad, kNoCheckpoint, kAbsorbNabla1RName);
+    mContainer[MI::kAbsorbNabla2].set(MT::kReal, reducedDims, kNoLoad, kNoCheckpoint, kAbsorbNabla2RName);
   }
 
   // linear sensor mask
-  if (Params.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  if (params.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
-    MatrixContainer[sensor_mask_index].SetAllValues(NULL,TMatrixRecord::mdtIndex,
-                                                    DimensionSizes(Params.getSensorMaskIndexSize(), 1, 1),
-                                                    LOAD, NOCHECKPOINT, kSensorMaskIndexName);
+    mContainer[MI::kSensorMaskIndex].set(MT::kIndex,
+                                         DimensionSizes(params.getSensorMaskIndexSize(), 1, 1),
+                                         kLoad, kNoCheckpoint, kSensorMaskIndexName);
   }
 
   // cuboid sensor mask
-  if (Params.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  if (params.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
-    MatrixContainer[sensor_mask_corners].SetAllValues(NULL,TMatrixRecord::mdtIndex,
-                                                      DimensionSizes(6 ,Params.getSensorMaskCornersSize(), 1),
-                                                      LOAD, NOCHECKPOINT, kSensorMaskCornersName);
+    mContainer[MI::kSensorMaskCorners].set(MT::kIndex,
+                                           DimensionSizes(6 ,params.getSensorMaskCornersSize(), 1),
+                                           kLoad, kNoCheckpoint, kSensorMaskCornersName);
   }
 
 
   // if p0 source flag
-  if (Params.getInitialPressureSourceFlag() == 1)
+  if (params.getInitialPressureSourceFlag() == 1)
   {
-    MatrixContainer[p0_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims, LOAD, NOCHECKPOINT, kInitialPressureSourceInputName);
+    mContainer[MI::kInitialPressureSourceInput].set(MT::kReal,fullDims, kLoad, kNoCheckpoint,
+                                                    kInitialPressureSourceInputName);
   }
 
 
   // us_index
-  if ((Params.getTransducerSourceFlag() != 0) ||
-      (Params.getVelocityXSourceFlag() != 0)         ||
-      (Params.getVelocityYSourceFlag() != 0)         ||
-      (Params.getVelocityZSourceFlag() != 0))
+  if ((params.getTransducerSourceFlag() != 0) ||
+      (params.getVelocityXSourceFlag() != 0)  ||
+      (params.getVelocityYSourceFlag() != 0)  ||
+      (params.getVelocityZSourceFlag() != 0))
   {
-    MatrixContainer[u_source_index].SetAllValues(NULL,TMatrixRecord::mdtIndex,
-                                                 DimensionSizes(1 ,1, Params.getVelocitySourceIndexSize()),
-                                                 LOAD, NOCHECKPOINT, kVelocitySourceIndexName);
+    mContainer[MI::kVelocitySourceIndex].set(MT::kIndex,
+                                            DimensionSizes(1 ,1, params.getVelocitySourceIndexSize()),
+                                            kLoad, kNoCheckpoint, kVelocitySourceIndexName);
   }
 
   //transducer source flag defined
-  if (Params.getTransducerSourceFlag() != 0)
+  if (params.getTransducerSourceFlag() != 0)
   {
-    MatrixContainer[delay_mask]             .SetAllValues(NULL,TMatrixRecord::mdtIndex,DimensionSizes(1 ,1, Params.getVelocitySourceIndexSize())         ,
-                                                          LOAD, NOCHECKPOINT, kDelayMaskName);
-    MatrixContainer[transducer_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal ,DimensionSizes(1 ,1, Params.getTransducerSourceInputSize()),
-                                                          LOAD, NOCHECKPOINT, kInitialPressureSourceInputName);
+    mContainer[MI::kDelayMask]            .set(MT::kIndex,DimensionSizes(1 ,1, params.getVelocitySourceIndexSize())         ,
+                                               kLoad, kNoCheckpoint, kDelayMaskName);
+    mContainer[MI::kTransducerSourceInput].set(MT::kReal ,DimensionSizes(1 ,1, params.getTransducerSourceInputSize()),
+                                               kLoad, kNoCheckpoint, kInitialPressureSourceInputName);
   }
 
   // p variables
-  if (Params.getPressureSourceFlag() != 0)
+  if (params.getPressureSourceFlag() != 0)
   {
-    if (Params.getPressureSourceMany() == 0)
+    if (params.getPressureSourceMany() == 0)
     { // 1D case
-      MatrixContainer[p_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                   DimensionSizes(1 ,1, Params.getPressureSourceFlag()),
-                                                   LOAD, NOCHECKPOINT, kPressureSourceInputName);
+      mContainer[MI::kPressureSourceInput].set(MT::kReal,
+                                               DimensionSizes(1 ,1, params.getPressureSourceFlag()),
+                                               kLoad, kNoCheckpoint, kPressureSourceInputName);
     }
     else
     { // 2D case
-      MatrixContainer[p_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                   DimensionSizes(1 ,Params.getPressureSourceIndexSize(),Params.getPressureSourceFlag()),
-                                                   LOAD, NOCHECKPOINT, kPressureSourceInputName);
+      mContainer[MI::kPressureSourceInput].set(MT::kReal,
+                                               DimensionSizes(1 ,params.getPressureSourceIndexSize(),
+                                               params.getPressureSourceFlag()),
+                                               kLoad, kNoCheckpoint, kPressureSourceInputName);
     }
 
-    MatrixContainer[p_source_index].SetAllValues(NULL,TMatrixRecord::mdtIndex,
-                                                 DimensionSizes(1 ,1, Params.getPressureSourceIndexSize()),
-                                                 LOAD, NOCHECKPOINT, kPressureSourceIndexName);
+    mContainer[MI::kPressureSourceIndex].set(MT::kIndex,
+                                            DimensionSizes(1 ,1, params.getPressureSourceIndexSize()),
+                                            kLoad, kNoCheckpoint, kPressureSourceIndexName);
   }
 
 
 
-    //----------------------------uxyz source flags---------------------------//
-  if (Params.getVelocityXSourceFlag() != 0)
+  //-------------------------------------------- Velocity source flags -----------------------------------------------//
+  if (params.getVelocityXSourceFlag() != 0)
   {
-    if (Params.getVelocitySourceMany() == 0)
+    if (params.getVelocitySourceMany() == 0)
     { // 1D
-      MatrixContainer[ux_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,1, Params.getVelocityXSourceFlag()),
-                                                    LOAD, NOCHECKPOINT, kVelocityXSourceInputName);
+      mContainer[MI::kVelocityXSourceInput].set(MT::kReal,
+                                                DimensionSizes(1 ,1, params.getVelocityXSourceFlag()),
+                                                kLoad, kNoCheckpoint, kVelocityXSourceInputName);
     }
     else
     { // 2D
-      MatrixContainer[ux_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,Params.getVelocitySourceIndexSize(),Params.getVelocityXSourceFlag()),
-                                                    LOAD, NOCHECKPOINT, kVelocityXSourceInputName);
+      mContainer[MI::kVelocityXSourceInput].set(MT::kReal,
+                                                DimensionSizes(1 ,params.getVelocitySourceIndexSize(),
+                                                params.getVelocityXSourceFlag()),
+                                                kLoad, kNoCheckpoint, kVelocityXSourceInputName);
     }
   }// ux_source_input
 
 
-  if (Params.getVelocityYSourceFlag() != 0)
+  if (params.getVelocityYSourceFlag() != 0)
   {
-    if (Params.getVelocitySourceMany() == 0)
+    if (params.getVelocitySourceMany() == 0)
     { // 1D
-      MatrixContainer[uy_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,1, Params.getVelocityYSourceFlag()),
-                                                    LOAD, NOCHECKPOINT, kVelocityYSourceInputName);
+      mContainer[MI::kVelocityYSourceInput].set(MT::kReal,
+                                                DimensionSizes(1 ,1, params.getVelocityYSourceFlag()),
+                                                kLoad, kNoCheckpoint, kVelocityYSourceInputName);
     }
     else
     { // 2D
-      MatrixContainer[uy_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,Params.getVelocitySourceIndexSize(),Params.getVelocityYSourceFlag()),
-                                                    LOAD, NOCHECKPOINT, kVelocityYSourceInputName);
+      mContainer[MI::kVelocityYSourceInput].set(MT::kReal,
+                                                DimensionSizes(1 ,params.getVelocitySourceIndexSize(),
+                                                params.getVelocityYSourceFlag()),
+                                                kLoad, kNoCheckpoint, kVelocityYSourceInputName);
     }
   }// uy_source_input
 
-  if (Params.getVelocityZSourceFlag() != 0)
+  if (params.getVelocityZSourceFlag() != 0)
   {
-    if (Params.getVelocitySourceMany() == 0)
+    if (params.getVelocitySourceMany() == 0)
     { // 1D
-      MatrixContainer[uz_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,1, Params.getVelocityZSourceFlag()),
-                                                    LOAD, NOCHECKPOINT, kVelocityZSourceInputName);
+      mContainer[MI::kVelocityZSourceInput].set(MT::kReal,
+                                                DimensionSizes(1 ,1, params.getVelocityZSourceFlag()),
+                                                kLoad, kNoCheckpoint, kVelocityZSourceInputName);
     }
     else
     { // 2D
-      MatrixContainer[uz_source_input].SetAllValues(NULL,TMatrixRecord::mdtReal,
-                                                    DimensionSizes(1 ,Params.getVelocitySourceIndexSize(),Params.getVelocityZSourceFlag()),
-                                                    LOAD, NOCHECKPOINT, kVelocityZSourceInputName);
+      mContainer[MI::kVelocityZSourceInput].set(MT::kReal,
+                                                DimensionSizes(1 ,params.getVelocitySourceIndexSize(),
+                                                params.getVelocityZSourceFlag()),
+                                                kLoad, kNoCheckpoint, kVelocityZSourceInputName);
     }
   }// uz_source_input
 
 
-  //-- Nonlinear grid
-  if (Params.getNonUniformGridFlag()!= 0)
+  //------------------------------------------------ Nonlinear grid --------------------------------------------------//
+  if (params.getNonUniformGridFlag()!= 0)
   {
-    MatrixContainer[dxudxn]    .SetAllValues(NULL,TMatrixRecord::mdtReal, DimensionSizes(FullDims.nx, 1, 1), LOAD, NOCHECKPOINT, kDxudxnName);
-    MatrixContainer[dyudyn]    .SetAllValues(NULL,TMatrixRecord::mdtReal, DimensionSizes(1, FullDims.ny, 1), LOAD, NOCHECKPOINT, kDyudynName);
-    MatrixContainer[dzudzn]    .SetAllValues(NULL,TMatrixRecord::mdtReal, DimensionSizes(1 ,1, FullDims.nz), LOAD, NOCHECKPOINT, kDzudznName);
+    mContainer[MI::kDxudxn]   .set(MT::kReal, DimensionSizes(fullDims.nx, 1, 1), kLoad, kNoCheckpoint, kDxudxnName);
+    mContainer[MI::kDyudyn]   .set(MT::kReal, DimensionSizes(1, fullDims.ny, 1), kLoad, kNoCheckpoint, kDyudynName);
+    mContainer[MI::kDzudzn]   .set(MT::kReal, DimensionSizes(1 ,1, fullDims.nz), kLoad, kNoCheckpoint, kDzudznName);
 
-    MatrixContainer[dxudxn_sgx].SetAllValues(NULL,TMatrixRecord::mdtReal, DimensionSizes(FullDims.nx, 1, 1), LOAD, NOCHECKPOINT, kDxudxnSgxName);
-    MatrixContainer[dyudyn_sgy].SetAllValues(NULL,TMatrixRecord::mdtReal, DimensionSizes(1, FullDims.ny, 1), LOAD, NOCHECKPOINT, kDyudynSgyName);
-    MatrixContainer[dzudzn_sgz].SetAllValues(NULL,TMatrixRecord::mdtReal, DimensionSizes(1 ,1, FullDims.nz), LOAD, NOCHECKPOINT, kDzudznSgzName);
+    mContainer[MI::kDxudxnSgx].set(MT::kReal, DimensionSizes(fullDims.nx, 1, 1), kLoad, kNoCheckpoint, kDxudxnSgxName);
+    mContainer[MI::kDyudynSgy].set(MT::kReal, DimensionSizes(1, fullDims.ny, 1), kLoad, kNoCheckpoint, kDyudynSgyName);
+    mContainer[MI::kDzudznSgz].set(MT::kReal, DimensionSizes(1 ,1, fullDims.nz), kLoad, kNoCheckpoint, kDzudznSgzName);
   }
 
-  //-- u_non_staggered_raw
-  if (Params.getStoreVelocityNonStaggeredRawFlag())
+  //-------------------------------------------- Non staggered velocity ----------------------------------------------//
+  if (params.getStoreVelocityNonStaggeredRawFlag())
   {
-    DimensionSizes ShiftDims = FullDims;
+    DimensionSizes shiftDims = fullDims;
 
-    size_t X_2 = FullDims.nx / 2 + 1;
-    size_t Y_2 = FullDims.ny / 2 + 1;
-    size_t Z_2 = FullDims.nz / 2 + 1;
+    size_t nxR = fullDims.nx / 2 + 1;
+    size_t nyR = fullDims.ny / 2 + 1;
+    size_t nzR = fullDims.nz / 2 + 1;
 
-    size_t XCutSize = X_2        * FullDims.ny * FullDims.nz;
-    size_t YCutSize = FullDims.nx * Y_2        * FullDims.nz;
-    size_t ZCutSize = FullDims.nx * FullDims.ny * Z_2;
+    size_t xCutSize = nxR         * fullDims.ny * fullDims.nz;
+    size_t yCutSize = fullDims.nx * nyR         * fullDims.nz;
+    size_t zCutSize = fullDims.nx * fullDims.ny * nzR;
 
-    if ((XCutSize >= YCutSize) && (XCutSize >= ZCutSize))
+    if ((xCutSize >= yCutSize) && (xCutSize >= zCutSize))
     { // X cut is the biggest
-      ShiftDims.nx = X_2;
+      shiftDims.nx = nxR;
     }
-    else if ((YCutSize >= XCutSize) && (YCutSize >= ZCutSize))
+    else if ((yCutSize >= xCutSize) && (yCutSize >= zCutSize))
     { // Y cut is the biggest
-      ShiftDims.ny = Y_2;
+      shiftDims.ny = nyR;
     }
-    else if ((ZCutSize >= XCutSize) && (ZCutSize >= YCutSize))
+    else if ((zCutSize >= xCutSize) && (zCutSize >= yCutSize))
     { // Z cut is the biggest
-      ShiftDims.nz = Z_2;
+      shiftDims.nz = nzR;
     }
     else
     { //all are the same
-      ShiftDims.nx = X_2;
+      shiftDims.nx = nxR;
     }
 
-    MatrixContainer[FFT_shift_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ShiftDims, NOLOAD, NOCHECKPOINT, kCufftShiftTempName);
+    mContainer[MI::kTempFftwShift].set(MT::kFftw, shiftDims, kNoLoad, kNoCheckpoint, kCufftShiftTempName);
 
     // these three are necessary only for u_non_staggered calculation now
-    MatrixContainer[ux_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, kUxShiftedName);
-    MatrixContainer[uy_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, kUyShiftedName);
-    MatrixContainer[uz_shifted].SetAllValues(NULL, TMatrixRecord::mdtReal, FullDims, NOLOAD, NOCHECKPOINT, kUzShiftedName);
+    mContainer[MI::kUxShifted].set(MT::kReal, fullDims, kNoLoad, kNoCheckpoint, kUxShiftedName);
+    mContainer[MI::kUyShifted].set(MT::kReal, fullDims, kNoLoad, kNoCheckpoint, kUyShiftedName);
+    mContainer[MI::kUzShifted].set(MT::kReal, fullDims, kNoLoad, kNoCheckpoint, kUzShiftedName);
 
     // shifts from the input file
-    MatrixContainer[x_shift_neg_r].SetAllValues(NULL, TMatrixRecord::mdtComplex, DimensionSizes(X_2, 1  , 1  ), LOAD, NOCHECKPOINT, kXShiftNegRName);
-    MatrixContainer[y_shift_neg_r].SetAllValues(NULL, TMatrixRecord::mdtComplex, DimensionSizes(1  , Y_2, 1  ), LOAD, NOCHECKPOINT, kYShiftNegRName);
-    MatrixContainer[z_shift_neg_r].SetAllValues(NULL, TMatrixRecord::mdtComplex, DimensionSizes(1  , 1  , Z_2), LOAD, NOCHECKPOINT, kZShiftNegRName);
+    mContainer[MI::kXShiftNegR].set(MT::kComplex, DimensionSizes(nxR, 1  , 1  ), kLoad, kNoCheckpoint, kXShiftNegRName);
+    mContainer[MI::kYShiftNegR].set(MT::kComplex, DimensionSizes(1  , nyR, 1  ), kLoad, kNoCheckpoint, kYShiftNegRName);
+    mContainer[MI::kZShiftNegR].set(MT::kComplex, DimensionSizes(1  , 1  , nzR), kLoad, kNoCheckpoint, kZShiftNegRName);
   }// u_non_staggered
 
 
-  //------------------------------------------------------------------------//
-  //--------------------- Temporary matrices -------------------------------//
-  //------------------------------------------------------------------------//
-  // this matrix used to load alpha_coeff for absorb_tau pre-calculation
-
-  if ((Params.getAbsorbingFlag() != 0) && (!Params.getAlphaCoeffScalarFlag()))
+  //----------------------------------------------- Temporary matrices -----------------------------------------------//
+  // this matrix used to load alphaCoeff for absorbTau pre-calculation
+  if ((params.getAbsorbingFlag() != 0) && (!params.getAlphaCoeffScalarFlag()))
   {
-    MatrixContainer[Temp_1_RS3D].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims ,   LOAD, NOCHECKPOINT, kAlphaCoeffName);
+    mContainer[MI::kTemp1Real3D].set(MT::kReal, fullDims ,   kLoad, kNoCheckpoint, kAlphaCoeffName);
   }
   else
   {
-    MatrixContainer[Temp_1_RS3D].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims , NOLOAD, NOCHECKPOINT, kTemp1Real3DName);
+    mContainer[MI::kTemp1Real3D].set(MT::kReal, fullDims , kNoLoad, kNoCheckpoint, kTemp1Real3DName);
   }
 
-  MatrixContainer[Temp_2_RS3D].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kTemp2Real3DName);
-  MatrixContainer[Temp_3_RS3D].SetAllValues(NULL,TMatrixRecord::mdtReal, FullDims   , NOLOAD, NOCHECKPOINT, kTemp3Real3DName);
+  mContainer[MI::kTemp2Real3D].set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kTemp2Real3DName);
+  mContainer[MI::kTemp3Real3D].set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kTemp3Real3DName);
 
-  MatrixContainer[FFT_X_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ReducedDims, NOLOAD, NOCHECKPOINT, kCufftXTempName);
-  MatrixContainer[FFT_Y_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ReducedDims, NOLOAD, NOCHECKPOINT, kCufftYTempName);
-  MatrixContainer[FFT_Z_temp].SetAllValues(NULL, TMatrixRecord::mdtFFTW, ReducedDims, NOLOAD, NOCHECKPOINT, kCufftZTempName);
-}// end of InitMatrixContainer
-//------------------------------------------------------------------------------
+  mContainer[MI::kTempFftwX].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kCufftXTempName);
+  mContainer[MI::kTempFftwY].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kCufftYTempName);
+  mContainer[MI::kTempFftwZ].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kCufftZTempName);
+}// end of addMatrices
+//----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Free all matrix objects.
+ */
+void MatrixContainer::freeMatrices()
+{
+  for (auto& it : mContainer)
+  {
+    if (it.second.matrixPtr)
+    {
+      delete it.second.matrixPtr;
+      it.second.matrixPtr = nullptr;
+    }
+  }
+}// end of freeMatrices
+//----------------------------------------------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------//
-//------------------------- Protected methods --------------------------------//
-//----------------------------------------------------------------------------//
+/**
+ * Load all marked matrices from the input HDF5 file.
+ */
+void MatrixContainer::loadDataFromInputFile()
+{
+  Hdf5File& inputFile = Parameters::getInstance().getInputFile();
 
+  for (const auto& it : mContainer)
+  {
+    if (it.second.loadData)
+    {
+      it.second.matrixPtr->readData(inputFile, it.second.matrixName);
+    }
+  }
+}// end of loadDataFromInputFile
+//----------------------------------------------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------//
-//-------------------------- Private methods ---------------------------------//
-//----------------------------------------------------------------------------//
+/**
+ * Load selected matrices from the checkpoint HDF5 file.
+ */
+void MatrixContainer::loadDataFromCheckpointFile()
+{
+  Hdf5File& checkpointFile = Parameters::getInstance().getCheckpointFile();
+
+  for (const auto& it : mContainer)
+  {
+    if (it.second.checkpoint)
+    {
+      it.second.matrixPtr->readData(checkpointFile,it.second.matrixName);
+    }
+  }
+}// end of loadDataFromCheckpointFile
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Store selected matrices into the checkpoint file.
+ */
+void MatrixContainer::storeDataIntoCheckpointFile()
+{
+  Hdf5File& checkpointFile = Parameters::getInstance().getCheckpointFile();
+  auto compressionLevel    = Parameters::getInstance().getCompressionLevel();
+  for (const auto& it : mContainer)
+  {
+    if (it.second.checkpoint)
+    {
+      it.second.matrixPtr->writeData(checkpointFile, it.second.matrixName, compressionLevel);
+    }
+  }
+}// end of storeDataIntoCheckpointFile
+//----------------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
 /**
  * Print error and and throw an exception.
- * @throw bad_alloc
- *
- * @param [in] FMT - format of error
- * @param [in] HDF5MatrixName - HDF5 dataset name
- * @param [in] File - File of error
- * @param [in] Line - Line of error
- *
  */
-void TMatrixContainer::PrintErrorAndThrowException(const char * FMT,
-                                                   const string HDF5MatrixName,
-                                                   const char * File,
-                                                   const int    Line)
+void MatrixContainer::printErrorAndThrowException(const char* fmt,
+                                                  MatrixName  matrixName,
+                                                  const char* file,
+                                                  const int   line)
 {
-  fprintf(stderr,FMT, HDF5MatrixName.c_str(), File, Line);
-  throw bad_alloc();
-}// end of PrintErrorAndAbort
-//------------------------------------------------------------------------------
+  fprintf(stderr,fmt, matrixName.c_str(), file, line);
+  throw std::bad_alloc();
+}// end of printErrorAndAbort
+//----------------------------------------------------------------------------------------------------------------------
 
 

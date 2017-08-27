@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              27 August    2017, 09:29 (revised)
+ *              27 August    2017, 12:42 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -42,173 +42,256 @@
 #include <Utils/MatrixNames.h>
 #include <Utils/DimensionSizes.h>
 
-using namespace std;
-
 /**
- * @enum TMatrixID
- * @brief Matrix identifers of all matrices in the k-space code
+ * @class   MatrixContainer
+ * @brief   Class implementing the matrix container.
+ * @details This container is responsible to maintain all the matrices in the code except the output
+ *          streams. The matrices are allocated, freed, loaded stored and check-pointed from here.
  */
-enum TMatrixID
-{
-    kappa, c2, p,
-
-    ux_sgx,uy_sgy, uz_sgz,
-    ux_shifted, uy_shifted, uz_shifted,
-    duxdx, duydy, duzdz,
-    dxudxn    , dyudyn    , dzudzn,
-    dxudxn_sgx, dyudyn_sgy, dzudzn_sgz,
-
-    rhox, rhoy, rhoz, rho0,
-    dt_rho0_sgx, dt_rho0_sgy, dt_rho0_sgz,
-
-    p0_source_input, sensor_mask_index, sensor_mask_corners,
-    ddx_k_shift_pos, ddy_k_shift_pos, ddz_k_shift_pos,
-    ddx_k_shift_neg, ddy_k_shift_neg, ddz_k_shift_neg,
-    x_shift_neg_r, y_shift_neg_r, z_shift_neg_r,
-    pml_x_sgx, pml_y_sgy, pml_z_sgz,
-    pml_x    , pml_y    , pml_z,
-
-    absorb_tau, absorb_eta, absorb_nabla1, absorb_nabla2, BonA,
-
-    ux_source_input, uy_source_input, uz_source_input,
-    p_source_input,
-
-    u_source_index, p_source_index, transducer_source_input,
-    delay_mask,
-
-    //---------------- output matrices -------------//
-    p_sensor_raw,  p_sensor_rms, p_sensor_max, p_sensor_min,
-    p_sensor_max_all, p_sensor_min_all,
-    ux_sensor_raw, uy_sensor_raw, uz_sensor_raw,
-
-    ux_shifted_sensor_raw, uy_shifted_sensor_raw, uz_shifted_sensor_raw, //non_staggered
-    ux_sensor_rms, uy_sensor_rms, uz_sensor_rms,
-    ux_sensor_max, uy_sensor_max, uz_sensor_max,
-    ux_sensor_min, uy_sensor_min, uz_sensor_min,
-    ux_sensor_max_all, uy_sensor_max_all, uz_sensor_max_all,
-    ux_sensor_min_all, uy_sensor_min_all, uz_sensor_min_all,
-
-
-    //--------------Temporary matrices -------------//
-    Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D,
-    FFT_X_temp, FFT_Y_temp, FFT_Z_temp, FFT_shift_temp
-}; // enum TMatrixID
-//------------------------------------------------------------------------------
-
-
-
-
-/**
- * @class TMatrixContainer
- * @brief Class implementing the matrix container.
- * @details This container is responsible to maintain all the matrices in the
- *          code except the output streams. The matrices are allocated, freed, loaded
- *          stored and checkpointed from here.
- */
-class TMatrixContainer
+class MatrixContainer
 {
   public:
+    /**
+     * @enum  MatrixIdx
+     * @brief Matrix identifers of all matrices in the k-space code.
+     */
+    enum class MatrixIdx
+    {
+      /// Kappa matrix.
+      kKappa,
+      /// c^2 matrix.
+      kC2,
+      /// Pressure matrix.
+      kP,
 
-    /// Constructor.
-    TMatrixContainer() {}
+      /// Acoustic density x.
+      kRhoX,
+      /// Acoustic density y.
+      kRhoY,
+      /// Acoustic density z.
+      kRhoZ,
+
+      /// Velocity x on staggered grid.
+      kUxSgx,
+      /// Velocity y on staggered grid.
+      kUySgy,
+      /// Velocity z on staggered grid.
+      kUzSgz,
+
+      /// Acoustic acceleration x.
+      kDuxdx,
+      /// Acoustic acceleration y.
+      kDuydy,
+      /// Acoustic acceleration z.
+      kDuzdz,
+
+      /// Initial velocity
+      kRho0,
+      /// dt / initial velocity on staggered grid x.
+      kDtRho0Sgx,
+      /// dt / initial velocity on staggered grid y.
+      kDtRho0Sgy,
+      /// dt / initial velocity on staggered grid z.
+      kDtRho0Sgz,
+
+      /// Positive Fourier shift in x.
+      kDdxKShiftPosR,
+      /// Positive Fourier shift in y.
+      kDdyKShiftPos,
+      /// Positive Fourier shift in z.
+      kDdzKShiftPos,
+
+      /// Negative Fourier shift in x
+      kDdxKShiftNegR,
+      /// Negative Fourier shift in y
+      kDdyKShiftNeg,
+      /// Negative Fourier shift in z
+      kDdzKShiftNeg,
+
+      /// PML on staggered grid x.
+      kPmlXSgx,
+      /// PML on staggered grid y.
+      kPmlYSgy,
+      /// PML on staggered grid z.
+      kPmlZSgz,
+      /// PML in x.
+      kPmlX,
+      /// PML in y.
+      kPmlY,
+      /// PML in z.
+      kPmlZ,
+
+      /// Nonlinear coefficient.
+      kBOnA,
+      /// Absorbing coefficient Tau.
+      kAbsorbTau,
+      /// Absorbing coefficient Eau.
+      kAbsorbEta,
+      /// Absorbing coefficient Nabla 1.
+      kAbsorbNabla1,
+      /// Absorbing coefficient Nabla 2.
+      kAbsorbNabla2,
+
+      /// Linear sensor mask.
+      kSensorMaskIndex,
+      /// Cuboid corners sensor mask.
+      kSensorMaskCorners,
+
+      /// Initial pressure source data.
+      kInitialPressureSourceInput,
+      /// Pressure source input data.
+      kPressureSourceInput,
+      /// Transducer source input data.
+      kTransducerSourceInput,
+      /// Velocity x source input data.
+      kVelocityXSourceInput,
+      /// Velocity y source input data.
+      kVelocityYSourceInput,
+      /// Velocity z source input data.
+      kVelocityZSourceInput,
+      /// Pressure source geometry data.
+      kPressureSourceIndex,
+      /// Velocity source geometry data.
+      kVelocitySourceIndex,
+      /// Delay mask for many types sources
+      kDelayMask,
+
+      /// Non uniform grid acoustic velocity in x.
+      kDxudxn,
+      /// Non uniform grid acoustic velocity in y.
+      kDyudyn,
+      /// Non uniform grid acoustic velocity in z.
+      kDzudzn,
+      /// Non uniform grid acoustic velocity on staggered grid x.
+      kDxudxnSgx,
+      /// Non uniform grid acoustic velocity on staggered grid y.
+      kDyudynSgy,
+      /// Non uniform grid acoustic velocity on staggered grid z.
+      kDzudznSgz,
+
+      /// velocity shift for non-staggered velocity in x.
+      kUxShifted,
+      /// velocity shift for non-staggered velocity in y.
+      kUyShifted,
+      /// velocity shift for non-staggered velocity in z.
+      kUzShifted,
+
+      /// Negative shift for non-staggered velocity in x.
+      kXShiftNegR,
+      /// Negative shift for non-staggered velocity in y.
+      kYShiftNegR,
+      /// Negative shift for non-staggered velocity in z.
+      kZShiftNegR,
+
+      /// 3D temporary matrix.
+      kTemp1Real3D,
+      /// 3D temporary matrix.
+      kTemp2Real3D,
+      /// 3D temporary matrix.
+      kTemp3Real3D,
+      /// Temporary matrix for 1D fft in x.
+      kTempFftwX,
+      /// Temporary matrix for 1D fft in y.
+      kTempFftwY,
+      /// Temporary matrix for 1D fft in z.
+      kTempFftwZ,
+      /// Temporary matrix for fft shift.
+      kTempFftwShift
+    }; // end of MatrixIdx
+
+        /// Constructor.
+    MatrixContainer();
+    /// Copy constructor is not allowed.
+    MatrixContainer(const MatrixContainer&) = delete;
     /// Destructor.
-    virtual ~TMatrixContainer();
+    ~MatrixContainer();
+
+    /// Operator = is not allowed.
+    MatrixContainer& operator=(const MatrixContainer&) = delete;
 
     /**
-     * @brief Get number of matrices in the container.
-     * @details Get number of matrices in the container.
-     * @return number of matrices in the container.
+     * @brief  Get the number of matrices in the container.
+     * @return Number of matrices in the container.
      */
     size_t size() const
     {
-      return MatrixContainer.size();
+      return mContainer.size();
     };
 
     /**
-     * @brief Is the container empty?
-     * @details Is the container empty?
-     * @return true if the container is empty
+     * @brief  Is the container empty?
+     * @return true - If the container is empty.
      */
     bool empty() const
     {
-      return MatrixContainer.empty();
+      return mContainer.empty();
     };
 
-    /// Create instances of all objects in the container.
-    void CreateAllObjects();
-
-    /// Load all matrices from the HDF5 file.
-    void LoadDataFromInputHDF5File(Hdf5File & HDF5_File);
-    /// Load all matrices from the HDF5 file.
-    void LoadDataFromCheckpointHDF5File(Hdf5File & HDF5_File);
-    /// Store selected matrices into the checkpoint file.
-    void StoreDataIntoCheckpointHDF5File(Hdf5File & HDF5_File);
-
-    /// Free all matrices - destroy them.
-    void FreeAllMatrices();
-
-    /// Set all matrices recored - populate the container.
-    void AddMatricesIntoContainer();
-
     /**
-     * @brief Get matrix record (data and information).
-     * @details Get matrix record (data and information).
-     * @param [in] MatrixID - Matrix identifier
-     * @return the matrix record.
+     * @brief   operator[]
+     * @param [in]  matrixIdx - Matrix identifier
+     * @return Matrix record.
      */
-    TMatrixRecord& GetMatrixRecord(const TMatrixID MatrixID)
+    inline MatrixRecord& operator[](const MatrixIdx matrixIdx)
     {
-      return MatrixContainer[MatrixID];
+      return mContainer[matrixIdx];
     };
 
     /**
-     * @brief operator [].
-     * @details operator [].
-     * @param [in]  MatrixID - Matrix identifier
-     * @return the matrix record.
-     */
-    TMatrixRecord& operator [] (const TMatrixID MatrixID)
-    {
-      return MatrixContainer[MatrixID];
-    };
-
-    /**
-     * @brief Get the matrix with a specific type from the container.
-     * @details This template routine returns the reference to the matrix recasted to
-     * the specific class.
-     * @param [in] MatrixID - Matrix identifier
-     * @return Base Matrix
+     * @brief      Get the matrix with a specific type from the container.
+     * @details    This template routine returns the reference to the matrix re-casted to the specific class type.
+     * @param [in] matrixIdx - Matrix identifier,
+     * @return     Reference to the Matrix,
      */
     template <typename T>
-    inline T& GetMatrix(const TMatrixID MatrixID)
+    inline T& getMatrix(const MatrixIdx matrixIdx)
     {
-      return static_cast<T &> (*(MatrixContainer[MatrixID].MatrixPtr));
+      return static_cast<T&> (*(mContainer[matrixIdx].matrixPtr));
     };
+
+    /**
+     * @brief Create all matrix objects in the container.
+     * @throw std::bad_alloc        - Usually due to out of memory.
+     * @throw std::invalid_argument - If this routine is called more than once.
+     * @throw std::invalid_argument - If matrix type is unknown.
+     */
+    void createMatrices();
+    /// Populate the container based on the simulation type.
+    void addMatrices();
+    /// Destroy and free all matrices.
+    void freeMatrices();
+
+    /// Load all marked matrices from the input HDF5 file.
+    void loadDataFromInputFile();
+    /// Load selected matrices from the checkpoint HDF5 file.
+    void loadDataFromCheckpointFile();
+    /// Store selected matrices into the checkpoint file.
+    void storeDataIntoCheckpointFile();
 
   protected:
 
 
   private:
 
-    /// Datatype for map associating the matrix ID enum and matrix record.
-    typedef map<TMatrixID, TMatrixRecord> TMatrixRecordContainer;
-
     /// Map holding the container.
-    TMatrixRecordContainer MatrixContainer;
+    std::map<MatrixIdx, MatrixRecord>  mContainer;
 
-    /// Copy constructor is not allowed for public.
-    TMatrixContainer(const TMatrixContainer& src);
+    /**
+     * @brief Print error and and throw an exception.
+     *
+     * @param [in] FMT - format of error
+     * @param [in] HDF5MatrixName - HDF5 dataset name
+     * @param [in] File - File of error
+     * @param [in] Line - Line of error
+     *
+     * @throw std::bad_alloc
+     */
+    void printErrorAndThrowException(const char* fmt,
+                                     MatrixName  matrixName,
+                                     const char* file,
+                                     const int   line);
 
-    /// Operator = is not allowed for public.
-    TMatrixContainer & operator = (const TMatrixContainer& src);
-
-    /// Print error and throw an exception.
-    void PrintErrorAndThrowException(const char * FMT,
-                                     const string HDF5MatrixName,
-                                     const char * File,
-                                     const int Line);
-
-};// end of TMatrixContainer
-//------------------------------------------------------------------------------
+};// end of MatrixContainer
+//----------------------------------------------------------------------------------------------------------------------
 
 #endif	/* MATRIX_CONTAINER_H */

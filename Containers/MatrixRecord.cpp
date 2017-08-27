@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        27 August    2017, 08:54 (created) \n
- *              27 August    2017, 08:54 (revised)
+ *              27 August    2017, 10:00 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -33,86 +33,86 @@
 #include <Containers/MatrixRecord.h>
 
 
+//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------------
 
-//============================================================================//
-//                              TMatrixRecord                                 //
-//============================================================================//
 
-//----------------------------------------------------------------------------//
-//--------------------------- Public methods ---------------------------------//
-//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Default constructor.
+ */
+MatrixRecord::MatrixRecord()
+  : matrixPtr(nullptr),
+    matrixType(MatrixType::kReal),
+    dimensionSizes(),
+    loadData(false),
+    checkpoint(false),
+    matrixName()
+{
+
+}// end of constructor
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Copy constructor of TMatrixRecord.
- * @param [in] src
  */
-TMatrixRecord::TMatrixRecord(const TMatrixRecord& src) :
-        MatrixPtr(src.MatrixPtr),
-        MatrixDataType(src.MatrixDataType),
-        dimensionSizes(src.dimensionSizes),
-        LoadData(src.LoadData),
-        Checkpoint(src.Checkpoint),
-        HDF5MatrixName(src.HDF5MatrixName)
+MatrixRecord::MatrixRecord(const MatrixRecord& src)
+  : matrixPtr(src.matrixPtr),
+    matrixType(src.matrixType),
+    dimensionSizes(src.dimensionSizes),
+    loadData(src.loadData),
+    checkpoint(src.checkpoint),
+    matrixName(src.matrixName)
 {
 
-}// end of TMatrixRecord
-//------------------------------------------------------------------------------
-
+}// end of copy constructor
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * operator = of TMatrixRecord
- * @param  [in] src
- * @return this
+ * operator =
  */
-TMatrixRecord& TMatrixRecord::operator = (const TMatrixRecord& src)
+MatrixRecord& MatrixRecord::operator=(const MatrixRecord& src)
 {
   if (this != &src)
   {
-    MatrixPtr       = src.MatrixPtr;
-    MatrixDataType  = src.MatrixDataType;
+    matrixPtr       = src.matrixPtr;
+    matrixType      = src.matrixType;
     dimensionSizes  = src.dimensionSizes;
-    LoadData        = src.LoadData;
-    Checkpoint      = src.Checkpoint;
-    HDF5MatrixName  = src.HDF5MatrixName;
+    loadData        = src.loadData;
+    checkpoint      = src.checkpoint;
+    matrixName      = src.matrixName;
   }
 
   return *this;
-}// end of operator =
-//------------------------------------------------------------------------------
-
-
+}// end of operator=
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Set all values for the record
- * @param [in] MatrixPtr        - Pointer to the MatrixClass object
- * @param [in] MatrixDataType   - Matrix data type
- * @param [in] DimensionSizes   - Dimension sizes
- * @param [in] LoadData         - Load data from file?
- * @param [in] Checkpoint       - Checkpoint this matrix?
- * @param [in] HDF5MatrixName   - HDF5 matrix name
+ * Set all values for the record.
  */
-void TMatrixRecord::SetAllValues(BaseMatrix *          MatrixPtr,
-                                 const TMatrixDataType  MatrixDataType,
-                                 const DimensionSizes   dimensionSizes,
-                                 const bool             LoadData,
-                                 const bool             Checkpoint,
-                                 const std::string           HDF5MatrixName)
+void MatrixRecord::set(const MatrixType     matrixType,
+                       const DimensionSizes dimensionSizes,
+                       const bool           loadData,
+                       const bool           checkpoint,
+                       MatrixName&          matrixName)
 {
-  this->MatrixPtr       = MatrixPtr;
-  this->MatrixDataType  = MatrixDataType;
-  this->dimensionSizes  = dimensionSizes;
-  this->LoadData        = LoadData;
-  this->Checkpoint      = Checkpoint;
-  this->HDF5MatrixName  = HDF5MatrixName;
-}// end of SetAllValues
-//------------------------------------------------------------------------------
+  this->matrixPtr        = nullptr;
+  this->matrixType       = matrixType;
+  this->dimensionSizes   = dimensionSizes;
+  this->loadData         = loadData;
+  this->checkpoint       = checkpoint;
+  this->matrixName       = matrixName;
+}// end of set
+//----------------------------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-//------------------------- Protected methods --------------------------------//
-//----------------------------------------------------------------------------//
-
-//----------------------------------------------------------------------------//
-//-------------------------- Private methods ---------------------------------//
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//

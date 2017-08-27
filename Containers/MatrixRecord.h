@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        27 August    2017, 08:54 (created) \n
- *              27 August    2017, 08:54 (revised)
+ *              27 August    2017, 10:00 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -40,56 +40,71 @@
 #include <Utils/MatrixNames.h>
 
 /**
- * @struct TMatrixRecord
- * @brief  A structure storing details about the matrix. The matrix container
- * stores this structures.
- * @details A structure storing details about the matrix. The matrix container
- * stores the list of these records with the data.
+ * @struct  MatrixRecord
+ * @brief   A structure storing details about the matrix.
+ * @details A structure storing details about the matrix. The matrix container stores the list of
+ *          these records - metadata and pointer to the matrix.
  */
-struct TMatrixRecord
+struct MatrixRecord
 {
   /**
-   * @enum TMatrixDataType
+   * @enum  MatrixType
    * @brief All possible types of the matrix.
    */
-  enum TMatrixDataType {mdtReal, mdtComplex, mdtIndex, mdtFFTW, mdtUxyz};
+  enum class MatrixType
+  {
+    /// Matrix for real values.
+    kReal,
+    /// Matrix for complex values.
+    kComplex,
+    /// Matrix for index values.
+    kIndex,
+    /// Matrix for FFTW.
+    kFftw,
+    /// Matrix for acoustic velocity.
+    kVelocity
+  };
 
-  /// Pointer to the matrix object.
-  BaseMatrix   * MatrixPtr;
-  /// Matrix data type.
-  TMatrixDataType MatrixDataType;
-  /// Matrix dimension sizes.
-  DimensionSizes dimensionSizes;
-  /// Is the matrix content loaded from the HDF5 file.
-  bool            LoadData;
-  /// Is the matrix necessary to be preserver when checkpoint is enabled.
-  bool            Checkpoint;
-  /// HDF5 matrix name.
-  std::string          HDF5MatrixName;
-
-  /// Default constructor.
-  TMatrixRecord() : MatrixPtr(NULL), MatrixDataType(mdtReal),
-          dimensionSizes(), LoadData(false), Checkpoint(false),
-          HDF5MatrixName("")
-  {};
-
+   /// Default constructor.
+  MatrixRecord();
   /// Copy constructor.
-  TMatrixRecord(const TMatrixRecord& src);
-
+  MatrixRecord(const MatrixRecord& src);
   /// operator =
-  TMatrixRecord& operator = (const TMatrixRecord& src);
+  MatrixRecord& operator=(const MatrixRecord& src);
 
-  /// Set all values of the record.
-  void SetAllValues(BaseMatrix *          MatrixPtr,
-                    const TMatrixDataType  MatrixDataType,
-                    const DimensionSizes  dimensionSizes,
-                    const bool             LoadData,
-                    const bool             Checkpoint,
-                    const std::string      HDF5MatrixName);
+
+  /**
+   * @brief Set all values for the record.
+   * @param [in] matrixType     - Matrix data type.
+   * @param [in] dimensionSizes - Dimension sizes.
+   * @param [in] loadData       - Load data from file?
+   * @param [in] checkpoint     - Checkpoint this matrix?
+   * @param [in] matrixName     - HDF5 matrix name.
+   */
+  void set(const MatrixType      matrixType,
+           const DimensionSizes  dimensionSizes,
+           const bool            loadData,
+           const bool            checkpoint,
+           MatrixName&           matrixName);
+
 
   // Destructor.
-  virtual ~TMatrixRecord() {};
-};// end of TMatrixRecord
-//------------------------------------------------------------------------------
+  virtual ~MatrixRecord() {};
+
+
+  /// Pointer to the matrix object.
+  BaseMatrix*    matrixPtr;
+  /// Matrix data type.
+  MatrixType     matrixType;
+  /// Matrix dimension sizes.
+  DimensionSizes dimensionSizes;
+  /// Is the matrix content loaded from the HDF5 file?
+  bool           loadData;
+  /// Is the matrix necessary to be preserver when checkpoint is enabled?
+  bool           checkpoint;
+  /// Matrix name in the HDF5 file.
+  std::string    matrixName;
+};// end of MatrixRecord
+//----------------------------------------------------------------------------------------------------------------------
 
 #endif	/* MATRIX_RECORD_H */

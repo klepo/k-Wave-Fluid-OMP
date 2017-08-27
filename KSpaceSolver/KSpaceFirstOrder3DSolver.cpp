@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              27 August    2017, 09:09 (revised)
+ *              27 August    2017, 12:40 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -84,7 +84,7 @@ using namespace std;
  * Constructor of the class.
  */
 TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver():
-        MatrixContainer(), OutputStreamContainer(),
+        mMatrixContainer(), mOutputStreamContainer(),
         mParameters(Parameters::getInstance()),
         ActPercent(0),
         TotalTime(), PreProcessingTime(), DataLoadTime (), SimulationTime(),
@@ -114,12 +114,12 @@ TKSpaceFirstOrder3DSolver::~TKSpaceFirstOrder3DSolver()
 void TKSpaceFirstOrder3DSolver::AllocateMemory()
 {
   // create container, then all matrices
-  MatrixContainer.AddMatricesIntoContainer();
-  MatrixContainer.CreateAllObjects();
+  mMatrixContainer.addMatrices();
+  mMatrixContainer.createMatrices();
 
   // add output streams into container
   //@todo Think about moving under LoadInputData routine...
-  OutputStreamContainer.AddStreamsIntoContainer(MatrixContainer);
+  mOutputStreamContainer.addStreams(mMatrixContainer);
 }// end of AllocateMemory
 //------------------------------------------------------------------------------
 
@@ -128,8 +128,8 @@ void TKSpaceFirstOrder3DSolver::AllocateMemory()
  */
 void TKSpaceFirstOrder3DSolver::FreeMemory()
 {
-  MatrixContainer.FreeAllMatrices();
-  OutputStreamContainer.FreeAllStreams();
+  mMatrixContainer.freeMatrices();
+  mOutputStreamContainer.freeStreams();
 }// end of FreeMemory
 //------------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
   Hdf5File& HDF5_CheckpointFile = mParameters.getCheckpointFile();
 
   // Load data from disk
-  MatrixContainer.LoadDataFromInputHDF5File(HDF5_InputFile);
+  mMatrixContainer.loadDataFromInputFile();
 
   // close the input file
   HDF5_InputFile.close();
@@ -174,7 +174,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     mParameters.setTimeIndex(new_t_index);
 
     // Read necessary matrices from the checkpoint file
-    MatrixContainer.LoadDataFromCheckpointHDF5File(HDF5_CheckpointFile);
+    mMatrixContainer.loadDataFromCheckpointFile();
 
     HDF5_CheckpointFile.close();
 
@@ -190,7 +190,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
     // Restore elapsed time
     RestoreCumulatedElapsedFromOutputFile();
 
-    OutputStreamContainer.ReopenStreams();
+    mOutputStreamContainer.reopenStreams();
   }
   else
   { //-------------------- First round of multi-leg simulation ---------------//
@@ -199,7 +199,7 @@ void TKSpaceFirstOrder3DSolver::LoadInputData()
 
 
     // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
-    OutputStreamContainer.CreateStreams();
+    mOutputStreamContainer.createStreams();
 
   }
 
@@ -2530,8 +2530,8 @@ void TKSpaceFirstOrder3DSolver::PostPorcessing()
   }// u_final
 
   // Apply post-processing and close
-  OutputStreamContainer.PostProcessStreams();
-  OutputStreamContainer.CloseStreams();
+  mOutputStreamContainer.postProcessStreams();
+  mOutputStreamContainer.closeStreams();
 
 
   // store sensor mask if wanted
@@ -2567,7 +2567,7 @@ void TKSpaceFirstOrder3DSolver::StoreSensorData()
     {
       Calculate_shifted_velocity();
     }
-    OutputStreamContainer.SampleStreams();
+    mOutputStreamContainer.sampleStreams();
   }
 }// end of StoreData
 //------------------------------------------------------------------------------
@@ -2593,7 +2593,7 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   //--------------------- Store Matrices ------------------------------//
 
   // Store all necessary matrices in Checkpoint file
-  MatrixContainer.StoreDataIntoCheckpointHDF5File(HDF5_CheckpointFile);
+  mMatrixContainer.storeDataIntoCheckpointFile();
 
   // Write t_index
   HDF5_CheckpointFile.writeScalarValue(HDF5_CheckpointFile.getRootGroup(),
@@ -2626,9 +2626,9 @@ void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
   // checkpoint only if necessary (t_index > start_index) - here we're at  step + 1
   if (mParameters.getTimeIndex() > mParameters.getSamplingStartTimeIndex())
   {
-    OutputStreamContainer.CheckpointStreams();
+    mOutputStreamContainer.checkpointStreams();
   }
-  OutputStreamContainer.CloseStreams();
+  mOutputStreamContainer.closeStreams();
 }// end of SaveCheckpointData()
 //------------------------------------------------------------------------------
 
