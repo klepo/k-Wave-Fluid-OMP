@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              26 August    2017, 12:54 (revised)
+ *              28 August    2017, 14:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -98,7 +98,7 @@ class VelocityMatrix : public RealMatrix
                                                  FftwComplexMatrix& fftTemp);
 
    /**
-    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, x direction.
+    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid, x direction.
     *
     * <b> Matlab code: </b>
     *
@@ -114,7 +114,7 @@ class VelocityMatrix : public RealMatrix
                                                      const RealMatrix&  dxudxnSgx,
                                                      FftwComplexMatrix& fftTemp);
    /**
-    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, y direction.
+    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid, y direction.
     *
     * <b> Matlab code: </b>
     *
@@ -130,7 +130,7 @@ class VelocityMatrix : public RealMatrix
                                                      const RealMatrix&  dyudynSgy,
                                                      FftwComplexMatrix& fftTemp);
    /**
-    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, z direction.
+    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid, z direction.
     *
     * <b> Matlab code: </b>
     *
@@ -168,7 +168,7 @@ class VelocityMatrix : public RealMatrix
                                             const float       dtRho0,
                                             const RealMatrix& pmlX);
     /**
-     * @brief Compute acoustic velocity for homogenous medium and non-uniform grid, x direction.
+     * @brief Compute acoustic velocity for homogenous medium and nonuniform grid, x direction.
      *
      * @param [in]     ifftX     - ifftn( bsxfun(\@times, ddx_k_shift_pos, kappa .* p_k))
      * @param [in]     dtRho0    - precomputed dt .* rho0 scalar value

@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              26 August    2017, 12:54 (revised)
+ *              28 August    2017, 14:45 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -34,8 +34,6 @@
 #include <MatrixClasses/VelocityMatrix.h>
 #include <MatrixClasses/FftwComplexMatrix.h>
 
-
-using namespace std;
 //--------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------- Constants -----------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
@@ -82,7 +80,7 @@ void VelocityMatrix::computeInitialVelocityHomogeneousUniform(const float dtRho0
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, x direction.
+ * Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid, x direction.
  */
 void VelocityMatrix::computeInitialVelocityXHomogeneousNonuniform(const float        dtRho0Sgx,
                                                                   const RealMatrix&  dxudxnSgx,
@@ -109,7 +107,7 @@ void VelocityMatrix::computeInitialVelocityXHomogeneousNonuniform(const float   
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, x direction.
+ * Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid, x direction.
  */
 void VelocityMatrix::computeInitialVelocityYHomogeneousNonuniform(const float        dtRho0Sgy,
                                                                   const RealMatrix&  dyudynSgy,
@@ -137,7 +135,7 @@ void VelocityMatrix::computeInitialVelocityYHomogeneousNonuniform(const float   
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute acoustic velocity for initial pressure problem, homogenous medium, non-uniform grid, z direction.
+ * Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid, z direction.
  */
 void VelocityMatrix::computeInitialVelocityZHomogeneousNonuniform(const float dtRho0Sgz,
                                                                   const  RealMatrix& dzudznSgz,
@@ -242,7 +240,7 @@ void VelocityMatrix::computeVelocityXHomogeneousUniform(const RealMatrix& ifftX,
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute acoustic velocity for homogenous medium and non-uniform grid, x direction.
+ * Compute acoustic velocity for homogenous medium and nonuniform grid, x direction.
  */
 void VelocityMatrix::computeVelocityXHomogeneousNonuniform(const RealMatrix& ifftX,
                                                            const float       dtRho0,

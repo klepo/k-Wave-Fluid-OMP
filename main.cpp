@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:57 (created) \n
- *              25 August    2017, 11:17 (revised)
+ *              28 August    2017, 14:25 (revised)
  *
  *
  *
@@ -821,11 +821,11 @@ static const char * FMT_SmallSeparator = "--------------------------------\n";
 int main(int argc, char** argv)
 {
   // Create K-Space solver
-  TKSpaceFirstOrder3DSolver KSpaceSolver;
+  KSpaceFirstOrder3DSolver KSpaceSolver;
 
   // print header
   fprintf(stdout,"%s",FMT_SmallSeparator);
-  fprintf(stdout,"  %s\n",KSpaceSolver.GetCodeName().c_str());
+  fprintf(stdout,"  %s\n",KSpaceSolver.getCodeName().c_str());
   fprintf(stdout,"%s",FMT_SmallSeparator);
 
   // Create parameters and parse command line
@@ -834,20 +834,20 @@ int main(int argc, char** argv)
   Parameters.init(argc,argv);
   if (Parameters.isPrintVersionOnly())
   {
-    KSpaceSolver.PrintFullNameCodeAndLicense(stdout);
+    KSpaceSolver.printFullCodeNameAndLicense(stdout);
     return 0;
   }
 
 
   // set number of threads and bind them to cores
   #ifdef _OPENMP
-    KSpaceSolver.SetProcessorAffinity();
+    KSpaceSolver.setProcessorAffinity();
     omp_set_num_threads(Parameters.getNumberOfThreads());
   #endif
 
 
   fprintf(stdout, "Number of CPU threads:    %6ld\n", Parameters.getNumberOfThreads());
-  KSpaceSolver.PrintParametersOfSimulation(stdout);
+  KSpaceSolver.printSimulationParameters(stdout);
 
 
   fprintf(stdout,"%s",FMT_SmallSeparator);
@@ -859,7 +859,7 @@ int main(int argc, char** argv)
   // allocate memory
   try
   {
-    KSpaceSolver.AllocateMemory();
+    KSpaceSolver.allocateMemory();
   }
   catch (exception e)
   {
@@ -875,7 +875,7 @@ int main(int argc, char** argv)
   fflush(stdout);
   try
   {
-    KSpaceSolver.LoadInputData();
+    KSpaceSolver.loadInputData();
   }
   catch (ios::failure e)
   {
@@ -885,7 +885,7 @@ int main(int argc, char** argv)
   }
   fprintf(stdout, "Done\n");
 
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",KSpaceSolver.GetDataLoadTime());
+  fprintf(stdout,"Elapsed time:          %8.2fs\n",KSpaceSolver.getDataLoadTime());
 
   if (Parameters.getTimeIndex() > 0)
   {
@@ -896,16 +896,16 @@ int main(int argc, char** argv)
   fprintf(stdout,"%s",FMT_SmallSeparator);
   fprintf(stdout, ".......... Computation .........\n");
 
-  KSpaceSolver.Compute();
+  KSpaceSolver.compute();
 
   fprintf(stdout,"%s",FMT_SmallSeparator);
   fprintf(stdout, "............ Summary ...........\n");
-  fprintf(stdout, "Peak memory in use:   %8ldMB\n",KSpaceSolver.ShowMemoryUsageInMB());
-  if (KSpaceSolver.GetCumulatedTotalTime() != KSpaceSolver.GetTotalTime())
+  fprintf(stdout, "Peak memory in use:   %8ldMB\n",KSpaceSolver.getMemoryUsage());
+  if (KSpaceSolver.getCumulatedTotalTime() != KSpaceSolver.getTotalTime())
   {
-    fprintf(stdout,"This leg execution time:%7.2fs\n",KSpaceSolver.GetTotalTime());
+    fprintf(stdout,"This leg execution time:%7.2fs\n",KSpaceSolver.getTotalTime());
   }
-  fprintf(stdout, "Total execution time:  %8.2fs\n",KSpaceSolver.GetCumulatedTotalTime());
+  fprintf(stdout, "Total execution time:  %8.2fs\n",KSpaceSolver.getCumulatedTotalTime());
 
 
   fprintf(stdout,"%s",FMT_SmallSeparator);

@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        08 December  2011, 16:34 (created) \n
- *              25 August    2017, 11:14 (revised)
+ *              28 August    2017, 14:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -243,7 +243,7 @@ class Parameters
      * @brief  Get scalar value of sound speed.
      * @return Sound speed.
      */
-    float&  getC0Scalar()         { return mC0Scalar; };      // Fix in the future
+    float  getC0Scalar()        const { return mC0Scalar; };
     /**
      * @brief  Get scalar value of sound speed squared.
      * @return Sound speed.
@@ -260,12 +260,12 @@ class Parameters
      * @brief  Get value of homogeneous medium density.
      * @return Density.
      */
-    float&  getRho0Scalar()      { return mRho0Scalar; }; // Fix in the future
+    float  getRho0Scalar()      const  { return mRho0Scalar; };
     /**
      * @brief  Get value of homogeneous medium density on staggered grid in x direction.
      * @return Staggered density.
      */
-    float&  getRho0SgxScalar()   { return mRho0SgxScalar; };  // Fix in the future
+    float  getRho0SgxScalar()   const { return mRho0SgxScalar; };
     /**
      * @brief  Get value of dt / rho0Sgx.
      * @return Staggered density.
@@ -275,7 +275,7 @@ class Parameters
      * @brief  Get value of homogeneous medium density on staggered grid in y direction.
      * @return Staggered density.
      */
-    float&  getRho0SgyScalar()   { return mRho0SgyScalar; };  // Fix in the future
+    float  getRho0SgyScalar()  const  { return mRho0SgyScalar; };
     /**
      * @brief  Get value of dt / rho0Sgy.
      * @return Staggered density.
@@ -285,7 +285,7 @@ class Parameters
      * @brief  Get value of homogeneous medium density on staggered grid in z direction.
      * @return Staggered density.
      */
-    float&  getRho0SgzScalar()   { return mRho0SgzScalar; };  // Fix in the future
+    float  getRho0SgzScalar()   const { return mRho0SgzScalar; };
     /**
      * @brief  Get value of dt / rho0Sgz.
      * @return Staggered density.
@@ -319,7 +319,7 @@ class Parameters
      * @brief  Get value of alpha absorption coefficient.
      * @return Alpha absorption coefficient.
      */
-    float&  getAlphaCoeffScalar()     { return mAlphaCoeffScalar; }   // Fix in the future
+    float  getAlphaCoeffScalar()     const { return mAlphaCoeffScalar; };
     /**
      * @brief  Get alpha power value for the absorption law.
      * @return Alpha power value.
@@ -329,7 +329,7 @@ class Parameters
      * @brief  Get absorb eta coefficient for homogeneous medium (scalar value)?
      * @return Absorb eta coefficient.
      */
-    float&  getAbsorbEtaScalar()       { return mAbsorbEtaScalar; };    // Fix in the future
+    float  getAbsorbEtaScalar()      const { return mAbsorbEtaScalar; };
     /**
      * @brief Set absorb eta coefficient for homogeneous medium (scalar value).
      * @param [in] absrobEta - New value for absorb eta
@@ -339,7 +339,7 @@ class Parameters
      * @brief  Get absorb tau coefficient for homogeneous medium.
      * @return Absorb tau coefficient.
      */
-    float&  getAbsorbTauScalar()      { return mAbsorbTauScalar; }; // Fix in the future
+    float  getAbsorbTauScalar()      const { return mAbsorbTauScalar; };
     /**
      * @brief Set absorb tau coefficient for homogeneous medium (scalar value).
      * @param [in] absorbTau - New value for absorb tau.
@@ -355,7 +355,7 @@ class Parameters
      * @brief  Get nonlinear coefficient for homogenous medium.
      * @return Nonlinear coefficient.
      */
-    float&  getBOnAScalar()            { return mBOnAScalar; };     // Fix in the future
+    float  getBOnAScalar()           const { return mBOnAScalar; };
 
     //------------------------------------------ Perfectly matched layer ---------------------------------------------//
     /**

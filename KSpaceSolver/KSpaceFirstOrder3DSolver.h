@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        12 July      2012, 10:27 (created)\n
- *              27 August    2017, 12:42 (revised)
+ *              28 August    2017, 13:28 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,8 +31,8 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TKSPACE3DSOLVER_H
-#define	TKSPACE3DSOLVER_H
+#ifndef KSPACE_FIRST_ORDER_3D_SOLVER_H
+#define KSPACE_FIRST_ORDER_3D_SOLVER_H
 
 #include <fftw3.h>
 
@@ -50,561 +50,810 @@
 
 #include <Utils/TimeMeasure.h>
 
-using namespace std;
-
-
 /**
- * @class TKSpaceFirstOrder3DSolver
- * @brief Class responsible for running the k-space first order 3D method.
- * @details Class responsible for running the k-space first order 3D method. This
- *          class maintain the whole k-wave (implements the time loop).
+ * @class   KSpaceFirstOrder3DSolver
+ * @brief   Class responsible for running the k-space first order 3D method.
+ * @details Class responsible for running the k-space first order 3D method. This class maintain
+ *          the whole k-wave (implements the time loop).
  *
  */
-class TKSpaceFirstOrder3DSolver
+class KSpaceFirstOrder3DSolver
 {
   public:
     /// Constructor.
-    TKSpaceFirstOrder3DSolver();
+    KSpaceFirstOrder3DSolver();
+    /// Copy constructor not allowed for public.
+    KSpaceFirstOrder3DSolver(const KSpaceFirstOrder3DSolver&) = delete;
     /// Destructor.
-    virtual ~TKSpaceFirstOrder3DSolver();
-
+    virtual ~KSpaceFirstOrder3DSolver();
+    /// operator= not allowed for public.
+    KSpaceFirstOrder3DSolver& operator=(const KSpaceFirstOrder3DSolver&) = delete;
 
     /// Memory allocation.
-    virtual void AllocateMemory();
+    virtual void allocateMemory();
     /// Memory deallocation.
-    virtual void FreeMemory();
+    virtual void freeMemory();
 
-    /// Load simulation data from the input file.
-    virtual void LoadInputData();
+    /**
+     * @brief Load simulation data.
+     *
+     * If checkpointing is enabled, this may include reading data from checkpoint and output file.
+     */
+    virtual void loadInputData();
+    /**
+     * @brief This method computes k-space First Order 3D simulation.
+     *
+     * This method computes k-space First Order 3D simulation. It launches calculation on a given
+     * dataset going through FFT initialization, pre-processing, main loop and post-processing phases.
+     */
+    virtual void compute();
 
-    /// Compute the 3D kspace first order simulation.
-    virtual void Compute();
+    /**
+     * @brief Print parameters of the simulation.
+     * @param [in, out] file - Where to write the parameters (stdout/stderr)
+     */
+    virtual void printSimulationParameters(FILE* file) const;
 
-    /// Print parameters of the simulation.
-    virtual void PrintParametersOfSimulation(FILE * file);
+    /**
+     * @brief  Get memory usage in MB on the host side.
+     * @return Memory consumed on the host side in MB.
+     */
+    virtual size_t getMemoryUsage() const;
 
-    /// Get memory usage in MB.
-    virtual size_t ShowMemoryUsageInMB();
+    /**
+     * @brief  Get code name - release code version.
+     * @return Release code version.
+     */
+    std::string getCodeName() const {return "kspaceFirstOrder3D-OMP v1.1"; };
 
-    /// Get code name.
-    string GetCodeName() {return "kspaceFirstOrder3D-OMP v1.1"; };
+    /**
+     * @brief Print the code name and license.
+     * @param [in] file - file to print the data (stdout).
+     */
+    void   printFullCodeNameAndLicense(FILE* file) const;
 
-    /// Print the code name and license.
-    void   PrintFullNameCodeAndLicense(FILE * file);
+    /**
+     * @brief   Set processor affinity.
+     * @warning This may not work on some OS, it should be done by user before launching the code. Moreover, the user
+     * may want to change the thread placement, e.g. on NUMA systems.
+     */
+    void   setProcessorAffinity();
 
-    /// Set processor affinity.
-    void   SetProcessorAffinity();
+    /**
+     * @brief  Get total simulation time.
+     * @return Total simulation time in seconds.
+     */
+    double getTotalTime()          const { return mTotalTime.getElapsedTime();          };
+    /**
+     * @brief  Get pre-processing time.
+     * @return Pre-processing time in seconds.
+     */
+    double getPreProcessingTime()  const { return mPreProcessingTime.getElapsedTime();  };
+    /**
+     * @brief  Get data load time.
+     * @return Time to load data in seconds.
+     */
+    double getDataLoadTime()       const { return mDataLoadTime.getElapsedTime();       };
+    /**
+     * @brief  Get simulation time (time loop).
+     * @return Time to execute the simulation in seconds.
+     */
+    double getSimulationTime()     const { return mSimulationTime.getElapsedTime();     };
+    /**
+     * @brief  Get post-processing time.
+     * @return Time to postprocess simulation data in seconds.
+     */
+    double getPostProcessingTime() const { return mPostProcessingTime.getElapsedTime(); };
 
-    /// Get total simulation time.
-    double GetTotalTime()          const { return TotalTime.getElapsedTime();         };
-
-    /// Get pre-processing time.
-    double GetPreProcessingTime()  const { return PreProcessingTime.getElapsedTime(); };
-
-    /// Get data load time.
-    double GetDataLoadTime()       const { return DataLoadTime.getElapsedTime();      };
-
-    /// Get simulation time (time loop).
-    double GetSimulationTime()     const { return SimulationTime.getElapsedTime();    };
-
-    /// Get post-processing time.
-    double GetPostProcessingTime() const { return PostProcessingTime.getElapsedTime();};
-
-    /// Get total simulation time cumulated over all legs.
-    double GetCumulatedTotalTime()          const { return TotalTime.getElapsedTimeOverAllLegs();          };
-    /// Get pre-processing time cumulated over all legs.
-    double GetCumulatedPreProcessingTime()  const { return PreProcessingTime.getElapsedTimeOverAllLegs();  };
-    /// Get data load time cumulated over all legs.
-    double GetCumulatedDataLoadTime()       const { return DataLoadTime.getElapsedTimeOverAllLegs();       };
-    /// Get simulation time (time loop) cumulated over all legs.
-    double GetCumulatedSimulationTime()     const { return SimulationTime.getElapsedTimeOverAllLegs();     };
-    /// Get post-processing time cumulated over all legs.
-    double GetCumulatedPostProcessingTime() const { return PostProcessingTime.getElapsedTimeOverAllLegs(); };
+    /**
+     * @brief  Get total simulation time accumulated over all legs.
+     * @return Total execution time in seconds accumulated over all legs.
+     */
+    double getCumulatedTotalTime()          const { return mTotalTime.getElapsedTimeOverAllLegs();          };
+    /**
+     * @brief  Get pre-processing time accumulated over all legs.
+     * @return Time to load data in seconds accumulated over all legs.
+     */
+    double getCumulatedPreProcessingTime()  const { return mPreProcessingTime.getElapsedTimeOverAllLegs();  };
+    /**
+     * @brief  Get simulation time (time loop) accumulated over all legs.
+     * @return Time to execute the simulation in seconds accumulated over all legs.
+     */
+    double getCumulatedDataLoadTime()       const { return mDataLoadTime.getElapsedTimeOverAllLegs();       };
+    /**
+     * @brief  Get simulation time (time loop) accumulated over all legs.
+     * @return Time to execute the simulation in seconds accumulated over all legs.
+     */
+    double getCumulatedSimulationTime()     const { return mSimulationTime.getElapsedTimeOverAllLegs();     };
+    /**
+     * @brief  Get post-processing time accumulated over all legs.
+     * @return Time to post-processing simulation data in seconds accumulated over all legs.
+     */
+    double getCumulatedPostProcessingTime() const { return mPostProcessingTime.getElapsedTimeOverAllLegs(); };
 
   protected:
 
-    /// Copy constructor not allowed for public.
-    TKSpaceFirstOrder3DSolver(const TKSpaceFirstOrder3DSolver& src);
-    /// operator = not allowed for public.
-    TKSpaceFirstOrder3DSolver& operator = (const TKSpaceFirstOrder3DSolver& src);
+    /// Initialize FFTW plans.
+    void InitializeFftwPlans();
 
-    /// Initialize FFT plans.
-    void InitializeFFTWPlans();
-
-    /// Compute pre-processing phase.
-    void PreProcessingPhase();
-
+    /**
+     * @brief Compute pre-processing phase.
+     *
+     * Initialize all indices, pre-compute constants such as c^2, rho0Sgx * dt  and create kappa,
+     * absorbEta, absorbTau, absorbNabla1, absorbNabla2  matrices.
+     *
+     */
+    void preProcessing();
     /// Compute the main time loop of the kspaceFirstOrder3D.
-    void Compute_MainLoop();
-
+    void computeMainLoop();
     /// Post processing, and closing the output streams.
-    void PostPorcessing();
+    void postPorcessing();
 
     /// Store sensor data.
-    void StoreSensorData();
-
-    /// Save checkpoint data.
-    void SaveCheckpointData();
-
+    void storeSensorData();
     /// Write statistics and header into the output file.
-    void WriteOutputDataInfo();
+    void writeOutputDataInfo();
+    /// Save checkpoint data and flush aggregated outputs into the output file.
+    void saveCheckpointData();
 
 
-    /// compute new values of for ux_sgx, uy_sgy, uz_sgz.
-    void Compute_uxyz();
+    /// Compute new values of acoustic velocity.
+    void computeVelocity();
+    /// Compute new values of acoustic velocity gradients.
+    void computeVelocityGradient();
 
-    /// Compute new values of for duxdx, duydy, dzdz.
-    void Compute_duxyz();
+
+    /// Compute new values of acoustic density for nonlinear case.
+    void computeDensityNonliner();
+    /// Compute new values of acoustic density for linear case.
+    void computeDensityLinear();
+
+    /// Compute acoustic pressure for nonlinear case.
+    void computePressureNonlinear();
+    /// Compute acoustic pressure for linear case.
+    void computePressureLinear();
 
 
-    /// Compute new values of rhox, rhoy, rhoz for non-linear case.
-    void Compute_rhoxyz_nonlinear();
-    /// Compute new values of rhox, rhoy, rhoz for linear case.
-    void Compute_rhoxyz_linear();
-
-    /// Add u source to the particle velocity.
-    void Add_u_source();
-
+    /// Add in velocity source
+    void addVelocitySource();
     /// Add in pressure source.
-    void Add_p_source();
+    void addPressureSource();
+    /// Calculate initial pressure source.
+    void addInitialPressureSource();
 
 
-    /// Generate kappa matrix for non-absorbing media.
-    void Generate_kappa();
-
-    /// Generate kappa matrix, absorb_nabla1, absorb_nabla2 for absorbing media.
-    void Generate_kappa_absorb_nabla1_absorb_nabla2();
-
-    /// Generate absorb_tau, absorb_eta for heterogenous media.
-    void Generate_absorb_tau_absorb_eta_matrix();
-
-    /// Calculate dt ./ rho0 for non-uniform grids.
-    void Calculate_dt_rho0_non_uniform();
-
-    /// Calculate p0_source.
-    void Calculate_p0_source();
-
-    /// Calculate c^2.
-    void Compute_c2();
-
-    /// Compute part of the new velocity - gradient of p.
-    void Compute_ddx_kappa_fft_p(RealMatrix&        X_Matrix,
-                                 FftwComplexMatrix& FFT_X,
-                                 FftwComplexMatrix& FFT_Y,
-                                 FftwComplexMatrix& FFT_Z,
-                                 const RealMatrix&  kappa,
-                                 const ComplexMatrix& ddx,
-                                 const ComplexMatrix& ddy,
-                                 const ComplexMatrix& ddz);
-
-    /// Calculate new p, non-linear case.
-    void Compute_new_p_nonlinear();
-    /// Calculate new p linear-case, absorbing.
-    void Compute_new_p_linear();
+    /// Generate kappa matrix for lossless media.
+    void generateKappa();
+    /// Generate kappa matrix, absorbNabla1, absorbNabla2 for absorbing medium.
+    void generateKappaAndNablas();
+    /// Generate absorbTau, absorbEta for heterogenous medium.
+    void generateTauAndEta();
+    /// Calculate dt ./ rho0 for nonuniform grids.
+    void generateInitialDenisty();
+    /// Calculate square of velocity
+    void computeC2();
 
 
-    /// Calculate three temporary sums in the new pressure formula, non-linear absorbing case, SSE2 version.
-    void Calculate_SumRho_BonA_SumDu_SSE2(RealMatrix& RHO_Temp,
-                                          RealMatrix& BonA_Temp,
-                                          RealMatrix& Sum_du);
-    /// Calculate two temporary sums in the new pressure formula, linear absorbing case.
-    void Calculate_SumRho_SumRhoDu(RealMatrix& Sum_rhoxyz,
-                                   RealMatrix& Sum_rho0_du);
+    /// Compute part of the new velocity term - gradient of pressure.
+    void computePressureGradient();
+    /**
+     * @brief Calculate three temporary sums in the new pressure formula before taking the FFT,
+     *        nonlinear absorbing case, SSE2 version.
+     * @param [out] densitySum          - rhoX + rhoY + rhoZ
+     * @param [out] nonlinearTerm       - BOnA + densitySum ^2 / 2 * rho0
+     * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
+     */
+    void computePressureTermsNonlinearSSE2(RealMatrix& densitySum,
+                                           RealMatrix& nonlinearTerm,
+                                           RealMatrix& velocityGradientSum);
+    /**
+     * @brief Calculate two temporary sums in the new pressure formula before taking the FFT,
+     *        linear absorbing case.
+     * @param [out] densitySum          - rhoxSgx + rhoySgy + rhozSgz
+     * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
+     */
+    void computePressureTermsLinear(RealMatrix& densitySum,
+                                    RealMatrix& velocityGradientSum);
 
-    /// Compute absorbing term with abosrb_nabla1 and absorb_nabla2, SSE2 version.
-    void Compute_Absorb_nabla1_2_SSE2(FftwComplexMatrix& FFT_1,
-                                      FftwComplexMatrix& FFT_2);
+    /**
+     * @brief Compute absorbing term with abosrbNabla1 and absorbNabla2, SSE2 version
+     *
+     * @param [in,out] fftPart1 - fftPart1 = absorbNabla1 .* fftPart1
+     * @param [in,out] fftPart2 - fftPart1 = absorbNabla1 .* fftPart2
+     */
+    void computeAbsorbtionTermSSE2(FftwComplexMatrix& fftPart1,
+                                   FftwComplexMatrix& fftPart2);
 
-    /// Sum sub-terms to calculate new pressure, non-linear case.
-    void Sum_Subterms_nonlinear(RealMatrix& Absorb_tau_temp,
-                                RealMatrix& Absorb_eta_temp,
-                                RealMatrix& BonA_temp);
+    /**
+     * @brief Sum sub-terms to calculate new pressure, after FFTs, nonlinear case.
+     * @param [in] absorbTauTerm - tau component
+     * @param [in] absorbEtaTerm - eta component  of the pressure term
+     * @param [in] nonlinearTerm - rho0 * (duxdx + duydy + duzdz)
+     */
+    void sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
+                                   const RealMatrix& absorbEtaTerm,
+                                   const RealMatrix& nonlinearTerm);
+    /**
+     * @brief Sum sub-terms to calculate new pressure, after FFTs, linear case.
+     * @param [in] absorbTauTerm - tau component
+     * @param [in] absorbEtaTerm - eta component  of the pressure term
+     * @param [in] densitySum    - Sum of three components of density (rhoXSgx + rhoYSgy + rhoZSgx)
+     */
+    void sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
+                                const RealMatrix& absorbEtaTerm,
+                                const RealMatrix& densitySum);
 
-    /// Sum sub-terms to calculate new pressure, linear case.
-    void Sum_Subterms_linear(RealMatrix& Absorb_tau_temp,
-                             RealMatrix& Absorb_eta_temp,
-                             RealMatrix& Sum_rhoxyz);
+    /// Sum sub-terms for new pressure, linear lossless case.
+    void sumPressureTermsNonlinearLossless();
+    /// Sum sub-terms for new pressure, linear lossless case.
+    void sumPressureTermsLinearLossless();
 
-    /// Sum sub-terms for new p, linear lossless case.
-    void Sum_new_p_nonlinear_lossless();
-    ///  Sum sub-terms for new p, linear lossless case.
-    void Sum_new_p_linear_lossless();
-
-    /// Calculate ux_shifted, uy_shifted and uz_shifted.
-    void Calculate_shifted_velocity();
+    /// compute shifted velocity for --u_non_staggered flag.
+    void computeShiftedVelocity();
 
     /// Print progress statistics.
-    void PrintStatisitcs();
+    void printStatistics();
 
     /// Print the header of the progress statistics.
-    void PrintOtputHeader();
+    void printOtputHeader() const;
 
-    /// Is time to checkpoint (save actual state on disk)?
-    bool IsTimeToCheckpoint();
+    /**
+     * @brief  Is time to checkpoint (save actual state on disk).
+     * @return true if it is time to interrupt the simulation and checkpoint.
+     */
+    bool isTimeToCheckpoint();
+    /**
+     * @brief  Was the loop interrupted to checkpoint?
+     * @return true if the simulation has been interrupted.
+     */
+    bool isCheckpointInterruption() const;
 
-    /// Was the loop interrupted to checkpoint?
-    bool IsCheckpointInterruption() const
-    {
-      return (mParameters.getTimeIndex() != mParameters.getNt());
-    };
+    /**
+     * @brief Check the output file has the correct format and version.
+     * @throw ios::failure - If an error happens.
+     */
+    void checkOutputFile();
+    /**
+     * @brief Check the file type and the version of the checkpoint file.
+     * @throw ios::failure - If an error happens
+     */
+    void checkCheckpointFile();
 
-    /// Check the output file has the correct format and version.
-    void CheckOutputFile();
     /// Reads the header of the output file and sets the cumulative elapsed time from the first log.
-    void RestoreCumulatedElapsedFromOutputFile();
+    void loadElapsedTimeFromOutputFile();
 
-    /// Check the checkpoint file has the correct format and version.
-    void CheckCheckpointFile();
-
-
-     //------------------------- Get matrices --------------------------------//
-    /// Get the kappa matrix from the container.
-    RealMatrix& Get_kappa()
+    //----------------------------------------------- Get matrices ---------------------------------------------------//
+    /**
+     * @brief  Get the kappa matrix from the container.
+     * @return kappa matrix
+     */
+    RealMatrix& getKappa()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kKappa);
     };
-    /// Get the c^2 matrix from the container.
-    RealMatrix& Get_c2()
+
+    /**
+     * @brief  Get the c^2 matrix from the container.
+     * @return c^2 matrix.
+     */
+    RealMatrix& getC2()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kC2);
     };
 
-    /// Get the p matrix from the container.
-    RealMatrix& Get_p()
+    /**
+     * @brief  Get pressure matrix
+     * @return Pressure matrix
+     */
+    RealMatrix& getP()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kP);
     };
 
-    /// Get the ux_sgx matrix from the container.
-    VelocityMatrix& Get_ux_sgx()
+    //--------------------------------------------- Velocity matrices ------------------------------------------------//
+    /**
+     * @brief  Get velocity matrix on staggered grid in x direction.
+     * @return Velocity matrix on staggered grid.
+     */
+    VelocityMatrix& getUxSgx()
     {
       return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUxSgx);
     };
-    /// Get the uy_sgy matrix from the container.
-    VelocityMatrix& Get_uy_sgy()
+    /**
+     * @brief  Get velocity matrix on staggered grid in y direction.
+     * @return Velocity matrix on staggered grid.
+     */
+    VelocityMatrix& getUySgy()
     {
       return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUySgy);
     };
-    /// Get the uz_sgz matrix from the container.
-    VelocityMatrix& Get_uz_sgz()
+    /**
+     * @brief  Get velocity matrix on staggered grid in z direction.
+     * @return Velocity matrix on staggered grid.
+     */
+    VelocityMatrix& getUzSgz()
     {
       return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUzSgz);
     };
 
-    /// Get the ux_shifted matrix from the container.
-    VelocityMatrix& Get_ux_shifted()
+    /**
+     * @brief  Get velocity shifted on normal grid in x direction.
+     * @return Unstaggeted velocity matrix.
+     */
+    RealMatrix& getUxShifted()
     {
-      return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUxShifted);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kUxShifted);
     };
-    /// Get the uy_shifted matrix from the container.
-    VelocityMatrix& Get_uy_shifted()
+    /**
+     * @brief  Get velocity shifted on normal grid in y direction.
+     * @return Unstaggered velocity matrix.
+     */
+    RealMatrix& getUyShifted()
     {
-      return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUyShifted);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kUyShifted);
     };
-    /// Get the uz_shifted matrix from the container.
-    VelocityMatrix& Get_uz_shifted()
+    /**
+     * @brief  Get velocity shifted on normal grid in z direction.
+     * @return Unstaggered velocity matrix.
+     */
+    RealMatrix& getUzShifted()
     {
-      return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUzShifted);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kUzShifted);
     };
 
-    /// Get the duxdx matrix from the container.
-    RealMatrix& Get_duxdx()
+    //----------------------------------------- Velocity gradient matrices -------------------------------------------//
+    /**
+     * @brief  Get velocity gradient on in x direction.
+     * @return Velocity gradient matrix.
+     */
+    RealMatrix& getDuxdx()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDuxdx);
     };
-    /// Get the duydy matrix from the container.
-    RealMatrix& Get_duydy()
+    /**
+     * @brief  Get velocity gradient on in y direction.
+     * @return Velocity gradient matrix.
+     */
+    RealMatrix& getDuydy()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDuydy);
     };
-    /// Get the duzdz matrix from the container.
-    RealMatrix& Get_duzdz()
+    /**
+     * @brief  Get velocity gradient on in z direction.
+     * @return Velocity gradient matrix.
+     */
+    RealMatrix& getDuzdz()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDuzdz);
     };
 
-    /// Get the dt.*rho0_sgx matrix from the container.
-    RealMatrix& Get_dt_rho0_sgx()
+    //---------------------------------------------- Density matrices ------------------------------------------------//
+    /**
+     * @brief  Get dt * rho0Sgx matrix (time step size * ambient velocity on staggered grid in x direction).
+     * @return Density matrix
+     */
+    RealMatrix& getDtRho0Sgx()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDtRho0Sgx);
     };
-    /// Get the dt.*rho0_sgy matrix from the container.
-    RealMatrix& Get_dt_rho0_sgy()
+    /**
+     * @brief  Get dt * rho0Sgy matrix (time step size * ambient velocity on staggered grid in y direction).
+     * @return Density matrix
+     */
+    RealMatrix& getDtRho0Sgy()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDtRho0Sgy);
     };
-    /// Get the dt.*rho0_sgz matrix from the container.
-    RealMatrix& Get_dt_rho0_sgz()
+    /**
+     * @brief  Get dt * rho0Sgz matrix (time step size * ambient velocity on staggered grid in z direction).
+     * @return Density matrix
+     */
+    RealMatrix& getDtRho0Sgz()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDtRho0Sgz);
     };
 
-    /// Get the rhox matrix from the container.
-    RealMatrix& Get_rhox()
+    /**
+     * @brief  Get density matrix in x direction.
+     * @return Density matrix.
+     */
+    RealMatrix& getRhoX()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kRhoX);
     };
-    /// Get the rhoy matrix from the container.
-    RealMatrix& Get_rhoy()
+    /**
+     * @brief  Get density matrix in y direction.
+     * @return Density matrix.
+     */
+    RealMatrix& getRhoY()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kRhoY);
     };
-    /// Get the rhoz matrix from the container.
-    RealMatrix& Get_rhoz()
+    /**
+     * @brief  Get density matrix in z direction.
+     * @return Density matrix.
+     */
+    RealMatrix& getRhoZ()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kRhoZ);
     };
-    /// Get the rho0 matrix from the container.
-    RealMatrix& Get_rho0()
+    /**
+     * @brief  Get ambient density matrix.
+     * @return Density matrix.
+     */
+    RealMatrix& getRho0()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kRho0);
     };
 
-    /// Get the ddx_k_shift_pos matrix from the container.
-    ComplexMatrix& Get_ddx_k_shift_pos()
+    //----------------------------------------------- Shift matrices -------------------------------------------------//
+    /**
+     * @brief  Get positive Fourier shift in x.
+     * @return Shift matrix.
+     */
+    ComplexMatrix& getDdxKShiftPos()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kDdxKShiftPosR);
     };
-    /// Get the ddy_k_shift_pos matrix from the container.
-    ComplexMatrix& Get_ddy_k_shift_pos()
+    /**
+     * @brief  Get positive Fourier shift in y.
+     * @return Shift matrix.
+     */
+    ComplexMatrix& getDdyKShiftPos()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kDdyKShiftPos);
     };
-    /// Get the ddz_k_shift_pos matrix from the container.
-    ComplexMatrix& Get_ddz_k_shift_pos()
+    /**
+     * @brief  Get positive Fourier shift in z.
+     * @return Shift matrix.
+     */
+    ComplexMatrix& getDdzKShiftPos()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kDdzKShiftPos);
     };
-    /// Get the ddx_k_shift_neg matrix from the container.
-    ComplexMatrix& Get_ddx_k_shift_neg()
+    /**
+     * @brief  Get negative Fourier shift in x.
+     * @return Shift matrix.
+     */
+    ComplexMatrix& getDdxKShiftNeg()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kDdxKShiftNegR);
     };
-    /// Get the ddy_k_shift_neg matrix from the container.
-    ComplexMatrix& Get_ddy_k_shift_neg()
+    /**
+     * @brief  Get negative Fourier shift in y.
+     * @return Shift matrix.
+     */
+    ComplexMatrix& getDdyKShiftNeg()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kDdyKShiftNeg);
     };
-    /// Get the ddz_k_shift_neg matrix from the container.
-    ComplexMatrix& Get_ddz_k_shift_neg()
+    /**
+     * @brief  Get negative Fourier shift in z.
+     * @return shift matrix.
+     */
+    ComplexMatrix& getDdzKShiftNeg()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kDdzKShiftNeg);
     };
 
-    /// Get the x_shift_neg_r matrix from the container.
-    ComplexMatrix& Get_x_shift_neg_r()
+    /**
+     * @brief  Get negative shift for non-staggered velocity in x.
+     * @return Shift matrix.
+     */
+    ComplexMatrix& getXShiftNegR()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kXShiftNegR);
     };
-    /// Get the y_shift_neg_r from the container.
-    ComplexMatrix& Get_y_shift_neg_r()
+    /**
+     * @brief  Get negative shift for non-staggered velocity in y.
+     * @return Shift matrix.
+     */
+    ComplexMatrix& getYShiftNegR()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kYShiftNegR);
     };
-    /// Get the y_shift_neg_r from the container.
-    ComplexMatrix& Get_z_shift_neg_r()
+    /**
+     * @brief  Get negative shift for non-staggered velocity in z.
+     * @return Shift matrix.
+     */
+    ComplexMatrix& getZShiftNegR()
     {
       return mMatrixContainer.getMatrix<ComplexMatrix>(MatrixContainer::MatrixIdx::kZShiftNegR);
     };
 
-    /// Get the pml_x_sgx matrix from the container.
-    RealMatrix& Get_pml_x_sgx()
+    //------------------------------------------------ PML matrices --------------------------------------------------//
+    /**
+     * @brief  Get PML on staggered grid x.
+     * @return PML matrix.
+     */
+    RealMatrix& getPmlXSgx()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kPmlXSgx);
     };
-    /// Get the pml_y_sgy matrix from the container.
-    RealMatrix& Get_pml_y_sgy()
+    /**
+     * @brief  Get PML on staggered grid y.
+     * @return PML matrix.
+     */
+    RealMatrix& getPmlYSgy()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kPmlYSgy);
     };
-    /// Get the pml_z_sgz matrix from the container.
-    RealMatrix& Get_pml_z_sgz()
+    /**
+     * @brief  Get PML on staggered grid z.
+     * @return PML matrix.
+     */
+    RealMatrix& getPmlZSgz()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kPmlZSgz);
     };
 
-    /// Get the pml_x matrix from the container.
-    RealMatrix& Get_pml_x()
+    /**
+     * @brief  Get PML in x.
+     * @return PML matrix.
+     */
+    RealMatrix& getPmlX()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kPmlX);
     };
-    /// Get the pml_y matrix from the container.
-    RealMatrix& Get_pml_y()
+    /**
+     * @brief  Get PML in y.
+     * @return PML matrix.
+     */
+    RealMatrix& getPmlY()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kPmlY);
     };
-    /// Get the pml_z matrix from the container.
-    RealMatrix& Get_pml_z()
+    /**
+     * @brief  Get PML in z.
+     * @return PML matrix.
+     */
+    RealMatrix& getPmlZ()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kPmlZ);
     };
 
-
-    /// Get the dxudxn matrix from the container.
-    RealMatrix& Get_dxudxn()
+    //------------------------------------------- Nonlinear grid matrices --------------------------------------------//
+    /**
+     * @brief  Non uniform grid acoustic velocity in x.
+     * @return Velocity matrix.
+     */
+    RealMatrix& getDxudxn()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDxudxn);
     };
-    /// Get the dyudyn matrix from the container.
-    RealMatrix& Get_dyudyn()
+    /**
+     * @brief  Non uniform grid acoustic velocity in y.
+     * @return Velocity matrix.
+     */
+    RealMatrix& getDyudyn()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDyudyn);
     };
-    /// Get the dzudzn matrix from the container.
-    RealMatrix& Get_dzudzn()
+    /**
+     * @brief  Non uniform grid acoustic velocity in z.
+     * @return Velocity matrix.
+     */
+    RealMatrix& getDzudzn()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDzudzn);
     };
-
-    /// Get the dxudxn_sgx matrix from the container.
-    RealMatrix& Get_dxudxn_sgx()
+    /**
+     * @brief  Non uniform grid acoustic velocity on staggered grid x.
+     * @return Velocity matrix.
+     */
+    RealMatrix& getDxudxnSgx()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDxudxnSgx);
     };
-    /// Get the dyudyn_sgy matrix from the container.
-    RealMatrix& Get_dyudyn_sgy()
+    /**
+     * @brief  Non uniform grid acoustic velocity on staggered grid x.
+     * @return Velocity matrix.
+     */
+    RealMatrix& getDyudynSgy()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDyudynSgy);
     };
-    /// Get the dzudzn_sgz matrix from the container.
-    RealMatrix& Get_dzudzn_sgz()
+    /**
+     * @brief  Non uniform grid acoustic velocity on staggered grid x.
+     * @return Velocity matrix.
+     */
+    RealMatrix& getDzudznSgz()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kDzudznSgz);
     };
 
-
-    /// Get the BonA matrix from the container.
-    RealMatrix& Get_BonA()
+    //-------------------------------------- Nonlinear and absorption matrices ---------------------------------------//
+    /**
+     * @brief  Get B on A (nonlinear coefficient).
+     * @return Nonlinear coefficient.
+     */
+    RealMatrix& getBOnA()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kBOnA);
     };
-    /// Get the absorb_tau matrix from the container.
-    RealMatrix& Get_absorb_tau()
+    /**
+     * @brief  Get absorbing coefficient Tau.
+     * @return Absorbing coefficient.
+     */
+    RealMatrix& getAbsorbTau()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kAbsorbTau);
     };
-    /// Get the absorb_eta matrix from the container.
-    RealMatrix& Get_absorb_eta()
+    /**
+     * @brief  Get absorbing coefficient Eta.
+     * @return Absorbing coefficient.
+     */
+    RealMatrix& getAbsorbEta()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kAbsorbEta);
     };
 
-    /// Get the absorb_nabla1 matrix from the container.
-    RealMatrix& Get_absorb_nabla1()
+    /**
+     * @brief  Get absorbing coefficient Nabla1.
+     * @return Absorbing coefficient.
+     */
+    RealMatrix& getAbsorbNabla1()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kAbsorbNabla1);
     };
-    /// Get the absorb_nabla2 matrix from the container.
-    RealMatrix& Get_absorb_nabla2()
+    /**
+     * @brief  Get absorbing coefficient Nabla2.
+     * @return Absorbing coefficient.
+     */
+    RealMatrix& getAbsorbNabla2()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kAbsorbNabla2);
     };
 
-
-    //-- Index matrices --//
-
-    /// Get the sensor_mask_index matrix from the container.
-    IndexMatrix& Get_sensor_mask_index()
+    //----------------------------------------------- Index matrices -------------------------------------------------//
+    /**
+     * @brief  Get linear sensor mask (spatial geometry of the sensor).
+     * @return Sensor mask data.
+     */
+    IndexMatrix& getSensorMaskIndex()
     {
       return mMatrixContainer.getMatrix<IndexMatrix>(MatrixContainer::MatrixIdx::kSensorMaskIndex);
     };
-    /// Get the sensor_mask_corners matrix from the container.
-    IndexMatrix& Get_sensor_mask_corners()
+    /**
+     * @brief  Get cuboid corners sensor mask. (Spatial geometry of multiple sensors).
+     * @return Sensor mask data.
+     */
+    IndexMatrix& getSensorMaskCorners()
     {
       return mMatrixContainer.getMatrix<IndexMatrix>(MatrixContainer::MatrixIdx::kSensorMaskCorners);
     };
-
-    /// Get the u_source_index matrix from the container.
-    IndexMatrix& Get_u_source_index()
+    /**
+     * @brief  Get velocity source geometry data.
+     * @return Source geometry indices
+     */
+    IndexMatrix& getVelocitySourceIndex()
     {
       return mMatrixContainer.getMatrix<IndexMatrix>(MatrixContainer::MatrixIdx::kVelocitySourceIndex);
     };
-    /// Get the p_source_index matrix from the container.
-    IndexMatrix& Get_p_source_index()
+    /**
+     * @brief  Get pressure source geometry data.
+     * @return Source geometry indices
+     */
+    IndexMatrix& getPressureSourceIndex()
     {
       return mMatrixContainer.getMatrix<IndexMatrix>(MatrixContainer::MatrixIdx::kPressureSourceIndex);
     };
-    /// Get the delay_mask matrix from the container.
-    IndexMatrix& Get_delay_mask()
+    /**
+     * @brief  Get delay mask for many types sources
+     * @return delay mask.
+     */
+    IndexMatrix& getDelayMask()
     {
       return mMatrixContainer.getMatrix<IndexMatrix>(MatrixContainer::MatrixIdx::kDelayMask);
     }
 
-
-    //-- sources  --//
-
-    /// Get the transducer_source_input matrix from the container.
-    RealMatrix& Get_transducer_source_input()
+    //-------------------------------------------------- Sources  ----------------------------------------------------//
+    /**
+     * @brief  Get transducer source input data (signal).
+     * @return Transducer source input data.
+     */
+    RealMatrix& getTransducerSourceInput()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTransducerSourceInput);
     };
-
-    /// Get the p_source_input matrix from the container.
-    RealMatrix& Get_p_source_input()
+    /**
+     * @brief  Get pressure source input data (signal).
+     * @return Pressure source input data.
+     */
+    RealMatrix& getPressureSourceInput()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kPressureSourceInput);
     };
-
-    /// Get the p0_source_input from the container.
-    RealMatrix& Get_p0_source_input()
+    /**
+     * @brief  Get initial pressure source input data (whole matrix).
+     * @return Initial pressure source input data.
+     */
+    RealMatrix& getInitialPressureSourceInput()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kInitialPressureSourceInput);
     };
 
-
-    /// Get the ux_source_input matrix from the container.
-    RealMatrix& Get_ux_source_input()
+    /**
+     * @brief  Get Velocity source input data in x direction.
+     * @return Velocity source input data.
+     */
+    RealMatrix& GetVelocityXSourceInput()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kVelocityXSourceInput);
     };
-    /// Get the uy_source_input matrix from the container.
-    RealMatrix& Get_uy_source_input()
+    /**
+     * @brief  Get Velocity source input data in y direction.
+     * @return Velocity source input data.
+     */
+    RealMatrix& GetVelocityYSourceInput()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kVelocityYSourceInput);
     };
-    /// Get the uz_source_input matrix from the container.
-    RealMatrix& Get_uz_source_input()
+    /**
+     * @brief  Get Velocity source input data in z direction.
+     * @return Velocity source input data.
+     */
+    RealMatrix& getVelocityZSourceInput()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kVelocityZSourceInput);
     };
 
 
-    //--Temporary matrices --//
-
-    /// Get the Temp_1_RS3D matrix from the container.
-    RealMatrix& Get_Temp_1_RS3D()
+    //--------------------------------------------- Temporary matrices -----------------------------------------------//
+    /**
+     * @brief  Get first real 3D temporary matrix.
+     * @return Temporary real 3D matrix.
+     */
+    RealMatrix& getTemp1Real3D()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp1Real3D);
     };
-    /// Get the Temp_2_RS3D matrix from the container.
-    RealMatrix& Get_Temp_2_RS3D()
+    /**
+     * @brief  Get second real 3D temporary matrix.
+     * @return Temporary real 3D matrix.
+     */
+    RealMatrix& getTemp2Real3D()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp2Real3D);
     };
-    /// Get the Temp_3_RS3D matrix from the container.
-    RealMatrix& Get_Temp_3_RS3D()
+    /**
+     * @brief  Get third real 3D temporary matrix.
+     * @return Temporary real 3D matrix.
+     */
+    RealMatrix& getTemp3Real3D()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp3Real3D);
     };
 
-
-    /// Get the FFT_X_temp from the container.
-    FftwComplexMatrix& Get_FFT_X_temp()
+    /**
+     * @brief  Get temporary matrix for 1D fft in x.
+     * @return Temporary complex 3D matrix.
+     */
+    FftwComplexMatrix& getTempFftwX()
     {
       return mMatrixContainer.getMatrix<FftwComplexMatrix>(MatrixContainer::MatrixIdx::kTempFftwX);
     };
-    /// Get the FFT_Y_temp from the container.
-    FftwComplexMatrix& Get_FFT_Y_temp()
+    /**
+     * @brief  Get temporary matrix for 1D fft in y.
+     * @return Temporary complex 3D matrix.
+     */
+    FftwComplexMatrix& getTempFftwY()
     {
       return mMatrixContainer.getMatrix<FftwComplexMatrix>(MatrixContainer::MatrixIdx::kTempFftwY);
     };
-    /// Get the FFT_Z_temp from the container.
-    FftwComplexMatrix& Get_FFT_Z_temp()
+    /**
+     * @brief  Get temporary matrix for 1D fft in z.
+     * @return Temporary complex 3D matrix.
+     */
+    FftwComplexMatrix& getTempFftwZ()
     {
       return mMatrixContainer.getMatrix<FftwComplexMatrix>(MatrixContainer::MatrixIdx::kTempFftwZ);
     };
-    /// Get the FFT_shift_temp the container.
-    FftwComplexMatrix& Get_FFT_shift_temp()
+    /**
+     * @brief  Get temporary matrix for fft shift.
+     * @return Temporary complex 3D matrix.
+     */
+    FftwComplexMatrix& getTempFftwShift()
     {
       return mMatrixContainer.getMatrix<FftwComplexMatrix>(MatrixContainer::MatrixIdx::kTempFftwShift);
     };
@@ -612,31 +861,30 @@ class TKSpaceFirstOrder3DSolver
   private:
 
     /// Matrix container with all the matrix classes.
-    MatrixContainer mMatrixContainer;
+    MatrixContainer       mMatrixContainer;
     /// Output stream container.
     OutputStreamContainer mOutputStreamContainer;
+    /// Global parameters of the simulation.
+    Parameters&           mParameters;
 
     /// Percentage of the simulation done.
-    size_t             ActPercent;
-
-    /// Global parameters of the simulation.
-    Parameters&       mParameters;
+    size_t                mActPercent;
 
     /// Total time of the simulation.
-    TimeMeasure       TotalTime;
+    TimeMeasure mTotalTime;
     /// Pre-processing time of the simulation.
-    TimeMeasure       PreProcessingTime;
+    TimeMeasure mPreProcessingTime;
     /// Data load time of the simulation.
-    TimeMeasure       DataLoadTime;
+    TimeMeasure mDataLoadTime;
     /// Simulation time of the simulation.
-    TimeMeasure       SimulationTime;
+    TimeMeasure mSimulationTime;
     /// Post-processing time of the simulation.
-    TimeMeasure       PostProcessingTime;
+    TimeMeasure mPostProcessingTime;
     /// Iteration time of the simulation.
-    TimeMeasure       IterationTime;
+    TimeMeasure mIterationTime;
 
-};// end of  TKSpaceFirstOrder3DSolver
-//------------------------------------------------------------------------------
+};// end of KSpaceFirstOrder3DSolver
+//----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* TKSPACE3DSOLVER_H */
+#endif	/* KSPACE_FIRST_ORDER_3D_SOLVER_H */
 

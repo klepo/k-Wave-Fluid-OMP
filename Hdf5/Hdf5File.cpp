@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14      (created) \n
- *              26 August    2017, 08:27      (revised)
+ *              28 August    2017, 14:27      (revised)
  *
 
  * @section License
@@ -31,10 +31,8 @@
  */
 
 
-#include <stdio.h>
 #include <iostream>
 #include <stdexcept>
-#include <time.h>
 
 // Linux build
 #ifdef __linux__
