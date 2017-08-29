@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 17:03 (created) \n
- *              26 August    2017, 18:50 (revised)
+ *              29 August    2017, 10:18 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -158,7 +158,6 @@ void IndexOutputStream::reopen()
 }// end of reopen
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Sample grid points, line them up in the buffer an flush to the disk unless a reduction operator is applied.
  */
@@ -237,7 +236,6 @@ void IndexOutputStream::postProcess()
   }
 }// end of postProcessing
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Checkpoint the stream and close.

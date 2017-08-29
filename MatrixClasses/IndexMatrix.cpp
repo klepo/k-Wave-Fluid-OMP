@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 15:16 (created) \n
- *              26 August    2017, 11:14 (revised)
+ *              29 August    2017, 10:16 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -47,7 +47,6 @@ using std::ios;
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Public methods ---------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
-
 
 /**
  * Constructor allocating memory.
@@ -171,8 +170,6 @@ DimensionSizes IndexMatrix::getBottomRightCorner(const size_t& index) const
   return DimensionSizes(x, y, z);
 }// end of GetBottomRightCorner
 //----------------------------------------------------------------------------------------------------------------------
-
-
 
 /**
  * Recompute indeces, MATLAB -> C++.

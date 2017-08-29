@@ -8,7 +8,7 @@
 # * 
 # * @Tool        kspaceFirstOrder3D 2.15
 # * @Created     18 September 2014, 12:32 
-# * @LastModif   18 Septmeber 2014, 14:09
+# * @LastModif   29 Aufust    2017, 10:25
 #
 # * @License: 
 # * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org)
@@ -30,9 +30,9 @@
 
 #################################################################################
 #	The source codes can be compiled ONLY under Linux x64 			#
-#	by GNU g++ 4.4 and newer OR Intel Compiler icpc 11 and newer 		#
+#	by GNU g++ 5.0 and newer OR Intel Compiler icpc 11 and newer 		#
 #	The newer compiler, the more advanced instruction set can be used	#
-#	We recomend compilation with g++ 4.8/4.9 or icpc 13/14                  #
+#	We recomend compilation with g++ 5.3/4.9 or icpc 16/17                  #
 #                                                                               #
 #	The code uses GNU compiler and STATIC linking by default		#
 #										#
@@ -69,14 +69,14 @@ COMPILER = GNU
 #COMPILER = Intel
 
 # static lining is deafult
-LINKING = STATIC
-#LINKING = DYNAMIC
+#LINKING = STATIC
+LINKING = DYNAMIC
 
 #Set up paths: FFT_DIR for FFTW or MKL for MKL
-FFT_DIR=/usr/local
+FFT_DIR=$(EBROOTFFTW)
 #MKL_DIR=/opt/intel/composer_xe_2013/mkl
 #HDF5_DIR=/usr/local/hdf5-1.8.10-serial-icc
-HDF5_DIR=/usr/local/hdf5-serial
+HDF5_DIR=$(EBROOTHDF5)
 
 # Select CPU architecture (what instruction set to be used). 
 # The libraries such as FFTW, HDF5 and MKL are to be compiled under the same architecture
@@ -112,12 +112,12 @@ ifeq ($(COMPILER),GNU)
     CPU_FLAGS=-m64 -mavx2
 
   else #defautl is native - the max perfromance for this CPU
-     CPU_FLAGS=-m64 -march=native
+     CPU_FLAGS=-m64 -march=native -mtune=native
   endif
 
 
   # Set compiler flags and header files directories
-  CXXFLAGS = $(CPU_FLAGS)  -O3 -fopenmp -ffast-math -fassociative-math -Wall \
+  CXXFLAGS = $(CPU_FLAGS) -std=c++11 -O3 -fopenmp -ffast-math -fassociative-math -Wall \
 	     -I$(HDF5_DIR)/include -I$(FFT_DIR)/include -I. \
              -D__KWAVE_GIT_HASH__=\"$(KWAVE_GIT_HASH)\"
   
@@ -204,36 +204,48 @@ TARGET		= kspaceFirstOrder3D-OMP
 all:		$(TARGET)	
 
 
-$(TARGET):	main.o 					\
-		HDF5/HDF5_File.o			\
-		KSpaceSolver/KSpaceFirstOrder3DSolver.o	\
-		MatrixClasses/BaseFloatMatrix.o		\
-		MatrixClasses/BaseIndexMatrix.o		\
-		MatrixClasses/ComplexMatrix.o		\
-		MatrixClasses/FFTWComplexMatrix.o	\
-		MatrixClasses/IndexMatrix.o		\
-		MatrixClasses/MatrixContainer.o		\
-		MatrixClasses/OutputHDF5Stream.o	\
-		MatrixClasses/RealMatrix.o		\
-		MatrixClasses/UXYZ_SGXYZMatrix.o	\
-		Parameters/CommandLineParameters.o	\
-		Parameters/Parameters.o			\
+$(TARGET):	main.o 					 \
+	        Containers/MatrixContainer.o             \
+		Containers/MatrixRecord.o                \
+		Containers/OutputStreamContainer.o       \
+		Hdf5/Hdf5File.o				 \
+		Hdf5/Hdf5FileHeader.o			 \
+		KSpaceSolver/KSpaceFirstOrder3DSolver.o	 \
+		MatrixClasses/BaseFloatMatrix.o		 \
+		MatrixClasses/BaseIndexMatrix.o		 \
+		MatrixClasses/ComplexMatrix.o		 \
+		MatrixClasses/FftwComplexMatrix.o	 \
+		MatrixClasses/IndexMatrix.o		 \
+		MatrixClasses/RealMatrix.o		 \
+		MatrixClasses/VelocityMatrix.o		 \
+		OutputStreams/BaseOutputStream.o         \
+		OutputStreams/IndexOutputStream.o        \
+		OutputStreams/CuboidOutputStream.o       \
+		OutputStreams/WholeDomainOutputStream.o  \
+		Parameters/CommandLineParameters.o	 \
+		Parameters/Parameters.o			 \
 
 
-	$(CXX) $(LDFLAGS) main.o 			\
-		HDF5/HDF5_File.o			\
-		KSpaceSolver/KSpaceFirstOrder3DSolver.o	\
-		MatrixClasses/BaseFloatMatrix.o		\
-		MatrixClasses/BaseIndexMatrix.o		\
-		MatrixClasses/ComplexMatrix.o		\
-		MatrixClasses/FFTWComplexMatrix.o	\
-		MatrixClasses/IndexMatrix.o		\
-		MatrixClasses/MatrixContainer.o		\
-		MatrixClasses/OutputHDF5Stream.o	\
-		MatrixClasses/RealMatrix.o		\
-		MatrixClasses/UXYZ_SGXYZMatrix.o	\
-		Parameters/CommandLineParameters.o	\
-		Parameters/Parameters.o			\
+	$(CXX) $(LDFLAGS) main.o 			 \
+		Containers/MatrixContainer.o             \
+		Containers/MatrixRecord.o                \
+		Containers/OutputStreamContainer.o       \
+		Hdf5/Hdf5File.o				 \
+		Hdf5/Hdf5FileHeader.o			 \
+		KSpaceSolver/KSpaceFirstOrder3DSolver.o	 \
+		MatrixClasses/BaseFloatMatrix.o		 \
+		MatrixClasses/BaseIndexMatrix.o		 \
+		MatrixClasses/ComplexMatrix.o		 \
+		MatrixClasses/FftwComplexMatrix.o	 \
+		MatrixClasses/IndexMatrix.o		 \
+		MatrixClasses/RealMatrix.o		 \
+		MatrixClasses/VelocityMatrix.o		 \
+		OutputStreams/BaseOutputStream.o         \
+		OutputStreams/IndexOutputStream.o        \
+		OutputStreams/CuboidOutputStream.o       \
+		OutputStreams/WholeDomainOutputStream.o  \
+		Parameters/CommandLineParameters.o	 \
+		Parameters/Parameters.o			 \
 		$(LIBS)	\
 		-o $@
 
@@ -243,6 +255,6 @@ $(TARGET).o : $(TARGET).cpp
 
 
 clean:
-	rm -f *.o HDF5/*.o KSpaceSolver/*.o MatrixClasses/*.o Parameters/*.o $(TARGET)
+	rm -f *.o Hdf5/*.o KSpaceSolver/*.o MatrixClasses/*.o Parameters/*.o OutputStreams/*.o $(TARGET)
 
 

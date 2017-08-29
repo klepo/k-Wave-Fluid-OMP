@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 32.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            25 August    2017, 11:17 (revised)
+ *            29 August    2017, 10:04 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -76,7 +76,7 @@ std::map<Hdf5FileHeader::FileHeaderItems, std::string> Hdf5FileHeader::sHeaderNa
   {Hdf5FileHeader::FileHeaderItems::kFileType              , "file_type"},
 
   {Hdf5FileHeader::FileHeaderItems::kHostName              , "host_names"},
-  {Hdf5FileHeader::FileHeaderItems::kNumberofCores         , "number_of_cpu_cores"},
+  {Hdf5FileHeader::FileHeaderItems::kNumberOfCores         , "number_of_cpu_cores"},
   {Hdf5FileHeader::FileHeaderItems::kTotalMemoryConsumption, "total_memory_in_use"},
   {Hdf5FileHeader::FileHeaderItems::kPeakMemoryConsumption , "peak_core_memory_in_use"},
 
@@ -132,8 +132,7 @@ void Hdf5FileHeader::readHeaderFromInputFile(Hdf5File& inputFile)
   using FHI = FileHeaderItems;
 
   // read file type
-  mHeaderValues[FHI::kFileType] =
-          inputFile.readStringAttribute(rootGroup,"/", sHeaderNames[FHI::kFileType]);
+  mHeaderValues[FHI::kFileType] = inputFile.readStringAttribute(rootGroup,"/", sHeaderNames[FHI::kFileType]);
 
   if (getFileType() == FileType::kInput)
   {
@@ -166,8 +165,7 @@ void Hdf5FileHeader::readHeaderFromOutputFile(Hdf5File& outputFile)
   // shortcut
   using FHI = FileHeaderItems;
 
-  mHeaderValues[FHI::kFileType]
-          = outputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileType]);
+  mHeaderValues[FHI::kFileType] = outputFile.readStringAttribute(rootGroup, "/", sHeaderNames[FHI::kFileType]);
 
   if (getFileType() == FileType::kOutput)
   {
@@ -448,7 +446,7 @@ void Hdf5FileHeader::setNumberOfCores()
   char text[12] = "";
   sprintf(text, "%ld",Parameters::getInstance().getNumberOfThreads());
 
-  mHeaderValues[FileHeaderItems::kNumberofCores] = text;
+  mHeaderValues[FileHeaderItems::kNumberOfCores] = text;
 }// end of setNumberOfCores
 //----------------------------------------------------------------------------------------------------------------------
 

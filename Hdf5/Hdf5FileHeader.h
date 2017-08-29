@@ -12,7 +12,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            24 August    2017, 14:35 (revised)
+ *            29 August    2017, 10:00 (revised)
  *
  * @section   Hdf5FileHeader HDF5 File Header Structure
  *
@@ -127,7 +127,7 @@ class Hdf5FileHeader
       /// Time to postprocess data.
       kPostProcessingTime     = 13,
       /// Number of cores the simulation was executed.
-      kNumberofCores          = 14
+      kNumberOfCores          = 14
     };
 
     /**

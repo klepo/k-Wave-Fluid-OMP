@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 12:13 (created) \n
- *              25 August    2017, 12:47 (revised)
+ *              29 August    2017, 10:14 (revised)
  *
  * @section license
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -67,7 +67,6 @@ BaseFloatMatrix::BaseFloatMatrix()
 }// end of BaseFloatMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Copy data from another matrix with same size.
  */
@@ -81,7 +80,6 @@ void BaseFloatMatrix::copyData(const BaseFloatMatrix& src)
 }// end of copyData
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Zero all allocated elements in parallel for NUMA first touch.
  */
@@ -94,7 +92,6 @@ void BaseFloatMatrix::zeroMatrix()
   }
 }// end of zeroMatrix
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Calculate matrix = scalar / matrix.

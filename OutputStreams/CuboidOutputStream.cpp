@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 17:03 (created) \n
- *              26 August    2017, 21:51 (revised)
+ *              29 August    2017, 10:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -256,7 +256,6 @@ void CuboidOutputStream::checkpoint()
   if (mReduceOp != ReduceOperator::kNone) flushBufferToFile();
 }// end of checkpoint
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Close stream (apply post-processing if necessary, flush data, close datasets and the group).

@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        09 August    2011, 13:10 (created) \n
- *              26 August    2017, 12:21 (revised)
+ *              29 August    2017, 10:13 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -139,7 +139,6 @@ void FftwComplexMatrix::createC2RFftPlan3D(RealMatrix& outMatrix)
   }
 }//end of createC2RFftPlan3D
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Create an FFTW plan for 1D Real-to-Complex in the x dimension.
@@ -272,7 +271,6 @@ void FftwComplexMatrix::createR2CFftPlan1DY(RealMatrix& inMatrix)
 }// end of createR2CFftPlan1DY
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Create an FFTW plan for 1D Real-to-Complex in the z dimension.
  */
@@ -336,7 +334,6 @@ void FftwComplexMatrix::createR2CFftPlan1DZ(RealMatrix& inMatrix)
   }
 }// end of createR2CFftPlan1DZ
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Create FFTW plan for Complex-to-Real in the x dimension.
@@ -403,8 +400,6 @@ void FftwComplexMatrix::createC2RFftPlan1DX(RealMatrix& outMatrix)
 }// end of createC2RFftPlan1DX
 //----------------------------------------------------------------------------------------------------------------------
 
-
-
  /**
   * Create FFTW plan for Complex-to-Real in the y dimension.
   */
@@ -469,7 +464,6 @@ void FftwComplexMatrix::createC2RFftPlan1DY(RealMatrix& outMatrix)
   }
 }// end of createC2RFftPlan1DY
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Create FFTW plan for Complex-to-Real in the z dimension.
@@ -570,8 +564,6 @@ void FftwComplexMatrix::computeC2RFft3D(RealMatrix & outMatrix)
   }
 }// end of computeC2RFft3D
 //----------------------------------------------------------------------------------------------------------------------
-
-
 
 /**
  * Compute 1D out-of-place Real-to-Complex FFT in the x dimension.
@@ -675,7 +667,6 @@ void FftwComplexMatrix::computeR2CFft1DZ(RealMatrix& inMatrix)
 }// end of computeR2CFft1DZ
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Compute 1D out-of-place Complex-to-Real FFT in the x dimension.
  */
@@ -778,7 +769,6 @@ void FftwComplexMatrix::computeC2RFft1DZ(RealMatrix& outMatrix)
 }// end of computeR2CFft1DZ
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Export wisdom to the file.
  */
@@ -794,8 +784,6 @@ void FftwComplexMatrix::exportWisdom()
   #endif
 }// end of exportWisdom
 //----------------------------------------------------------------------------------------------------------------------
-
-
 
 /**
  * Import wisdom from the file.
@@ -849,7 +837,6 @@ void FftwComplexMatrix::allocateMemory()
 }// end of allocateMemory
 //----------------------------------------------------------------------------------------------------------------------
 
-
  /**
   * Free memory using fftwf_free.
   */
@@ -862,7 +849,6 @@ void FftwComplexMatrix::freeMemory()
 
 /**
  * Get Wisdom file name (derive it form the checkpoint filename).
- * @return the filename for wisdom.
  */
 std::string FftwComplexMatrix::getWisdomFileName()
 {

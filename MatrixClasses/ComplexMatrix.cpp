@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
- *              25 August    2017, 14:19 (revised)
+ *              29 August    2017, 10:15 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -95,7 +95,6 @@ void ComplexMatrix::readData(Hdf5File&   file,
   file.readCompleteDataset(file.getRootGroup(), matrixName, complexDims, mData);
 }// end of readData
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Write data to HDF5 file (only from the root group).

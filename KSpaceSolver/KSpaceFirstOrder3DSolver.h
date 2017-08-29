@@ -34,7 +34,7 @@
 #ifndef KSPACE_FIRST_ORDER_3D_SOLVER_H
 #define KSPACE_FIRST_ORDER_3D_SOLVER_H
 
-#include <fftw3.h>
+//#include <fftw3.h>
 
 #include <Parameters/Parameters.h>
 

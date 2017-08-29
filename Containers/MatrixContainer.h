@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              27 August    2017, 12:42 (revised)
+ *              29 August    2017, 09:56 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -274,7 +274,7 @@ class MatrixContainer
   private:
 
     /// Map holding the container.
-    std::map<MatrixIdx, MatrixRecord>  mContainer;
+    std::map<MatrixIdx, MatrixRecord> mContainer;
 
     /**
      * @brief Print error and and throw an exception.

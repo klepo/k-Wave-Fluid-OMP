@@ -10,11 +10,9 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              25 August    2017, 11:20 (revised)
+ *              29 August    2017, 10:20 (revised)
  *
  * @section Params Command Line Parameters
- *
- * @section   Params Command Line Parameters
  *
  * The C++ code requires two mandatory parameters and accepts a few optional parameters and  flags. Ill parameters,
  * bad simulation files, and runtime errors such as out-of-memory problems, lead to an exception followed by an error
@@ -334,7 +332,7 @@ class CommandLineParameters
      * @brief  Is --u_min set?
      * @return true if the flag is set.
      */
-    bool getStoreVelocityMinAllFlag()            const { return mStoreVelocityMinAllFlag; };
+    bool  getStoreVelocityMinAllFlag()           const { return mStoreVelocityMinAllFlag; };
     /**
      * @brief  Is --u_final set?
      * @return true if the flag is set.

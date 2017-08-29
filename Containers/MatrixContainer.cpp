@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created) \n
- *              27 August    2017, 12:54 (revised)
+ *              29 August    2017, 09:49 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -262,7 +262,7 @@ void MatrixContainer::addMatrices()
     mContainer[MI::kDelayMask]            .set(MT::kIndex,DimensionSizes(1 ,1, params.getVelocitySourceIndexSize())         ,
                                                kLoad, kNoCheckpoint, kDelayMaskName);
     mContainer[MI::kTransducerSourceInput].set(MT::kReal ,DimensionSizes(1 ,1, params.getTransducerSourceInputSize()),
-                                               kLoad, kNoCheckpoint, kInitialPressureSourceInputName);
+                                               kLoad, kNoCheckpoint, kTransducerSourceInputName);
   }
 
   // p variables
@@ -476,6 +476,7 @@ void MatrixContainer::storeDataIntoCheckpointFile()
 {
   Hdf5File& checkpointFile = Parameters::getInstance().getCheckpointFile();
   auto compressionLevel    = Parameters::getInstance().getCompressionLevel();
+
   for (const auto& it : mContainer)
   {
     if (it.second.checkpoint)
@@ -507,5 +508,4 @@ void MatrixContainer::printErrorAndThrowException(const char* fmt,
   throw std::bad_alloc();
 }// end of printErrorAndAbort
 //----------------------------------------------------------------------------------------------------------------------
-
 

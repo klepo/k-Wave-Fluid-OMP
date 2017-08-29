@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 17:03 (created) \n
- *              26 August    2017, 22:14 (revised)
+ *              29 August    2017, 10:19 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -106,7 +106,6 @@ void WholeDomainOutputStream::create()
 }//end of create
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Reopen the output stream after restart and reload data.
  */
@@ -142,7 +141,6 @@ void WholeDomainOutputStream::reopen()
 }// end of reopen
 //----------------------------------------------------------------------------------------------------------------------
 
-
 /**
  * Sample all grid points, line them up in the buffer an flush to the disk unless a reduction operator is applied.
  */
@@ -170,17 +168,6 @@ void WholeDomainOutputStream::sample()
                                    mSourceMatrix.getData());
 
       mSampledTimeStep++;   // Move forward in time
-
-      // This version is obsolete (needs one more data movement)
-      /*
-       #pragma omp parallel for if (BufferSize > MinGridpointsToSampleInParallel)
-      for (size_t i = 0; i < BufferSize; i++)
-      {
-        StoreBuffer[i] = SourceData[i];
-      }
-      // only raw time series are flushed down to the disk every time step
-      FlushBufferToFile();
-      */
 
       break;
     }// case kNone
@@ -217,7 +204,6 @@ void WholeDomainOutputStream::sample()
   }// switch
 }// end of sample
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Apply post-processing on the buffer and flush it to the file.

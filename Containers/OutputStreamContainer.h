@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        27 August    2017, 08:58 (created) \n
- *              27 August    2017, 11:47 (revised)
+ *              29 August    2017, 09:55 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -40,8 +40,6 @@
 
 #include <Utils/MatrixNames.h>
 #include <Utils/DimensionSizes.h>
-
-
 
 
 /**
@@ -187,7 +185,7 @@ class OutputStreamContainer
 
   protected:
     /**
-     * @brief  Create a new output stream.
+     * @brief Create a new output stream.
      * @param [in] matrixContainer  - name of the HDF5 dataset or group
      * @param [in] sampledMatrixIdx - code id of the matrix
      * @param [in] fileObjectName   - name of the HDF5 dataset or group

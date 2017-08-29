@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              26 August    2017, 18:21 (revised)
+ *              29 August    2017, 10:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -68,7 +68,6 @@ BaseOutputStream::BaseOutputStream(Hdf5File&            file,
 
 };
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Apply post-processing on the buffer. It supposes the elements are independent.

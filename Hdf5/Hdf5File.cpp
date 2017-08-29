@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14      (created) \n
- *              28 August    2017, 14:27      (revised)
+ *              29 August    2017, 10:02      (revised)
  *
 
  * @section License
@@ -767,7 +767,7 @@ void Hdf5File::readCompleteDataset<float>
                                   (const hid_t           parentGroup,
                                    MatrixName&           datasetName,
                                    const DimensionSizes& dimensionSizes,
-                                   float*               data);
+                                   float*                data);
 //----------------------------------------------------------------------------------------------------------------------
 /**
  * Read data from the dataset at a specified place in the file tree, index version explicit instance.
@@ -980,7 +980,4 @@ string Hdf5File::readStringAttribute(const hid_t  parentGroup,
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------ Private methods ---------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
-
-
-
 
