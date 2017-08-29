@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              28 August    2017, 13:32 (revised)
+ *              29 August    2017, 16:43 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -1030,6 +1030,9 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
   }// parallel
 }// end of computeDensityNonliner
 //----------------------------------------------------------------------------------------------------------------------
+
+
+
 
 /**
  * Calculate new values of acoustic density for linear case (rhoX, rhoy and rhoZ).
@@ -2092,9 +2095,9 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinear(const RealMatrix& absor
     #pragma omp for schedule (static)
     for (size_t i = 0; i < nElements; i++)
     {
-      const float c2        = (c0ScalarFlag) ? c2Scalar        : c2Matrix[i];
-      const float absorbTau = (c0ScalarFlag) ? absorbTauScalar : absorbTauMatrix[i];
-      const float absorbEta = (c0ScalarFlag) ? absorbEtaScalar : absorbEtaMatrix[i];
+      const float c2        = (c0ScalarFlag) ?        c2Scalar        : c2Matrix[i];
+      const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
+      const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
 
       p[i] = c2 *(bOnA[i] + (divider * ((eAbsorbTauTerm[i] * absorbTau) - (eAbsorbEtaTerm[i] * absorbEta))));
     }
@@ -2109,8 +2112,8 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
                                                       const RealMatrix& absorbEtaTerm,
                                                       const RealMatrix& densitySum)
 {
-  const float * eAbsorbTauTerm = absorbTauTerm.getData();
-  const float * eAbsorbEtaTerm = absorbEtaTerm.getData();
+  const float* eAbsorbTauTerm = absorbTauTerm.getData();
+  const float* eAbsorbEtaTerm = absorbEtaTerm.getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
   const float  divider = 1.0f / static_cast<float>(nElements);
@@ -2134,9 +2137,9 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
     #pragma omp for schedule (static)
     for (size_t i = 0; i < nElements; i++)
     {
-      const float c2        = (c0ScalarFlag) ? c2Scalar        : c2Matrix[i];
-      const float absorbTau = (c0ScalarFlag) ? absorbTauScalar : absorbTauMatrix[i];
-      const float absorbEta = (c0ScalarFlag) ? absorbEtaScalar : absorbEtaMatrix[i];
+      const float c2        = (c0ScalarFlag) ?        c2Scalar        : c2Matrix[i];
+      const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
+      const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
 
       p[i] = c2 * (eDenistySum[i] + (divider * ((eAbsorbTauTerm[i] * absorbTau) - (eAbsorbEtaTerm[i] * absorbEta))));
     }
@@ -2163,7 +2166,7 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
     const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
     const bool   nonlinearFlag = mParameters.getBOnAScalarFlag();
-    const float  bOnAScalar    = (nonlinearFlag) ? mParameters.getBOnAScalarFlag() : 0;
+    const float  bOnAScalar    = (nonlinearFlag) ? mParameters.getBOnAScalar(): 0;
     const float* bOnAMatrix    = (nonlinearFlag) ? nullptr : getBOnA().getData();
 
     const bool   rho0ScalarFlag = mParameters.getRho0ScalarFlag();
