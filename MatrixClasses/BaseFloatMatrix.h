@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 12:13 (created) \n
- *              24 September 2014, 14:07 (revised)
+ *              25 August    2017, 12:37 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -32,109 +32,106 @@
  */
 
 
-#ifndef BASEFLOATMATRIXDATA_H
-#define	BASEFLOATMATRIXDATA_H
+#ifndef BASE_FLOAT_MATRIX_H
+#define BASE_FLOAT_MATRIX_H
 
 #include <MatrixClasses/BaseMatrix.h>
 #include <Utils/DimensionSizes.h>
 
-using namespace std;
-
 /**
- * @class TBaseFloatMatrix
- * @brief Abstract base class for float based matrices defining basic interface.
- *        Higher dimensional matrices stored as 1D arrays, row-major order.
+ * @class   BaseFloatMatrix
+ * @brief   Abstract base class for float based matrices defining basic interface. Higher dimensional
+ *          matrices stored as 1D arrays, row-major order.
  *
- * @details Abstract base class for float based matrices defining basic interface.
- *          Higher dimensional matrices stored as 1D arrays, row-major order.
- *
+ * @details Abstract base class for float based matrices defining basic interface. Higher dimensional matrices stored
+ *          as 1D arrays, row-major order. The I/O is done via HDF5 files.
  */
-class TBaseFloatMatrix : public TBaseMatrix
+class BaseFloatMatrix : public BaseMatrix
 {
   public:
 
     /// Default constructor.
-    TBaseFloatMatrix() : TBaseMatrix(),
-            pTotalElementCount(0), pTotalAllocatedElementCount(0), pDimensionSizes(),
-            pDataRowSize(0), p2DDataSliceSize (0), pMatrixData (NULL)
-    {};
-
-
-    /// Get dimension sizes of the matrix.
-    virtual TDimensionSizes GetDimensionSizes() const
-    {
-      return pDimensionSizes;
-    }
-
-    /// Get element count of the matrix.
-    virtual size_t GetTotalElementCount() const
-    {
-      return pTotalElementCount;
-    };
-
-    /// Get total allocated element count (might differ from total element count used for the simulation because of padding).
-    virtual size_t GetTotalAllocatedElementCount() const
-    {
-      return pTotalAllocatedElementCount;
-    };
-
+    BaseFloatMatrix();
+    /// Copy constructor is not allowed.
+    BaseFloatMatrix(const BaseFloatMatrix&) = delete;
     /// Destructor.
-    virtual ~TBaseFloatMatrix() {};
+    virtual ~BaseFloatMatrix() {};
 
+    /// operator= is not allowed.
+    BaseFloatMatrix& operator=(const BaseFloatMatrix&) = delete;
 
-    /// Copy data from other matrix with the same size.
-    virtual void CopyData(const TBaseFloatMatrix & src);
+    /**
+     * @brief  Get dimension sizes of the matrix.
+     * @return Dimension sizes of the matrix.
+     */
+    virtual const DimensionSizes& getDimensionSizes() const { return mDimensionSizes; };
+    /**
+     * @brief  Size of the matrix.
+     * @return Number of elements.
+     */
+    virtual size_t size()                             const { return mSize; };
+    /**
+     * @brief  The capacity of the matrix (this may differ from size due to padding, etc.).
+     * @return Capacity of the currently allocated storage.
+     */
+    virtual size_t capacity()                         const { return mCapacity; };
+
+    /**
+     * @brief Copy data from other matrix with the same size.
+     * @param [in] src - Matrix to copy data in.
+     */
+    virtual void  copyData(const BaseFloatMatrix& src);
 
     /// Zero all elements of the matrix (NUMA first touch).
-    virtual void ZeroMatrix();
+    virtual void  zeroMatrix();
 
-    /// Divide scalar/ matrix_element[i].
-    virtual void ScalarDividedBy(const float scalar);
+    /**
+     * @brief Calculate matrix = scalar / matrix.
+     * @param [in] scalar - Scalar constant
+     */
+    virtual void   scalarDividedBy(const float scalar);
 
-    /// Get raw data out of the class (for direct kernel access).
-    virtual float* GetRawData()
-    {
-      return pMatrixData;
-    }
+    /**
+     * @brief Get raw data out of the class (for direct kernel access).
+     * @return Mutable matrix data
+     */
+    virtual float* getData()                          { return mData; };
 
-    /// Get raw data out of the class (for direct kernel access).
-    virtual const float * GetRawData() const
-    {
-      return pMatrixData;
-    }
+    /**
+     * @brief Get raw data out of the class (for direct kernel access), const version.
+     * @return Immutable matrix data.
+     */
+    virtual const float* getData() const              { return mData; };
 
   protected:
 
-    /// Total number of elements.
-    size_t pTotalElementCount;
+   /**
+    * @brief Aligned memory allocation (both on CPU and GPU).
+    * @throw std::bad_alloc - If there's not enough memory.
+    */
+    virtual void allocateMemory();
+    /// Memory allocation (both on CPU and GPU).
+    virtual void freeMemory();
+
+    /// Total number of used elements.
+    size_t mSize;
     /// Total number of allocated elements (in terms of floats).
-    size_t pTotalAllocatedElementCount;
+    size_t mCapacity;
 
     /// Dimension sizes.
-    struct TDimensionSizes pDimensionSizes;
+    DimensionSizes mDimensionSizes;
 
     /// Size of a 1D row in X dimension.
-    size_t pDataRowSize;
-    /// Size of a 2D slab (X,Y).
-    size_t p2DDataSliceSize;
+    size_t mRowSize;
+    /// Size of a XY slab.
+    size_t mSlabSize;
 
     /// Raw matrix data.
-    float * pMatrixData;
-
-    /// Memory allocation.
-    virtual void AllocateMemory();
-
-    /// Memory deallocation.
-    virtual void FreeMemory();
-
-    /// Copy constructor is not directly allowed.
-    TBaseFloatMatrix(const TBaseFloatMatrix& src);
-    /// operator =  is not directly allowed.
-    TBaseFloatMatrix & operator =(const TBaseFloatMatrix& src);
+    float* mData;
 
   private:
 
-};// end of class TBaseFloatMatrix
-//-----------------------------------------------------------------------------
+};//end of class BaseFloatMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* TBASEMATRIXDATA_H */
+#endif	/* BASE_FLOAT_MATRIX_H */

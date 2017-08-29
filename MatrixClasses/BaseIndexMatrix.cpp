@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 14:17 (created) \n
- *              24 September 2014, 14:58 (revised)
+ *              29 August    2017, 10:14 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org). .\n
@@ -42,76 +42,78 @@
 #include <Utils/ErrorMessages.h>
 
 
-//----------------------------------------------------------------------------//
-//                              Constants                                     //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
-//----------------------------------------------------------------------------//
-//                              Definitions                                   //
-//----------------------------------------------------------------------------//
-
-
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
- *  Zero all allocated elements.
- *
+ * Default constructor
  */
-void TBaseIndexMatrix::ZeroMatrix()
+BaseIndexMatrix::BaseIndexMatrix()
+  : BaseMatrix(),
+    mSize(0), mCapacity(0),
+    mDimensionSizes(),
+    mRowSize(0), mSlabSize(0),
+    mData(nullptr)
 {
-  ///@todo: This breaks the first touch policy! - however we don't know the distribution
-  memset(pMatrixData, 0, pTotalAllocatedElementCount * sizeof(size_t));
-}// end of ZeroMatrix
-//------------------------------------------------------------------------------
 
-
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                             protected methods                              //
-//----------------------------------------------------------------------------//
-
+}// end of BaseIndexMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Memory allocation based on the total number of elements. \n
- * Memory is aligned by the DATA_ALIGNMENT and all elements are zeroed.
+ * Zero all allocated elements.
  */
-void TBaseIndexMatrix::AllocateMemory()
+void BaseIndexMatrix::zeroMatrix()
+{
+  #pragma omp parallel for simd schedule(static)
+  for (size_t i = 0; i < mCapacity; i++)
+  {
+    mData[i] = size_t(0);
+  }
+}// end of zeroMatrix
+//----------------------------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+/**
+ * Memory allocation based on the capacity and aligned based on kDataAlignment.
+ */
+void BaseIndexMatrix::allocateMemory()
 {
   /* No memory allocated before this function*/
-  assert(pMatrixData == NULL);
+  assert(mData == nullptr);
 
-  pMatrixData = (size_t *) _mm_malloc(pTotalAllocatedElementCount * sizeof (size_t), DATA_ALIGNMENT);
+  mData = (size_t*) _mm_malloc(mCapacity * sizeof (size_t), kDataAlignment);
 
-  if (!pMatrixData)
+  if (!mData)
   {
-    fprintf(stderr,Matrix_ERR_FMT_NotEnoughMemory, "TBaseIndexMatrix");
-    throw bad_alloc();
+    fprintf(stderr,kErrFmtNotEnoughMemory, "BaseIndexMatrix");
+    throw std::bad_alloc();
   }
 
-  ZeroMatrix();
-}// end of AllocateMemory
-//------------------------------------------------------------------------------
+  zeroMatrix();
+}// end of allocateMemory
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Free memory.
  */
-void TBaseIndexMatrix::FreeMemory()
+void BaseIndexMatrix::freeMemory()
 {
-  if (pMatrixData) _mm_free(pMatrixData);
-  pMatrixData = NULL;
-}// end of MemoryDealocation
-//------------------------------------------------------------------------------
+  if (mData) _mm_free(mData);
 
+  mData = nullptr;
+}// end of freeMemory
+//----------------------------------------------------------------------------------------------------------------------
 
-
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              private methods                               //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Private methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//

@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <logicalFolder name="f1" displayName="HDF5" projectFiles="true">
-      <itemPath>HDF5/HDF5_File.cpp</itemPath>
-      <itemPath>HDF5/HDF5_File.h</itemPath>
+    <logicalFolder name="Containers" displayName="Containers" projectFiles="true">
+      <itemPath>Containers/MatrixContainer.cpp</itemPath>
+      <itemPath>Containers/MatrixContainer.h</itemPath>
+      <itemPath>Containers/MatrixRecord.cpp</itemPath>
+      <itemPath>Containers/MatrixRecord.h</itemPath>
+      <itemPath>Containers/OutputStreamContainer.cpp</itemPath>
+      <itemPath>Containers/OutputStreamContainer.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="f1" displayName="Hdf5" projectFiles="true">
+      <itemPath>Hdf5/Hdf5File.cpp</itemPath>
+      <itemPath>Hdf5/Hdf5File.h</itemPath>
+      <itemPath>Hdf5/Hdf5FileHeader.cpp</itemPath>
+      <itemPath>Hdf5/Hdf5FileHeader.h</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -21,18 +31,26 @@
       <itemPath>MatrixClasses/BaseMatrix.h</itemPath>
       <itemPath>MatrixClasses/ComplexMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/ComplexMatrix.h</itemPath>
-      <itemPath>MatrixClasses/FFTWComplexMatrix.cpp</itemPath>
-      <itemPath>MatrixClasses/FFTWComplexMatrix.h</itemPath>
+      <itemPath>MatrixClasses/FftwComplexMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/FftwComplexMatrix.h</itemPath>
       <itemPath>MatrixClasses/IndexMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/IndexMatrix.h</itemPath>
-      <itemPath>MatrixClasses/MatrixContainer.cpp</itemPath>
-      <itemPath>MatrixClasses/MatrixContainer.h</itemPath>
-      <itemPath>MatrixClasses/OutputHDF5Stream.cpp</itemPath>
-      <itemPath>MatrixClasses/OutputHDF5Stream.h</itemPath>
       <itemPath>MatrixClasses/RealMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/RealMatrix.h</itemPath>
-      <itemPath>MatrixClasses/UXYZ_SGXYZMatrix.cpp</itemPath>
-      <itemPath>MatrixClasses/UXYZ_SGXYZMatrix.h</itemPath>
+      <itemPath>MatrixClasses/VelocityMatrix.cpp</itemPath>
+      <itemPath>MatrixClasses/VelocityMatrix.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="OutputStreams"
+                   displayName="OutputStreams"
+                   projectFiles="true">
+      <itemPath>OutputStreams/BaseOutputStream.cpp</itemPath>
+      <itemPath>OutputStreams/BaseOutputStream.h</itemPath>
+      <itemPath>OutputStreams/CuboidOutputStream.cpp</itemPath>
+      <itemPath>OutputStreams/CuboidOutputStream.h</itemPath>
+      <itemPath>OutputStreams/IndexOutputStream.cpp</itemPath>
+      <itemPath>OutputStreams/IndexOutputStream.h</itemPath>
+      <itemPath>OutputStreams/WholeDomainOutputStream.cpp</itemPath>
+      <itemPath>OutputStreams/WholeDomainOutputStream.h</itemPath>
     </logicalFolder>
     <logicalFolder name="f3" displayName="Parameters" projectFiles="true">
       <itemPath>Parameters/CommandLineParameters.cpp</itemPath>
@@ -69,6 +87,10 @@
       <itemPath>change.log</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>OutputStreams</Elem>
+    <Elem>Containers</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug-pcjaros-dynamic" type="1">
@@ -91,8 +113,8 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -124,9 +146,28 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -152,32 +193,52 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -221,8 +282,8 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
-          <warningLevel>0</warningLevel>
+          <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -255,9 +316,28 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -283,32 +363,52 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -352,8 +452,8 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <commandLine>-std=c++11 -O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -385,9 +485,28 @@
           <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -413,32 +532,52 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -482,8 +621,8 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -Wall -fopenmp</commandLine>
-          <warningLevel>0</warningLevel>
+          <commandLine>-std=c++11 -O3 -Wall -fopenmp</commandLine>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -516,9 +655,28 @@
           <commandLine>-O3 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -544,32 +702,52 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -613,8 +791,8 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -649,9 +827,28 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -677,32 +874,52 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -746,8 +963,8 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <commandLine>-std=c++11 -O3 -g3 -gdwarf-2 -Wall -fopenmp -ffast-math -fassociative-math</commandLine>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -782,9 +999,28 @@
           <commandLine>-O3 -g3 -gdwarf-2 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -810,32 +1046,52 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -879,8 +1135,8 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -fopenmp -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <commandLine>-std=c++11 -O3 -fopenmp -ffast-math -fassociative-math</commandLine>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -915,9 +1171,28 @@
           <commandLine>-O3 -Wall -fopenmp</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -943,32 +1218,52 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"
@@ -1012,8 +1307,8 @@
             <pElem>${EBROOTHDF5}/include</pElem>
             <pElem>${EBROOTFFTW}/include</pElem>
           </incDir>
-          <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
-          <warningLevel>0</warningLevel>
+          <commandLine>-std=c++11 -O3 -Wall -fopenmp -mavx -mtune=native -march=native -ffast-math -fassociative-math</commandLine>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -1048,9 +1343,28 @@
           <commandLine>-O3 -Wall -fopenmp -mavx -mtune=native -march=native</commandLine>
         </linkerTool>
       </compileType>
-      <item path="HDF5/HDF5_File.cpp" ex="false" tool="1" flavor2="9">
+      <item path="Containers/MatrixContainer.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="HDF5/HDF5_File.h" ex="false" tool="3" flavor2="0">
+      <item path="Containers/MatrixContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Containers/MatrixRecord.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="Containers/OutputStreamContainer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5File.cpp" ex="false" tool="1" flavor2="9">
+      </item>
+      <item path="Hdf5/Hdf5File.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hdf5/Hdf5FileHeader.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="KSpaceSolver/KSpaceFirstOrder3DSolver.cpp"
             ex="false"
@@ -1076,32 +1390,52 @@
       </item>
       <item path="MatrixClasses/ComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.cpp"
+      <item path="MatrixClasses/FftwComplexMatrix.cpp"
             ex="false"
             tool="1"
             flavor2="9">
       </item>
-      <item path="MatrixClasses/FFTWComplexMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/FftwComplexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/IndexMatrix.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="MatrixClasses/IndexMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/MatrixContainer.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/MatrixContainer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/OutputHDF5Stream.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.cpp" ex="false" tool="1" flavor2="9">
+      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
-      <item path="MatrixClasses/UXYZ_SGXYZMatrix.h" ex="false" tool="3" flavor2="0">
+      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/CuboidOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/IndexOutputStream.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="OutputStreams/WholeDomainOutputStream.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="Parameters/CommandLineParameters.cpp"
             ex="false"

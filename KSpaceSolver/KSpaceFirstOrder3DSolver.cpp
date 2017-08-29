@@ -9,8 +9,8 @@
  *              responsible for the entire simulation.
  *
  * @version     kspaceFirstOrder3D 2.16
- * @date        12 July      2012, 10:27  (created)\n
- *              21 August    2015, 18:28  (revised)
+ * @date        12 July      2012, 10:27 (created)\n
+ *              28 August    2017, 13:32 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -49,264 +49,240 @@
   #include <omp.h>
 #endif
 
-#include <iostream>
 #include <sstream>
 #include <cstdio>
 #include <limits>
 
 #include <immintrin.h>
-#include <time.h>
+#include <ctime>
 
 #include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
+#include <Containers/MatrixContainer.h>
+#include <Containers/OutputStreamContainer.h>
 
+#include <MatrixClasses/FftwComplexMatrix.h>
 #include <Utils/ErrorMessages.h>
 
-#include <MatrixClasses/FFTWComplexMatrix.h>
-#include <MatrixClasses/MatrixContainer.h>
+using std::ios;
 
-using namespace std;
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-//                              Constants                                     //
-//----------------------------------------------------------------------------//
-
-
-
-
-//----------------------------------------------------------------------------//
-//                              Public methods                                //
-//----------------------------------------------------------------------------//
-
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
  * Constructor of the class.
  */
-TKSpaceFirstOrder3DSolver::TKSpaceFirstOrder3DSolver():
-        MatrixContainer(), OutputStreamContainer(),
-        ActPercent(0),
-        Parameters(NULL),
-        TotalTime(), PreProcessingTime(), DataLoadTime (), SimulationTime(),
-        PostProcessingTime(), IterationTime()
+KSpaceFirstOrder3DSolver::KSpaceFirstOrder3DSolver():
+        mMatrixContainer(), mOutputStreamContainer(),
+        mParameters(Parameters::getInstance()),
+        mActPercent(0l),
+        mTotalTime(), mPreProcessingTime(), mDataLoadTime (), mSimulationTime(),
+        mPostProcessingTime(), mIterationTime()
 {
-  TotalTime.Start();
-  Parameters = TParameters::GetInstance();
+  mTotalTime.start();
 
   //Switch off HDF5 error messages
   H5Eset_auto(H5E_DEFAULT, NULL, NULL);
-}// end of TKSpaceFirstOrder3DSolver
-//------------------------------------------------------------------------------
+}// end of KSpaceFirstOrder3DSolver
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Destructor of the class.
  */
-TKSpaceFirstOrder3DSolver::~TKSpaceFirstOrder3DSolver()
+KSpaceFirstOrder3DSolver::~KSpaceFirstOrder3DSolver()
 {
-  FreeMemory();
-}// end of TKSpace3DSolver
-//------------------------------------------------------------------------------
+  freeMemory();
+}// end of KSpaceFirstOrder3DSolver
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * The method allocates the matrix container, creates all matrices and
- * creates all output streams (however not allocating memory).
+ * The method allocates the matrix container, creates all matrices and creates all output streams
+ * (however not allocating memory).
  */
-void TKSpaceFirstOrder3DSolver::AllocateMemory()
+void KSpaceFirstOrder3DSolver::allocateMemory()
 {
   // create container, then all matrices
-  MatrixContainer.AddMatricesIntoContainer();
-  MatrixContainer.CreateAllObjects();
+  mMatrixContainer.addMatrices();
+  mMatrixContainer.createMatrices();
 
   // add output streams into container
   //@todo Think about moving under LoadInputData routine...
-  OutputStreamContainer.AddStreamsIntoContainer(MatrixContainer);
-}// end of AllocateMemory
-//------------------------------------------------------------------------------
+  mOutputStreamContainer.addStreams(mMatrixContainer);
+}// end of allocateMemory
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * The method frees all memory allocated by the class.
  */
-void TKSpaceFirstOrder3DSolver::FreeMemory()
+void KSpaceFirstOrder3DSolver::freeMemory()
 {
-  MatrixContainer.FreeAllMatrices();
-  OutputStreamContainer.FreeAllStreams();
-}// end of FreeMemory
-//------------------------------------------------------------------------------
+  mMatrixContainer.freeMatrices();
+  mOutputStreamContainer.freeStreams();
+}// end of freeMemory
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Load data from the input file provided by the Parameter class and creates
- * the output time series streams.
+ * Load data from the input file provided by the Parameter class and creates the output time series streams.
  */
-void TKSpaceFirstOrder3DSolver::LoadInputData()
+void KSpaceFirstOrder3DSolver::loadInputData()
 {
   // Start timer
-  DataLoadTime.Start();
+  mDataLoadTime.start();
 
   // get handles
-  THDF5_File& HDF5_InputFile      = Parameters->HDF5_InputFile; // file is opened (in Parameters)
-  THDF5_File& HDF5_OutputFile     = Parameters->HDF5_OutputFile;
-  THDF5_File& HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  Hdf5File& inputFile      = mParameters.getInputFile(); // file is opened (in Parameters)
+  Hdf5File& outputFile     = mParameters.getOutputFile();
+  Hdf5File& checkpointFile = mParameters.getCheckpointFile();
 
   // Load data from disk
-  MatrixContainer.LoadDataFromInputHDF5File(HDF5_InputFile);
+  mMatrixContainer.loadDataFromInputFile();
 
-  // close the input file
-  HDF5_InputFile.Close();
+  // close the input file since we don't need it anymore.
+  inputFile.close();
 
   // The simulation does not use checkpointing or this is the first turn
-  bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               THDF5_File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
+  bool recoverFromCheckpoint = (mParameters.isCheckpointEnabled() &&
+                                Hdf5File::canAccess(mParameters.getCheckpointFileName()));
 
-  //-------------------- Read data from the checkpoint file -----------------//
-  if (RecoverFromPrevState)
+  if (recoverFromCheckpoint)
   {
+    //------------------------------------- Read data from the checkpoint file ---------------------------------------//
     // Open checkpoint file
-    HDF5_CheckpointFile.Open(Parameters->GetCheckpointFileName().c_str());
+    checkpointFile.open(mParameters.getCheckpointFileName());
 
     // Check the checkpoint file
-    CheckCheckpointFile();
+    checkCheckpointFile();
 
     // read the actual value of t_index
-    size_t new_t_index;
-    HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
-                                        t_index_Name,
-                                        new_t_index);
-    Parameters->Set_t_index(new_t_index);
+    size_t checkpointedTimeIndex;
+    checkpointFile.readScalarValue(checkpointFile.getRootGroup(), kTimeIndexName, checkpointedTimeIndex);
+    mParameters.setTimeIndex(checkpointedTimeIndex);
 
     // Read necessary matrices from the checkpoint file
-    MatrixContainer.LoadDataFromCheckpointHDF5File(HDF5_CheckpointFile);
+    mMatrixContainer.loadDataFromCheckpointFile();
 
-    HDF5_CheckpointFile.Close();
+    checkpointFile.close();
 
-
-    //------------- Read data from the output file -------------------------//
-
+    //--------------------------------------- Read data from the output file -----------------------------------------//
     // Reopen output file for RW access
-    HDF5_OutputFile.Open(Parameters->GetOutputFileName().c_str(), H5F_ACC_RDWR);
+    outputFile.open(mParameters.getOutputFileName(), H5F_ACC_RDWR);
     //Read file header of the output file
-    Parameters->HDF5_FileHeader.ReadHeaderFromOutputFile(HDF5_OutputFile);
+    mParameters.getFileHeader().readHeaderFromOutputFile(outputFile);
     // Check the checkpoint file
-    CheckOutputFile();
+    checkOutputFile();
     // Restore elapsed time
-    RestoreCumulatedElapsedFromOutputFile();
+    loadElapsedTimeFromOutputFile();
 
-    OutputStreamContainer.ReopenStreams();
+    mOutputStreamContainer.reopenStreams();
   }
   else
-  { //-------------------- First round of multi-leg simulation ---------------//
+  { //------------------------------------ First round of multi-leg simulation ---------------------------------------//
     // Create the output file
-    HDF5_OutputFile.Create(Parameters->GetOutputFileName().c_str());
-
+    outputFile.create(mParameters.getOutputFileName());
 
     // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
-    OutputStreamContainer.CreateStreams();
-
+    mOutputStreamContainer.createStreams();
   }
 
  // Stop timer
-  DataLoadTime.Stop();
-}// end of LoadInputData
-//------------------------------------------------------------------------------
+  mDataLoadTime.stop();
+}// end of loadInputData
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
- * This method computes k-space First Order 3D simulation.
- * It launches calculation on a given dataset going through
- * FFT initialization, pre-processing, main loop and post-processing phases.
- *
+* This method computes k-space First Order 3D simulation.
  */
-void TKSpaceFirstOrder3DSolver::Compute()
+void KSpaceFirstOrder3DSolver::compute()
 {
-  PreProcessingTime.Start();
+  mPreProcessingTime.start();
 
   fprintf(stdout,"FFT plans creation.........."); fflush(stdout);
 
-    InitializeFFTWPlans( );
+    InitializeFftwPlans( );
 
   fprintf(stdout,"Done \n");
   fprintf(stdout,"Pre-processing phase........"); fflush(stdout);
 
 
-    PreProcessingPhase( );
+    preProcessing( );
 
   fprintf(stdout,"Done \n");
-  fprintf(stdout,"Current memory in use:%8ldMB\n", ShowMemoryUsageInMB());
-  PreProcessingTime.Stop();
+  fprintf(stdout,"Current memory in use:%8ldMB\n", getMemoryUsage());
+  mPreProcessingTime.stop();
 
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",PreProcessingTime.GetElapsedTime());
+  fprintf(stdout,"Elapsed time:          %8.2fs\n",mPreProcessingTime.getElapsedTime());
 
-  SimulationTime.Start();
+  mSimulationTime.start();
 
-    Compute_MainLoop();
+    computeMainLoop();
 
-  SimulationTime.Stop();
+  mSimulationTime.stop();
 
-  PostProcessingTime.Start();
+  mPostProcessingTime.start();
 
-  if (IsCheckpointInterruption())
+  if (isCheckpointInterruption())
   { // Checkpoint
     fprintf(stdout,"-------------------------------------------------------------\n");
     fprintf(stdout,".............. Interrupted to checkpoint! ...................\n");
-    fprintf(stdout,"Number of time steps completed:                    %10ld\n",  Parameters->Get_t_index());
-    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.GetElapsedTime());
+    fprintf(stdout,"Number of time steps completed:                    %10ld\n",  mParameters.getTimeIndex());
+    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",mSimulationTime.getElapsedTime());
     fprintf(stdout,"-------------------------------------------------------------\n");
     fprintf(stdout,"Checkpoint in progress......"); fflush(stdout);
 
-    SaveCheckpointData();
+    saveCheckpointData();
   }
   else
   { // Finish
     fprintf(stdout,"-------------------------------------------------------------\n");
-    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",SimulationTime.GetElapsedTime());
+    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",mSimulationTime.getElapsedTime());
     fprintf(stdout,"-------------------------------------------------------------\n");
     fprintf(stdout,"Post-processing phase......."); fflush(stdout);
 
-    PostPorcessing();
+    postPorcessing();
 
     // if checkpointing is enabled and the checkpoint file was created created in the past, delete it
-    if (Parameters->IsCheckpointEnabled())
+    if (mParameters.isCheckpointEnabled())
     {
-      std::remove(Parameters->GetCheckpointFileName().c_str());
-      TFFTWComplexMatrix::DeleteStoredWisdom();
+      std::remove(mParameters.getCheckpointFileName().c_str());
+      FftwComplexMatrix::deleteStoredWisdom();
     }
   }
 
-  PostProcessingTime.Stop();
+  mPostProcessingTime.stop();
 
   fprintf(stdout,"Done \n");
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",PostProcessingTime.GetElapsedTime());
+  fprintf(stdout,"Elapsed time:          %8.2fs\n",mPostProcessingTime.getElapsedTime());
 
-    WriteOutputDataInfo();
+    writeOutputDataInfo();
 
-  Parameters->HDF5_OutputFile.Close();
-}// end of Compute()
-//------------------------------------------------------------------------------
-
-
-
+  mParameters.getOutputFile().close();
+}// end of compute()
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Print parameters of the simulation.
- * @param [in,out] file - where to print the parameters
  */
-void TKSpaceFirstOrder3DSolver::PrintParametersOfSimulation(FILE * file)
+void KSpaceFirstOrder3DSolver::printSimulationParameters(FILE* file) const
 {
   fprintf(file,"Domain dims:   [%4ld, %4ld,%4ld]\n",
-                Parameters->GetFullDimensionSizes().X,
-                Parameters->GetFullDimensionSizes().Y,
-                Parameters->GetFullDimensionSizes().Z);
+                mParameters.getFullDimensionSizes().nx,
+                mParameters.getFullDimensionSizes().ny,
+                mParameters.getFullDimensionSizes().nz);
 
-  fprintf(file,"Simulation time steps:  %8ld\n", Parameters->Get_Nt());
-}// end of PrintParametersOfSimulation
-//------------------------------------------------------------------------------
-
-
+  fprintf(file,"Simulation time steps:  %8ld\n", mParameters.getNt());
+}// end of printSimulationParameters
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get peak memory usage.
- * @return Peak memory usage in MBs.
- *
  */
-size_t TKSpaceFirstOrder3DSolver::ShowMemoryUsageInMB()
+size_t KSpaceFirstOrder3DSolver::getMemoryUsage() const
 {
   // Linux build
   #ifdef __linux__
@@ -330,15 +306,13 @@ size_t TKSpaceFirstOrder3DSolver::ShowMemoryUsageInMB()
 
     return pmc.PeakWorkingSetSize >> 20;
   #endif
-}// end of ShowMemoryUsageInMB
-//------------------------------------------------------------------------------
-
+}// end of getMemoryUsage
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Print Full code name and the license.
- * @param [in] file - file to print the data (stdout)
+ * Print full code name and the license.
  */
-void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file)
+void KSpaceFirstOrder3DSolver::printFullCodeNameAndLicense(FILE* file) const
 {
   fprintf(file,"\n");
   fprintf(file,"+----------------------------------------------------+\n");
@@ -386,23 +360,23 @@ void TKSpaceFirstOrder3DSolver::PrintFullNameCodeAndLicense(FILE * file)
   fprintf(file,"| http://www.k-wave.org                              |\n");
   fprintf(file,"+----------------------------------------------------+\n");
   fprintf(file,"\n");
-}// end of GetFullCodeAndLincence
-//------------------------------------------------------------------------------
+}// end of printFullCodeNameAndLicense
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Set processor affinity.
  */
-void TKSpaceFirstOrder3DSolver::SetProcessorAffinity()
+void KSpaceFirstOrder3DSolver::setProcessorAffinity()
 {
   // Linux Build
   #ifdef __linux__
     //GNU compiler
     #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
-      setenv("OMP_PROC_BIND","TRUE",1);
+      setenv("OMP_PROC_BIND","TRUE", 1);
     #endif
 
     #ifdef __INTEL_COMPILER
-      setenv("KMP_AFFINITY","none",1);
+      setenv("KMP_AFFINITY","none", 1);
     #endif
   #endif
 
@@ -410,469 +384,1117 @@ void TKSpaceFirstOrder3DSolver::SetProcessorAffinity()
   #ifdef _WIN64
     _putenv_s("KMP_AFFINITY","none");
   #endif
-}//end of SetProcessorAffinity
-//------------------------------------------------------------------------------
+}//end of setProcessorAffinity
+//----------------------------------------------------------------------------------------------------------------------
 
 
-//----------------------------------------------------------------------------//
-//                            Protected methods                               //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
  * Initialize FFTW plans.
- *
  */
-void TKSpaceFirstOrder3DSolver::InitializeFFTWPlans()
+void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
 {
   // initialization of FFTW library
   #ifdef _OPENMP
     fftwf_init_threads();
-    fftwf_plan_with_nthreads(Parameters->GetNumberOfThreads());
+    fftwf_plan_with_nthreads(mParameters.getNumberOfThreads());
   #endif
 
   // The simulation does not use checkpointing or this is the first turn
-  bool RecoverFromPrevState = (Parameters->IsCheckpointEnabled() &&
-                               THDF5_File::IsAccessible(Parameters->GetCheckpointFileName().c_str()));
+  bool recoverFromPrevState = (mParameters.isCheckpointEnabled() &&
+                               Hdf5File::canAccess(mParameters.getCheckpointFileName()));
 
   // import FFTW wisdom if it is here
-  if (RecoverFromPrevState)
+  if (recoverFromPrevState)
   {
      // try to find the wisdom in the file that has the same name as the checkpoint file (different extension)
-    TFFTWComplexMatrix::ImportWisdom();
+    FftwComplexMatrix::importWisdom();
   }
 
   // create real to complex plans
-  Get_FFT_X_temp().Create_FFT_Plan_3D_R2C(Get_p());
-  Get_FFT_Y_temp().Create_FFT_Plan_3D_R2C(Get_p());
-  Get_FFT_Z_temp().Create_FFT_Plan_3D_R2C(Get_p());
+  getTempFftwX().createR2CFftPlan3D(getP());
+  getTempFftwY().createR2CFftPlan3D(getP());
+  getTempFftwZ().createR2CFftPlan3D(getP());
 
   // create real to complex plans
-  Get_FFT_X_temp().Create_FFT_Plan_3D_C2R(Get_p());
-  Get_FFT_Y_temp().Create_FFT_Plan_3D_C2R(Get_p());
-  Get_FFT_Z_temp().Create_FFT_Plan_3D_C2R(Get_p());
+  getTempFftwX().createC2RFftPlan3D(getP());
+  getTempFftwY().createC2RFftPlan3D(getP());
+  getTempFftwZ().createC2RFftPlan3D(getP());
 
   // if necessary, create 1D shift plans.
   // in this case, the matrix has a bit bigger dimensions to be able to store
   // shifted matrices.
-  if (TParameters::GetInstance()->IsStore_u_non_staggered_raw())
+  if (Parameters::getInstance().getStoreVelocityNonStaggeredRawFlag())
   {
     // X shifts
-    Get_FFT_shift_temp().Create_FFT_Plan_1DX_R2C(Get_p());
-    Get_FFT_shift_temp().Create_FFT_Plan_1DX_C2R(Get_p());
+    getTempFftwShift().createR2CFftPlan1DX(getP());
+    getTempFftwShift().createC2RFftPlan1DX(getP());
 
     // Y shifts
-    Get_FFT_shift_temp().Create_FFT_Plan_1DY_R2C(Get_p());
-    Get_FFT_shift_temp().Create_FFT_Plan_1DY_C2R(Get_p());
+    getTempFftwShift().createR2CFftPlan1DY(getP());
+    getTempFftwShift().createC2RFftPlan1DY(getP());
 
     // Z shifts
-    Get_FFT_shift_temp().Create_FFT_Plan_1DZ_R2C(Get_p());
-    Get_FFT_shift_temp().Create_FFT_Plan_1DZ_C2R(Get_p());
+    getTempFftwShift().createR2CFftPlan1DZ(getP());
+    getTempFftwShift().createC2RFftPlan1DZ(getP());
   }// end u_non_staggered
-}// end of InitializeFFTWPlans
-//------------------------------------------------------------------------------
-
-
+}// end of InitializeFftwPlans
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute pre-processing phase \n
- * Initialize all indices, pre-compute constants such as c^2, rho0_sg* x dt
- * and create kappa, absorb_eta, absorb_tau, absorb_nabla1, absorb_nabla2 matrices.
+ * Compute pre-processing phase.
  */
-void TKSpaceFirstOrder3DSolver::PreProcessingPhase()
+void KSpaceFirstOrder3DSolver::preProcessing()
 {
   // get the correct sensor mask and recompute indices
-  if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
-    Get_sensor_mask_index().RecomputeIndicesToCPP();
+    getSensorMaskIndex().recomputeIndicesToCPP();
   }
 
-  if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
-    Get_sensor_mask_corners().RecomputeIndicesToCPP();
+    getSensorMaskCorners().recomputeIndicesToCPP();
   }
 
-
-  if ((Parameters->Get_transducer_source_flag() != 0) ||
-      (Parameters->Get_ux_source_flag() != 0)         ||
-      (Parameters->Get_uy_source_flag() != 0)         ||
-      (Parameters->Get_uz_source_flag() != 0)
+  if ((mParameters.getTransducerSourceFlag() != 0) ||
+      (mParameters.getVelocityXSourceFlag() != 0)  ||
+      (mParameters.getVelocityYSourceFlag() != 0)  ||
+      (mParameters.getVelocityZSourceFlag() != 0)
      )
   {
-    Get_u_source_index().RecomputeIndicesToCPP();
+    getVelocitySourceIndex().recomputeIndicesToCPP();
   }
 
-  if (Parameters->Get_transducer_source_flag() != 0)
+  if (mParameters.getTransducerSourceFlag() != 0)
   {
-    Get_delay_mask().RecomputeIndicesToCPP();
+    getDelayMask().recomputeIndicesToCPP();
   }
 
-  if (Parameters->Get_p_source_flag() != 0)
+  if (mParameters.getPressureSourceFlag() != 0)
   {
-    Get_p_source_index().RecomputeIndicesToCPP();
+    getPressureSourceIndex().recomputeIndicesToCPP();
   }
 
 
   // compute dt / rho0_sg...
-  if (Parameters->Get_rho0_scalar_flag())
-  { // rho is scalar
-    Parameters->Get_rho0_sgx_scalar() = Parameters->Get_dt() / Parameters->Get_rho0_sgx_scalar();
-    Parameters->Get_rho0_sgy_scalar() = Parameters->Get_dt() / Parameters->Get_rho0_sgy_scalar();
-    Parameters->Get_rho0_sgz_scalar() = Parameters->Get_dt() / Parameters->Get_rho0_sgz_scalar();
-  }
-  else
+  if (!mParameters.getRho0ScalarFlag())
   { // non-uniform grid cannot be pre-calculated :-(
     // rho is matrix
-    if (Parameters->Get_nonuniform_grid_flag())
+    if (mParameters.getNonUniformGridFlag())
     {
-      Calculate_dt_rho0_non_uniform();
+      generateInitialDenisty();
     }
     else
     {
-      Get_dt_rho0_sgx().ScalarDividedBy(Parameters->Get_dt());
-      Get_dt_rho0_sgy().ScalarDividedBy(Parameters->Get_dt());
-      Get_dt_rho0_sgz().ScalarDividedBy(Parameters->Get_dt());
+      getDtRho0Sgx().scalarDividedBy(mParameters.getDt());
+      getDtRho0Sgy().scalarDividedBy(mParameters.getDt());
+      getDtRho0Sgz().scalarDividedBy(mParameters.getDt());
     }
   }
 
   // generate different matrices
-  if (Parameters->Get_absorbing_flag() != 0)
+  if (mParameters.getAbsorbingFlag() != 0)
   {
-    Generate_kappa_absorb_nabla1_absorb_nabla2();
-    Generate_absorb_tau_absorb_eta_matrix();
+    generateKappaAndNablas();
+    generateTauAndEta();
   }
   else
   {
-    Generate_kappa();
+    generateKappa();
   }
 
   // calculate c^2. It has to be after kappa gen... because of c modification
-  Compute_c2();
-}// end of PreProcessingPhase
-//------------------------------------------------------------------------------
-
-
-/**
- * Generate kappa matrix for lossless case.
- *
- */
-void TKSpaceFirstOrder3DSolver::Generate_kappa()
-{
-  #pragma omp parallel
-  {
-    const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
-    const float dy_sq_rec = 1.0f / (Parameters->Get_dy()*Parameters->Get_dy());
-    const float dz_sq_rec = 1.0f / (Parameters->Get_dz()*Parameters->Get_dz());
-
-    const float c_ref_dt_pi = Parameters->Get_c_ref() * Parameters->Get_dt() * float(M_PI);
-
-    const float Nx_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().X;
-    const float Ny_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
-    const float Nz_rec   = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
-
-
-    const size_t X_Size  = Parameters->GetReducedDimensionSizes().X;
-    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().Y;
-    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().Z;
-
-    float * kappa = Get_kappa().GetRawData();
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < Z_Size; z++)
-    {
-      const float z_f = (float) z;
-      float z_part = 0.5f - fabs(0.5f - z_f * Nz_rec );
-      z_part = (z_part * z_part) * dz_sq_rec;
-
-      for (size_t y = 0; y < Y_Size; y++)
-      {
-        const float y_f = (float) y;
-        float y_part = 0.5f - fabs(0.5f - y_f * Ny_rec);
-        y_part = (y_part * y_part) * dy_sq_rec;
-
-        const float yz_part = z_part + y_part;
-        for (size_t x = 0; x < X_Size; x++)
-        {
-          const float x_f = (float) x;
-          float x_part = 0.5f - fabs(0.5f - x_f * Nx_rec);
-          x_part = (x_part * x_part) * dx_sq_rec;
-
-          float  k = c_ref_dt_pi * sqrtf(x_part + yz_part);
-
-          // kappa element
-          kappa[(z*Y_Size + y) * X_Size + x ] = (k == 0.0f) ? 1.0f : sin(k)/k;
-        }//x
-      }//y
-    }// z
-  }// parallel
-}// end of Generate_kappa
-//------------------------------------------------------------------------------
+  computeC2();
+}// end of preProcessing
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Generate kappa, absorb_nabla1, absorb_nabla2 for absorbing media.
- *
+ * Compute the main time loop of KSpaceFirstOrder3D.
  */
-void TKSpaceFirstOrder3DSolver::Generate_kappa_absorb_nabla1_absorb_nabla2()
+void KSpaceFirstOrder3DSolver::computeMainLoop()
 {
-  #pragma omp parallel
+  mActPercent = 0;
+  // set ActPercent to correspond the t_index after recovery
+  if (mParameters.getTimeIndex() > 0)
   {
-    const float dx_sq_rec = 1.0f / (Parameters->Get_dx()*Parameters->Get_dx());
-    const float dy_sq_rec = 1.0f / (Parameters->Get_dy()*Parameters->Get_dy());
-    const float dz_sq_rec = 1.0f / (Parameters->Get_dz()*Parameters->Get_dz());
-
-    const float c_ref_dt_2 = Parameters->Get_c_ref() * Parameters->Get_dt() * 0.5f;
-    const float pi_2       = float(M_PI) * 2.0f;
-
-    const size_t Nx = Parameters->GetFullDimensionSizes().X;
-    const size_t Ny = Parameters->GetFullDimensionSizes().Y;
-    const size_t Nz = Parameters->GetFullDimensionSizes().Z;
-
-    const float Nx_rec   = 1.0f / (float) Nx;
-    const float Ny_rec   = 1.0f / (float) Ny;
-    const float Nz_rec   = 1.0f / (float) Nz;
-
-    const size_t X_Size  = Parameters->GetReducedDimensionSizes().X;
-    const size_t Y_Size  = Parameters->GetReducedDimensionSizes().Y;
-    const size_t Z_Size  = Parameters->GetReducedDimensionSizes().Z;
-
-    float * kappa           = Get_kappa().GetRawData();
-    float * absorb_nabla1   = Get_absorb_nabla1().GetRawData();
-    float * absorb_nabla2   = Get_absorb_nabla2().GetRawData();
-    const float alpha_power = Parameters->Get_alpha_power();
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < Z_Size; z++)
-    {
-      const float z_f = (float) z;
-      float z_part = 0.5f - fabs(0.5f - z_f * Nz_rec );
-      z_part = (z_part * z_part) * dz_sq_rec;
-
-      for (size_t y = 0; y < Y_Size; y++)
-      {
-        const float y_f = (float) y;
-        float y_part = 0.5f - fabs(0.5f - y_f * Ny_rec);
-        y_part = (y_part * y_part) * dy_sq_rec;
-
-        const float yz_part = z_part + y_part;
-
-        size_t i = (z*Y_Size + y) * X_Size;
-
-        for (size_t x = 0; x < X_Size; x++)
-        {
-          const float x_f = (float) x;
-
-          float x_part = 0.5f - fabs(0.5f - x_f * Nx_rec);
-          x_part = (x_part * x_part) * dx_sq_rec;
-
-
-          float  k         = pi_2 * sqrt(x_part + yz_part);
-          float  c_ref_k   = c_ref_dt_2 * k;
-
-          absorb_nabla1[i] = pow(k, alpha_power - 2);
-          absorb_nabla2[i] = pow(k, alpha_power - 1);
-
-          kappa[i]         =  (c_ref_k == 0.0f) ? 1.0f : sin(c_ref_k)/c_ref_k;
-
-          if (absorb_nabla1[i] ==  std::numeric_limits<float>::infinity()) absorb_nabla1[i] = 0.0f;
-          if (absorb_nabla2[i] ==  std::numeric_limits<float>::infinity()) absorb_nabla2[i] = 0.0f;
-
-          i++;
-        }//x
-      }//y
-    }// z
-  }// parallel
-}// end of Generate_kappa_absorb_nabla1_absorb_nabla2
-//------------------------------------------------------------------------------
-
-/**
- * Generate absorb_tau and absorb_eta in for heterogenous media.
- */
-void TKSpaceFirstOrder3DSolver::Generate_absorb_tau_absorb_eta_matrix()
-{
-  // test for scalars
-  if ((Parameters->Get_alpha_coeff_scallar_flag()) && (Parameters->Get_c0_scalar_flag()))
-  {
-    const float alpha_power = Parameters->Get_alpha_power();
-    const float tan_pi_y_2  = tan(float(M_PI_2)* alpha_power);
-    const float alpha_db_neper_coeff = (100.0f * pow(1.0e-6f / (2.0f * (float) M_PI), alpha_power)) /
-                                       (20.0f * (float) M_LOG10E);
-
-    const float alpha_coeff_2 = 2.0f * Parameters->Get_alpha_coeff_scallar() * alpha_db_neper_coeff;
-
-    Parameters->Get_absorb_tau_scalar() =  (-alpha_coeff_2) * pow(Parameters->Get_c0_scalar(),alpha_power-1);
-    Parameters->Get_absorb_eta_scalar() =    alpha_coeff_2  * pow(Parameters->Get_c0_scalar(),alpha_power) * tan_pi_y_2;
+    mActPercent = (100 * mParameters.getTimeIndex()) / mParameters.getNt();
   }
-  else
+
+  printOtputHeader();
+
+  mIterationTime.start();
+
+  while ((mParameters.getTimeIndex() < mParameters.getNt()) && (!isTimeToCheckpoint()))
+  {
+    const size_t timeIndex = mParameters.getTimeIndex();
+
+    // compute velocity
+    computeVelocity();
+    // add in the velocity source term
+    addVelocitySource();
+
+    // add in the transducer source term (t = t1) to ux
+    if (mParameters.getTransducerSourceFlag() > timeIndex)
+    {
+     getUxSgx().addTransducerSource(getVelocitySourceIndex(),
+                                    getTransducerSourceInput(),
+                                    getDelayMask(),
+                                    mParameters.getTimeIndex());
+    }
+
+    // compute gradient of velocity
+    computeVelocityGradient();
+
+    if (mParameters.getNonLinearFlag())
+    {
+      computeDensityNonliner();
+    }
+    else
+    {
+      computeDensityLinear();
+    }
+
+
+     // add in the source pressure term
+     addPressureSource();
+
+    if (mParameters.getNonLinearFlag())
+    {
+      computePressureNonlinear();
+    }
+    else
+    {
+      computePressureLinear();
+    }
+
+    // calculate initial pressure
+    if ((timeIndex == 0) && (mParameters.getInitialPressureSourceFlag() == 1)) addInitialPressureSource();
+
+    storeSensorData();
+    printStatistics();
+    mParameters.incrementTimeIndex();
+  }// time loop
+}// end of computeMainLoop
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Post processing the quantities, closing the output streams and storing the sensor mask.
+ */
+void KSpaceFirstOrder3DSolver::postPorcessing()
+{
+  if (mParameters.getStorePressureFinalAllFlag())
+  {
+    getP().writeData(mParameters.getOutputFile(), kPressureFinalName, mParameters.getCompressionLevel());
+  }// p_final
+
+  if (mParameters.getStoreVelocityFinalAllFlag())
+  {
+    getUxSgx().writeData(mParameters.getOutputFile(), kUxFinalName, mParameters.getCompressionLevel());
+    getUySgy().writeData(mParameters.getOutputFile(), kUyFinalName, mParameters.getCompressionLevel());
+    getUzSgz().writeData(mParameters.getOutputFile(), kUzFinalName, mParameters.getCompressionLevel());
+  }// u_final
+
+  // Apply post-processing and close
+  mOutputStreamContainer.postProcessStreams();
+  mOutputStreamContainer.closeStreams();
+
+
+  // store sensor mask if wanted
+  if (mParameters.getCopySensorMaskFlag())
+  {
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+    {
+      getSensorMaskIndex().recomputeIndicesToMatlab();
+      getSensorMaskIndex().writeData(mParameters.getOutputFile(),kSensorMaskIndexName,
+                                     mParameters.getCompressionLevel());
+    }
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+    {
+      getSensorMaskCorners().recomputeIndicesToMatlab();
+      getSensorMaskCorners().writeData(mParameters.getOutputFile(),kSensorMaskCornersName,
+                                       mParameters.getCompressionLevel());
+    }
+  }
+}// end of postPorcessing
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Store sensor data.
+ */
+void KSpaceFirstOrder3DSolver::storeSensorData()
+{
+  // Unless the time for sampling has come, exit
+  if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex())
+  {
+    if (mParameters.getStoreVelocityNonStaggeredRawFlag())
+    {
+      computeShiftedVelocity();
+    }
+    mOutputStreamContainer.sampleStreams();
+  }
+}// end of storeSensorData
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Write statistics and the header into the output file.
+ */
+void KSpaceFirstOrder3DSolver::writeOutputDataInfo()
+{
+  // write timeIndex into the output file
+  mParameters.getOutputFile().writeScalarValue(mParameters.getOutputFile().getRootGroup(),
+                                               kTimeIndexName,
+                                               mParameters.getTimeIndex());
+
+  // Write scalars
+  mParameters.saveScalarsToOutputFile();
+  Hdf5FileHeader& fileHeader = mParameters.getFileHeader();
+
+  // Write File header
+  fileHeader.setCodeName(getCodeName());
+  fileHeader.setMajorFileVersion();
+  fileHeader.setMinorFileVersion();
+  fileHeader.setActualCreationTime();
+  fileHeader.setFileType(Hdf5FileHeader::FileType::kOutput);
+  fileHeader.setHostName();
+
+  fileHeader.setMemoryConsumption(getMemoryUsage());
+
+  // Stop total timer here
+  mTotalTime.stop();
+  fileHeader.setExecutionTimes(getCumulatedTotalTime(),
+                               getCumulatedDataLoadTime(),
+                               getCumulatedPreProcessingTime(),
+                               getCumulatedSimulationTime(),
+                               getCumulatedPostProcessingTime());
+
+  fileHeader.setNumberOfCores();
+  fileHeader.writeHeaderToOutputFile(mParameters.getOutputFile());
+}// end of writeOutputDataInfo
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Save checkpoint data into the checkpoint file, flush aggregated outputs into the output file.
+ */
+void KSpaceFirstOrder3DSolver::saveCheckpointData()
+{
+  // export FFTW wisdom
+  FftwComplexMatrix::exportWisdom();
+
+  // Create Checkpoint file
+  Hdf5File& checkpointFile = mParameters.getCheckpointFile();
+  // if it happens and the file is opened (from the recovery, close it)
+  if (checkpointFile.isOpen()) checkpointFile.close();
+  // Create the new file (overwrite the old one)
+  checkpointFile.create(mParameters.getCheckpointFileName());
+
+
+  //------------------------------------------------ Store Matrices --------------------------------------------------//
+  // Store all necessary matrices in Checkpoint file
+  mMatrixContainer.storeDataIntoCheckpointFile();
+
+  // Write t_index
+  checkpointFile.writeScalarValue(checkpointFile.getRootGroup(), kTimeIndexName, mParameters.getTimeIndex());
+
+  // store basic dimension sizes (Nx, Ny, Nz) - Nt is not necessary
+  checkpointFile.writeScalarValue(checkpointFile.getRootGroup(), kNxName, mParameters.getFullDimensionSizes().nx);
+  checkpointFile.writeScalarValue(checkpointFile.getRootGroup(), kNyName, mParameters.getFullDimensionSizes().ny);
+  checkpointFile.writeScalarValue(checkpointFile.getRootGroup(), kNzName, mParameters.getFullDimensionSizes().nz);
+
+
+  // Write checkpoint file header
+  Hdf5FileHeader fileHeader = mParameters.getFileHeader();
+
+  fileHeader.setFileType(Hdf5FileHeader::FileType::kCheckpoint);
+  fileHeader.setCodeName(getCodeName());
+  fileHeader.setActualCreationTime();
+
+  fileHeader.writeHeaderToCheckpointFile(checkpointFile);
+
+  // Close the checkpoint file
+  checkpointFile.close();
+
+  // checkpoint output streams only if necessary (t_index > start_index) - here we're at  step + 1
+  if (mParameters.getTimeIndex() > mParameters.getSamplingStartTimeIndex())
+  {
+    mOutputStreamContainer.checkpointStreams();
+  }
+  mOutputStreamContainer.closeStreams();
+}// end of saveCheckpointData
+//----------------------------------------------------------------------------------------------------------------------
+
+
+ /**
+ * Compute new values of acoustic velocity in all three dimensions (UxSgx, UySgy, UzSgz).
+ *
+ * <b>Matlab code:</b> \n
+ *
+ * \verbatim
+   p_k = fftn(p);
+   ux_sgx = bsxfun(@times, pml_x_sgx, ...
+       bsxfun(@times, pml_x_sgx, ux_sgx) ...
+       - dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) ...
+       );
+   uy_sgy = bsxfun(@times, pml_y_sgy, ...
+       bsxfun(@times, pml_y_sgy, uy_sgy) ...
+       - dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) ...
+       );
+   uz_sgz = bsxfun(@times, pml_z_sgz, ...
+       bsxfun(@times, pml_z_sgz, uz_sgz) ...
+       - dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) ...
+       );
+ \endverbatim
+ */
+ void KSpaceFirstOrder3DSolver::computeVelocity()
+ {
+  // bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)), for all 3 dims
+  computePressureGradient();
+
+   getTempFftwX().computeC2RFft3D(getTemp1Real3D());
+   getTempFftwY().computeC2RFft3D(getTemp2Real3D());
+   getTempFftwZ().computeC2RFft3D(getTemp3Real3D());
+
+  #pragma omp parallel
+  {
+    if (mParameters.getRho0ScalarFlag())
+    { // scalars
+      if (mParameters.getNonUniformGridFlag())
+      {
+        getUxSgx().computeVelocityXHomogeneousNonuniform(getTemp1Real3D(),
+                                                         mParameters.getDtRho0SgxScalar(),
+                                                         getDxudxnSgx(),
+                                                         getPmlXSgx());
+        getUySgy().computeVelocityYHomogeneousNonuniform(getTemp2Real3D(),
+                                                         mParameters.getDtRho0SgyScalar(),
+                                                         getDyudynSgy(),
+                                                         getPmlYSgy());
+        getUzSgz().computeVelocityZHomogeneousNonuniform(getTemp3Real3D(),
+                                                         mParameters.getDtRho0SgzScalar(),
+                                                         getDzudznSgz(),
+                                                         getPmlZSgz());
+       }
+      else
+      {
+        getUxSgx().computeVelocityXHomogeneousUniform(getTemp1Real3D(),
+                                                      mParameters.getDtRho0SgxScalar(),
+                                                      getPmlXSgx());
+        getUySgy().computeVelocityYHomogeneousUniform(getTemp2Real3D(),
+                                                      mParameters.getDtRho0SgyScalar(),
+                                                      getPmlYSgy());
+        getUzSgz().computeVelocityZHomogeneousUniform(getTemp3Real3D(),
+                                                      mParameters.getDtRho0SgzScalar(),
+                                                      getPmlZSgz());
+      }
+    }
+    else
+    {// matrices
+      getUxSgx().computeVelocityX(getTemp1Real3D(),
+                                  getDtRho0Sgx(),
+                                  getPmlXSgx());
+      getUySgy().computeVelocityY(getTemp2Real3D(),
+                                  getDtRho0Sgy(),
+                                  getPmlYSgy());
+      getUzSgz().computeVelocityZ(getTemp3Real3D(),
+                                  getDtRho0Sgz(),
+                                  getPmlZSgz());
+    }
+  } // parallel
+}// end of computeVelocity
+//----------------------------------------------------------------------------------------------------------------------
+
+ /**
+ * Compute new values for duxdx, duydy, duzdz.
+ */
+void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
+{
+  getTempFftwX().computeR2CFft3D(getUxSgx());
+  getTempFftwY().computeR2CFft3D(getUySgy());
+  getTempFftwZ().computeR2CFft3D(getUzSgz());
+
+  #pragma omp parallel
+  {
+    float* tempFftX = getTempFftwX().getData();
+    float* tempFftY = getTempFftwY().getData();
+    float* tempFftZ = getTempFftwZ().getData();
+
+    const float* kappa   = getKappa().getData();
+
+    const size_t fftDimZ = getTempFftwX().getDimensionSizes().nz;
+    const size_t fftDimY = getTempFftwX().getDimensionSizes().ny;
+    const size_t fftDimX = getTempFftwX().getDimensionSizes().nx;
+
+    const size_t slabSize = (fftDimX * fftDimY) << 1;
+    const float  divider = 1.0f / static_cast<float>(getUxSgx().size());
+
+    const FloatComplex* ddx = reinterpret_cast<FloatComplex*>(getDdxKShiftNeg().getData());
+    const FloatComplex* ddy = reinterpret_cast<FloatComplex*>(getDdyKShiftNeg().getData());
+    const FloatComplex* ddz = reinterpret_cast<FloatComplex*>(getDdzKShiftNeg().getData());
+
+
+    #pragma omp for schedule (static)
+    for (size_t z = 0; z < fftDimZ; z++)
+    {
+      register size_t i = z * slabSize;
+
+      const float ddzNegRe = ddz[z].real;
+      const float ddzNegIm = ddz[z].imag;
+      for (size_t y = 0; y < fftDimY; y++)
+      {
+        const float ddyNegRe = ddy[y].real;
+        const float ddyNegIm = ddy[y].imag;
+        for (size_t x = 0; x < fftDimX; x++)
+        {
+          const float eKappa = kappa[i >> 1];
+
+          const float fftXRe = tempFftX[i]   *= eKappa;
+          const float ffyXIm = tempFftX[i+1] *= eKappa;
+
+          const float fftYre = tempFftY[i]   *= eKappa;
+          const float fftYIm = tempFftY[i+1] *= eKappa;
+
+          const float fftZRe = tempFftZ[i]   *= eKappa;
+          const float fftZIm = tempFftZ[i+1] *= eKappa;
+
+          tempFftX[i]     = ((fftXRe * ddx[x].real) - (ffyXIm * ddx[x].imag) ) * divider;
+          tempFftX[i + 1] = ((ffyXIm * ddx[x].real) + (fftXRe * ddx[x].imag) ) * divider;
+
+          tempFftY[i]     = ((fftYre * ddyNegRe) - (fftYIm * ddyNegIm)) * divider;
+          tempFftY[i + 1] = ((fftYIm * ddyNegRe) + (fftYre * ddyNegIm)) * divider;
+
+          tempFftZ[i]     = ((fftZRe * ddzNegRe) - (fftZIm * ddzNegIm)) * divider;
+          tempFftZ[i + 1] = ((fftZIm * ddzNegRe) + (fftZRe * ddzNegIm)) * divider;
+
+          i+=2;
+        } // x
+      } // y
+    } // z
+  } // parallel;
+
+  getTempFftwX().computeC2RFft3D(getDuxdx());
+  getTempFftwY().computeC2RFft3D(getDuydy());
+  getTempFftwZ().computeC2RFft3D(getDuzdz());
+
+ //------------------------------------------------- Non linear grid -------------------------------------------------//
+  if (mParameters.getNonUniformGridFlag() != 0)
   {
     #pragma omp parallel
     {
-      const size_t Z_Size  = Parameters->GetFullDimensionSizes().Z;
-      const size_t Y_Size  = Parameters->GetFullDimensionSizes().Y;
-      const size_t X_Size  = Parameters->GetFullDimensionSizes().X;
+      float* duxdx = getDuxdx().getData();
+      float* duydy = getDuydy().getData();
+      float* duzdz = getDuzdz().getData();
 
-      float * absorb_tau = Get_absorb_tau().GetRawData();
-      float * absorb_eta = Get_absorb_eta().GetRawData();
+      const float* duxdxn = getDxudxn().getData();
+      const float* duydyn = getDyudyn().getData();
+      const float* duzdzn = getDzudzn().getData();
 
-      float * alpha_coeff;
-      size_t  alpha_shift;
+      const size_t nz = getDuxdx().getDimensionSizes().nz;
+      const size_t ny = getDuxdx().getDimensionSizes().ny;
+      const size_t nx = getDuxdx().getDimensionSizes().nx;
 
-      if (Parameters->Get_alpha_coeff_scallar_flag())
-      {
-        alpha_coeff = &(Parameters->Get_alpha_coeff_scallar());
-        alpha_shift = 0;
-      }
-      else
-      {
-        alpha_coeff = Get_Temp_1_RS3D().GetRawData();
-        alpha_shift = 1;
-      }
-
-      float * c0;
-      size_t  c0_shift;
-      if (Parameters->Get_c0_scalar_flag())
-      {
-        c0 = &(Parameters->Get_c0_scalar());
-        c0_shift = 0;
-      }
-      else
-      {
-        c0 = Get_c2().GetRawData();
-        c0_shift = 1;
-      }
-
-      const float alpha_power = Parameters->Get_alpha_power();
-      const float tan_pi_y_2  = tan(float(M_PI_2)* alpha_power);
-
-      //alpha = 100*alpha.*(1e-6/(2*pi)).^y./
-      //                  (20*log10(exp(1)));
-      const float alpha_db_neper_coeff = (100.0f * pow(1.0e-6f / (2.0f * (float) M_PI), alpha_power)) /
-                                         (20.0f * (float) M_LOG10E);
+      const size_t SliceSize = (nx * ny);
 
       #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
+      for (size_t z = 0; z < nz; z++)
       {
-        for (size_t y = 0; y < Y_Size; y++)
+        register size_t i = z * SliceSize;
+        for (size_t y = 0; y < ny; y++)
         {
-          size_t i = (z*Y_Size + y) * X_Size;
-          for (size_t x = 0; x < X_Size; x++)
+          for (size_t x = 0; x < nx; x++)
           {
-            const float alpha_coeff_2 = 2.0f * alpha_coeff[i * alpha_shift] * alpha_db_neper_coeff;
-            absorb_tau[i] = (-alpha_coeff_2) * pow(c0[i * c0_shift],alpha_power-1);
-            absorb_eta[i] =   alpha_coeff_2  * pow(c0[i * c0_shift],alpha_power) * tan_pi_y_2;
+            duxdx[i] *= duxdxn[x];
             i++;
-          }//x
-        }//y
-      }// z
-    }// parallel
-  } // absorb_tau and aborb_eta = matrics
-}// end of Generate_absorb_tau_absorb_eta_matrix
-//------------------------------------------------------------------------------
+          } // x
+        } // y
+      } // z
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * SliceSize;
+        for (size_t y = 0; y < ny; y++)
+        {
+          const float eDyudyn = duydyn[y];
+          for (size_t x = 0; x < nx; x++)
+          {
+            duydy[i] *= eDyudyn;
+            i++;
+          } // x
+        } // y
+      } // z
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        const float eDuzdzn = duzdzn[z];
+        register size_t i = z * SliceSize;
+        for (size_t y = 0; y < ny; y++)
+        {
+          for (size_t x = 0; x < nx; x++)
+          {
+            duzdz[i] *=  eDuzdzn;
+            i++;
+          } // x
+        } // y
+      } // z
+    } // parallel
+ }// nonlinear
+}// end of computeVelocityGradient
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Prepare dt./ rho0  for non-uniform grid.
+ * Calculate new values of acoustic density for nonlinear case (rhoX, rhoy and rhoZ).
  *
+ * <b>Matlab code:</b> \n
+ *
+ *\verbatim
+    rho0_plus_rho = 2 .* (rhox + rhoy + rhoz) + rho0;
+    rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0_plus_rho .* duxdx);
+    rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0_plus_rho .* duydy);
+    rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0_plus_rho .* duzdz);
+ \endverbatim
  */
-void TKSpaceFirstOrder3DSolver::Calculate_dt_rho0_non_uniform()
+void KSpaceFirstOrder3DSolver::computeDensityNonliner()
 {
+  const size_t nz = getRhoX().getDimensionSizes().nz;
+  const size_t ny = getRhoX().getDimensionSizes().ny;
+  const size_t nx = getRhoX().getDimensionSizes().nx;
+
+  const float dt2 = 2.0f * mParameters.getDt();
+  const float dt  = mParameters.getDt();
+  const size_t slabSize = ny * nx;
+
   #pragma omp parallel
   {
-    float * dt_rho0_sgx   = Get_dt_rho0_sgx().GetRawData();
-    float * dt_rho0_sgy   = Get_dt_rho0_sgy().GetRawData();
-    float * dt_rho0_sgz   = Get_dt_rho0_sgz().GetRawData();
+    float* rhox  = getRhoX().getData();
+    float* rhoy  = getRhoY().getData();
+    float* rhoz  = getRhoZ().getData();
 
-    const float dt = Parameters->Get_dt();
+    const float* pmlX  = getPmlX().getData();
+    const float* pmlY  = getPmlY().getData();
+    const float* pmlZ  = getPmlZ().getData();
 
-    const float * duxdxn_sgx = Get_dxudxn_sgx().GetRawData();
-    const float * duydyn_sgy = Get_dyudyn_sgy().GetRawData();
-    const float * duzdzn_sgz = Get_dzudzn_sgz().GetRawData();
+    const float* duxdx = getDuxdx().getData();
+    const float* duydy = getDuydy().getData();
+    const float* duzdz = getDuzdz().getData();
 
-    const size_t Z_Size = Get_dt_rho0_sgx().GetDimensionSizes().Z;
-    const size_t Y_Size = Get_dt_rho0_sgx().GetDimensionSizes().Y;
-    const size_t X_Size = Get_dt_rho0_sgx().GetDimensionSizes().X;
-
-    const size_t SliceSize = (X_Size * Y_Size );
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < Z_Size; z++)
+    //----------------------------------------------- rho0 is scalar -------------------------------------------------//
+    if (mParameters.getRho0ScalarFlag())
     {
-      register size_t i = z * SliceSize;
-      for (size_t y = 0; y < Y_Size; y++)
-      {
-        for (size_t x = 0; x < X_Size; x++)
-        {
-          dt_rho0_sgx[i] = (dt * duxdxn_sgx[x]) / dt_rho0_sgx[i];
-          i++;
-        } // x
-      } // y
-    } // z
+      const float dtRho0 = mParameters.getRho0Scalar() * dt;
 
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < Z_Size; z++)
-    {
-      register size_t i = z * SliceSize;
-      for (size_t y = 0; y < Y_Size; y++)
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
       {
-        const float duydyn_el = duydyn_sgy[y];
-        for (size_t x = 0; x < X_Size; x++)
+        register size_t i = z * slabSize;
+        for (size_t y = 0; y < ny; y++)
         {
-          dt_rho0_sgy[i] = (dt * duydyn_el) / dt_rho0_sgy[i];
-          i++;
-        } // x
-      } // y
-    } // z
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float ePmlX   = pmlX[x];
+            const float eDuxdx  = duxdx[i];
 
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < Z_Size; z++)
-    {
-      register size_t i = z* SliceSize;
-      const float duzdzn_el = duzdzn_sgz[z];
-      for (size_t y = 0; y < Y_Size; y++)
+            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * eDuxdx)) /
+                                (1.0f + (dt2 * eDuxdx)));
+            i++;
+          } // x
+        }// y
+      }// z
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
       {
-        for (size_t x = 0; x < X_Size; x++)
+        register size_t i = z * slabSize;
+        for (size_t y = 0; y < ny; y++)
         {
-          dt_rho0_sgz[i] = (dt * duzdzn_el) / dt_rho0_sgz[i];
-          i++;
-        } // x
-      } // y
-    } // z
-  } // parallel
-}// end of Calculate_dt_rho0_non_uniform
-//------------------------------------------------------------------------------
+          const float ePmlY = pmlY[y];
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float eDuydy = duydy[i];
+
+            rhoy[i] = ePmlY * (((ePmlY * rhoy[i]) - (dtRho0 * eDuydy))/
+                                (1.0f + (dt2 * eDuydy)));
+            i++;
+          } // x
+        }// y
+      }// z
+
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        const float ePmlZ = pmlZ[z];
+        for (size_t y = 0; y < ny; y++)
+        {
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float eDuzdz  = duzdz[i];
+
+            rhoz[i] = ePmlZ * (((ePmlZ * rhoz[i]) - (dtRho0 * eDuzdz)) /
+                                (1.0f + (dt2 * eDuzdz)));
+            i++;
+          } // x
+        }// y
+      }// z
+    }
+    else
+    { //---------------------------------------------- rho0 is matrix ------------------------------------------------//
+      // rho0 is a matrix
+      const float* rho0  = getRho0().getData();
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        for (size_t y = 0; y < ny; y++)
+        {
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float ePmlX  = pmlX[x];
+            const float dtRho0 = dt * rho0[i];
+            const float eDuxdx = duxdx[i];
+
+            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * eDuxdx))/
+                                (1.0f + (dt2 * eDuxdx)));
+            i++;
+          } // x
+        }// y
+      }// z
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        for (size_t y = 0; y < ny; y++)
+        {
+          const float pmlY = getPmlY()[y];
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float dtRho0 = dt * rho0[i];
+            const float eDuydy = duydy[i];
+
+            rhoy[i] = pmlY * (((pmlY * rhoy[i]) - (dtRho0 * eDuydy))/
+                               (1.0f + (dt2 * eDuydy)));
+            i++;
+          } // x
+        }// y
+      }// z
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        const float pmlZ = getPmlZ()[z];
+        for (size_t y = 0; y < ny; y++)
+        {
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float dtRho0 = dt * rho0[i];
+            const float eDuzdz = duzdz[i];
+
+            rhoz[i] = pmlZ * (((pmlZ * rhoz[i]) - (dtRho0 * eDuzdz))/
+                               (1.0f + (dt2 * eDuzdz)));
+            i++;
+          } // x
+        }// y
+      }// z
+    } // end rho is matrix
+  }// parallel
+}// end of computeVelocityGradient
+//----------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * Calculate new values of acoustic density for linear case (rhoX, rhoy and rhoZ).
+ *
+ * <b>Matlab code:</b> \n
+ *
+ *\verbatim
+    rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0 .* duxdx);
+    rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0 .* duydy);
+    rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0 .* duzdz);
+\endverbatim
+ *
+ */
+void KSpaceFirstOrder3DSolver::computeDensityLinear()
+{
+  const size_t nz = getRhoX().getDimensionSizes().nz;
+  const size_t ny = getRhoX().getDimensionSizes().ny;
+  const size_t nx = getRhoX().getDimensionSizes().nx;
+
+  const float dt        = mParameters.getDt();
+  const size_t slabSize =  ny * nx;
+
+  #pragma omp parallel
+  {
+    float* rhox  = getRhoX().getData();
+    float* rhoy  = getRhoY().getData();
+    float* rhoz  = getRhoZ().getData();
+
+    const float* pmlX  = getPmlX().getData();
+    const float* pmlY  = getPmlY().getData();
+    const float* pmlZ  = getPmlZ().getData();
+
+    const float* duxdx = getDuxdx().getData();
+    const float* duydy = getDuydy().getData();
+    const float* duzdz = getDuzdz().getData();
+
+    //----------------------------------------------- rho0 is scalar -------------------------------------------------//
+    if (mParameters.getRho0ScalarFlag())
+    { // rho0 is a scalar
+      const float dtRho0 = mParameters.getRho0Scalar() * dt;
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        for (size_t y = 0; y < ny; y++)
+        {
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float ePmlX   = pmlX[x];
+
+            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * duxdx[i])) );
+            i++;
+          } // x
+        }// y
+      }// z
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        for (size_t y = 0; y < ny; y++)
+        {
+          const float ePmlY = pmlY[y];
+          for (size_t x = 0; x < nx; x++)
+          {
+            rhoy[i] = ePmlY * (((ePmlY * rhoy[i]) - (dtRho0 * duydy[i])));
+            i++;
+          } // x
+        }// y
+      }// z
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        const float ePmlZ = pmlZ[z];
+
+        for (size_t y = 0; y < ny; y++)
+        {
+          for (size_t x = 0; x < nx; x++)
+          {
+            rhoz[i] = ePmlZ * (((ePmlZ * rhoz[i]) - (dtRho0 * duzdz[i])));
+            i++;
+          } // x
+        }// y
+      }// z
+
+    }
+    else
+    { //---------------------------------------------- rho0 is matrix ------------------------------------------------//
+      // rho0 is a matrix
+      const float* rho0  = getRho0().getData();
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        for (size_t y = 0; y < ny; y++)
+        {
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float ePmlX   = pmlX[x];
+            const float dtRho0 = dt * rho0[i];
+
+            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * duxdx[i])));
+
+            i++;
+          } // x
+        }// y
+      }// z
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        for (size_t y = 0; y < ny; y++)
+        {
+          const float ePmlY = pmlY[y];
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float dtRho0 = dt * rho0[i];
+
+            rhoy[i] = ePmlY * (((ePmlY * rhoy[i]) - (dtRho0 * duydy[i])));
+            i++;
+
+          } // x
+        }// y
+      }// z
+
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        register size_t i = z * slabSize;
+        const float ePmlZ = pmlZ[z];
+
+        for (size_t y = 0; y < ny; y++)
+        {
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float dtRho0 = dt * rho0[i];
+
+            rhoz[i] = ePmlZ * (((ePmlZ * rhoz[i]) - (dtRho0 * duzdz[i])));
+            i++;
+          } // x
+        }// y
+      }// z
+
+   } // end rho is a matrix
+  }// parallel
+}// end of computeDensityLinear
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic pressure for non-linear case.
+ *
+ * <b>Matlab code:</b> \n
+ *
+ *\verbatim
+    case 'lossless'
+        % calculate p using a nonlinear adiabatic equation of state
+        p = c.^2 .* (rhox + rhoy + rhoz + medium.BonA .* (rhox + rhoy + rhoz).^2 ./ (2 .* rho0));
+
+    case 'absorbing'
+        % calculate p using a nonlinear absorbing equation of state
+        p = c.^2 .* (...
+            (rhox + rhoy + rhoz) ...
+            + absorb_tau .* real(ifftn( absorb_nabla1 .* fftn(rho0 .* (duxdx + duydy + duzdz)) ))...
+            - absorb_eta .* real(ifftn( absorb_nabla2 .* fftn(rhox + rhoy + rhoz) ))...
+            + medium.BonA .*(rhox + rhoy + rhoz).^2 ./ (2 .* rho0) ...
+            );
+
+ \endverbatim
+ */
+ void KSpaceFirstOrder3DSolver::computePressureNonlinear()
+{
+  if (mParameters.getAbsorbingFlag())
+  { // absorbing case
+
+    RealMatrix& densitySum         = getTemp1Real3D();
+    RealMatrix& nonlinearTerm      = getTemp2Real3D();
+    RealMatrix& velocitGradientSum = getTemp3Real3D();
+
+    // reusing of the temp variables
+    RealMatrix& absorbTauTerm = velocitGradientSum;
+    RealMatrix& absorbEtaTerm = densitySum;
+
+
+    computePressureTermsNonlinearSSE2(densitySum, nonlinearTerm, velocitGradientSum);
+
+    // ifftn( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
+    getTempFftwX().computeR2CFft3D(velocitGradientSum);
+    getTempFftwY().computeR2CFft3D(densitySum);
+
+    computeAbsorbtionTermSSE2(getTempFftwX(), getTempFftwY());
+
+    getTempFftwX().computeC2RFft3D(absorbTauTerm);
+    getTempFftwY().computeC2RFft3D(absorbEtaTerm);
+
+    sumPressureTermsNonlinear(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
+  }
+  else
+  {
+    sumPressureTermsNonlinearLossless();
+  }
+}// end of computePressureNonlinear
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute new p for linear case.
+ *
+ * <b>Matlab code:</b> \n
+ *
+ *\verbatim
+    case 'lossless'
+
+        % calculate p using a linear adiabatic equation of state
+        p = c.^2 .* (rhox + rhoy + rhoz);
+
+    case 'absorbing'
+
+        % calculate p using a linear absorbing equation of state
+        p = c.^2 .* ( ...
+            (rhox + rhoy + rhoz) ...
+            + absorb_tau .* real(ifftn( absorb_nabla1 .* fftn(rho0 .* (duxdx + duydy + duzdz)) )) ...
+            - absorb_eta .* real(ifftn( absorb_nabla2 .* fftn(rhox + rhoy + rhoz) )) ...
+            );
+ \endverbatim
+ */
+ void KSpaceFirstOrder3DSolver::computePressureLinear()
+ {
+  // rhox + rhoy + rhoz
+  if (mParameters.getAbsorbingFlag())
+  { // absorbing case
+
+    RealMatrix& densitySum           = getTemp1Real3D();
+    RealMatrix& velocityGradientTerm = getTemp2Real3D();
+
+    RealMatrix& absorbTauTerm        = getTemp2Real3D();
+    RealMatrix& absorbEtaTerm        = getTemp3Real3D();
+
+    computePressureTermsLinear(densitySum, velocityGradientTerm);
+
+    // ifftn ( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
+
+    getTempFftwX().computeR2CFft3D(velocityGradientTerm);
+    getTempFftwY().computeR2CFft3D(densitySum);
+
+    computeAbsorbtionTermSSE2(getTempFftwX(), getTempFftwY());
+
+    getTempFftwX().computeC2RFft3D(absorbTauTerm);
+    getTempFftwY().computeC2RFft3D(absorbEtaTerm);
+
+    sumPressureTermsLinear(absorbTauTerm, absorbEtaTerm, densitySum);
+  }
+  else
+  {
+    // lossless case
+    sumPressureTermsLinearLossless();
+  }
+ }// end of computePressureLinear
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add u source to the particle velocity.
+ */
+void KSpaceFirstOrder3DSolver::addVelocitySource()
+{
+  const size_t timeIndex = mParameters.getTimeIndex();
+
+  if (mParameters.getVelocityXSourceFlag() > timeIndex)
+  {
+    getUxSgx().addVelocitySource(GetVelocityXSourceInput(),
+                                 getVelocitySourceIndex(),
+                                 timeIndex,
+                                 mParameters.getVelocitySourceMode(),
+                                 mParameters.getVelocitySourceMany());
+  }
+
+  if (mParameters.getVelocityYSourceFlag() > timeIndex)
+  {
+    getUySgy().addVelocitySource(GetVelocityYSourceInput(),
+                                 getVelocitySourceIndex(),
+                                 timeIndex,
+                                 mParameters.getVelocitySourceMode(),
+                                 mParameters.getVelocitySourceMany());
+  }
+
+  if (mParameters.getVelocityZSourceFlag() > timeIndex)
+  {
+    getUzSgz().addVelocitySource(getVelocityZSourceInput(),
+                                 getVelocitySourceIndex(),
+                                 timeIndex,
+                                 mParameters.getVelocitySourceMode(),
+                                 mParameters.getVelocitySourceMany());
+  }
+}// end of addVelocitySource
+//----------------------------------------------------------------------------------------------------------------------
+
+ /**
+  * Add in pressure source.
+  */
+void KSpaceFirstOrder3DSolver::addPressureSource()
+{
+  const size_t timeIndex = mParameters.getTimeIndex();
+
+  if (mParameters.getPressureSourceFlag() > timeIndex)
+  {
+    float* rhox = getRhoX().getData();
+    float* rhoy = getRhoY().getData();
+    float* rhoz = getRhoZ().getData();
+
+    const float*  sourceInput = getPressureSourceInput().getData();
+    const size_t* sourceIndex = getPressureSourceIndex().getData();
+
+    const bool   isManyFlag  = (mParameters.getPressureSourceMany() != 0);
+    const size_t sourceSize  = getPressureSourceIndex().size();
+    const size_t index2D     = (isManyFlag) ? timeIndex * sourceSize : timeIndex;
+
+    // replacement
+    if (mParameters.getPressureSourceMode() == 0)
+    {
+      #pragma omp parallel for if (sourceSize > 16384)
+      for (size_t i = 0; i < sourceSize; i++)
+      {
+        const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+
+        rhox[sourceIndex[i]] = sourceInput[signalIndex];
+        rhoy[sourceIndex[i]] = sourceInput[signalIndex];
+        rhoz[sourceIndex[i]] = sourceInput[signalIndex];
+      }
+    }
+    // Addition
+    else
+    {
+      #pragma omp parallel for if (sourceSize > 16384)
+      for (size_t i = 0; i < sourceSize; i++)
+      {
+        const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+
+        rhox[sourceIndex[i]] += sourceInput[signalIndex];
+        rhoy[sourceIndex[i]] += sourceInput[signalIndex];
+        rhoz[sourceIndex[i]] += sourceInput[signalIndex];
+      }
+    }// type of replacement
+  }// if do at all
+}// end of addPressureSource
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculate p0 source when necessary.
  *
+ * <b>Matlab code:</b> \n
+ *
+ *\verbatim
+    % add the initial pressure to rho as a mass source
+    p = source.p0;
+    rhox = source.p0 ./ (3 .* c.^2);
+    rhoy = source.p0 ./ (3 .* c.^2);
+    rhoz = source.p0 ./ (3 .* c.^2);
+
+    % compute u(t = t1 + dt/2) based on the assumption u(dt/2) = -u(-dt/2)
+    % which forces u(t = t1) = 0
+    ux_sgx = dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) / 2;
+    uy_sgy = dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) / 2;
+    uz_sgz = dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) / 2;
+ \endverbatim
  */
-void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
+void KSpaceFirstOrder3DSolver::addInitialPressureSource()
 {
-  Get_p().CopyData(Get_p0_source_input());
+  getP().copyData(getInitialPressureSourceInput());
 
-  const float * p0 = Get_p0_source_input().GetRawData();
+  const float* sourceInput = getInitialPressureSourceInput().getData();
 
-  float * c2;
-  size_t c2_shift;
+  const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
+  const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+  const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  if (Parameters->Get_c0_scalar_flag())
+  float* rhox = getRhoX().getData();
+  float* rhoy = getRhoY().getData();
+  float* rhoz = getRhoZ().getData();
+
+  const size_t size = getRhoX().size();
+
+  #pragma omp parallel for schedule (static)
+  for (size_t i = 0; i < size; i++)
   {
-    c2 = &Parameters->Get_c0_scalar();
-    c2_shift = 0;
-  }
-  else
-  {
-    c2 = Get_c2().GetRawData();
-    c2_shift = 1;
-  }
-
-  float * rhox = Get_rhox().GetRawData();
-  float * rhoy = Get_rhoy().GetRawData();
-  float * rhoz = Get_rhoz().GetRawData();
-
-  //  add the initial pressure to rho as a mass source
-  float tmp;
-
-  #pragma omp parallel for schedule (static) private(tmp)
-  for (size_t i = 0; i < Get_rhox().GetTotalElementCount(); i++)
-  {
-    tmp = p0[i] / (3.0f* c2[i * c2_shift]);
+    const float tmp = sourceInput[i] / (3.0f * ((c0ScalarFlag) ? c2Scalar : c2Matrix[i]));
     rhox[i] = tmp;
     rhoy[i] = tmp;
     rhoz[i] = tmp;
@@ -882,743 +1504,505 @@ void TKSpaceFirstOrder3DSolver::Calculate_p0_source()
   //--  compute u(t = t1 + dt/2) based on the assumption u(dt/2) = -u(-dt/2) --//
   //--    which forces u(t = t1) = 0 --//
   //------------------------------------------------------------------------//
-  Compute_ddx_kappa_fft_p(Get_p(),
-                          Get_FFT_X_temp(),Get_FFT_Y_temp(),Get_FFT_Z_temp(),
-                          Get_kappa(),
-                          Get_ddx_k_shift_pos(),Get_ddy_k_shift_pos(),Get_ddz_k_shift_pos()
-                          );
+  computePressureGradient();
 
-  if (Parameters->Get_rho0_scalar_flag())
+  if (mParameters.getRho0ScalarFlag())
   {
-    if (Parameters->Get_nonuniform_grid_flag())
+    if (mParameters.getNonUniformGridFlag())
     { // non uniform grid
-      Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_x(Parameters->Get_rho0_sgx_scalar(),
-                                                                        Get_dxudxn_sgx(),
-                                                                        Get_FFT_X_temp());
-      Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_y(Parameters->Get_rho0_sgy_scalar(),
-                                                                        Get_dyudyn_sgy(),
-                                                                        Get_FFT_Y_temp());
-      Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2_scalar_nonuniform_z(Parameters->Get_rho0_sgz_scalar(),
-                                                                        Get_dzudzn_sgz(),
-                                                                        Get_FFT_Z_temp());
+      getUxSgx().computeInitialVelocityXHomogeneousNonuniform(mParameters.getDtRho0SgxScalar(),
+                                                              getDxudxnSgx(),
+                                                              getTempFftwX());
+      getUySgy().computeInitialVelocityYHomogeneousNonuniform(mParameters.getDtRho0SgyScalar(),
+                                                              getDyudynSgy(),
+                                                              getTempFftwY());
+      getUzSgz().computeInitialVelocityZHomogeneousNonuniform(mParameters.getDtRho0SgzScalar(),
+                                                              getDzudznSgz(),
+                                                              getTempFftwZ());
     }
     else
     { //uniform grid, heterogeneous
-      Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgx_scalar(), Get_FFT_X_temp());
-      Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgy_scalar(), Get_FFT_Y_temp());
-      Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2(Parameters->Get_rho0_sgz_scalar(), Get_FFT_Z_temp());
+      getUxSgx().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgxScalar(), getTempFftwX());
+      getUySgy().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgyScalar(), getTempFftwY());
+      getUzSgz().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgzScalar(), getTempFftwZ());
     }
   }
   else
-  { // homogeneous, non-unifrom grid
+  { // homogeneous, unifrom grid
     // divide the matrix by 2 and multiply with st./rho0_sg
-    Get_ux_sgx().Compute_dt_rho_sg_mul_ifft_div_2(Get_dt_rho0_sgx(), Get_FFT_X_temp());
-    Get_uy_sgy().Compute_dt_rho_sg_mul_ifft_div_2(Get_dt_rho0_sgy(), Get_FFT_Y_temp());
-    Get_uz_sgz().Compute_dt_rho_sg_mul_ifft_div_2(Get_dt_rho0_sgz(), Get_FFT_Z_temp());
+    getUxSgx().computeInitialVelocity(getDtRho0Sgx(), getTempFftwX());
+    getUySgy().computeInitialVelocity(getDtRho0Sgy(), getTempFftwY());
+    getUzSgz().computeInitialVelocity(getDtRho0Sgz(), getTempFftwZ());
   }
-}// end of Calculate_p0_source
-//------------------------------------------------------------------------------
+}// end of addInitialPressureSource
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Generate kappa matrix for lossless medium.
+ */
+void KSpaceFirstOrder3DSolver::generateKappa()
+{
+  #pragma omp parallel
+  {
+    const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
+    const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
+    const float dz2Rec = 1.0f / (mParameters.getDz() * mParameters.getDz());
+
+    const float cRefDtPi = mParameters.getCRef() * mParameters.getDt() * static_cast<float>(M_PI);
+
+    const float nxRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
+    const float nyRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().ny);
+    const float nzRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nz);
+
+    const size_t nx = mParameters.getReducedDimensionSizes().nx;
+    const size_t ny = mParameters.getReducedDimensionSizes().ny;
+    const size_t nz = mParameters.getReducedDimensionSizes().nz;
+
+    float* kappa = getKappa().getData();
+
+    #pragma omp for schedule (static)
+    for (size_t z = 0; z < nz; z++)
+    {
+      const float zf    = static_cast<float>(z);
+            float zPart = 0.5f - fabs(0.5f - zf * nzRec);
+                  zPart = (zPart * zPart) * dz2Rec;
+
+      for (size_t y = 0; y < ny; y++)
+      {
+        const float yf    = static_cast<float>(y);
+              float yPart = 0.5f - fabs(0.5f - yf * nyRec);
+                    yPart = (yPart * yPart) * dy2Rec;
+
+        const float yzPart = zPart + yPart;
+        for (size_t x = 0; x < nx; x++)
+        {
+          const float xf = static_cast<float>(x);
+                float xPart = 0.5f - fabs(0.5f - xf * nxRec);
+                      xPart = (xPart * xPart) * dx2Rec;
+
+                float k = cRefDtPi * sqrt(xPart + yzPart);
+
+          // kappa element
+          kappa[(z * ny + y) * nx + x ] = (k == 0.0f) ? 1.0f : sin(k) / k;
+        }//x
+      }//y
+    }// z
+  }// parallel
+}// end of generateKappa
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Generate kappa, absorb_nabla1, absorb_nabla2 for absorbing medium.
+ */
+void KSpaceFirstOrder3DSolver::generateKappaAndNablas()
+{
+  #pragma omp parallel
+  {
+    const float dxSqRec    = 1.0f / (mParameters.getDx() * mParameters.getDx());
+    const float dySqRec    = 1.0f / (mParameters.getDy() * mParameters.getDy());
+    const float dzSqRec    = 1.0f / (mParameters.getDz() * mParameters.getDz());
+
+    const float cRefDt2    = mParameters.getCRef() * mParameters.getDt() * 0.5f;
+    const float pi2        = static_cast<float>(M_PI) * 2.0f;
+
+    const size_t nx        = mParameters.getFullDimensionSizes().nx;
+    const size_t ny        = mParameters.getFullDimensionSizes().ny;
+    const size_t nz        = mParameters.getFullDimensionSizes().nz;
+
+    const float nxRec      = 1.0f / static_cast<float>(nx);
+    const float nyRec      = 1.0f / static_cast<float>(ny);
+    const float nzRec      = 1.0f / static_cast<float>(nz);
+
+    const size_t nxComplex = mParameters.getReducedDimensionSizes().nx;
+    const size_t nyComplex = mParameters.getReducedDimensionSizes().ny;
+    const size_t nzComplex = mParameters.getReducedDimensionSizes().nz;
+
+    float* kappa           = getKappa().getData();
+    float* absorbNabla1    = getAbsorbNabla1().getData();
+    float* absorbNabla2    = getAbsorbNabla2().getData();
+    const float alphaPower = mParameters.getAlphaPower();
+
+    #pragma omp for schedule (static)
+    for (size_t z = 0; z < nzComplex; z++)
+    {
+      const float zf    = static_cast<float>(z);
+            float zPart = 0.5f - fabs(0.5f - zf * nzRec);
+                  zPart = (zPart * zPart) * dzSqRec;
+
+      for (size_t y = 0; y < nyComplex; y++)
+      {
+        const float yf    = static_cast<float>(y);
+              float yPart = 0.5f - fabs(0.5f - yf * nyRec);
+                    yPart = (yPart * yPart) * dySqRec;
+
+        const float yzPart = zPart + yPart;
+
+        size_t i = (z * nyComplex + y) * nxComplex;
+
+        for (size_t x = 0; x < nxComplex; x++)
+        {
+          const float xf    = static_cast<float>(x);
+                float xPart = 0.5f - fabs(0.5f - xf * nxRec);
+                      xPart = (xPart * xPart) * dxSqRec;
+
+                float k     = pi2 * sqrt(xPart + yzPart);
+                float cRefK = cRefDt2 * k;
+
+          // if the exponent is negative, then both abosorb coeffs are 0 not infinity
+          //absorbNabla1[i]   = ((alphaPower - 2) < 0) ? 0.0f : pow(k, alphaPower - 2);
+          //absorbNabla2[i]   = ((alphaPower - 1) < 0) ? 0.0f : pow(k, alphaPower - 1);
+
+          kappa[i]          = (cRefK == 0.0f) ? 1.0f : sin(cRefK) / cRefK;
+
+          absorbNabla1[i] = pow(k, alphaPower - 2);
+          absorbNabla2[i] = pow(k, alphaPower - 1);
+
+          if (absorbNabla1[i] ==  std::numeric_limits<float>::infinity()) absorbNabla1[i] = 0.0f;
+          if (absorbNabla2[i] ==  std::numeric_limits<float>::infinity()) absorbNabla2[i] = 0.0f;
+
+          i++;
+        }//x
+      }//y
+    }// z
+  }// parallel
+}// end of generateKappaAndNablas
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Generate absorbTau and absorbEta in for heterogenous medium.
+ */
+void KSpaceFirstOrder3DSolver::generateTauAndEta()
+{
+
+  if ((mParameters.getAlphaCoeffScalarFlag()) && (mParameters.getC0ScalarFlag()))
+  { // scalar values
+    const float alphaPower       = mParameters.getAlphaPower();
+    const float tanPi2AlphaPower = tan(static_cast<float> (M_PI_2) * alphaPower);
+    const float alphaNeperCoeff  = (100.0f * pow(1.0e-6f / (2.0f * static_cast<float>(M_PI)), alphaPower)) /
+                                   (20.0f * static_cast<float>(M_LOG10E));
+
+    const float alphaCoeff2      = 2.0f * mParameters.getAlphaCoeffScalar() * alphaNeperCoeff;
+
+    mParameters.setAbsorbTauScalar((-alphaCoeff2) * pow(mParameters.getC0Scalar(), alphaPower - 1));
+    mParameters.setAbsorbEtaScalar(  alphaCoeff2  * pow(mParameters.getC0Scalar(), alphaPower) * tanPi2AlphaPower);
+  }
+  else
+  { // matrix
+    #pragma omp parallel
+    {
+      const size_t nx  = mParameters.getFullDimensionSizes().nx;
+      const size_t ny  = mParameters.getFullDimensionSizes().ny;
+      const size_t nz  = mParameters.getFullDimensionSizes().nz;
+
+      float* absorbTau = getAbsorbTau().getData();
+      float* absorbEta = getAbsorbEta().getData();
+
+      const bool   alphaCoeffScalarFlag = mParameters.getAlphaCoeffScalarFlag();
+      const float  alphaCoeffScalar     = (alphaCoeffScalarFlag) ? mParameters.getAlphaCoeffScalar() : 0;
+      const float* alphaCoeffMatrix     = (alphaCoeffScalarFlag) ? nullptr : getTemp1Real3D().getData();
+
+
+      const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
+      const float  c0Scalar     = (c0ScalarFlag) ? mParameters.getC0Scalar() : 0;
+      // here c2 still holds just c0!
+      const float* cOMatrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
+
+
+      const float alphaPower       = mParameters.getAlphaPower();
+      const float tanPi2AlphaPower = tan(static_cast<float>(M_PI_2) * alphaPower);
+
+      //alpha = 100*alpha.*(1e-6/(2*pi)).^y./
+      //                  (20*log10(exp(1)));
+      const float alphaNeperCoeff = (100.0f * pow(1.0e-6f / (2.0f * static_cast<float>(M_PI)), alphaPower)) /
+                                    (20.0f * static_cast<float>(M_LOG10E));
+
+
+      #pragma omp for schedule (static)
+      for (size_t z = 0; z < nz; z++)
+      {
+        for (size_t y = 0; y < ny; y++)
+        {
+          size_t i = (z * ny + y) * nx;
+          for (size_t x = 0; x < nx; x++)
+          {
+            const float alphaCoeff2 = 2.0f * alphaNeperCoeff *
+                                      ((alphaCoeffScalarFlag) ? alphaCoeffScalar : alphaCoeffMatrix[i]);
+
+            absorbTau[i] = (-alphaCoeff2) * pow(((c0ScalarFlag) ? c0Scalar : cOMatrix[i]), alphaPower - 1);
+            absorbEta[i] =   alphaCoeff2  * pow(((c0ScalarFlag) ? c0Scalar : cOMatrix[i]),
+                                                  alphaPower) * tanPi2AlphaPower;
+
+            i++;
+          }//x
+        }//y
+      }// z
+    }// parallel
+  } // matrix
+}// end of generateTauAndEta
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Prepare dt./ rho0  for non-uniform grid.
+ */
+void KSpaceFirstOrder3DSolver::generateInitialDenisty()
+{
+  #pragma omp parallel
+  {
+    float* dtRho0Sgx   = getDtRho0Sgx().getData();
+    float* dtRho0Sgy   = getDtRho0Sgy().getData();
+    float* dtRho0Sgz   = getDtRho0Sgz().getData();
+
+    const float dt = mParameters.getDt();
+
+    const float* duxdxnSgx = getDxudxnSgx().getData();
+    const float* duydynSgy = getDyudynSgy().getData();
+    const float* duzdznSgz = getDzudznSgz().getData();
+
+    const size_t nz = getDtRho0Sgx().getDimensionSizes().nz;
+    const size_t ny = getDtRho0Sgx().getDimensionSizes().ny;
+    const size_t nx = getDtRho0Sgx().getDimensionSizes().nx;
+
+    const size_t sliceSize = (nx * ny);
+
+    #pragma omp for schedule (static)
+    for (size_t z = 0; z < nz; z++)
+    {
+      register size_t i = z * sliceSize;
+      for (size_t y = 0; y < ny; y++)
+      {
+        for (size_t x = 0; x < nx; x++)
+        {
+          dtRho0Sgx[i] = (dt * duxdxnSgx[x]) / dtRho0Sgx[i];
+          i++;
+        } // x
+      } // y
+    } // z
+
+    #pragma omp for schedule (static)
+    for (size_t z = 0; z < nz; z++)
+    {
+      register size_t i = z * sliceSize;
+      for (size_t y = 0; y < ny; y++)
+      {
+        const float duydynEl = duydynSgy[y];
+        for (size_t x = 0; x < nx; x++)
+        {
+          dtRho0Sgy[i] = (dt * duydynEl) / dtRho0Sgy[i];
+          i++;
+        } // x
+      } // y
+    } // z
+
+    #pragma omp for schedule (static)
+    for (size_t z = 0; z < nz; z++)
+    {
+      register size_t i = z * sliceSize;
+      const float duzdznEl = duzdznSgz[z];
+      for (size_t y = 0; y < ny; y++)
+      {
+        for (size_t x = 0; x < nx; x++)
+        {
+          dtRho0Sgz[i] = (dt * duzdznEl) / dtRho0Sgz[i];
+          i++;
+        } // x
+      } // y
+    } // z
+  } // parallel
+}// end of generateInitialDenisty
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute c^2.
- *
  */
-void TKSpaceFirstOrder3DSolver::Compute_c2()
+void KSpaceFirstOrder3DSolver::computeC2()
 {
-  if (Parameters->Get_c0_scalar_flag())
-  { //scalar
-    float c = Parameters->Get_c0_scalar();
-    Parameters->Get_c0_scalar() = c * c;
-  }
-  else
+  if (!mParameters.getC0ScalarFlag())
   {
-    float * c2 =  Get_c2().GetRawData();
+    float* c2 =  getC2().getData();
 
     #pragma omp parallel for schedule (static)
-    for (size_t i=0; i< Get_c2().GetTotalElementCount(); i++)
+    for (size_t i=0; i< getC2().size(); i++)
     {
       c2[i] = c2[i] * c2[i];
     }
   }// matrix
-}// ComputeC2
-//------------------------------------------------------------------------------
+}// computeC2
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- *  Compute part of the new velocity term - gradient of p
- *  represented by:
- *  bsxfun(\@times, ddx_k_shift_pos, kappa .* p_k)
+ *  Compute part of the new velocity term - gradient of pressure.
+ * <b>Matlab code:</b> \n
  *
- * @param [in]  X_Matrix - 3D pressure matrix
- * @param [out] FFT_X - matrix to store input for iFFT (p) /dx
- * @param [out] FFT_Y - matrix to store input for iFFT (p) /dy
- * @param [out] FFT_Z - matrix to store input for iFFT (p) /dz
- *
- * @param [in]  kappa - Real matrix of kappa
- *
- * @param [in]  ddx - precomputed value of ddx_k_shift_pos
- * @param [in]  ddy - precomputed value of ddy_k_shift_pos
- * @param [in]  ddz - precomputed value of ddz_k_shift_pos
+ *\verbatim
+    bsxfun(\@times, ddx_k_shift_pos, kappa .* fftn(p))
+  \endverbatim
  */
-void TKSpaceFirstOrder3DSolver::Compute_ddx_kappa_fft_p(TRealMatrix&        X_Matrix,
-                                                        TFFTWComplexMatrix& FFT_X,
-                                                        TFFTWComplexMatrix& FFT_Y,
-                                                        TFFTWComplexMatrix& FFT_Z,
-                                                        const TRealMatrix&  kappa,
-                                                        const TComplexMatrix& ddx,
-                                                        const TComplexMatrix& ddy,
-                                                        const TComplexMatrix& ddz)
+void KSpaceFirstOrder3DSolver::computePressureGradient()
 {
-  // Compute FFT of X
-  FFT_X.Compute_FFT_3D_R2C(X_Matrix);
+  // Compute FFT of pressure
+  getTempFftwX().computeR2CFft3D(getP());
 
   #pragma omp parallel
   {
-    float * p_k_x_data = FFT_X.GetRawData();
-    float * p_k_y_data = FFT_Y.GetRawData();
-    float * p_k_z_data = FFT_Z.GetRawData();
+    float* pkX = getTempFftwX().getData();
+    float* pkY = getTempFftwY().getData();
+    float* pkZ = getTempFftwZ().getData();
 
-    const float * kappa_data = kappa.GetRawData();
-    const float * ddx_data   = ddx.GetRawData();
-    const float * ddy_data   = ddy.GetRawData();
-    const float * ddz_data   = ddz.GetRawData();
+    const float* kappa        = getKappa().getData();
+    const float* ddxKShiftPos = getDdxKShiftPos().getData();
+    const float* ddyKShiftPos = getDdyKShiftPos().getData();
+    const float* ddzKShiftPos = getDdzKShiftPos().getData();
 
-    const size_t Z_Size = FFT_X.GetDimensionSizes().Z;
-    const size_t Y_Size = FFT_X.GetDimensionSizes().Y;
-    const size_t X_Size = FFT_X.GetDimensionSizes().X;
+    const size_t nz = getTempFftwX().getDimensionSizes().nz;
+    const size_t ny = getTempFftwX().getDimensionSizes().ny;
+    const size_t nx = getTempFftwX().getDimensionSizes().nx;
 
-    const size_t SliceSize = (X_Size * Y_Size ) << 1;
+    const size_t slabSize = (ny * nx) << 1;
 
     #pragma omp for schedule (static)
-    for (size_t z = 0; z < Z_Size; z++)
+    for (size_t z = 0; z < nz; z++)
     {
-      register size_t i = z * SliceSize;
+      register size_t i = z * slabSize;
       const size_t z2 = z<<1;
-      for (size_t y = 0; y < Y_Size; y++)
+      for (size_t y = 0; y < ny; y++)
       {
         const size_t y2 = y<<1;
-        for (size_t x = 0; x < X_Size;  x++)
+        for (size_t x = 0; x < nx;  x++)
         {
           // kappa ./ p_k
-          const float kappa_el  = kappa_data[i>>1];
-          const float p_k_el_re = p_k_x_data[i]   * kappa_el;
-          const float p_k_el_im = p_k_x_data[i+1] * kappa_el;
+          const float eKappa  = kappa[i>>1];
+          const float ePkXRe = pkX[i]   * eKappa;
+          const float ePkXIm = pkX[i+1] * eKappa;
           const size_t x2 = x<<1;
 
           //bsxfun(ddx...)
-          p_k_x_data[i]   = p_k_el_re * ddx_data[x2]   - p_k_el_im * ddx_data[x2+1];
-          p_k_x_data[i+1] = p_k_el_re * ddx_data[x2+1] + p_k_el_im * ddx_data[x2];
+          pkX[i]   = ePkXRe * ddxKShiftPos[x2]   - ePkXIm * ddxKShiftPos[x2+1];
+          pkX[i+1] = ePkXRe * ddxKShiftPos[x2+1] + ePkXIm * ddxKShiftPos[x2];
 
           //bsxfun(ddy...)
-          p_k_y_data[i]   = p_k_el_re * ddy_data[y2]   - p_k_el_im * ddy_data[y2+1];
-          p_k_y_data[i+1] = p_k_el_re * ddy_data[y2+1] + p_k_el_im * ddy_data[y2];
+          pkY[i]   = ePkXRe * ddyKShiftPos[y2]   - ePkXIm * ddyKShiftPos[y2+1];
+          pkY[i+1] = ePkXRe * ddyKShiftPos[y2+1] + ePkXIm * ddyKShiftPos[y2];
 
           //bsxfun(ddz...)
-          p_k_z_data[i]   = p_k_el_re * ddz_data[z2]   - p_k_el_im * ddz_data[z2+1];
-          p_k_z_data[i+1] = p_k_el_re * ddz_data[z2+1] + p_k_el_im * ddz_data[z2];
+          pkZ[i]   = ePkXRe * ddzKShiftPos[z2]   - ePkXIm * ddzKShiftPos[z2+1];
+          pkZ[i+1] = ePkXRe * ddzKShiftPos[z2+1] + ePkXIm * ddzKShiftPos[z2];
 
           i +=2;
         } // x
       } // y
     } // z
   }// parallel
-}// end of KSpaceFirstOrder3DSolver
-//------------------------------------------------------------------------------
-
-
-/**
- * Compute new values for duxdx, duydy, duzdz.
- *
- */
-void  TKSpaceFirstOrder3DSolver::Compute_duxyz()
-{
-  Get_FFT_X_temp().Compute_FFT_3D_R2C(Get_ux_sgx());
-  Get_FFT_Y_temp().Compute_FFT_3D_R2C(Get_uy_sgy());
-  Get_FFT_Z_temp().Compute_FFT_3D_R2C(Get_uz_sgz());
-
-  #pragma omp parallel
-  {
-    float * Temp_FFT_X_Data  = Get_FFT_X_temp().GetRawData();
-    float * Temp_FFT_Y_Data  = Get_FFT_Y_temp().GetRawData();
-    float * Temp_FFT_Z_Data  = Get_FFT_Z_temp().GetRawData();
-
-    const float * kappa   = Get_kappa().GetRawData();
-
-    const size_t FFT_Z_dim = Get_FFT_X_temp().GetDimensionSizes().Z;
-    const size_t FFT_Y_dim = Get_FFT_X_temp().GetDimensionSizes().Y;
-    const size_t FFT_X_dim = Get_FFT_X_temp().GetDimensionSizes().X;
-
-    const size_t SliceSize = (FFT_X_dim * FFT_Y_dim) << 1;
-    const float  Divider = 1.0f / Get_ux_sgx().GetTotalElementCount();
-
-    const TFloatComplex * ddx = (TFloatComplex *) Get_ddx_k_shift_neg().GetRawData();
-    const TFloatComplex * ddy = (TFloatComplex *) Get_ddy_k_shift_neg().GetRawData();
-    const TFloatComplex * ddz = (TFloatComplex *) Get_ddz_k_shift_neg().GetRawData();
-
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < FFT_Z_dim; z++)
-    {
-      register size_t i = z * SliceSize;
-
-      const float ddz_neg_re = ddz[z].real;
-      const float ddz_neg_im = ddz[z].imag;
-      for (size_t y = 0; y < FFT_Y_dim; y++)
-      {
-        const float ddy_neg_re = ddy[y].real;
-        const float ddy_neg_im = ddy[y].imag;
-        for (size_t x = 0; x < FFT_X_dim; x++)
-        {
-          float FFT_el_x_re = Temp_FFT_X_Data[i];
-          float FFT_el_x_im = Temp_FFT_X_Data[i+1];
-
-          float FFT_el_y_re = Temp_FFT_Y_Data[i];
-          float FFT_el_y_im = Temp_FFT_Y_Data[i+1];
-
-          float FFT_el_z_re = Temp_FFT_Z_Data[i];
-          float FFT_el_z_im = Temp_FFT_Z_Data[i+1];
-
-          const float kappa_el = kappa[i >> 1];
-
-          FFT_el_x_re   *= kappa_el;
-          FFT_el_x_im   *= kappa_el;
-
-          FFT_el_y_re   *= kappa_el;
-          FFT_el_y_im   *= kappa_el;
-
-          FFT_el_z_re   *= kappa_el;
-          FFT_el_z_im   *= kappa_el;
-
-
-          Temp_FFT_X_Data[i]     = ((FFT_el_x_re * ddx[x].real) -
-                                    (FFT_el_x_im * ddx[x].imag)
-                                   ) * Divider;
-          Temp_FFT_X_Data[i + 1] = ((FFT_el_x_im * ddx[x].real) +
-                                    (FFT_el_x_re * ddx[x].imag)
-                                   )* Divider;
-
-          Temp_FFT_Y_Data[i]     = ((FFT_el_y_re * ddy_neg_re) -
-                                    (FFT_el_y_im * ddy_neg_im)
-                                   ) * Divider;
-          Temp_FFT_Y_Data[i + 1] = ((FFT_el_y_im * ddy_neg_re) +
-                                    (FFT_el_y_re * ddy_neg_im)
-                                   )* Divider;
-
-          Temp_FFT_Z_Data[i]     = ((FFT_el_z_re * ddz_neg_re) -
-                                    (FFT_el_z_im * ddz_neg_im)
-                                   ) * Divider;
-          Temp_FFT_Z_Data[i + 1] = ((FFT_el_z_im * ddz_neg_re) +
-                                    (FFT_el_z_re * ddz_neg_im)
-                                   )* Divider;
-
-          i+=2;
-        } // x
-      } // y
-    } // z
-  } // parallel;
-
-  Get_FFT_X_temp().Compute_FFT_3D_C2R(Get_duxdx());
-  Get_FFT_Y_temp().Compute_FFT_3D_C2R(Get_duydy());
-  Get_FFT_Z_temp().Compute_FFT_3D_C2R(Get_duzdz());
-
- //-------------------------------------------------------------------------//
- //--------------------- Non linear grid -----------------------------------//
- //-------------------------------------------------------------------------//
-  if (Parameters->Get_nonuniform_grid_flag() != 0)
-  {
-    #pragma omp parallel
-    {
-      float * duxdx = Get_duxdx().GetRawData();
-      float * duydy = Get_duydy().GetRawData();
-      float * duzdz = Get_duzdz().GetRawData();
-
-      const float * duxdxn = Get_dxudxn().GetRawData();
-      const float * duydyn = Get_dyudyn().GetRawData();
-      const float * duzdzn = Get_dzudzn().GetRawData();
-
-      const size_t Z_Size = Get_duxdx().GetDimensionSizes().Z;
-      const size_t Y_Size = Get_duxdx().GetDimensionSizes().Y;
-      const size_t X_Size = Get_duxdx().GetDimensionSizes().X;
-
-      const size_t SliceSize = (X_Size * Y_Size );
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z* SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            duxdx[i] *= duxdxn[x];
-            i++;
-          } // x
-        } // y
-      } // z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          const float dyudyn_el = duydyn[y];
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            duydy[i] *=  dyudyn_el;
-            i++;
-          } // x
-        } // y
-      } // z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        const float duzdzn_el = duzdzn[z];
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            duzdz[i] *=  duzdzn_el;
-            i++;
-          } // x
-        } // y
-      } // z
-    } // parallel
- }// nonlinear
-}// end of Compute_duxyz
-//------------------------------------------------------------------------------
-
+}// end of computePressureGradient
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Calculate new values of rhox, rhoy and rhoz for non-linear case.
- *
+ * Calculate three temporary sums in the new pressure formula non-linear absorbing case, SSE2 version.
  */
-void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_nonlinear()
-{
-  const size_t Z_Size = Get_rhox().GetDimensionSizes().Z;
-  const size_t Y_Size = Get_rhox().GetDimensionSizes().Y;
-  const size_t X_Size = Get_rhox().GetDimensionSizes().X;
-
-  const float dt2   = 2.0f * Parameters->Get_dt();
-  const float dt_el = Parameters->Get_dt();
-  const size_t SliceSize = Y_Size * X_Size;
-
-  #pragma omp parallel
-  {
-    float * rhox_data  = Get_rhox().GetRawData();
-    float * rhoy_data  = Get_rhoy().GetRawData();
-    float * rhoz_data  = Get_rhoz().GetRawData();
-
-    const float * pml_x_data = Get_pml_x().GetRawData();
-    const float * duxdx_data = Get_duxdx().GetRawData();
-    const float * duydy_data = Get_duydy().GetRawData();
-    const float * duzdz_data = Get_duzdz().GetRawData();
-
-    // rho0 is a scalar
-    if (Parameters->Get_rho0_scalar())
-    {
-      const float dt_rho0 = Parameters->Get_rho0_scalar() * dt_el;
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            const float pml_x   = pml_x_data[x];
-                  float du      = duxdx_data[i];
-
-            rhox_data[i] = pml_x * (
-                                ((pml_x * rhox_data[i]) - (dt_rho0 * du))/
-                                (1.0f + (dt2 * du))
-                                );
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          const float pml_y = Get_pml_y()[y];
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            float du = duydy_data[i];
-
-            rhoy_data[i] = pml_y * (
-                                ((pml_y * rhoy_data[i]) - (dt_rho0 * du))/
-                                (1.0f + (dt2 * du))
-                                );
-            i++;
-          } // x
-        }// y
-      }// z
-
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        const float pml_z = Get_pml_z()[z];
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            float du      = duzdz_data[i];
-
-            rhoz_data[i] = pml_z * (
-                                ((pml_z * rhoz_data[i]) - (dt_rho0 * du))/
-                                (1.0f + (dt2 * du))
-                                );
-            i++;
-          } // x
-        }// y
-      }// z
-    }
-    else
-    { //----------------------------------------------------------------//
-      // rho0 is a matrix
-      const float * rho0_data  = Get_rho0().GetRawData();
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            const float pml_x   = pml_x_data[x];
-            const float dt_rho0 = dt_el * rho0_data[i];
-                  float du      = duxdx_data[i];
-
-            rhox_data[i] = pml_x * (
-                                ((pml_x * rhox_data[i]) - (dt_rho0 * du))/
-                                (1.0f + (dt2 * du))
-                                );
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          const float pml_y = Get_pml_y()[y];
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            const float dt_rho0 = dt_el * rho0_data[i];
-                  float du = duydy_data[i];
-
-            rhoy_data[i] = pml_y * (
-                                ((pml_y * rhoy_data[i]) - (dt_rho0 * du))/
-                                (1.0f + (dt2 * du))
-                                );
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        const float pml_z = Get_pml_z()[z];
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            const float dt_rho0 = dt_el * rho0_data[i];
-                  float du      = duzdz_data[i];
-
-            rhoz_data[i] = pml_z * (
-                                ((pml_z * rhoz_data[i]) - (dt_rho0 * du))/
-                                (1.0f + (dt2 * du))
-                                );
-            i++;
-          } // x
-        }// y
-      }// z
-    } // end rho is matrix
-  }// parallel
-}// end of Compute_rhoxyz_nonlinear
-//------------------------------------------------------------------------------
-
-
-/**
- * Calculate new values of rhox, rhoy and rhoz for linear case.
- *
- */
-void TKSpaceFirstOrder3DSolver::Compute_rhoxyz_linear()
-{
-  const size_t Z_Size = Get_rhox().GetDimensionSizes().Z;
-  const size_t Y_Size = Get_rhox().GetDimensionSizes().Y;
-  const size_t X_Size = Get_rhox().GetDimensionSizes().X;
-
-  const float dt_el = Parameters->Get_dt();
-  const size_t SliceSize =  Y_Size * X_Size;
-
-  #pragma omp parallel
-  {
-    float * rhox_data  = Get_rhox().GetRawData();
-    float * rhoy_data  = Get_rhoy().GetRawData();
-    float * rhoz_data  = Get_rhoz().GetRawData();
-
-    const float * pml_x_data = Get_pml_x().GetRawData();
-    const float * duxdx_data = Get_duxdx().GetRawData();
-    const float * duydy_data = Get_duydy().GetRawData();
-    const float * duzdz_data = Get_duzdz().GetRawData();
-
-
-    if (Parameters->Get_rho0_scalar())
-    { // rho0 is a scalar
-      const float dt_rho0 = Parameters->Get_rho0_scalar() * dt_el;
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            const float pml_x   = pml_x_data[x];
-
-            rhox_data[i] = pml_x * (
-                                   ((pml_x * rhox_data[i]) - (dt_rho0 * duxdx_data[i]))
-                                   );
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          const float pml_y = Get_pml_y()[y];
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            rhoy_data[i] = pml_y * (
-                                   ((pml_y * rhoy_data[i]) - (dt_rho0 * duydy_data[i]))
-                                   );
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        const float pml_z = Get_pml_z()[z];
-
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            rhoz_data[i] = pml_z * (
-                                   ((pml_z * rhoz_data[i]) - (dt_rho0 * duzdz_data[i]))
-                                   );
-            i++;
-          } // x
-        }// y
-      }// z
-
-    }
-    else
-    { //-----------------------------------------------------//
-      // rho0 is a matrix
-      const float * rho0_data  = Get_rho0().GetRawData();
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            const float pml_x   = pml_x_data[x];
-            const float dt_rho0 = dt_el * rho0_data[i];
-
-            rhox_data[i] = pml_x * (
-                                   ((pml_x * rhox_data[i]) - (dt_rho0 * duxdx_data[i]))
-                                   );
-
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          const float pml_y = Get_pml_y()[y];
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            const float dt_rho0 = dt_el * rho0_data[i];
-
-            rhoy_data[i] = pml_y * (
-                                   ((pml_y * rhoy_data[i]) - (dt_rho0 * duydy_data[i]))
-                                   );
-            i++;
-
-          } // x
-        }// y
-      }// z
-
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < Z_Size; z++)
-      {
-        register size_t i = z * SliceSize;
-        const float pml_z = Get_pml_z()[z];
-
-        for (size_t y = 0; y < Y_Size; y++)
-        {
-          for (size_t x = 0; x < X_Size; x++)
-          {
-            const float dt_rho0 = dt_el * rho0_data[i];
-
-            rhoz_data[i] = pml_z * (
-                                   ((pml_z * rhoz_data[i]) - (dt_rho0 * duzdz_data[i]))
-                                   );
-            i++;
-          } // x
-        }// y
-      }// z
-
-   } // end rho is a matrix
-  }// parallel
-}// end of Compute_rhoxyz_linear
-//------------------------------------------------------------------------------
-
-
-/**
- * Calculate three temporary sums in the new pressure formula \n
- * non-linear absorbing case, SSE2 version.
- * @param [out] RHO_Temp  - rhox_sgx + rhoy_sgy + rhoz_sgz
- * @param [out] BonA_Temp - BonA + rho ^2 / 2 rho0  + (rhox_sgx + rhoy_sgy + rhoz_sgz)
- * @param [out] Sum_du    - rho0* (duxdx + duydy + duzdz)
- */
-void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & RHO_Temp,
-                                                                  TRealMatrix & BonA_Temp,
-                                                                  TRealMatrix & Sum_du)
+void KSpaceFirstOrder3DSolver::computePressureTermsNonlinearSSE2(RealMatrix& densitySum,
+                                                                 RealMatrix& nonlinearTerm,
+                                                                 RealMatrix& velocityGradientSum)
 {
   // step of 4
-  const size_t TotalElementCount_4 = (RHO_Temp.GetTotalElementCount() >> 2) << 2;
+  const size_t nElementsSSE = (densitySum.size() >> 2) << 2;
 
-  const float * rhox_data = Get_rhox().GetRawData();
-  const float * rhoy_data = Get_rhoy().GetRawData();
-  const float * rhoz_data = Get_rhoz().GetRawData();
+  const float* rhoX = getRhoX().getData();
+  const float* rhoY = getRhoY().getData();
+  const float* rhoZ = getRhoZ().getData();
 
-  const float * dux_data = Get_duxdx().GetRawData();
-  const float * duy_data = Get_duydy().GetRawData();
-  const float * duz_data = Get_duzdz().GetRawData();
+  const float* duxdx = getDuxdx().getData();
+  const float* duydy = getDuydy().getData();
+  const float* duzdz = getDuzdz().getData();
 
-
+  float  bOnAScalaValue  = mParameters.getBOnAScalar();
+  float  rho0ScalarValue = mParameters.getRho0Scalar();
   // set BonA to be either scalar or a matrix
-        float * BonA;
-        size_t  BonA_shift;
-  const bool    BonA_flag = Parameters->Get_BonA_scalar_flag();
+        float* bOnA;
+        size_t bOnAShift;
+  const bool   bOnAFlag = mParameters.getBOnAScalarFlag();
 
-  if (BonA_flag)
+  if (bOnAFlag)
   {
-    BonA = &Parameters->Get_BonA_scalar();
-    BonA_shift = 0;
+    bOnA = &bOnAScalaValue;
+    bOnAShift = 0;
   }
   else
   {
-    BonA = Get_BonA().GetRawData();
-    BonA_shift = 1;
+    bOnA = getBOnA().getData();
+    bOnAShift = 1;
   }
 
 
-  // set rho0A to be either scalar or a matrix
-        float * rho0_data;
-        size_t  rho0_shift;
-  const bool    rho0_flag = Parameters->Get_rho0_scalar_flag();
+  // set rho0 to be either scalar or a matrix
+        float* rho0Data;
+        size_t rho0Shift;
+  const bool   rho0Flag = mParameters.getRho0ScalarFlag();
 
-  if (rho0_flag)
+
+  if (rho0Flag)
   {
-    rho0_data = &Parameters->Get_rho0_scalar();
-    rho0_shift = 0;
+    rho0Data = &rho0ScalarValue;
+    rho0Shift = 0;
   }
   else
   {
-    rho0_data = Get_rho0().GetRawData();
-    rho0_shift = 1;
+    rho0Data = getRho0().getData();
+    rho0Shift = 1;
   }
 
   // compute loop
   #pragma  omp parallel
   {
-    float * RHO_Temp_Data  = RHO_Temp.GetRawData();
-    float * BonA_Temp_Data = BonA_Temp.GetRawData();
-    float * SumDU_Temp_Data= Sum_du.GetRawData();
+    float* eDensitySum          = densitySum.getData();
+    float* eNonlinearTerm       = nonlinearTerm.getData();
+    float* eVelocityGradientSum = velocityGradientSum.getData();
 
 
-    const __m128 Two_SSE   = _mm_set1_ps(2.0f);
-          __m128 BonA_SSE  = _mm_set1_ps(Parameters->Get_BonA_scalar());
-          __m128 rho0_SSE  = _mm_set1_ps(Parameters->Get_rho0_scalar());
+    const __m128 sseTwo   = _mm_set1_ps(2.0f);
+          __m128 sseBOnA  = _mm_set1_ps(mParameters.getBOnAScalar());
+          __m128 sseRho0  = _mm_set1_ps(mParameters.getRho0Scalar());
 
 
    #pragma omp for schedule (static) nowait
-   for (size_t i = 0; i < TotalElementCount_4; i+=4)
+   for (size_t i = 0; i < nElementsSSE; i +=4 )
    {
-      if (!BonA_flag) BonA_SSE = _mm_load_ps(&BonA[i]);
+      if (!bOnAFlag) sseBOnA = _mm_load_ps(&bOnA[i]);
 
-      __m128 xmm1 = _mm_load_ps(&rhox_data[i]);
-      __m128 xmm2 = _mm_load_ps(&rhoy_data[i]);
-      __m128 xmm3 = _mm_load_ps(&rhoz_data[i]);
+      __m128 xmm1 = _mm_load_ps(&rhoX[i]);
+      __m128 xmm2 = _mm_load_ps(&rhoY[i]);
+      __m128 xmm3 = _mm_load_ps(&rhoZ[i]);
 
-      if (!rho0_flag)  rho0_SSE = _mm_load_ps(&rho0_data[i]);
+      if (!rho0Flag)  sseRho0 = _mm_load_ps(&rho0Data[i]);
 
-      __m128 rho_xyz_sq_SSE;
-      __m128 rho_xyz_el_SSE;
+      __m128 sseRhoSumSq;
+      __m128 sseRhoSum;
 
       //  register const float rho_xyz_el = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
-      rho_xyz_el_SSE = _mm_add_ps(xmm1, xmm2);
-      rho_xyz_el_SSE = _mm_add_ps(xmm3, rho_xyz_el_SSE);
+      sseRhoSum = _mm_add_ps(xmm1, xmm2);
+      sseRhoSum = _mm_add_ps(xmm3, sseRhoSum);
 
       // RHO_Temp_Data[i]  = rho_xyz_el;
-      _mm_stream_ps(&RHO_Temp_Data[i], rho_xyz_el_SSE);
+      _mm_stream_ps(&eDensitySum[i], sseRhoSum);
 
       //  BonA_Temp_Data[i] =  ((BonA * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i])) + rho_xyz_el;
-      rho_xyz_sq_SSE = _mm_mul_ps(rho_xyz_el_SSE, rho_xyz_el_SSE);// (rho_xyz_el * rho_xyz_el)
+      sseRhoSumSq = _mm_mul_ps(sseRhoSum, sseRhoSum);// (rho_xyz_el * rho_xyz_el)
 
-      xmm1           = _mm_mul_ps(rho_xyz_sq_SSE, BonA_SSE);      //((BonA * (rho_xyz_el * rho_xyz_el))
-      xmm2           = _mm_mul_ps(Two_SSE, rho0_SSE);             // (2.0f * rho0_data[i])
+      xmm1           = _mm_mul_ps(sseRhoSumSq, sseBOnA);      //((BonA * (rho_xyz_el * rho_xyz_el))
+      xmm2           = _mm_mul_ps(sseTwo, sseRho0);             // (2.0f * rho0_data[i])
       xmm3           = _mm_div_ps(xmm1, xmm2);                    // (BonA * (rho_xyz_el * rho_xyz_el)) /  (2.0f * rho0_data[i])
 
-      xmm1           = _mm_add_ps(xmm3, rho_xyz_el_SSE);          // + rho_xyz_el
+      xmm1           = _mm_add_ps(xmm3, sseRhoSum);          // + rho_xyz_el
 
-      _mm_stream_ps(&BonA_Temp_Data[i], xmm1);   //bypass cache
+      _mm_stream_ps(&eNonlinearTerm[i], xmm1);   //bypass cache
 
-      xmm1       = _mm_load_ps(&dux_data[i]); //dudx
-      xmm2       = _mm_load_ps(&duy_data[i]); //dudu
-      xmm3       = _mm_load_ps(&duz_data[i]); //dudz
+      xmm1       = _mm_load_ps(&duxdx[i]); //dudx
+      xmm2       = _mm_load_ps(&duydy[i]); //dudu
+      xmm3       = _mm_load_ps(&duzdz[i]); //dudz
 
-      __m128 xmm_acc = _mm_add_ps(xmm1, xmm2);
-      xmm_acc    = _mm_add_ps(xmm_acc, xmm3);
-      xmm_acc    = _mm_mul_ps(xmm_acc, rho0_SSE);
+      __m128 xmmAcc = _mm_add_ps(xmm1, xmm2);
+      xmmAcc        = _mm_add_ps(xmmAcc, xmm3);
+      xmmAcc        = _mm_mul_ps(xmmAcc, sseRho0);
 
-      _mm_stream_ps(&SumDU_Temp_Data[i],xmm_acc);
+      _mm_stream_ps(&eVelocityGradientSum[i],xmmAcc);
 
     // BonA_Temp_Data[i] =  ((BonA * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i])) + rho_xyz_el;
     }
@@ -1628,122 +2012,112 @@ void TKSpaceFirstOrder3DSolver::Calculate_SumRho_BonA_SumDu_SSE2(TRealMatrix & R
       if (omp_get_thread_num() == omp_get_num_threads() -1)
     #endif
     {
-      for (size_t i = TotalElementCount_4; i < RHO_Temp.GetTotalElementCount() ; i++)
+      for (size_t i = nElementsSSE; i < densitySum.size() ; i++)
       {
-        register const float rho_xyz_el = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
+        register const float rhoSum = rhoX[i] + rhoY[i] + rhoZ[i];
 
-        RHO_Temp_Data[i]   = rho_xyz_el;
-        BonA_Temp_Data[i]  = ((BonA[i * BonA_shift] * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i* rho0_shift])) + rho_xyz_el;
-        SumDU_Temp_Data[i] = rho0_data[i * rho0_shift] * (dux_data[i] + duy_data[i] + duz_data[i]);
+        eDensitySum[i]          = rhoSum;
+        eNonlinearTerm[i]       = ((bOnA[i * bOnAShift] * (rhoSum * rhoSum)) /
+                                   (2.0f * rho0Data[i* rho0Shift])) + rhoSum;
+        eVelocityGradientSum[i] = rho0Data[i * rho0Shift] * (duxdx[i] + duydy[i] + duzdz[i]);
       }
     }
-
   }// parallel
- } // end of Calculate_SumRho_BonA_SumDu_SSE2
-//------------------------------------------------------------------------------
-
+ } // end of computePressureTermsNonlinearSSE2
+//----------------------------------------------------------------------------------------------------------------------
 
 
  /**
   * Calculate two temporary sums in the new pressure formula, linear absorbing case.
-  * @param [out] Sum_rhoxyz  - rhox_sgx + rhoy_sgy + rhoz_sgz
-  * @param [out] Sum_rho0_du - rho0* (duxdx + duydy + duzdz);
   */
-void TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu(TRealMatrix & Sum_rhoxyz,
-                                                           TRealMatrix & Sum_rho0_du)
+void KSpaceFirstOrder3DSolver::computePressureTermsLinear(RealMatrix& densitySum,
+                                                          RealMatrix& velocityGradientSum)
  {
-  const size_t TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
+  const size_t size = mParameters.getFullDimensionSizes().nElements();
 
   #pragma  omp parallel
   {
-    const float * rhox_data = Get_rhox().GetRawData();
-    const float * rhoy_data = Get_rhoy().GetRawData();
-    const float * rhoz_data = Get_rhoz().GetRawData();
+    const float* rhoX = getRhoX().getData();
+    const float* rhoY = getRhoY().getData();
+    const float* rhoZ = getRhoZ().getData();
 
-    const float * dux_data = Get_duxdx().GetRawData();
-    const float * duy_data = Get_duydy().GetRawData();
-    const float * duz_data = Get_duzdz().GetRawData();
+    const float* duxdx = getDuxdx().getData();
+    const float* duydy = getDuydy().getData();
+    const float* duzdz = getDuzdz().getData();
 
-    const float * rho0_data = NULL;
+    const float* rho0 = nullptr;
 
-    const float rho0_data_el = Parameters->Get_rho0_scalar();
-    if (!Parameters->Get_rho0_scalar_flag())
+    const float eRho0 = mParameters.getRho0Scalar();
+    if (!mParameters.getRho0ScalarFlag())
     {
-      rho0_data = Get_rho0().GetRawData();
+      rho0 = getRho0().getData();
     }
 
-
-    float * Sum_rhoxyz_Data  = Sum_rhoxyz.GetRawData();
-    float * Sum_rho0_du_Data = Sum_rho0_du.GetRawData();
+    float* eDensitySum  = densitySum.getData();
+    float* eVelocityGradientSum = velocityGradientSum.getData();
 
     #pragma omp for schedule (static)
-    for (size_t i = 0; i < TotalElementCount; i++)
+    for (size_t i = 0; i < size; i++)
     {
-      Sum_rhoxyz_Data[i] = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
+      eDensitySum[i] = rhoX[i] + rhoY[i] + rhoZ[i];
     }
 
-
-    if (Parameters->Get_rho0_scalar_flag())
+    if (mParameters.getRho0ScalarFlag())
     { // scalar
-      #pragma omp for schedule (static) nowait
-      for (size_t i = 0; i < TotalElementCount; i++)
+      #pragma omp for schedule (static)
+      for (size_t i = 0; i < size; i++)
       {
-        Sum_rho0_du_Data[i] = rho0_data_el * (dux_data[i] + duy_data[i] + duz_data[i]);
+        eVelocityGradientSum[i] = eRho0 * (duxdx[i] + duydy[i] + duzdz[i]);
       }
     }
     else
     { // matrix
-      #pragma omp for schedule (static) nowait
-      for (size_t i = 0; i < TotalElementCount; i++)
+      #pragma omp for schedule (static)
+      for (size_t i = 0; i < size; i++)
       {
-        Sum_rho0_du_Data[i] = rho0_data[i] * (dux_data[i] + duy_data[i] + duz_data[i]);
+        eVelocityGradientSum[i] = rho0[i] * (duxdx[i] + duydy[i] + duzdz[i]);
       }
     }
   } // parallel
-}// end of Calculate_SumRho_SumRhoDu
-//------------------------------------------------------------------------------
+}// end of computePressureTermsLinear
+//----------------------------------------------------------------------------------------------------------------------
 
 
  /**
-  * Compute absorbing term with abosrb_nabla1 and absorb_nabla2, SSE2 version. \n
-  * Calculate absorb_nabla1 .* fft_1 \n
-  * Calculate absorb_nabla2 .* fft_2 \n
-  *
-  * @param [in,out] FFT_1
-  * @param [in,out] FFT_2
+  * Compute absorbing term with abosrbNabla1 and absorbNabla2, SSE2 version
   */
-void TKSpaceFirstOrder3DSolver::Compute_Absorb_nabla1_2_SSE2(TFFTWComplexMatrix& FFT_1,
-                                                              TFFTWComplexMatrix& FFT_2)
+void KSpaceFirstOrder3DSolver::computeAbsorbtionTermSSE2(FftwComplexMatrix& fftPart1,
+                                                         FftwComplexMatrix& fftPart2)
 {
-  const float * nabla1 = Get_absorb_nabla1().GetRawData();
-  const float * nabla2 = Get_absorb_nabla2().GetRawData();
+  const float* absorbNabla1 = getAbsorbNabla1().getData();
+  const float* absorbNabla2 = getAbsorbNabla2().getData();
 
-  const size_t TotalElementCount     = FFT_1.GetTotalElementCount();
-  const size_t TotalElementCount_SSE = (FFT_1.GetTotalElementCount() >> 1) << 1;
+  const size_t nElements     = fftPart1.size();
+  const size_t nElementsSSE = (fftPart1.size() >> 1) << 1;
 
   #pragma omp parallel
   {
-    float * FFT_1_data  = FFT_1.GetRawData();
-    float * FFT_2_data  = FFT_2.GetRawData();
+    float * fft1Data  = fftPart1.getData();
+    float * fft2Data  = fftPart2.getData();
 
     #pragma omp for schedule (static) nowait
-    for (size_t i = 0; i < TotalElementCount_SSE; i+=2)
+    for (size_t i = 0; i < nElementsSSE; i += 2)
     {
-       __m128 xmm_nabla1 = _mm_set_ps(nabla1[i+1], nabla1[i+1], nabla1[i], nabla1[i]);
-       __m128 xmm_FFT_1  = _mm_load_ps(&FFT_1_data[2*i]);
+       __m128 sseAbsorbNabla1 = _mm_set_ps(absorbNabla1[i + 1], absorbNabla1[i + 1], absorbNabla1[i], absorbNabla1[i]);
+       __m128 sseFft1  = _mm_load_ps(&fft1Data[2 * i]);
 
-              xmm_FFT_1  = _mm_mul_ps(xmm_nabla1, xmm_FFT_1);
-                           _mm_store_ps(&FFT_1_data[2*i], xmm_FFT_1);
+              sseFft1  = _mm_mul_ps(sseAbsorbNabla1, sseFft1);
+                         _mm_store_ps(&fft1Data[2 * i],    sseFft1);
     }
 
     #pragma omp for schedule (static)
-    for (size_t i = 0; i < TotalElementCount; i+=2)
+    for (size_t i = 0; i < nElements; i += 2)
     {
-      __m128 xmm_nabla2 = _mm_set_ps(nabla2[i+1], nabla2[i+1], nabla2[i], nabla2[i]);
-      __m128 xmm_FFT_2  = _mm_load_ps(&FFT_2_data[2*i]);
+      __m128 sseAbsorbNabla2 = _mm_set_ps(absorbNabla2[i + 1 ], absorbNabla2[i + 1], absorbNabla2[i], absorbNabla2[i]);
+      __m128 sseFft2  = _mm_load_ps(&fft2Data[2 * i]);
 
-             xmm_FFT_2  = _mm_mul_ps(xmm_nabla2, xmm_FFT_2);
-                          _mm_store_ps(&FFT_2_data[2*i], xmm_FFT_2);
+             sseFft2  = _mm_mul_ps(sseAbsorbNabla2, sseFft2);
+                        _mm_store_ps(&fft2Data[2 * i], sseFft2);
       }
 
     //-- non SSE code --//
@@ -1751,1101 +2125,540 @@ void TKSpaceFirstOrder3DSolver::Compute_Absorb_nabla1_2_SSE2(TFFTWComplexMatrix&
       if (omp_get_thread_num() == omp_get_num_threads() -1)
     #endif
     {
-      for (size_t i = TotalElementCount_SSE; i < TotalElementCount ; i++)
+      for (size_t i = nElementsSSE; i < nElements ; i++)
       {
-        FFT_1_data[(i<<1)]   *= nabla1[i];
-        FFT_1_data[(i<<1)+1] *= nabla1[i];
+        fft1Data[(i << 1) ]    *= absorbNabla1[i];
+        fft1Data[(i << 1) + 1] *= absorbNabla1[i];
 
-        FFT_2_data[(i<<1)]   *=  nabla2[i];
-        FFT_2_data[(i<<1)+1] *=  nabla2[i];
+        fft2Data[(i << 1) ]    *=  absorbNabla2[i];
+        fft2Data[(i << 1) + 1] *=  absorbNabla2[i];
       }
     }
 
   }// parallel
- } // end of Compute_Absorb_nabla1_2_SSE2
-//------------------------------------------------------------------------------
+ } // end of computeAbsorbtionTermSSE2
+//----------------------------------------------------------------------------------------------------------------------
 
 
  /**
-  * Sum sub-terms to calculate new pressure, non-linear case.
-  * @param [in] Absorb_tau_temp -
-  * @param [in] Absorb_eta_temp - BonA + rho ^2 / 2 rho0  + (rhox_sgx + rhoy_sgy + rhoz_sgz)
-  * @param [in] BonA_temp       - rho0* (duxdx + duydy + duzdz)
+  * @brief Sum sub-terms to calculate new pressure, after FFTs, non-linear case.
   */
-void TKSpaceFirstOrder3DSolver::Sum_Subterms_nonlinear(TRealMatrix& Absorb_tau_temp,
-                                                       TRealMatrix& Absorb_eta_temp,
-                                                       TRealMatrix& BonA_temp)
+void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
+                                                         const RealMatrix& absorbEtaTerm,
+                                                         const RealMatrix& nonlinearTerm)
 {
-  float * tau_data;
-  float * eta_data;
-  float * c2_data;
+  const float* eAbsorbTauTerm = absorbTauTerm.getData();
+  const float* eAbsorbEtaTerm = absorbEtaTerm.getData();
 
-  size_t  c2_shift;
-  size_t  tau_eta_shift;
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+  const float  divider = 1.0f / static_cast<float>(nElements);
 
-  const float * Absorb_tau_data = Absorb_tau_temp.GetRawData();
-  const float * Absorb_eta_data = Absorb_eta_temp.GetRawData();
+  const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
+  const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+  const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  const size_t TotalElementCount = Get_p().GetTotalElementCount();
-  const float  Divider = 1.0f / (float) TotalElementCount;
+  const bool   areTauAndEtaScalars = mParameters.getC0ScalarFlag() && mParameters.getAlphaCoeffScalarFlag();
+  const float  absorbTauScalar     = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
+  const float* absorbTauMatrix     = (areTauAndEtaScalars) ? nullptr : getAbsorbTau().getData();
 
-  // c2 scalar
-  if (Parameters->Get_c0_scalar_flag())
-  {
-    c2_data = &Parameters->Get_c0_scalar();
-    c2_shift = 0;
-  }
-  else
-  {
-    c2_data  = Get_c2().GetRawData();
-    c2_shift = 1;
-  }
-
-  // eta and tau scalars
-  if (Parameters->Get_c0_scalar_flag() && Parameters->Get_alpha_coeff_scallar_flag())
-  {
-    tau_data = &Parameters->Get_absorb_tau_scalar();
-    eta_data = &Parameters->Get_absorb_eta_scalar();
-    tau_eta_shift = 0;
-  }
-  else
-  {
-    tau_data = Get_absorb_tau().GetRawData();
-    eta_data = Get_absorb_eta().GetRawData();
-    tau_eta_shift = 1;
-  }
+  const float  absorbEtaScalar     = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
+  const float* absorbEtaMatrix     = (areTauAndEtaScalars) ? nullptr : getAbsorbEta().getData();;
 
   #pragma omp parallel
   {
-    const float * BonA_data = BonA_temp.GetRawData();
-    float * p_data  = Get_p().GetRawData();
+    const float* bOnA = nonlinearTerm.getData();
+    float*       p    = getP().getData();
 
     #pragma omp for schedule (static)
-    for (size_t i = 0; i < TotalElementCount; i++)
+    for (size_t i = 0; i < nElements; i++)
     {
-      p_data[i] = (c2_data[i * c2_shift]) *(
-                   BonA_data[i] +
-                   (Divider * ((Absorb_tau_data[i] * tau_data[i * tau_eta_shift]) -
-                               (Absorb_eta_data[i] * eta_data[i * tau_eta_shift])
-                              ))
-                );
+      const float c2        = (c0ScalarFlag) ? c2Scalar        : c2Matrix[i];
+      const float absorbTau = (c0ScalarFlag) ? absorbTauScalar : absorbTauMatrix[i];
+      const float absorbEta = (c0ScalarFlag) ? absorbEtaScalar : absorbEtaMatrix[i];
+
+      p[i] = c2 *(bOnA[i] + (divider * ((eAbsorbTauTerm[i] * absorbTau) - (eAbsorbEtaTerm[i] * absorbEta))));
     }
-
   }// parallel
-}// end of Sum_Subterms_nonlinear
-//------------------------------------------------------------------------------
-
+}// end of sumPressureTermsNonlinear
+//----------------------------------------------------------------------------------------------------------------------
 
  /**
-  * Sum sub-terms to calculate new pressure, linear case.
-  * @param [in] Absorb_tau_temp - sub-term with absorb_tau
-  * @param [in] Absorb_eta_temp - sub-term with absorb_eta
-  * @param [in] Sum_rhoxyz      - rhox_sgx + rhoy_sgy + rhoz_sgz
+  * Sum sub-terms to calculate new pressure, after FFTs, linear case.
   */
-void TKSpaceFirstOrder3DSolver::Sum_Subterms_linear(TRealMatrix& Absorb_tau_temp,
-                                                    TRealMatrix& Absorb_eta_temp,
-                                                    TRealMatrix& Sum_rhoxyz)
+void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
+                                                      const RealMatrix& absorbEtaTerm,
+                                                      const RealMatrix& densitySum)
 {
-  const float *  tau_data = NULL;
-  const float *  eta_data = NULL;
-  const float *  c2_data  = NULL;
+  const float * eAbsorbTauTerm = absorbTauTerm.getData();
+  const float * eAbsorbEtaTerm = absorbEtaTerm.getData();
 
-  size_t c2_shift      = 0;
-  size_t tau_eta_shift = 0;
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+  const float  divider = 1.0f / static_cast<float>(nElements);
 
-  const float * Absorb_tau_data = Absorb_tau_temp.GetRawData();
-  const float * Absorb_eta_data = Absorb_eta_temp.GetRawData();
+  const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
+  const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+  const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  const size_t TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
-  const float Divider = 1.0f / (float) TotalElementCount;
+  const bool   areTauAndEtaScalars = mParameters.getC0ScalarFlag() && mParameters.getAlphaCoeffScalarFlag();
+  const float  absorbTauScalar     = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
+  const float* absorbTauMatrix     = (areTauAndEtaScalars) ? nullptr : getAbsorbTau().getData();
 
-  // c2 scalar
-  if (Parameters->Get_c0_scalar_flag())
-  {
-    c2_data = &Parameters->Get_c0_scalar();
-    c2_shift = 0;
-  }
-  else
-  {
-    c2_data = Get_c2().GetRawData();
-    c2_shift = 1;
-  }
-
-  // eta and tau scalars
-  if (Parameters->Get_c0_scalar_flag() && Parameters->Get_alpha_coeff_scallar_flag())
-  {
-    tau_data = &Parameters->Get_absorb_tau_scalar();
-    eta_data = &Parameters->Get_absorb_eta_scalar();
-    tau_eta_shift = 0;
-  }
-  else
-  {
-    tau_data = Get_absorb_tau().GetRawData();
-    eta_data = Get_absorb_eta().GetRawData();
-    tau_eta_shift = 1;
-  }
+  const float  absorbEtaScalar     = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
+  const float* absorbEtaMatrix     = (areTauAndEtaScalars) ? nullptr : getAbsorbEta().getData();;
 
   #pragma omp parallel
   {
-    const float * Sum_rhoxyz_Data = Sum_rhoxyz.GetRawData();
-          float * p_data  = Get_p().GetRawData();
+    const float* eDenistySum = densitySum.getData();
+          float* p           = getP().getData();
 
     #pragma omp for schedule (static)
-    for (size_t i = 0; i < TotalElementCount; i++)
+    for (size_t i = 0; i < nElements; i++)
     {
-      p_data[i] = (c2_data[i * c2_shift]) *
-                    (Sum_rhoxyz_Data[i] +
-                      (Divider * ((Absorb_tau_data[i] * tau_data[i * tau_eta_shift]) -
-                                 (Absorb_eta_data[i] * eta_data[i * tau_eta_shift])
-                      ))
-                );
+      const float c2        = (c0ScalarFlag) ? c2Scalar        : c2Matrix[i];
+      const float absorbTau = (c0ScalarFlag) ? absorbTauScalar : absorbTauMatrix[i];
+      const float absorbEta = (c0ScalarFlag) ? absorbEtaScalar : absorbEtaMatrix[i];
+
+      p[i] = c2 * (eDenistySum[i] + (divider * ((eAbsorbTauTerm[i] * absorbTau) - (eAbsorbEtaTerm[i] * absorbEta))));
     }
   }// parallel
-}// end of Sum_Subterms_linear
-//------------------------------------------------------------------------------
-
-
+}// end of sumPressureTermsLinear
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Sum sub-terms for new p, non-linear lossless case.
- *
+ * Sum sub-terms for new p, nonlinear lossless case.
  */
- void TKSpaceFirstOrder3DSolver::Sum_new_p_nonlinear_lossless()
+ void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinearLossless()
  {
   #pragma omp parallel
   {
-    const size_t TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
-    float * p_data = Get_p().GetRawData();
+    const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+    float* p = getP().getData();
 
-    const float * rhox_data = Get_rhox().GetRawData();
-    const float * rhoy_data = Get_rhoy().GetRawData();
-    const float * rhoz_data = Get_rhoz().GetRawData();
+    const float* rhoX = getRhoX().getData();
+    const float* rhoY = getRhoY().getData();
+    const float* rhoZ = getRhoZ().getData();
 
-    float * c2_data;
-    size_t  c2_shift;
+    const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
+    const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+    const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-    if (Parameters->Get_c0_scalar_flag())
-    {
-      c2_data = &Parameters->Get_c0_scalar();
-      c2_shift = 0;
-    }
-    else
-    {
-      c2_data = Get_c2().GetRawData();
-      c2_shift = 1;
-    }
+    const bool   nonlinearFlag = mParameters.getBOnAScalarFlag();
+    const float  bOnAScalar    = (nonlinearFlag) ? mParameters.getBOnAScalarFlag() : 0;
+    const float* bOnAMatrix    = (nonlinearFlag) ? nullptr : getBOnA().getData();
 
-    float * BonA_data;
-    size_t  BonA_shift;
-
-    if (Parameters->Get_BonA_scalar_flag())
-    {
-      BonA_data = &Parameters->Get_BonA_scalar();
-      BonA_shift = 0;
-    }
-    else
-    {
-      BonA_data = Get_BonA().GetRawData();
-      BonA_shift = 1;
-    }
-
-    float * rho0_data;
-    size_t rho0_shift;
-
-    if (Parameters->Get_rho0_scalar_flag())
-    {
-      rho0_data = &Parameters->Get_rho0_scalar();
-      rho0_shift = 0;
-    }
-    else
-    {
-      rho0_data = Get_rho0().GetRawData();
-      rho0_shift = 1;
-    }
-
+    const bool   rho0ScalarFlag = mParameters.getRho0ScalarFlag();
+    const float  rho0Scalar     = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
+    const float* rho0Matrix     = (rho0ScalarFlag) ? nullptr : getRho0().getData();
 
     #pragma omp for schedule (static)
-    for (size_t i = 0; i < TotalElementCount; i++)
+    for (size_t i = 0; i < nElements; i++)
     {
-      const float sum_rho = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
+      const float c2   = (c0ScalarFlag)   ? c2Scalar   : c2Matrix[i];
+      const float bOnA = (nonlinearFlag)  ? bOnAScalar : bOnAMatrix[i];
+      const float rho0 = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
 
-      p_data[i] = c2_data[i * c2_shift] *
-                    (sum_rho +
-                              (BonA_data[i * BonA_shift] * (sum_rho * sum_rho) /
-                              (2.0f * rho0_data[i * rho0_shift]))
-                    );
+      const float sumDensity = rhoX[i] + rhoY[i] + rhoZ[i];
+
+      p[i] = c2 * (sumDensity + (bOnA * (sumDensity * sumDensity) / (2.0f * rho0)));
     }
   }// parallel
- }// end of Sum_new_p_nonlinear_lossless
-//------------------------------------------------------------------------------
-
+ }// end of sumPressureTermsNonlinearLossless
+//----------------------------------------------------------------------------------------------------------------------
 
  /**
-  * Sum sub-terms for new p, linear lossless case.
-  *
+  * Sum sub-terms for new pressure, linear lossless case.
   */
- void TKSpaceFirstOrder3DSolver::Sum_new_p_linear_lossless()
+ void KSpaceFirstOrder3DSolver::sumPressureTermsLinearLossless()
 {
   #pragma omp parallel
   {
-    const float * rhox = Get_rhox().GetRawData();
-    const float * rhoy = Get_rhoy().GetRawData();
-    const float * rhoz = Get_rhoz().GetRawData();
-          float * p_data = Get_p().GetRawData();
-    const size_t  TotalElementCount = Parameters->GetFullDimensionSizes().GetElementCount();
+    const float* rhoX = getRhoX().getData();
+    const float* rhoY = getRhoY().getData();
+    const float* rhoZ = getRhoZ().getData();
+          float* p    = getP().getData();
 
-    if (Parameters->Get_c0_scalar_flag())
+    const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+
+    if (mParameters.getC0ScalarFlag())
     {
-      const float c2_element = Parameters->Get_c0_scalar();
+      const float c2 = mParameters.getC2Scalar();
 
       #pragma omp for schedule (static)
-      for (size_t i = 0; i < TotalElementCount; i++)
+      for (size_t i = 0; i < nElements; i++)
       {
-        p_data[i] = c2_element * (rhox[i] + rhoy[i] + rhoz[i]);
+        p[i] = c2 * (rhoX[i] + rhoY[i] + rhoZ[i]);
       }
     }
     else
     {
-      const float * c2_data = Get_c2().GetRawData();
+      const float* c2 = getC2().getData();
 
       #pragma omp for schedule (static)
-      for (size_t i = 0; i < TotalElementCount; i++)
+      for (size_t i = 0; i < nElements; i++)
       {
-        p_data[i] = (c2_data[i]) * (rhox[i] + rhoy[i] + rhoz[i]);
+        p[i] = c2[i] * (rhoX[i] + rhoY[i] + rhoZ[i]);
       }
     }
   }// parallel
-}// end of Sum_new_p_linear_lossless()
-//------------------------------------------------------------------------------
-
-
-/**
- * Compute new p for non-linear case.
- */
- void TKSpaceFirstOrder3DSolver::Compute_new_p_nonlinear()
-{
-  // rhox + rhoy + rhoz
-  if (Parameters->Get_absorbing_flag())
-  { // absorbing case
-
-    TRealMatrix & Sum_rhoxyz = Get_Temp_1_RS3D();
-    TRealMatrix & BonA_rho_rhoxyz = Get_Temp_2_RS3D();
-    TRealMatrix & Sum_du = Get_Temp_3_RS3D();
-
-    Calculate_SumRho_BonA_SumDu_SSE2(Sum_rhoxyz, BonA_rho_rhoxyz, Sum_du);
-
-    // ifftn ( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
-    Get_FFT_X_temp().Compute_FFT_3D_R2C(Sum_du);
-    Get_FFT_Y_temp().Compute_FFT_3D_R2C(Sum_rhoxyz);
-
-    Compute_Absorb_nabla1_2_SSE2(Get_FFT_X_temp(), Get_FFT_Y_temp());
-
-    TRealMatrix& Absorb_tau_temp = Sum_du;
-    TRealMatrix& Absorb_eta_temp = Sum_rhoxyz;
-
-    Get_FFT_X_temp().Compute_FFT_3D_C2R(Absorb_tau_temp);
-    Get_FFT_Y_temp().Compute_FFT_3D_C2R(Absorb_eta_temp);
-
-    Sum_Subterms_nonlinear(Absorb_tau_temp, Absorb_eta_temp, BonA_rho_rhoxyz);
-  }
-  else
-  {
-    Sum_new_p_nonlinear_lossless();
-  }
-}// end of Compute_new_p_nonlinear
-//------------------------------------------------------------------------------
-
-
-/**
- * Compute new p for linear case.
- */
- void TKSpaceFirstOrder3DSolver::Compute_new_p_linear()
- {
-  // rhox + rhoy + rhoz
-  if (Parameters->Get_absorbing_flag())
-  { // absorbing case
-
-    TRealMatrix& Sum_rhoxyz = Get_Temp_1_RS3D();
-    TRealMatrix& Sum_rho0_du = Get_Temp_2_RS3D();
-
-    Calculate_SumRho_SumRhoDu(Sum_rhoxyz, Sum_rho0_du);
-
-    // ifftn ( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
-
-    Get_FFT_X_temp().Compute_FFT_3D_R2C(Sum_rho0_du);
-    Get_FFT_Y_temp().Compute_FFT_3D_R2C(Sum_rhoxyz);
-
-    Compute_Absorb_nabla1_2_SSE2(Get_FFT_X_temp(), Get_FFT_Y_temp());
-
-    TRealMatrix& Absorb_tau_temp = Get_Temp_2_RS3D(); // override Sum_rho0_dx
-    TRealMatrix& Absorb_eta_temp = Get_Temp_3_RS3D();
-
-    Get_FFT_X_temp().Compute_FFT_3D_C2R(Absorb_tau_temp);
-    Get_FFT_Y_temp().Compute_FFT_3D_C2R(Absorb_eta_temp);
-
-    Sum_Subterms_linear(Absorb_tau_temp, Absorb_eta_temp, Sum_rhoxyz);
-  }
-  else
-  {
-    // lossless case
-    Sum_new_p_linear_lossless();
-  }
- }// end of Compute_new_p_linear
-//------------------------------------------------------------------------------
-
-
-
-
- /*
-  * Compute new values of ux_sgx, uy_sgy, uz_sgz.
-  */
- void TKSpaceFirstOrder3DSolver::Compute_uxyz()
- {
-
-  Compute_ddx_kappa_fft_p(Get_p(),
-                          Get_FFT_X_temp(),Get_FFT_Y_temp(),Get_FFT_Z_temp(),
-                          Get_kappa(),
-                          Get_ddx_k_shift_pos(),Get_ddy_k_shift_pos(),Get_ddz_k_shift_pos());
-
-   Get_FFT_X_temp().Compute_FFT_3D_C2R(Get_Temp_1_RS3D());
-   Get_FFT_Y_temp().Compute_FFT_3D_C2R(Get_Temp_2_RS3D());
-   Get_FFT_Z_temp().Compute_FFT_3D_C2R(Get_Temp_3_RS3D());
-
-  #pragma omp parallel
-  {
-    if (Parameters->Get_rho0_scalar_flag())
-    { // scalars
-      if (Parameters->Get_nonuniform_grid_flag())
-      {
-        Get_ux_sgx().Compute_ux_sgx_normalize_scalar_nonuniform(Get_Temp_1_RS3D(),
-                                                                Parameters->Get_rho0_sgx_scalar(),
-                                                                Get_dxudxn_sgx(), Get_pml_x_sgx());
-        Get_uy_sgy().Compute_uy_sgy_normalize_scalar_nonuniform(Get_Temp_2_RS3D(),
-                                                                Parameters->Get_rho0_sgy_scalar(),
-                                                                Get_dyudyn_sgy(), Get_pml_y_sgy());
-        Get_uz_sgz().Compute_uz_sgz_normalize_scalar_nonuniform(Get_Temp_3_RS3D(),
-                                                                Parameters->Get_rho0_sgz_scalar(),
-                                                                Get_dzudzn_sgz(), Get_pml_z_sgz());
-       }
-      else
-      {
-        Get_ux_sgx().Compute_ux_sgx_normalize_scalar_uniform(Get_Temp_1_RS3D(),
-                                                             Parameters->Get_rho0_sgx_scalar(),
-                                                             Get_pml_x_sgx());
-        Get_uy_sgy().Compute_uy_sgy_normalize_scalar_uniform(Get_Temp_2_RS3D(),
-                                                             Parameters->Get_rho0_sgy_scalar(),
-                                                             Get_pml_y_sgy());
-        Get_uz_sgz().Compute_uz_sgz_normalize_scalar_uniform(Get_Temp_3_RS3D(),
-                                                             Parameters->Get_rho0_sgz_scalar(),
-                                                             Get_pml_z_sgz());
-      }
-    }
-    else
-    {// matrices
-      Get_ux_sgx().Compute_ux_sgx_normalize(Get_Temp_1_RS3D(),
-                                            Get_dt_rho0_sgx(),
-                                            Get_pml_x_sgx());
-      Get_uy_sgy().Compute_uy_sgy_normalize(Get_Temp_2_RS3D(),
-                                            Get_dt_rho0_sgy(),
-                                            Get_pml_y_sgy());
-      Get_uz_sgz().Compute_uz_sgz_normalize(Get_Temp_3_RS3D(),
-                                            Get_dt_rho0_sgz(),
-                                            Get_pml_z_sgz());
-    }
-  } // parallel
-}// end of Compute_uxyz()
-//------------------------------------------------------------------------------
-
-/**
- * Add u source to the particle velocity.
- */
-void TKSpaceFirstOrder3DSolver::Add_u_source()
-{
-  const size_t t_index = Parameters->Get_t_index();
-
-  if (Parameters->Get_ux_source_flag() > t_index)
-  {
-    Get_ux_sgx().Add_u_source(Get_ux_source_input(),
-                              Get_u_source_index(),
-                              t_index,
-                              Parameters->Get_u_source_mode(),
-                              Parameters->Get_u_source_many());
-  }
-
-  if (Parameters->Get_uy_source_flag() > t_index)
-  {
-    Get_uy_sgy().Add_u_source(Get_uy_source_input(),
-                              Get_u_source_index(),
-                              t_index,
-                              Parameters->Get_u_source_mode(),
-                              Parameters->Get_u_source_many());
-  }
-
-  if (Parameters->Get_uz_source_flag() > t_index)
-  {
-    Get_uz_sgz().Add_u_source(Get_uz_source_input(),
-                              Get_u_source_index(),
-                              t_index,
-                              Parameters->Get_u_source_mode(),
-                              Parameters->Get_u_source_many());
-  }
-}// end of Add_u_source
-//------------------------------------------------------------------------------
-
-
-
- /**
-  * Add in pressure source.
-  *
-  */
-void TKSpaceFirstOrder3DSolver::Add_p_source()
-{
-  const size_t t_index = Parameters->Get_t_index();
-
-  if (Parameters->Get_p_source_flag() > t_index)
-  {
-    float * rhox = Get_rhox().GetRawData();
-    float * rhoy = Get_rhoy().GetRawData();
-    float * rhoz = Get_rhoz().GetRawData();
-
-    float  * p_source_input = Get_p_source_input().GetRawData();
-    const size_t * p_source_index = Get_p_source_index().GetRawData();
-
-    const bool   Is_p_source_many  = (Parameters->Get_p_source_many() != 0);
-    const size_t Index2D           = (Is_p_source_many) ? t_index * Get_p_source_index().GetTotalElementCount() : t_index;
-    const size_t p_source_size     = Get_p_source_index().GetTotalElementCount();
-
-    // replacement
-    if (Parameters->Get_p_source_mode() == 0)
-    {
-      #pragma omp parallel for if (p_source_size > 16384)
-      for (size_t i = 0; i < p_source_size; i++)
-      {
-        const size_t SignalIndex = (Is_p_source_many) ? Index2D + i : Index2D;
-
-        rhox[p_source_index[i]] = p_source_input[SignalIndex];
-        rhoy[p_source_index[i]] = p_source_input[SignalIndex];
-        rhoz[p_source_index[i]] = p_source_input[SignalIndex];
-
-      }
-    }
-    // Addition
-    else
-    {
-      #pragma omp parallel for if (p_source_size > 16384)
-      for (size_t i = 0; i < p_source_size; i++)
-      {
-        const size_t SignalIndex = (Is_p_source_many) ? Index2D + i : Index2D;
-
-        rhox[p_source_index[i]] += p_source_input[SignalIndex];
-        rhoy[p_source_index[i]] += p_source_input[SignalIndex];
-        rhoz[p_source_index[i]] += p_source_input[SignalIndex];
-      }
-    }// type of replacement
-  }// if do at all
-}// end of Add_p_source
-//------------------------------------------------------------------------------
-
+}// end of sumPressureTermsLinearLossless()
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculated shifted velocities.
- * \n
- * ux_shifted = real(ifft(bsxfun(\@times, x_shift_neg, fft(ux_sgx, [], 1)), [], 1)); \n
- * uy_shifted = real(ifft(bsxfun(\@times, y_shift_neg, fft(uy_sgy, [], 2)), [], 2)); \n
- * uz_shifted = real(ifft(bsxfun(\@times, z_shift_neg, fft(uz_sgz, [], 3)), [], 3)); \n
+ *
+ * <b>Matlab code:</b> \n
+ *
+ * \verbatim
+    ux_shifted = real(ifft(bsxfun(\@times, x_shift_neg, fft(ux_sgx, [], 1)), [], 1));
+    uy_shifted = real(ifft(bsxfun(\@times, y_shift_neg, fft(uy_sgy, [], 2)), [], 2));
+    uz_shifted = real(ifft(bsxfun(\@times, z_shift_neg, fft(uz_sgz, [], 3)), [], 3));
+  \endverbatim
  */
-void TKSpaceFirstOrder3DSolver::Calculate_shifted_velocity()
-{
-  const TFloatComplex * x_shift_neg_r  = (TFloatComplex *) Get_x_shift_neg_r().GetRawData();
-  const TFloatComplex * y_shift_neg_r  = (TFloatComplex *) Get_y_shift_neg_r().GetRawData();
-  const TFloatComplex * z_shift_neg_r  = (TFloatComplex *) Get_z_shift_neg_r().GetRawData();
 
-        TFloatComplex * FFT_shift_temp = (TFloatComplex *) Get_FFT_shift_temp().GetRawData();
+void KSpaceFirstOrder3DSolver::computeShiftedVelocity()
+{
+  const FloatComplex* xShiftNegR  = reinterpret_cast<FloatComplex*>(getXShiftNegR().getData());
+  const FloatComplex* yShiftNegR  = reinterpret_cast<FloatComplex*>(getYShiftNegR().getData());
+  const FloatComplex* zShiftNegR  = reinterpret_cast<FloatComplex*>(getZShiftNegR().getData());
+
+        FloatComplex* tempFftShift = reinterpret_cast<FloatComplex*>(getTempFftwShift().getData());
 
 
   // sizes of frequency spaces
-  TDimensionSizes XShiftDims = Parameters->GetFullDimensionSizes();
-                  XShiftDims.X = XShiftDims.X/2 + 1;
+  DimensionSizes xShiftDims    = mParameters.getFullDimensionSizes();
+                 xShiftDims.nx = xShiftDims.nx / 2 + 1;
 
-  TDimensionSizes YShiftDims = Parameters->GetFullDimensionSizes();
-                  YShiftDims.Y = YShiftDims.Y/2 + 1;
+  DimensionSizes yShiftDims    = mParameters.getFullDimensionSizes();
+                 yShiftDims.ny = yShiftDims.ny / 2 + 1;
 
-  TDimensionSizes ZShiftDims = Parameters->GetFullDimensionSizes();
-                  ZShiftDims.Z = ZShiftDims.Z/2 + 1;
+  DimensionSizes zShiftDims    = mParameters.getFullDimensionSizes();
+                 zShiftDims.nz = zShiftDims.nz / 2 + 1;
 
   // normalization constants for FFTs
-  const float DividerX = 1.0f / (float) Parameters->GetFullDimensionSizes().X;
-  const float DividerY = 1.0f / (float) Parameters->GetFullDimensionSizes().Y;
-  const float DividerZ = 1.0f / (float) Parameters->GetFullDimensionSizes().Z;
+  const float dividerX = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
+  const float dividerY = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().ny);
+  const float dividerZ = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nz);
 
-  //-------------------------- ux_shifted --------------------------------------
-  Get_FFT_shift_temp().Compute_FFT_1DX_R2C(Get_ux_sgx());
+  //-------------------------------------------------- ux_shifted ----------------------------------------------------//
+  getTempFftwShift().computeR2CFft1DX(getUxSgx());
 
   #pragma omp parallel for schedule (static)
-  for (size_t z = 0; z < XShiftDims.Z; z++)
+  for (size_t z = 0; z < xShiftDims.nz; z++)
   {
-    register size_t i = z *  XShiftDims.Y * XShiftDims.X;
-    for (size_t y = 0; y < XShiftDims.Y; y++)
+    register size_t i = z *  xShiftDims.ny * xShiftDims.nx;
+    for (size_t y = 0; y < xShiftDims.ny; y++)
     {
-      for (size_t x = 0; x < XShiftDims.X; x++)
+      for (size_t x = 0; x < xShiftDims.nx; x++)
       {
-        TFloatComplex Temp;
+        FloatComplex temp;
 
-        Temp.real = ((FFT_shift_temp[i].real * x_shift_neg_r[x].real) -
-                     (FFT_shift_temp[i].imag * x_shift_neg_r[x].imag)
-                    ) * DividerX;
+        temp.real = ((tempFftShift[i].real * xShiftNegR[x].real) -
+                     (tempFftShift[i].imag * xShiftNegR[x].imag)
+                    ) * dividerX;
 
 
-        Temp.imag = ((FFT_shift_temp[i].imag * x_shift_neg_r[x].real) +
-                     (FFT_shift_temp[i].real * x_shift_neg_r[x].imag)
-                    ) * DividerX;
+        temp.imag = ((tempFftShift[i].imag * xShiftNegR[x].real) +
+                     (tempFftShift[i].real * xShiftNegR[x].imag)
+                    ) * dividerX;
 
-        FFT_shift_temp[i] = Temp;
+        tempFftShift[i] = temp;
 
         i++;
       } // x
     } // y
   }//z*/
-  Get_FFT_shift_temp().Compute_FFT_1DX_C2R(Get_ux_shifted());
+  getTempFftwShift().computeC2RFft1DX(getUxShifted());
 
 
-  //-------------------------- uy_shifted --------------------------------------
-  Get_FFT_shift_temp().Compute_FFT_1DY_R2C(Get_uy_sgy());
+  //-------------------------------------------------- uy shifted ----------------------------------------------------//
+  getTempFftwShift().computeR2CFft1DY(getUySgy());
 
   #pragma omp parallel for schedule (static)
-  for (size_t z = 0; z < YShiftDims.Z; z++)
+  for (size_t z = 0; z < yShiftDims.nz; z++)
   {
-    register size_t i = z *  YShiftDims.Y * YShiftDims.X;
-    for (size_t y = 0; y < YShiftDims.Y; y++)
+    register size_t i = z *  yShiftDims.ny * yShiftDims.nx;
+    for (size_t y = 0; y < yShiftDims.ny; y++)
     {
-      for (size_t x = 0; x < YShiftDims.X; x++)
+      for (size_t x = 0; x < yShiftDims.nx; x++)
       {
-        TFloatComplex Temp;
+        FloatComplex temp;
 
-        Temp.real = ((FFT_shift_temp[i].real * y_shift_neg_r[y].real) -
-                     (FFT_shift_temp[i].imag * y_shift_neg_r[y].imag)) *
-                      DividerY;
+        temp.real = ((tempFftShift[i].real * yShiftNegR[y].real) -
+                     (tempFftShift[i].imag * yShiftNegR[y].imag)) *
+                      dividerY;
 
 
-        Temp.imag = ((FFT_shift_temp[i].imag * y_shift_neg_r[y].real) +
-                     (FFT_shift_temp[i].real * y_shift_neg_r[y].imag)
-                    ) * DividerY;
+        temp.imag = ((tempFftShift[i].imag * yShiftNegR[y].real) +
+                     (tempFftShift[i].real * yShiftNegR[y].imag)
+                    ) * dividerY;
 
-        FFT_shift_temp[i] = Temp;
+        tempFftShift[i] = temp;
 
         i++;
       } // x
     } // y
   }//z
-  Get_FFT_shift_temp().Compute_FFT_1DY_C2R(Get_uy_shifted());
+  getTempFftwShift().computeC2RFft1DY(getUyShifted());
 
 
-  //-------------------------- uz_shifted --------------------------------------
-  Get_FFT_shift_temp().Compute_FFT_1DZ_R2C(Get_uz_sgz());
+  //-------------------------------------------------- uz_shifted ----------------------------------------------------//
+  getTempFftwShift().computeR2CFft1DZ(getUzSgz());
   #pragma omp parallel for schedule (static)
-  for (size_t z = 0; z < ZShiftDims.Z; z++)
+  for (size_t z = 0; z < zShiftDims.nz; z++)
   {
-    register size_t i = z *  ZShiftDims.Y * ZShiftDims.X;
-    for (size_t y = 0; y < ZShiftDims.Y; y++)
+    register size_t i = z *  zShiftDims.ny * zShiftDims.nx;
+    for (size_t y = 0; y < zShiftDims.ny; y++)
     {
-      for (size_t x = 0; x < ZShiftDims.X; x++)
+      for (size_t x = 0; x < zShiftDims.nx; x++)
       {
-        TFloatComplex Temp;
+        FloatComplex temp;
 
-        Temp.real = ((FFT_shift_temp[i].real * z_shift_neg_r[z].real) -
-                     (FFT_shift_temp[i].imag * z_shift_neg_r[z].imag)) *
-                      DividerZ;
+        temp.real = ((tempFftShift[i].real * zShiftNegR[z].real) -
+                     (tempFftShift[i].imag * zShiftNegR[z].imag)) *
+                      dividerZ;
 
 
-        Temp.imag = ((FFT_shift_temp[i].imag * z_shift_neg_r[z].real) +
-                     (FFT_shift_temp[i].real * z_shift_neg_r[z].imag)
-                    ) * DividerZ;
+        temp.imag = ((tempFftShift[i].imag * zShiftNegR[z].real) +
+                     (tempFftShift[i].real * zShiftNegR[z].imag)
+                    ) * dividerZ;
 
-        FFT_shift_temp[i] = Temp;
+        tempFftShift[i] = temp;
 
         i++;
       } // x
     } // y
   }//z
-  Get_FFT_shift_temp().Compute_FFT_1DZ_C2R(Get_uz_shifted());
-}// end of Calculate_shifted_velocity()
-//------------------------------------------------------------------------------
-
-
-/**
- * Compute the main time loop of KSpaceFirstOrder3D.
- *
- */
-void TKSpaceFirstOrder3DSolver::Compute_MainLoop()
-{
-
-  ActPercent = 0;
-  // set ActPercent to correspond the t_index after recovery
-  if (Parameters->Get_t_index() > 0)
-  {
-    ActPercent = (100 * Parameters->Get_t_index()) / Parameters->Get_Nt();
-  }
-
-  PrintOtputHeader();
-
-  IterationTime.Start();
-
-  while (Parameters->Get_t_index() < Parameters->Get_Nt() && (!IsTimeToCheckpoint()))
-  {
-    const size_t t_index = Parameters->Get_t_index();
-
-    Compute_uxyz();
-    // add in the velocity u source term
-    Add_u_source();
-
-    // add in the transducer source term (t = t1) to ux
-    if (Parameters->Get_transducer_source_flag() > t_index)
-    {
-     Get_ux_sgx().AddTransducerSource(Get_u_source_index(), Get_delay_mask(), Get_transducer_source_input());
-    }
-
-    Compute_duxyz();
-
-    if (Parameters->Get_nonlinear_flag())
-    {
-      Compute_rhoxyz_nonlinear();
-    }
-    else
-    {
-      Compute_rhoxyz_linear();
-    }
-
-
-     // add in the source pressure term
-     Add_p_source();
-
-    if (Parameters->Get_nonlinear_flag())
-    {
-      Compute_new_p_nonlinear();
-    }
-    else
-    {
-      Compute_new_p_linear();
-    }
-
-    // calculate initial pressure
-    if ((t_index == 0) && (Parameters->Get_p0_source_flag() == 1)) Calculate_p0_source();
-
-    StoreSensorData();
-    PrintStatisitcs();
-    Parameters->Increment_t_index();
-
-  }// time loop
-}// end of Compute_Main_Loop()
-//------------------------------------------------------------------------------
-
+  getTempFftwShift().computeC2RFft1DZ(getUzShifted());
+}// end of computeShiftedVelocity
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Print progress statistics.
- *
  */
-void TKSpaceFirstOrder3DSolver::PrintStatisitcs()
+void KSpaceFirstOrder3DSolver::printStatistics()
 {
-  const size_t Nt =  Parameters->Get_Nt();
-  const size_t t_index = Parameters->Get_t_index();
+  const size_t nt =  mParameters.getNt();
+  const size_t timeIndex = mParameters.getTimeIndex();
 
 
-  if (t_index > ((ActPercent * Nt) / 100) )
+  if (timeIndex > (mActPercent * nt * 0.01f))
   {
-    ActPercent += Parameters->GetVerboseInterval();
+    mActPercent += mParameters.getProgressPrintInterval();
 
-    IterationTime.Stop();
+    mIterationTime.stop();
 
-    const double ElTime = IterationTime.GetElapsedTime();
-    const double ElTimeWithLegs = IterationTime.GetElapsedTime() + SimulationTime.GetCumulatedElapsedTimeOverPreviousLegs();
-    const double ToGo   = ((ElTimeWithLegs / (double) (t_index + 1)) *  double(Nt)) - ElTimeWithLegs;
+    const double elTime = mIterationTime.getElapsedTime();
+    const double elTimeWithLegs = mIterationTime.getElapsedTime() + mSimulationTime.getElapsedTimeOverPreviousLegs();
+    const double toGo   = ((elTimeWithLegs / static_cast<double>((timeIndex + 1)) *  nt)) - elTimeWithLegs;
 
     struct tm *current;
     time_t now;
     time(&now);
-    now += ToGo;
+    now += toGo;
     current = localtime(&now);
 
     fprintf(stdout, "%5li%c      %9.3fs      %9.3fs      %02i/%02i/%02i %02i:%02i:%02i\n",
-            (100 * t_index) / Nt ,'%',
-            ElTime, ToGo,
+            static_cast<size_t>(((timeIndex) / (nt * 0.01f))) ,'%',
+            elTime, toGo,
             current->tm_mday, current->tm_mon + 1, current->tm_year - 100,
             current->tm_hour, current->tm_min, current->tm_sec
             );
 
     fflush(stdout);
   }
-}// end of KSpaceFirstOrder3DSolver
-//------------------------------------------------------------------------------
+}// end of printStatistics
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Print the header of the progress statistics.
  */
-void TKSpaceFirstOrder3DSolver::PrintOtputHeader()
+void KSpaceFirstOrder3DSolver::printOtputHeader() const
 {
   fprintf(stdout,"-------------------------------------------------------------\n");
   fprintf(stdout,"....................... Simulation ..........................\n");
   fprintf(stdout,"Progress...ElapsedTime........TimeToGo......TimeOfTermination\n");
-}// end of PrintOtputHeader
-//------------------------------------------------------------------------------
+}// end of printOtputHeader
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Is time to checkpoint
- * @return true if it is necessary to stop to checkpoint?
+ * Is time to checkpoint?
  */
-bool TKSpaceFirstOrder3DSolver::IsTimeToCheckpoint()
+bool KSpaceFirstOrder3DSolver::isTimeToCheckpoint()
 {
-  if (!Parameters->IsCheckpointEnabled()) return false;
+  if (!mParameters.isCheckpointEnabled()) return false;
 
-  TotalTime.Stop();
+  mTotalTime.stop();
 
-  return (TotalTime.GetElapsedTime() > (float) Parameters->GetCheckpointInterval());
+  return (mTotalTime.getElapsedTime() > static_cast<float>(mParameters.getCheckpointInterval()));
 
-}// end of IsTimeToCheckpoint
-//------------------------------------------------------------------------------
-
+}// end of isTimeToCheckpoint
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Post processing the quantities, closing the output streams and storing the
- * sensor mask.
- *
+ * Was the loop interrupted to checkpoint?
  */
-void TKSpaceFirstOrder3DSolver::PostPorcessing()
+bool KSpaceFirstOrder3DSolver::isCheckpointInterruption() const
 {
-  if (Parameters->IsStore_p_final())
-  {
-    Get_p().WriteDataToHDF5File(Parameters->HDF5_OutputFile, p_final_Name, Parameters->GetCompressionLevel());
-  }// p_final
-
-  if (Parameters->IsStore_u_final())
-  {
-    Get_ux_sgx().WriteDataToHDF5File(Parameters->HDF5_OutputFile, ux_final_Name, Parameters->GetCompressionLevel());
-    Get_uy_sgy().WriteDataToHDF5File(Parameters->HDF5_OutputFile, uy_final_Name, Parameters->GetCompressionLevel());
-    Get_uz_sgz().WriteDataToHDF5File(Parameters->HDF5_OutputFile, uz_final_Name, Parameters->GetCompressionLevel());
-  }// u_final
-
-  // Apply post-processing and close
-  OutputStreamContainer.PostProcessStreams();
-  OutputStreamContainer.CloseStreams();
-
-
-  // store sensor mask if wanted
-  if (Parameters->IsCopySensorMask())
-  {
-    if (Parameters->Get_sensor_mask_type() == TParameters::smt_index)
-    {
-      Get_sensor_mask_index().RecomputeIndicesToMatlab();
-      Get_sensor_mask_index().WriteDataToHDF5File(Parameters->HDF5_OutputFile,sensor_mask_index_Name,
-                                                  Parameters->GetCompressionLevel());
-    }
-    if (Parameters->Get_sensor_mask_type() == TParameters::smt_corners)
-    {
-      Get_sensor_mask_corners().RecomputeIndicesToMatlab();
-      Get_sensor_mask_corners().WriteDataToHDF5File(Parameters->HDF5_OutputFile,sensor_mask_corners_Name,
-                                                    Parameters->GetCompressionLevel());
-    }
-  }
-}// end of PostPorcessing
-//------------------------------------------------------------------------------
-
-
-/**
- * Store sensor data.
- *
- */
-void TKSpaceFirstOrder3DSolver::StoreSensorData()
-{
-  // Unless the time for sampling has come, exit
-  if (Parameters->Get_t_index() >= Parameters->GetStartTimeIndex())
-  {
-    if (Parameters->IsStore_u_non_staggered_raw())
-    {
-      Calculate_shifted_velocity();
-    }
-    OutputStreamContainer.SampleStreams();
-  }
-}// end of StoreData
-//------------------------------------------------------------------------------
-
-/**
- * Save checkpoint data into the checkpoint file, flush aggregated outputs into
- * the output file.
- */
-void TKSpaceFirstOrder3DSolver::SaveCheckpointData()
-{
-  // export FFTW wisdom
-  TFFTWComplexMatrix::ExportWisdom();
-
-
-  // Create Checkpoint file
-  THDF5_File & HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
-  // if it happens and the file is opened (from the recovery, close it)
-  if (HDF5_CheckpointFile.IsOpened()) HDF5_CheckpointFile.Close();
-  // Create the new file (overwrite the old one)
-  HDF5_CheckpointFile.Create(Parameters->GetCheckpointFileName().c_str());
-
-
-  //--------------------- Store Matrices ------------------------------//
-
-  // Store all necessary matrices in Checkpoint file
-  MatrixContainer.StoreDataIntoCheckpointHDF5File(HDF5_CheckpointFile);
-
-  // Write t_index
-  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
-                                       t_index_Name,
-                                       Parameters->Get_t_index());
-  // store basic dimension sizes (Nx, Ny, Nz) - Nt is not necessary
-  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
-                                       Nx_Name,
-                                       Parameters->GetFullDimensionSizes().X);
-  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
-                                       Ny_Name,
-                                       Parameters->GetFullDimensionSizes().Y);
-  HDF5_CheckpointFile.WriteScalarValue(HDF5_CheckpointFile.GetRootGroup(),
-                                       Nz_Name,
-                                       Parameters->GetFullDimensionSizes().Z);
-
-
-  // Write checkpoint file header
-  THDF5_FileHeader CheckpointFileHeader = Parameters->HDF5_FileHeader;
-
-  CheckpointFileHeader.SetFileType(THDF5_FileHeader::hdf5_ft_checkpoint);
-  CheckpointFileHeader.SetCodeName(GetCodeName());
-  CheckpointFileHeader.SetActualCreationTime();
-
-  CheckpointFileHeader.WriteHeaderToCheckpointFile(HDF5_CheckpointFile);
-
-  // Close the checkpoint file
-  HDF5_CheckpointFile.Close();
-
-  // checkpoint only if necessary (t_index > start_index) - here we're at  step + 1
-  if (Parameters->Get_t_index() > Parameters->GetStartTimeIndex())
-  {
-    OutputStreamContainer.CheckpointStreams();
-  }
-  OutputStreamContainer.CloseStreams();
-}// end of SaveCheckpointData()
-//------------------------------------------------------------------------------
-
-
-/**
- * Write statistics and the header into the output file.
- */
-void TKSpaceFirstOrder3DSolver::WriteOutputDataInfo()
-{
-  // write t_index into the output file
-  Parameters->HDF5_OutputFile.WriteScalarValue(Parameters->HDF5_OutputFile.GetRootGroup(),
-                                               t_index_Name,
-                                               Parameters->Get_t_index());
-
-  // Write scalars
-  Parameters->SaveScalarsToHDF5File(Parameters->HDF5_OutputFile);
-  THDF5_FileHeader & HDF5_FileHeader = Parameters->HDF5_FileHeader;
-
-  // Write File header
-
-  HDF5_FileHeader.SetCodeName(GetCodeName());
-  HDF5_FileHeader.SetMajorFileVersion();
-  HDF5_FileHeader.SetMinorFileVersion();
-  HDF5_FileHeader.SetActualCreationTime();
-  HDF5_FileHeader.SetFileType(THDF5_FileHeader::hdf5_ft_output);
-  HDF5_FileHeader.SetHostName();
-
-  HDF5_FileHeader.SetMemoryConsumption(ShowMemoryUsageInMB());
-
-  // Stop total timer here
-  TotalTime.Stop();
-  HDF5_FileHeader.SetExecutionTimes(GetCumulatedTotalTime(),
-                                    GetCumulatedDataLoadTime(),
-                                    GetCumulatedPreProcessingTime(),
-                                    GetCumulatedSimulationTime(),
-                                    GetCumulatedPostProcessingTime());
-
-  HDF5_FileHeader.SetNumberOfCores();
-  HDF5_FileHeader.WriteHeaderToOutputFile(Parameters->HDF5_OutputFile);
-}// end of WriteOutputDataInfo
-//------------------------------------------------------------------------------
-
-
-/**
- *
- * Restore cumulated elapsed time form Output file (header stored in TParameters)
- * Open the header, read this and store into TTimeMeasure classes.
- */
-void TKSpaceFirstOrder3DSolver::RestoreCumulatedElapsedFromOutputFile()
-{
-  double ElapsedTotalTime, ElapsedDataLoadTime, ElapsedPreProcessingTime,
-         ElapsedSimulationTime, ElapsedPostProcessingTime;
-
-  // Get execution times stored in the output file header
-  Parameters->HDF5_FileHeader.GetExecutionTimes(ElapsedTotalTime,
-                                                ElapsedDataLoadTime,
-                                                ElapsedPreProcessingTime,
-                                                ElapsedSimulationTime,
-                                                ElapsedPostProcessingTime);
-
-  TotalTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedTotalTime);
-  DataLoadTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedDataLoadTime);
-  PreProcessingTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedPreProcessingTime);
-  SimulationTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedSimulationTime);
-  PostProcessingTime.SetCumulatedElapsedTimeOverPreviousLegs(ElapsedPostProcessingTime);
-
-}// end of RestoreCumulatedElapsedFromOutputFile
-//------------------------------------------------------------------------------
-
+  return (mParameters.getTimeIndex() != mParameters.getNt());
+}// end of isCheckpointInterruption
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Check the output file has the correct format and version.
- * @throw ios::failure if an error happens
  */
-void TKSpaceFirstOrder3DSolver::CheckOutputFile()
+void KSpaceFirstOrder3DSolver::checkOutputFile()
 {
   // The header has already been read
-  THDF5_FileHeader & OutputFileHeader = Parameters->HDF5_FileHeader;
-  THDF5_File       & OutputFile       = Parameters->HDF5_OutputFile;
+  Hdf5FileHeader& fileHeader = mParameters.getFileHeader();
+  Hdf5File&        outputFile = mParameters.getOutputFile();
 
   // test file type
-  if (OutputFileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_output)
+  if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kOutput)
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage,
-            KSpaceFirstOrder3DSolver_ERR_FMT_IncorrectOutputFileFormat,
-            Parameters->GetOutputFileName().c_str());
+    sprintf(ErrorMessage, kErrFmtBadOutputFileFormat, mParameters.getOutputFileName().c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // test file major version
-  if (!OutputFileHeader.CheckMajorFileVersion())
+  if (!fileHeader.checkMajorFileVersion())
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage,
-            Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion,
-            Parameters->GetCheckpointFileName().c_str(),
-            OutputFileHeader.GetCurrentHDF5_MajorVersion().c_str());
+    sprintf(ErrorMessage, kErrFmtBadMajorFileVersion,
+            mParameters.getCheckpointFileName().c_str(),
+            fileHeader.getFileMajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // test file minor version
-  if (!OutputFileHeader.CheckMinorFileVersion())
+  if (!fileHeader.checkMinorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
-            Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion,
-            Parameters->GetCheckpointFileName().c_str(),
-            OutputFileHeader.GetCurrentHDF5_MinorVersion().c_str());
+            kErrFmtBadMinorFileVersion,
+            mParameters.getCheckpointFileName().c_str(),
+            fileHeader.getFileMinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
 
   // Check dimension sizes
-  TDimensionSizes OutputDimSizes;
-  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
-                             Nx_Name,
-                             OutputDimSizes.X);
+  DimensionSizes outputDimSizes;
+  outputFile.readScalarValue(outputFile.getRootGroup(),
+                             kNxName,
+                             outputDimSizes.nx);
 
-  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
-                             Ny_Name,
-                             OutputDimSizes.Y);
+  outputFile.readScalarValue(outputFile.getRootGroup(), kNyName, outputDimSizes.ny);
 
-  OutputFile.ReadScalarValue(OutputFile.GetRootGroup(),
-                             Nz_Name,
-                             OutputDimSizes.Z);
+  outputFile.readScalarValue(outputFile.getRootGroup(), kNzName, outputDimSizes.nz);
 
- if (Parameters->GetFullDimensionSizes() != OutputDimSizes)
+ if (mParameters.getFullDimensionSizes() != outputDimSizes)
  {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
-            KSpaceFirstOrder3DSolver_ERR_FMT_OutputDimensionsDoNotMatch,
-            OutputDimSizes.X,
-            OutputDimSizes.Y,
-            OutputDimSizes.Z,
-            Parameters->GetFullDimensionSizes().X,
-            Parameters->GetFullDimensionSizes().Y,
-            Parameters->GetFullDimensionSizes().Z);
+            kErrFmtOutputDimensionsMismatch,
+            outputDimSizes.nx,
+            outputDimSizes.ny,
+            outputDimSizes.nz,
+            mParameters.getFullDimensionSizes().nx,
+            mParameters.getFullDimensionSizes().ny,
+            mParameters.getFullDimensionSizes().nz);
 
    throw ios::failure(ErrorMessage);
  }
-}// end of CheckOutputFile
-//------------------------------------------------------------------------------
+}// end of checkOutputFile
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Check the file type and the version of the checkpoint file.
- * @throw ios::failure if an error happens
- *
  */
-void TKSpaceFirstOrder3DSolver::CheckCheckpointFile()
+void KSpaceFirstOrder3DSolver::checkCheckpointFile()
 {
   // read the header and check the file version
-  THDF5_FileHeader CheckpointFileHeader;
-  THDF5_File &     HDF5_CheckpointFile = Parameters->HDF5_CheckpointFile;
+  Hdf5FileHeader fileHeader;
+  Hdf5File&      checkpointFile = mParameters.getCheckpointFile();
 
-  CheckpointFileHeader.ReadHeaderFromCheckpointFile(HDF5_CheckpointFile);
+  fileHeader.readHeaderFromCheckpointFile(checkpointFile);
 
   // test file type
-  if (CheckpointFileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_checkpoint)
+  if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kCheckpoint)
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage,
-            KSpaceFirstOrder3DSolver_ERR_FMT_IncorrectCheckpointFileFormat,
-            Parameters->GetCheckpointFileName().c_str());
+    sprintf(ErrorMessage, kErrFmtBadCheckpointFileFormat, mParameters.getCheckpointFileName().c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // test file major version
-  if (!CheckpointFileHeader.CheckMajorFileVersion())
+  if (!fileHeader.checkMajorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
-            Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion,
-            Parameters->GetCheckpointFileName().c_str(),
-            CheckpointFileHeader.GetCurrentHDF5_MajorVersion().c_str());
+            kErrFmtBadMajorFileVersion,
+            mParameters.getCheckpointFileName().c_str(),
+            fileHeader.getFileMajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // test file minor version
-  if (!CheckpointFileHeader.CheckMinorFileVersion())
+  if (!fileHeader.checkMinorFileVersion())
   {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
-            Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion,
-            Parameters->GetCheckpointFileName().c_str(),
-            CheckpointFileHeader.GetCurrentHDF5_MinorVersion().c_str());
+            kErrFmtBadMinorFileVersion,
+            mParameters.getCheckpointFileName().c_str(),
+            fileHeader.getFileMinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
 
   // Check dimension sizes
-  TDimensionSizes CheckpointDimSizes;
-  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
-                                      Nx_Name,
-                                      CheckpointDimSizes.X);
+  DimensionSizes checkpointDimSizes;
+  checkpointFile.readScalarValue(checkpointFile.getRootGroup(), kNxName, checkpointDimSizes.nx);
+  checkpointFile.readScalarValue(checkpointFile.getRootGroup(), kNyName, checkpointDimSizes.ny);
+  checkpointFile.readScalarValue(checkpointFile.getRootGroup(), kNzName, checkpointDimSizes.nz);
 
-  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
-                                      Ny_Name,
-                                      CheckpointDimSizes.Y);
-
-  HDF5_CheckpointFile.ReadScalarValue(HDF5_CheckpointFile.GetRootGroup(),
-                                      Nz_Name,
-                                      CheckpointDimSizes.Z);
-
- if (Parameters->GetFullDimensionSizes() != CheckpointDimSizes)
+ if (mParameters.getFullDimensionSizes() != checkpointDimSizes)
  {
     char ErrorMessage[256] = "";
     sprintf(ErrorMessage,
-            KSpaceFirstOrder3DSolver_ERR_FMT_CheckpointDimensionsDoNotMatch,
-            CheckpointDimSizes.X,
-            CheckpointDimSizes.Y,
-            CheckpointDimSizes.Z,
-            Parameters->GetFullDimensionSizes().X,
-            Parameters->GetFullDimensionSizes().Y,
-            Parameters->GetFullDimensionSizes().Z);
+            kErrFmtCheckpointDimensionsMismatch,
+            checkpointDimSizes.nx,
+            checkpointDimSizes.ny,
+            checkpointDimSizes.nz,
+            mParameters.getFullDimensionSizes().nx,
+            mParameters.getFullDimensionSizes().ny,
+            mParameters.getFullDimensionSizes().nz);
 
    throw ios::failure(ErrorMessage);
  }
-}// end of CheckCheckpointFile
-//------------------------------------------------------------------------------
+}// end of checkCheckpointFile
+//----------------------------------------------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------//
-//                            Private methods                                 //
-//----------------------------------------------------------------------------//
+/**
+ * Restore cumulated elapsed time from the output file.
+ */
+void KSpaceFirstOrder3DSolver::loadElapsedTimeFromOutputFile()
+{
+  double totalTime, dataLoadTime, preProcessingTime, simulationTime, postProcessingTime;
+
+  // Get execution times stored in the output file header
+  mParameters.getFileHeader().getExecutionTimes(totalTime,
+                                                dataLoadTime,
+                                                preProcessingTime,
+                                                simulationTime,
+                                                postProcessingTime);
+
+  mTotalTime.SetElapsedTimeOverPreviousLegs(totalTime);
+  mDataLoadTime.SetElapsedTimeOverPreviousLegs(dataLoadTime);
+  mPreProcessingTime.SetElapsedTimeOverPreviousLegs(preProcessingTime);
+  mSimulationTime.SetElapsedTimeOverPreviousLegs(simulationTime);
+  mPostProcessingTime.SetElapsedTimeOverPreviousLegs(postProcessingTime);
+
+}// end of loadElapsedTimeFromOutputFile
+//----------------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+

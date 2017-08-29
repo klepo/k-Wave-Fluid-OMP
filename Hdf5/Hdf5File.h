@@ -1,344 +1,23 @@
 /**
- * @file        main.cpp
- * @author      Jiri Jaros              \n
+ * @file        Hdf5File.h
+ * @author      Jiri Jaros \n
  *              Faculty of Information Technology\n
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
- * @brief       The main file of kspaceFirstOrder3D-OMP.
+ * @brief       The header file containing the HDF5 related classes.
  *
  * @version     kspaceFirstOrder3D 2.16
- *
- * @date        11 July      2012, 10:57 (created) \n
- *              28 August    2017, 14:59 (revised)
- *
- *
- * @mainpage kspaceFirstOrder3D-OMP
- *
- * @section Overview 1 Overview
- *
- * k-Wave is an open source MATLAB toolbox designed for the time-domain simulation
- * of propagating acoustic waves in 1D, 2D, or 3D. The toolbox has a wide range of
- * functionality, but at its heart is an advanced numerical model that can account
- * for both linear or nonlinear wave propagation, an arbitrary distribution of weakly
- * heterogeneous material parameters, and power law acoustic absorption
- * (http://www.k-wave.org).
- *
- * This project is a part of the k-Wave toolbox accelerating 3D simulations using
- * an optimized C++ implementation to run moderate to big grid sizes.
- * Compiled binaries of the C++ code for x86 architectures are available from
- * (http://www.k-wave.org/download). Both 64-bit Linux (Ubuntu / Debian) and 64-bit Windows
- * versions are provided.
+ * @date        27 July      2012, 14:14 (created) \n
+ *              24 August    2017, 14:22 (revised)
  *
  *
  *
- * @section Compilation 2 Compilation
+ * @section   HDF5File HDF5 File Structure
  *
- *
- * The source codes of <tt>kpsaceFirstOrder3D-OMP</tt> are written using the C++
- * 2003 standard and the OpenMP 3.0 library. There are variety of different C++
- * compilers that can be used to compile the source codes. We recommend using either
- * the GNU C++ compiler (gcc/g++) version 4.4 and higher, or the Intel C++ compiler
- * version 11.0 and higher. The codes can be compiled on 64-bit Linux and Windows.
- * 32-bit systems are not supported!
- * This section describes the compilation procedure using GNU and Intel compilers on Linux.
- * (The Windows users are encouraged to download the Visual Studio 2012 project
- * and compile it using Intel Compiler from within Visual Studio.)
- *
- * Before compiling the code, it is necessary to install a C++ compiler and several
- * libraries.  The GNU compiler is usually part of Linux distributions and distributed
- * as open source.  It can be downloaded from http://gcc.gnu.org/ if necessary.
- * The Intel compiler can be downloaded from  http://software.intel.com/en-us/intel-composer-xe/.
- * This package also includes the Intel MKL (Math Kernel Library) library that contains FFT.
- * The Intel compiler is only free for non-commercial use.
- *
- * The code also relies on several libraries that are to be installed before compiling:
- *
- * \li HDF5 library - Mandatory I/O library, version 1.8 or higher (http://www.hdfgroup.org/HDF5/).
- * \li FFTW library - Optional library for FFT, version 3.0 or higher (http://www.fftw.org/).
- * \li MKL library  - Optional library for FFT, version 11.0 or higher (http://software.intel.com/en-us/intel-composer-xe/).
-
- *
- * Although it is possible to use any combination of the FFT library and the compiler,
- * the best performance is observed when using GNU compiler and FFTW, or Intel Compiler and Intel MKL.
-
- * <b> 2.1 The HDF5 library installation procedure </b>
-
- * 1. Download a 64-bit HDF5 library package for your platform (http://www.hdfgroup.org/HDF5/release/obtain5.html).
- *
- * 2. Configure the HDF5 distribution. Enable the high-level library and specify
- * an installation folder by typing:
- \verbatim
-  ./configure --enable-hl --prefix=folder_to_install
-\endverbatim
- * 3. Make the HDF5 library by typing:
-\verbatim
-  make
-\endverbatim
- * 4. Install the HDF5 library by typing:
-\verbatim
-  make install
-\endverbatim
- *
- *
- *
- * <b> 2.2 The FFTW library installation procedure </b>
- *
- * 1. Download the FFTW library  package for your platform (http://www.fftw.org/download.html).
- *
- * 2. Configure the FFTW distribution. Enable OpenMP support, SSE instruction set,
- * single precision floating point arithmetic, and specify an installation folder:
-\verbatim
-  ./configure --enable-single --enable-sse --enable-openmp --enable-shared --prefix=folder_to_install
-\endverbatim
- *    if you intend to use the FFTW library (and the C++ code) only on a selected
- *    machine and want to get the best possible performance, you may also add processor
- *    specific optimisations and AVX instructions set. Note, the compiled binary
- *    code is not likely to be portable on different CPUs (e.g. even from Intel
- *    Sandy Bridge to Intel Nehalem).
-\verbatim
-  ./configure --enable-single --enable-avx --enable-openmp  --enable-shared --with-gcc-arch=native --prefix=folder_to_install
-\endverbatim
- * More information about the installation and customization can be found at http://www.fftw.org/fftw3_doc/Installation-and-Customization.htm.
- * For recent CPUs based on Sandy Bridge, Ivy Bridge, Haswell and Broadwell with
- * strongly recommend to use the AVX support.
- * 3. Make the FFTW library by typing:
-\verbatim
-	make
-\endverbatim
- * 4. Install the FFTW library by typing:
-\verbatim
-	make install
-\endverbatim
-
- * <b> 2.3 The Intel Compiler and MKL installation procedure </b>
- *
- *
- * 1. Download  the Intel Composer XE package for your platform (http://software.intel.com/en-us/intel-compilers).
- *
- * 2. Run the installation script and follow the procedure by typing:
-\verbatim
-	./install.sh
-\endverbatim
- *
- *
- *
- * <b> 2.4 Compiling the C++ code on Linux</b>
- *
- * After the libraries and the compiler have been installed, you are ready to
- * compile the <tt>kspaceFirstOrder3D-OMP</tt> code.
- *
- *
- * 1. Download the <tt>kspaceFirstOrder3D-OMP</tt> source codes.
- *
- * 2. Open the \c Makefile file.  The Makefile supports code compilation under
- * GNU compiler and FFTW, or Intel compiler with MKL. Uncomment the desired compiler
- * by removing character `<tt>#</tt>'.
-\verbatim
-	#COMPILER = GNU
-	#COMPILER = Intel
-\endverbatim
- *
- * 3. Select how to link the libraries. Static linking is preferred as it may be
- * a bit faster, however, on some systems (HPC clusters) it may be better to use
- * dynamic linking and use the system specific libraries at runtime.
-\verbatim
-	#LINKING = STATIC
-	#LINKING = DYNAMIC
-\endverbatim
- *
- * 4. Select the instruction set and the CPU architecture.
- * For users who will only use the binary on the same machine as compiled, the
- * best choice is <tt>CPU_ARCH=native</tt>.
- * If you are about to run the same binary on different machines or you want to
- * cross-compile the code, you are free to use any of the possible choices,
- * where SSE 3 is the most general but slowest and AVX2 is the most recent
- * instruction set while believed to be the fastest one.
-\verbatim
-  CPU_ARCH = native
-  #CPU_ARCH = SSE3
-  #CPU_ARCH = SSE4
-  #CPU_ARCH = AVX
-  #CPU_ARCH = AVX2
- \endverbatim
- *
- * 5. Set installation paths of the libraries (an example is shown bellow).
-\verbatim
-  FFT_DIR=/usr/local
-  MKL_DIR=/opt/intel/composer_xe_2013/mkl
-  HDF5_DIR=/usr/local/hdf5-serial
-\endverbatim
- *
- *
- * 6. Compile the source code by typing:
-\verbatim
-  make
-\endverbatim
-   If you want to clean the distribution, type:
-\verbatim
-  make clean
-\endverbatim
- *
- *
- *
- *
- * @section Parameters 3 Command Line Parameters
- * The  C++ code requires two mandatory parameters and accepts a few optional parameters and flags.
- * The mandatory parameters \c -i and \c -o specify the input and output file. The
- * file names respect the path conventions for particular operating system.
- * If any of the files is not specified, cannot be found or created, an error
- * message is shown.
- *
- * The \c -t parameter sets the number of threads used, which defaults the system maximum.
- * On CPUs with Intel Hyper-Threading (HT), the performance is sometimes better if HT
- * is disabled in the BIOS settings. If HT is switched on, the default will be to
- * spawn twice as many threads as there are physical processor cores, which may but again
- * may not slow down the code execution. Therefore, if the HT is on, try specifying the
- * number of threads manually for best performance (e.g. 4 for Intel i7). We
- * recommend experimenting with this parameter to find the best configuration.
- * Note, if there are other tasks being executed on the system, it might be useful
- * to further limit the number of threads to prevent system overload.
- *
- * The \c -r parameter specifies how often information about the simulation progress
- * is printed out to the command line. By default, the C++ code prints out the
- * progress of the simulation, the elapsed time, and the estimated time of
- * completion in intervals corresponding to 5% of the total number of times steps.
- *
- * The \c -c parameter specifies the compression level used by the ZIP library to
- * reduce the size of the output file. The actual compression rate is highly dependent
- * on the shape of the sensor mask and the range of stored quantities. In general,
- * the output data is very hard to compress, and using higher compression levels
- * can greatly increase the time to save data while not having a large impact on
- * the final file size. That's why we decided to disable compression in default settings.
- *
- * The \c <tt>--benchmark</tt> parameter enables the total length of simulation (i.e.,
- * the number of time steps) to be overridden by setting a new number of time
- * steps to simulate. This is particularly useful for performance evaluation and
- * benchmarking. As the code performance is relatively stable, 50-100 time steps is
- * usually enough to predict the simulation duration. This parameter can also be
- * used to quickly find the ideal number of CPU threads to use.
- *
- *
- *
- * For jobs that are expected to run for a very long time, it may be useful to
- * checkpoint and restart the execution. One motivation is the wall clock limit
- * per task on clusters where jobs must fit within a given time span
- * (e.g. 24 hours). The second motivation is a level of fault-tolerance, where
- * you can back up the state of the simulation after a predefined period.
- * To enable checkpoint-restart, the user is asked to specify a file to store the
- * actual state of the simulation by  <tt>--checkpoint_file</tt> and the
- * period in seconds after which the simulation will be interrupted by <tt>--checkpoint_interval</tt>.
- * When running on a cluster, please allocate enough time for the checkpoint procedure
- * that can take a non-negligible amount of time (7 matrices have to be stored in
- * the checkpoint file and all aggregated quantities are flushed into the output file).
- *
- * When controlling a multi-leg simulation by a script loop, the parameters of the code
- * remains the same in all legs. The first leg of the simulation creates a checkpoint
- * file while the last one deletes it. If the checkpoint file is not found the
- * simulation starts from the beginning. In order to find out how many steps have been
- * finished, please open the output file and read the variable <tt>t_index</tt>.
- *
- *
- * The \c -h and \c --help parameters print all the parameters of the C++ code.
- * The <tt> --version </tt>parameter reports detail information about the code useful for
- * debugging and bug reports. It prints out the internal version, the build date and time, the
- * git hash allowing us to track the version of the source code, the operating system,
- * the compiler name and version and the instruction set used.
- *
- *
- * The remaining flags specify the output quantities to be recorded during the
- * simulation and stored on disk analogous to  the sensor.record input. If
- * the \c -p or \c --p\_raw flags are set (these are equivalent), a time series of
- * the acoustic pressure at the grid points specified by the sensor mask is
- * recorded. If the \c --p_rms, \c --p_max, \c --p_min flags are set,
- * the root mean square and/or maximum and/or minimum values of the pressure at
- * the grid points specified by the sensor mask are recorded. If the
- * \c --p_final flag is set, the values for the entire acoustic pressure field
- * in the final time step of the simulation is stored (this will always include
- * the PML, regardless of  the setting for <tt> `PMLInside'</tt>).
- * The flags \c --p_max_all and \c --p_min_all allow to calculate the maximum and
- * minimum values over the entire acoustic pressure field, regardless on the shape
- * of the sensor mask.
- * Flags to record the acoustic particle velocity are defined in an analogous fashion.
- * For proper calculation of acoustic intensity, the particle velocity has to be
- * shifted onto the same grid as the acoustic pressure. This can be done by setting
- * \c --u_non_staggered_raw flag, that first shifts the particle velocity and then
- * samples the grid points specified by the sensor mask. Since the shift operation
- * requires additional FFTs, the impact on the simulation time may be significant.
- *
- * Any combination of <tt>p</tt> and <tt>u</tt> flags is admissible. If no output flag is set,
- * a time-series for the acoustic pressure is recorded. If it is not necessary
- * to collect the output quantities over the entire simulation, the starting time
- * step when the collection begins can be specified using the -s parameter.
- * Note, the index for the first time step is 1 (this follows the MATLAB indexing convention).
- *
- * The \c --copy_sensor_mask will copy the sensor from the input file to the output
- * one at the end of the simulation. This helps in post-processing and visualisation of
- * the outputs.
- *
-\verbatim
----------------------------------- Usage ---------------------------------
-Mandatory parameters:
-  -i <input_file_name>            : HDF5 input file
-  -o <output_file_name>           : HDF5 output file
-
-Optional parameters:
-  -t <num_threads>                : Number of CPU threads
-                                      (default = all)
-  -r <interval_in_%>              : Progress print interval
-                                      (default = 5%)
-  -c <comp_level>                 : Output file compression level <0,9>
-                                      (default = 0)
-  --benchmark <steps>             : Run a specified number of time steps
-
-  --checkpoint_file <file_name>   : HDF5 checkpoint file
-  --checkpoint_interval <seconds> : Stop after a given number of seconds and
-                                      store the actual state
-
-  -h                              : Print help
-  --help                          : Print help
-  --version                       : Print version
-
-Output flags:
-  -p                              : Store acoustic pressure
-                                      (default if nothing else is on)
-                                      (the same as --p_raw)
-  --p_raw                         : Store raw time series of p (default)
-  --p_rms                         : Store rms of p
-  --p_max                         : Store max of p
-  --p_min                         : Store min of p
-  --p_max_all                     : Store max of p (whole domain)
-  --p_min_all                     : Store min of p (whole domain)
-  --p_final                       : Store final pressure field
-
-  -u                              : Store ux, uy, uz
-                                      (the same as --u_raw)
-  --u_raw                         : Store raw time series of ux, uy, uz
-  --u_non_staggered_raw           : Store non-staggered raw time series of
-                                      ux, uy, uz
-  --u_rms                         : Store rms of ux, uy, uz
-  --u_max                         : Store max of ux, uy, uz
-  --u_min                         : Store min of ux, uy, uz
-  --u_max_all                     : Store max of ux, uy, uz (whole domain)
-  --u_min_all                     : Store min of ux, uy, uz (whole domain)
-  --u_final                       : Store final acoustic velocity
-
-  --copy_sensor_mask              : Copy sensor mask to the output file
-
-  -s <timestep>                   : Time step when data collection begins
-                                      (default = 1)
---------------------------------------------------------------------------
-\endverbatim
- *
- *
- *
- *
- *
- *
- * @section HDF5Files 4 HDF5 File Structure
- * The C++ code has been designed as a standalone application which is not dependent  on MATLAB libraries or a MEX
+ * The CUDA/C++ code has been designed as a standalone application which is not dependent  on MATLAB libraries or a MEX
  * interface. This is of particular importance when using servers and supercomputers without MATLAB support. For this
- * reason, simulation data must be transferred between the C++ code and MATLAB using external input and output
+ * reason, simulation data must be transferred between the CUDA/C++ code and MATLAB using external input and output
  * files. These files are stored using the [Hierarchical Data Format HDF5] (http://www.hdfgroup.org/HDF5/). This is a
  * data model, library, and file format for storing and managing data. It supports a variety of datatypes, and is
  * designed for flexible and efficient I/O and for high volume and complex data.  The HDF5 technology suite includes
@@ -354,12 +33,12 @@ Output flags:
  * (http://www.hdfgroup.org/HDF5/doc/index.html).
  *
  *
- * kspaceFirstOrder3D-OMP v1.2 uses the file format introduced in version 1.1. The code is happy to work with both
+ * kspaceFirstOrder3D-CUDA v1.2 uses the file format introduced in version 1.1. The code is happy to work with both
  * versions (1.0 and 1.1), however when working with an input file of version 1.0, some features are not supported,
  * namely the cuboid sensor mask, and <tt>u_non_staggered_raw</tt>. When running from within the actual MATLAB K-Wave
  * Toolbox, the files will always be generated in version 1.1.
  *
- * The HDF5 input file for the C++ simulation code contains a file header with brief description of the simulation
+ * The HDF5 input file for the CUDA/C++ simulation code contains a file header with brief description of the simulation
  * stored in string attributes, and the root group <tt>'/'</tt> which stores  all the simulation properties in the form
  * of 3D  datasets (a complete list of input datasets is  given bellow).
  * The HDF5 checkpoint file contains the same file header as the input file and the root group <tt>'/'</tt> with a few
@@ -759,143 +438,436 @@ Output flags:
 \endverbatim
  *
  *
- * @section License
- * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
  *
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
- * k-Wave is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with k-Wave. If not, see http://www.gnu.org/licenses/.
+ * This file is part of the k-Wave. k-Wave is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
+ * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
 
-#include <iostream>
-#include <exception>
+#ifndef THDF5_FILE_H
+#define THDF5_FILE_H
 
-#ifdef _OPENMP
-  #include <omp.h>
+
+#include <hdf5.h>
+#include <hdf5_hl.h>
+#include <string>
+#include <map>
+
+// Linux build
+#ifdef __linux__
+  #include <unistd.h>
 #endif
 
-#include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
+#ifdef _WIN64
+  #include <io.h>
+#endif
 
+#include <Utils/MatrixNames.h>
+#include <Utils/DimensionSizes.h>
 
-using std::ios;
-
-
-/// separator
-static const char* fmtSmallSeparator = "--------------------------------\n";
 
 /**
- * The main function of the ksppaceFirstOrder3D-OMP.
+ * @class Hdf5File
+ * @brief Class wrapping the HDF5 routines.
  *
- * @param [in] argc
- * @param [in] argv
- * @return EXIT_SUCCESS - If the simulation completed correctly.
- *
+ * This class is responsible for working with HDF5 files. It offers routines to manage files (create, open, close)
+ * as well as creating, reading and modifying the contents (groups and datasets).
  */
-int main(int argc, char** argv)
+class Hdf5File
 {
-  // Create K-Space solver
-  KSpaceFirstOrder3DSolver kSpaceSolver;
+  public:
 
-  // print header
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout,"  %s\n",kSpaceSolver.getCodeName().c_str());
-  fprintf(stdout,"%s",fmtSmallSeparator);
+   /**
+     * @enum    MatrixDataType
+     * @brief   HDF5 matrix data type (float or uint64).
+     * @details HDF5 matrix data type (float or uint64).
+     */
+    enum class MatrixDataType
+    {
+      /// The matrix is stored in floating point 32b wide format.
+      kFloat = 0,
+      /// The matrix is stored in fixed point point 64b wide format.
+      kLong  = 1
+    };
 
-  // Create parameters and parse command line
-  Parameters& parameters = Parameters::getInstance();
+    /**
+     * @enum    MatrixDomainType
+     * @brief   HDF5 Matrix domain type (real or complex).
+     * @details HDF5 Matrix domain type (real or complex).
+     */
+    enum class MatrixDomainType
+    {
+      /// The matrix is defined on real domain.
+      kReal    = 0,
+      /// The matrix is defined on complex domain.
+      kComplex = 1
+    };
 
-  parameters.init(argc,argv);
-  if (parameters.isPrintVersionOnly())
-  {
-    kSpaceSolver.printFullCodeNameAndLicense(stdout);
-    return 0;
-  }
+    /// Constructor of the class.
+    Hdf5File();
+    /// Copy constructor is not allowed.
+    Hdf5File(const Hdf5File&) = delete;
+    /// Destructor.
+    virtual ~Hdf5File();
+
+    /// Operator = is not allowed.
+    Hdf5File& operator=(const Hdf5File&) = delete;
+
+    //------------------------------------------- Basic file operations ----------------------------------------------//
+    /**
+     * @brief Create the HDF5 file.
+     *
+     * The file is always created in read write mode mode, by default overwriting an old file of the same name.
+     * Other HDF5 flags are set to default.
+     *
+     * @param [in] fileName - File name.
+     * @param [in] flags    - How to create the file, by default overwrite existing file.
+     * @throw ios:failure   - If error happened (file is open or cannot be created).
+     */
+    void create(const std::string& fileName,
+                unsigned int       flags = H5F_ACC_TRUNC);
+    /**
+     * @brief Open the HDF5 file.
+     *
+     * The file is opened in read only mode by default. Other HDF5 flags are set to default.
+     *
+     * @param [in] fileName - File name
+     * @param [in] flags    - Open mode, by default read only.
+     * @throw ios:failure   - If error happened (file not found, file is not a HDF5 file, file is already open).
+     *
+     */
+    void open(const std::string& fileName,
+              unsigned int       flags  = H5F_ACC_RDONLY);
+    /**
+     * @brief   Is the file opened?
+     * @details Is the file opened?
+     * @return  true - If the file is opened.
+     */
+    bool isOpen() const { return mFile != H5I_BADID; };
+    /**
+     * @brief  Can I access the file.
+     * @details  Can the code access the file, e.g. does it exist, do we have enough privileges, etc.
+     *
+     * @param  [in] fileName - Name of the file.
+     * @return true          - If it is possible to access the file.
+     */
+    static bool canAccess(const std::string& fileName);
+    /**
+     * @brief Close the HDF5 file.
+     * @throw ios::failure - If an error happens
+     */
+    void close();
+
+    //--------------------------------------------- Group manipulators -----------------------------------------------//
+    /**
+     * @brief   Create a HDF5 group at a specified place in the file tree.
+     * @details Other HDF5 flags are set to default.
+     *
+     * @param [in] parentGroup  - Where to link the group at.
+     * @param [in] groupName    - Group name.
+     * @return A handle to the new group.
+     * @throw ios::failure      - If error happens.
+     */
+    hid_t createGroup(const hid_t parentGroup,
+                      MatrixName& groupName);
+    /**
+     * @brief   Open a HDF5 group at a specified place in the file tree.
+     * @details Other HDF5 flags are set to default.
+     *
+     * @param [in] parentGroup - Parent group.
+     * @param [in] groupName   - Group name.
+     * @return A handle to the group.
+     * @throw ios::failure      - If error happens.
+     */
+    hid_t openGroup(const hid_t parentGroup,
+                    MatrixName& groupName);
+    /**
+     * @brief Close a group.
+     * @param[in] group - Group to close.
+     */
+    void closeGroup(const hid_t group);
+    /**
+     * @brief   Get handle to the root group of the file.
+     * @details Get handle to the root group of the file.
+     * @return  Handle to the root group.
+     */
+    hid_t getRootGroup() const { return mFile; };
 
 
-  // set number of threads and bind them to cores
-  #ifdef _OPENMP
-    kSpaceSolver.setProcessorAffinity();
-    omp_set_num_threads(parameters.getNumberOfThreads());
-  #endif
+    //-------------------------------------------- Dataset manipulators ----------------------------------------------//
+    /**
+     * @brief   Open a dataset at a specified place in the file tree.
+     * @details Other HDF5 flags are set to default.
+     *
+     * @param [in] parentGroup - Parent group id (can be the file id for root)..
+     * @param [in] datasetName - Dataset name.
+     * @return A handle to open dataset.
+     * @throw ios::failure     - If error happens.
+     */
+    hid_t openDataset(const hid_t parentGroup,
+                      MatrixName& datasetName);
+
+    /**
+     * @brief   Create a float HDF5 dataset at a specified place in the file tree (3D/4D).
+     * @details Other HDF5 flags are set to default.
+     *
+     * @param [in] parentGroup      - Parent group id.
+     * @param [in] datasetName      - Dataset name.
+     * @param [in] dimensionSizes   - Dimension sizes.
+     * @param [in] chunkSizes       - Chunk sizes.
+     * @param [in] matrixDataType   - Matrix data type
+     * @param [in] compressionLevel - Compression level.
+     * @return A handle to the new dataset.
+     * @throw  ios::failure         - If error happens.
+     */
+    hid_t createDataset(const hid_t           parentGroup,
+                        MatrixName&           datasetName,
+                        const DimensionSizes& dimensionSizes,
+                        const DimensionSizes& chunkSizes,
+                        const MatrixDataType  matrixDataType,
+                        const size_t          compressionLevel);
+
+    /**
+     * @brief Close dataset.
+     * @param [in] dataset - Dataset to close.
+     */
+    void  closeDataset(const hid_t dataset);
 
 
-  fprintf(stdout, "Number of CPU threads:    %6ld\n", parameters.getNumberOfThreads());
-  kSpaceSolver.printSimulationParameters(stdout);
+    //---------------------------------------- Dataset Read/Write operations -----------------------------------------//
+    /**
+     * @brief Write a hyperslab into the dataset.
+     *
+     * @tparam     T         - Data type to be written.
+     * @param [in] dataset   - Dataset id.
+     * @param [in] position  - Position in the dataset.
+     * @param [in] size      - Size of the hyperslab.
+     * @param [in] data      - Data to be written.
+     * @throw ios::failure   - If error happens.
+     * @warning Limited to float and size_t data types.
+     */
+    template<class T>
+    void writeHyperSlab(const hid_t           dataset,
+                        const DimensionSizes& position,
+                        const DimensionSizes& size,
+                        const T*              data);
+
+    /**
+     * @brief   Write a cuboid selected within the matrixData into a hyperslab.
+     * @details The routine writes 3D cuboid into a 4D dataset (only intended for raw time series).
+     *
+     * @param [in] dataset           - Dataset to write MatrixData into.
+     * @param [in] hyperslabPosition - Position in the dataset (hyperslab) - may be 3D/4D.
+     * @param [in] cuboidPosition    - Position of the cuboid in MatrixData (what to sample) - must be 3D.
+     * @param [in] cuboidSize        - Cuboid size (size of data being sampled) - must by 3D.
+     * @param [in] matrixDimensions  - Size of the original matrix (the sampled one).
+     * @param [in] matrixData        - C array of matrix data.
+     * @throw ios::failure           - If error happens.
+     */
+    void writeCuboidToHyperSlab(const hid_t           dataset,
+                                const DimensionSizes& hyperslabPosition,
+                                const DimensionSizes& cuboidPosition,
+                                const DimensionSizes& cuboidSize,
+                                const DimensionSizes& matrixDimensions,
+                                const float*          matrixData);
+
+    /**
+     * @brief  Write sensor data selected by the sensor mask - Occasionally very slow, do not use!
+     *
+     * Write sensor data selected by the sensor mask. The routine picks elements from the MatixData based on
+     * the Sensor Data and store them into a single hyperslab of size [Nsens, 1, 1]
+     *
+     * @param [in] dataset           - Dataset to write MaatrixData into
+     * @param [in] hyperslabPosition - 3D position in the dataset (hyperslab)
+     * @param [in] indexSensorSize   - Size of the index based sensor mask
+     * @param [in] indexSensorData   - Index based sensor mask
+     * @param [in] matrixDimensions  - Size of the sampled matrix
+     * @param [in] matrixData        - Matrix data
+     * @warning  - very slow at this version of HDF5 for orthogonal planes-> DO NOT USE
+     */
+    void writeSensorByMaskToHyperSlab(const hid_t           dataset,
+                                      const DimensionSizes& hyperslabPosition,
+                                      const size_t          indexSensorSize,
+                                      const size_t*         indexSensorData,
+                                      const DimensionSizes& matrixDimensions,
+                                      const float*          matrixData);
+
+    /**
+     * @brief   Write the scalar value under a specified group
+     * @details No chunks and no compression is used.
+     *
+     * @tparam     T         - Data type to be written.
+     * @param [in] parentGroup - Where to link the scalar dataset.
+     * @param [in] datasetName - HDF5 dataset name.
+     * @param [in] value       - data to be written.
+     * @throw ios::failure     - If error happens.
+     * @warning Limited to float and size_t data types
+     */
+    template<class T>
+    void writeScalarValue(const hid_t parentGroup,
+                          MatrixName& datasetName,
+                          const T     value);
+    /**
+     * @brief Read the scalar value under a specified group.
+     *
+     * @tparam      T           - Data type to be written.
+     * @param [in]  parentGroup - Where to link the scalar dataset.
+     * @param [in]  datasetName - HDF5 dataset name.
+     * @param [out] value       - Data to be read.
+     * @throw ios::failure      - If error happens.
+     * @warning Limited to float and size_t data types
+     */
+    template<class T>
+    void readScalarValue(const hid_t parentGroup,
+                         MatrixName& datasetName,
+                         T&          value);
+
+    /**
+     * @brief Read data from the dataset at a specified place in the file tree.
+     *
+     * @tparam      T              - Data type to be written.
+     * @param [in]  parentGroup    - Where is the dataset situated.
+     * @param [in]  datasetName    - Dataset name.
+     * @param [in]  dimensionSizes - Dimension sizes.
+     * @param [out] data           - Pointer to data.
+     * @throw ios::failure         - If error happens.
+     */
+    template<class T>
+    void readCompleteDataset(const hid_t           parentGroup,
+                             MatrixName&           datasetName,
+                             const DimensionSizes& dimensionSizes,
+                             T*                    data);
 
 
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout,"........ Initialization ........\n");
-  fprintf(stdout,"Memory allocation ..........");
-  fflush(stdout);
+    //--------------------------------------- Attributes Read/Write operations ---------------------------------------//
+    /**
+     * @brief Get dimension sizes of the dataset under a specified group.
+     *
+     * @param [in] parentGroup - Where the dataset is.
+     * @param [in] datasetName - Dataset name.
+     * @return Dimension sizes of the dataset.
+     * @throw ios::failure     - If error happens.
+     */
+    DimensionSizes getDatasetDimensionSizes(const hid_t parentGroup,
+                                            MatrixName& datasetName);
+    /**
+     * @brief Get number of dimensions of the dataset  under a specified group.
+     *
+     * @param [in] parentGroup - Where the dataset is.
+     * @param [in] datasetName - Dataset name.
+     * @return Number of dimensions.
+     * @throw ios::failure     - If error happens.
+     */
+    size_t getDatasetNumberOfDimensions(const hid_t parentGroup,
+                                        MatrixName& datasetName);
+    /**
+     * @brief Get dataset element count at a specified place in the file tree.
+     *
+     * @param [in] parentGroup - Where the dataset is.
+     * @param [in] datasetName - Dataset name.
+     * @return Number of elements.
+     * @throw ios::failure     - If error happens.
+     */
+    size_t getDatasetSize(const hid_t parentGroup,
+                          MatrixName& datasetName);
+    /**
+     * @brief Write matrix data type into the dataset at a specified place in the file tree.
+     *
+     * @param [in] parentGroup    - Where the dataset is.
+     * @param [in] datasetName    - Dataset name.
+     * @param [in] matrixDataType - Matrix data type in the file.
+     * @throw ios::failure        - If error happens.
+     */
+    void writeMatrixDataType (const hid_t           parentGroup,
+                              MatrixName&           datasetName,
+                              const MatrixDataType& matrixDataType);
+    /**
+     * @brief  Write matrix data type into the dataset at a specified place in the file tree.
+     *
+     * @param [in] parentGroup      - Where the dataset is.
+     * @param [in] datasetName      - Dataset name.
+     * @param [in] matrixDomainType - Matrix domain type.
+     * @throw ios::failure          - If error happens.
+     */
+    void writeMatrixDomainType(const hid_t             parentGroup,
+                               MatrixName&             datasetName,
+                               const MatrixDomainType& matrixDomainType);
+    /**
+     * @brief Read matrix data type from the dataset at a specified place in the file tree.
+     *
+     * @param [in] parentGroup - Where the dataset is.
+     * @param [in] datasetName - Dataset name.
+     * @return Matrix data type.
+     * @throw ios::failure     - If error happens.
+     */
+    MatrixDataType   readMatrixDataType(const hid_t parentGroup,
+                                        MatrixName& datasetName);
+    /**
+     * @brief Read matrix dataset domain type at a specified place in the file tree.
+     *
+     * @param [in] parentGroup - Where the dataset is.
+     * @param [in] datasetName - Dataset name.
+     * @return Matrix domain type.
+     * @throw ios::failure      - If error happens.
+     */
+    MatrixDomainType readMatrixDomainType(const hid_t parentGroup,
+                                          MatrixName& datasetName);
+    /**
+     * @brief Write string attribute into the dataset under the root group.
+     *
+     * @param [in] parentGroup   - Where the dataset is.
+     * @param [in] datasetName   - Dataset name.
+     * @param [in] attributeName - Attribute name.
+     * @param [in] value         - Data to write.
+     * @throw ios::failure       - If error happens.
+     */
+    void   writeStringAttribute(const hid_t        parentGroup,
+                                MatrixName&        datasetName,
+                                MatrixName&        attributeName,
+                                const std::string& value);
+    /**
+     * @brief Read string attribute from the dataset under the root group.
+     *
+     * @param [in] parentGroup   - Where the dataset is.
+     * @param [in] datasetName   - Dataset name.
+     * @param [in] attributeName - Attribute name.
+     * @return Attribute value.
+     * @throw ios::failure       - If error happens.
+     */
+    std::string readStringAttribute(const hid_t parentGroup,
+                                    MatrixName& datasetName,
+                                    MatrixName& attributeName);
 
+  private:
 
-  // allocate memory
-  try
-  {
-    kSpaceSolver.allocateMemory();
-  }
-  catch (std::exception e)
-  {
-    fprintf(stdout, "Failed!\nk-Wave panic: Not enough memory to run this simulation!\n%s\n", e.what());
-    fprintf(stderr, "k-Wave panic: Not enough memory to run this simulation! \n%s\n", e.what());
-    return EXIT_FAILURE;
-  }
-  fprintf(stdout, "Done\n");
+   /// String representation of the Domain type in the HDF5 file.
+    static const std::string kMatrixDomainTypeName;
+    /// String representation of the Data type in the HDF5 file.
+    static const std::string kMatrixDataTypeName;
 
+    /// String representation of different domain types.
+    static const std::string kMatrixDomainTypeNames[];
+    /// String representation of different data types.
+    static const std::string kMatrixDataTypeNames[];
 
-  // Load data from disk
-  fprintf(stdout, "Data loading................");
-  fflush(stdout);
-  try
-  {
-    kSpaceSolver.loadInputData();
-  }
-  catch (ios::failure e)
-  {
-    fprintf(stdout, "Failed!\nk-Wave panic: Data loading was not successful!\n%s\n", e.what());
-    fprintf(stderr, "k-Wave panic: Data loading was not successful! \n%s\n", e.what());
-    return EXIT_FAILURE;
-  }
-  fprintf(stdout, "Done\n");
-
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",kSpaceSolver.getDataLoadTime());
-
-  if (parameters.getTimeIndex() > 0)
-  {
-    fprintf(stdout, "Recovered from t_index: %8ld\n", parameters.getTimeIndex());
-  }
-
-  // start computation
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout, ".......... Computation .........\n");
-
-  kSpaceSolver.compute();
-
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout, "............ Summary ...........\n");
-  fprintf(stdout, "Peak memory in use:   %8ldMB\n",kSpaceSolver.getMemoryUsage());
-  if (kSpaceSolver.getCumulatedTotalTime() != kSpaceSolver.getTotalTime())
-  {
-    fprintf(stdout,"This leg execution time:%7.2fs\n",kSpaceSolver.getTotalTime());
-  }
-  fprintf(stdout, "Total execution time:  %8.2fs\n",kSpaceSolver.getCumulatedTotalTime());
-
-
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout,"       End of computation \n");
-  fprintf(stdout,"%s",fmtSmallSeparator);
-
-  return  EXIT_SUCCESS;
-}// end of main
+    /// HDF file handle.
+    hid_t  mFile;
+    /// File name.
+    std::string mFileName;
+}; // Hdf5File
 //----------------------------------------------------------------------------------------------------------------------
+
+
+#endif	/* THDF5_FILE_H */

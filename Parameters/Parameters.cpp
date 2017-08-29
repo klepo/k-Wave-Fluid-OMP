@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2012, 13:39 (created) \n
- *              29 September 2014, 12:43 (revised)
+ *              29 August    2017, 09:49 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -45,207 +45,215 @@
 #include <Utils/MatrixNames.h>
 #include <Utils/ErrorMessages.h>
 
-using namespace std;
+using std::ios;
+using std::string;
 
-//----------------------------------------------------------------------------//
-//                              Constants                                     //
-//----------------------------------------------------------------------------//
-
-
-
-
-//----------------------------------------------------------------------------//
-//                              Definitions                                   //
-//----------------------------------------------------------------------------//
-
-bool TParameters::ParametersInstanceFlag = false;
-
-TParameters* TParameters::ParametersSingleInstance = NULL;
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Variables -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+// initialization of the singleton instance flag
+bool Parameters::sParametersInstanceFlag   = false;
+
+// initialization of the instance
+Parameters* Parameters::sPrametersInstance = nullptr;
+
+
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+/**
+ * Destructor.
+ */
+Parameters::~Parameters()
+{
+  sParametersInstanceFlag = false;
+  if (sPrametersInstance)
+  {
+    delete sPrametersInstance;
+  }
+  sPrametersInstance = nullptr;
+};
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get instance of singleton class.
  */
-TParameters* TParameters::GetInstance()
+Parameters& Parameters::getInstance()
 {
-  if(!ParametersInstanceFlag)
+  if(!sParametersInstanceFlag)
   {
-    ParametersSingleInstance = new TParameters();
-    ParametersInstanceFlag = true;
-    return ParametersSingleInstance;
+    sPrametersInstance = new Parameters();
+    sParametersInstanceFlag = true;
+    return *sPrametersInstance;
   }
   else
   {
-    return ParametersSingleInstance;
+    return *sPrametersInstance;
   }
-}// end of GetInstance
-//------------------------------------------------------------------------------
+}// end of getInstance()
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Parse command line.
- * @param [in] argc
- * @param [in] argv
+ * Parse command line and read scalar values from the input file to initialise the class and the simulation.
  */
-void TParameters::ParseCommandLine(int argc, char** argv)
+void Parameters::init(int argc, char** argv)
 {
-  CommandLinesParameters.ParseCommandLine(argc, argv);
+  mCommandLineParameters.parseCommandLine(argc, argv);
 
-  if (CommandLinesParameters.IsVersion())
+  if (mCommandLineParameters.isPrintVersionOnly())
   {
     return;
   }
 
-  ReadScalarsFromHDF5InputFile(HDF5_InputFile);
+  readScalarsFromInputFile();
 
-  if (CommandLinesParameters.IsBenchmarkFlag())
+  if (mCommandLineParameters.isBenchmarkEnabled())
   {
-    Nt = CommandLinesParameters.GetBenchmarkTimeStepsCount();
+    mNt = mCommandLineParameters.getBenchmarkTimeStepsCount();
   }
 
-  if ((Nt <= (size_t) CommandLinesParameters.GetStartTimeIndex()) ||
-      ( 0 > CommandLinesParameters.GetStartTimeIndex()) )
+  if ((mNt <= (size_t) mCommandLineParameters.getSamplingStartTimeIndex()) ||
+      ( 0 > mCommandLineParameters.getSamplingStartTimeIndex()) )
   {
-    fprintf(stderr,Parameters_ERR_FMT_Illegal_StartTime_value, (size_t) 1, Nt);
-    CommandLinesParameters.PrintUsageAndExit();
+    fprintf(stderr,kErrFmtIllegalSamplingStartTimeStep, 1l, mNt);
+    mCommandLineParameters.printUsage();
   }
-}// end of ParseCommandLine
-//------------------------------------------------------------------------------
-
+}// end of parseCommandLine
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Read scalar values from the input HDF5 file.
- *
- * @param [in] HDF5_InputFile - Handle to an opened input file.
- * @throw ios:failure if the file cannot be open or is of a wrong type or version.
  */
-void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
+void Parameters::readScalarsFromInputFile()
 {
-  TDimensionSizes ScalarSizes(1, 1, 1);
+  DimensionSizes scalarSizes(1, 1, 1);
 
-  if (!HDF5_InputFile.IsOpened())
+  if (!mInputFile.isOpen())
   {
     // Open file
     try
     {
-      HDF5_InputFile.Open(CommandLinesParameters.GetInputFileName().c_str());
+      mInputFile.open(mCommandLineParameters.getInputFileName());
     }
     catch (ios::failure e)
     {
       fprintf(stderr, "%s", e.what());
-      PrintUsageAndExit();
+      printUsageAndExit();
     }
   }
 
-  HDF5_FileHeader.ReadHeaderFromInputFile(HDF5_InputFile);
+  mFileHeader.readHeaderFromInputFile(mInputFile);
 
   // check file type
-  if (HDF5_FileHeader.GetFileType() != THDF5_FileHeader::hdf5_ft_input)
+  if (mFileHeader.getFileType() != Hdf5FileHeader::FileType::kInput)
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, Parameters_ERR_FMT_IncorrectInputFileFormat, GetInputFileName().c_str());
+    sprintf(ErrorMessage, kErrFmtBadInputFileFormat, getInputFileName().c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // check version
-  if (!HDF5_FileHeader.CheckMajorFileVersion())
+  if (!mFileHeader.checkMajorFileVersion())
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion, GetInputFileName().c_str(),
-            HDF5_FileHeader.GetCurrentHDF5_MajorVersion().c_str());
+    sprintf(ErrorMessage, kErrFmtBadMajorFileVersion, getInputFileName().c_str(),
+            mFileHeader.getFileMajorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
-  if (!HDF5_FileHeader.CheckMinorFileVersion())
+  if (!mFileHeader.checkMinorFileVersion())
   {
     char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion, GetInputFileName().c_str(),
-            HDF5_FileHeader.GetCurrentHDF5_MinorVersion().c_str());
+    sprintf(ErrorMessage, kErrFmtBadMinorFileVersion, getInputFileName().c_str(),
+            mFileHeader.getFileMinorVersion().c_str());
     throw ios::failure(ErrorMessage);
   }
 
-  const hid_t HDF5RootGroup = HDF5_InputFile.GetRootGroup();
+  const hid_t rootGroup = mInputFile.getRootGroup();
 
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, Nt_Name, Nt);
+  mInputFile.readScalarValue(rootGroup, kNtName, mNt);
 
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, dt_Name, dt);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, dx_Name, dx);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, dy_Name, dy);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, dz_Name, dz);
+  mInputFile.readScalarValue(rootGroup, kDtName, mDt);
+  mInputFile.readScalarValue(rootGroup, kDxName, mDx);
+  mInputFile.readScalarValue(rootGroup, kDyName, mDy);
+  mInputFile.readScalarValue(rootGroup, kDzName, mDz);
 
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, c_ref_Name, c_ref);
+  mInputFile.readScalarValue(rootGroup, kCRefName, mCRef);
 
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, pml_x_size_Name, pml_x_size);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, pml_y_size_Name, pml_y_size);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, pml_z_size_Name, pml_z_size);
+  mInputFile.readScalarValue(rootGroup, kPmlXSizeName, mPmlXSize);
+  mInputFile.readScalarValue(rootGroup, kPmlYSizeName, mPmlYSize);
+  mInputFile.readScalarValue(rootGroup, kPmlZSizeName, mPmlZSize);
 
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, pml_x_alpha_Name, pml_x_alpha);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, pml_y_alpha_Name, pml_y_alpha);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, pml_z_alpha_Name, pml_z_alpha);
+  mInputFile.readScalarValue(rootGroup, kPmlXAlphaName, mPmlXAlpha);
+  mInputFile.readScalarValue(rootGroup, kPmlYAlphaName, mPmlYAlpha);
+  mInputFile.readScalarValue(rootGroup, kPmlZAlphaName, mPmlZAlpha);
 
-  size_t X, Y, Z;
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, Nx_Name, X);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, Ny_Name, Y);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, Nz_Name, Z);
+  size_t x, y, z;
+  mInputFile.readScalarValue(rootGroup, kNxName, x);
+  mInputFile.readScalarValue(rootGroup, kNyName, y);
+  mInputFile.readScalarValue(rootGroup, kNzName, z);
 
-  FullDimensionSizes.X = X;
-  FullDimensionSizes.Y = Y;
-  FullDimensionSizes.Z = Z;
+  mFullDimensionSizes.nx = x;
+  mFullDimensionSizes.ny = y;
+  mFullDimensionSizes.nz = z;
 
-  ReducedDimensionSizes.X = ((X / 2) + 1);
-  ReducedDimensionSizes.Y = Y;
-  ReducedDimensionSizes.Z = Z;
+  mReducedDimensionSizes.nx = ((x / 2) + 1);
+  mReducedDimensionSizes.ny = y;
+  mReducedDimensionSizes.nz = z;
 
   // if the file is of version 1.0, there must be a sensor mask index (backward compatibility)
-  if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_10)
+  if (mFileHeader.getFileVersion() == Hdf5FileHeader::FileVersion::kVersion10)
   {
-    sensor_mask_ind_size = HDF5_InputFile.GetDatasetElementCount(HDF5RootGroup, sensor_mask_index_Name);
+    mSensorMaskIndexSize = mInputFile.getDatasetSize(rootGroup, kSensorMaskIndexName);
 
     //if -u_non_staggered_raw enabled, throw an error - not supported
-    if (IsStore_u_non_staggered_raw())
+    if (getStoreVelocityNonStaggeredRawFlag())
     {
-      throw ios::failure(Parameters_ERR_FMT_UNonStaggeredNotSupportedForFile10);
+      throw ios::failure(kErrFmtNonStaggeredVelocityNotSupportedFileVersion);
     }
   }
 
   // This is the current version 1.1
-  if (HDF5_FileHeader.GetFileVersion() == THDF5_FileHeader::hdf5_fv_11)
+  if (mFileHeader.getFileVersion() == Hdf5FileHeader::FileVersion::kVersion11)
   {
 
     // read sensor mask type as a size_t value to enum
-    size_t SensorMaskTypeNumericalue = 0;
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, sensor_mask_type_Name, SensorMaskTypeNumericalue);
+    size_t sensorMaskTypeNumericValue = 0;
+    mInputFile.readScalarValue(rootGroup, kSensorMaskTypeName, sensorMaskTypeNumericValue);
 
     // convert the size_t value to enum
-    switch (SensorMaskTypeNumericalue)
+    switch (sensorMaskTypeNumericValue)
     {
-      case 0: sensor_mask_type = smt_index;
+      case 0: mSensorMaskType = SensorMaskType::kIndex;
         break;
-      case 1: sensor_mask_type = smt_corners;
+      case 1: mSensorMaskType = SensorMaskType::kCorners;
         break;
       default:
       {
-        throw ios::failure(Parameters_ERR_FMT_WrongSensorMaskType);
+        throw ios::failure(kErrFmtBadSensorMaskType);
         break;
       }
     }//case
 
     // read the input mask size
-    switch (sensor_mask_type)
+    switch (mSensorMaskType)
     {
-      case smt_index:
+      case SensorMaskType::kIndex:
       {
-        sensor_mask_ind_size = HDF5_InputFile.GetDatasetElementCount(HDF5RootGroup, sensor_mask_index_Name);
+        mSensorMaskIndexSize = mInputFile.getDatasetSize(rootGroup, kSensorMaskIndexName);
         break;
       }
-      case smt_corners:
+      case SensorMaskType::kCorners:
       {
         // mask dimensions are [6, N, 1] - I want to know N
-        sensor_mask_corners_size = HDF5_InputFile.GetDatasetDimensionSizes(HDF5RootGroup, sensor_mask_corners_Name).Y;
+        mSensorMaskCornersSize = mInputFile.getDatasetDimensionSizes(rootGroup, kSensorMaskCornersName).ny;
         break;
       }
     }// switch
@@ -253,237 +261,233 @@ void TParameters::ReadScalarsFromHDF5InputFile(THDF5_File & HDF5_InputFile)
 
 
   // flags.
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, ux_source_flag_Name, ux_source_flag);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, uy_source_flag_Name, uy_source_flag);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, uz_source_flag_Name, uz_source_flag);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, transducer_source_flag_Name, transducer_source_flag);
+  mInputFile.readScalarValue(rootGroup, kVelocityXSourceFlagName,  mVelocityXSourceFlag);
+  mInputFile.readScalarValue(rootGroup, kVelocityYSourceFlagName,  mVelocityYSourceFlag);
+  mInputFile.readScalarValue(rootGroup, kVelocityZSourceFlagName,  mVelocityZSourceFlag);
+  mInputFile.readScalarValue(rootGroup, kTransducerSourceFlagName, mTransducerSourceFlag);
 
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, p_source_flag_Name, p_source_flag);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, p0_source_flag_Name,p0_source_flag);
+  mInputFile.readScalarValue(rootGroup, kPressureSourceFlagName,       mPressureSourceFlag);
+  mInputFile.readScalarValue(rootGroup, kInitialPressureSourceFlagName,mInitialPressureSourceFlag);
 
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, nonuniform_grid_flag_Name, nonuniform_grid_flag);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, absorbing_flag_Name, absorbing_flag);
-  HDF5_InputFile.ReadScalarValue(HDF5RootGroup, nonlinear_flag_Name, nonlinear_flag);
-
+  mInputFile.readScalarValue(rootGroup, kNonUniformGridFlagName, mNonUniformGridFlag);
+  mInputFile.readScalarValue(rootGroup, kAbsorbingFlagName,      mAbsorbingFlag);
+  mInputFile.readScalarValue(rootGroup, kNonLinearFlagName,      mNonLinearFlag);
 
 
   // Vector sizes.
-  if (transducer_source_flag == 0)
+  if (mTransducerSourceFlag == 0)
   {
-   transducer_source_input_size = 0;
+   mTransducerSourceInputSize = 0;
   }
   else
   {
-    transducer_source_input_size = HDF5_InputFile.GetDatasetElementCount(HDF5RootGroup, transducer_source_input_Name);
+    mTransducerSourceInputSize = mInputFile.getDatasetSize(rootGroup, kTransducerSourceInputName);
   }
 
-  if ((transducer_source_flag > 0) || (ux_source_flag > 0) || (uy_source_flag > 0) || (uz_source_flag > 0))
+  if ((mTransducerSourceFlag > 0) || (mVelocityXSourceFlag > 0) ||
+      (mVelocityYSourceFlag > 0) || (mVelocityZSourceFlag > 0))
   {
-    u_source_index_size = HDF5_InputFile.GetDatasetElementCount(HDF5RootGroup, u_source_index_Name);
+    mVelocitySourceIndexSize = mInputFile.getDatasetSize(rootGroup, kVelocitySourceIndexName);
   }
 
 
   // uxyz_source_flags
-  if ((ux_source_flag > 0) || (uy_source_flag > 0) || (uz_source_flag > 0))
+  if ((mVelocityXSourceFlag > 0) || (mVelocityYSourceFlag > 0) || (mVelocityZSourceFlag > 0))
   {
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, u_source_many_Name, u_source_many);
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, u_source_mode_Name, u_source_mode);
+    mInputFile.readScalarValue(rootGroup, kVelocitySourceManyName, mVelocitySourceMany);
+    mInputFile.readScalarValue(rootGroup, kVelocitySourceModeName, mVelocitySourceMode);
   }
   else
   {
-    u_source_many = 0;
-    u_source_mode = 0;
+    mVelocitySourceMany = 0;
+    mVelocitySourceMode = 0;
   }
 
   // p_source_flag
-  if (p_source_flag != 0)
+  if (mPressureSourceFlag != 0)
   {
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, p_source_many_Name, p_source_many);
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, p_source_mode_Name, p_source_mode);
+    mInputFile.readScalarValue(rootGroup, kPressureSourceManyName, mPressureSourceMany);
+    mInputFile.readScalarValue(rootGroup, kPressureSourceModeName, mPressureSourceMode);
 
-    p_source_index_size = HDF5_InputFile.GetDatasetElementCount(HDF5RootGroup, p_source_index_Name);
+    mPressureSourceIndexSize = mInputFile.getDatasetSize(rootGroup, kPressureSourceIndexName);
   }
   else
   {
-    p_source_mode = 0;
-    p_source_many = 0;
-    p_source_index_size = 0;
+    mPressureSourceMode = 0;
+    mPressureSourceMany = 0;
+    mPressureSourceIndexSize = 0;
   }
 
 
   // absorb flag
-  if (absorbing_flag != 0)
+  if (mAbsorbingFlag != 0)
   {
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, alpha_power_Name, alpha_power);
-    if (alpha_power == 1.0f)
+    mInputFile.readScalarValue(rootGroup, kAlphaPowerName, mAlphaPower);
+    if (mAlphaPower == 1.0f)
     {
-      fprintf(stderr, "%s", Parameters_ERR_FMT_Illegal_alpha_power_value);
-      PrintUsageAndExit();
+      fprintf(stderr, "%s", kErrFmtIllegalAlphaPowerValue);
+      printUsageAndExit();
     }
 
-    alpha_coeff_scalar_flag = HDF5_InputFile.GetDatasetDimensionSizes(HDF5RootGroup, alpha_coeff_Name) == ScalarSizes;
-    if (alpha_coeff_scalar_flag)
+    mAlphaCoeffScalarFlag = mInputFile.getDatasetDimensionSizes(rootGroup, kAlphaCoeffName) == scalarSizes;
+    if (mAlphaCoeffScalarFlag)
     {
-      HDF5_InputFile.ReadScalarValue(HDF5RootGroup, alpha_coeff_Name, alpha_coeff_scalar);
-    }
-  }
-
-
-  c0_scalar_flag = HDF5_InputFile.GetDatasetDimensionSizes(HDF5RootGroup, c0_Name) == ScalarSizes;
-  if (c0_scalar_flag)
-  {
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, c0_Name, c0_scalar);
-  }
-
-  if (nonlinear_flag)
-  {
-    BonA_scalar_flag = HDF5_InputFile.GetDatasetDimensionSizes(HDF5RootGroup, BonA_Name) == ScalarSizes;
-    if (BonA_scalar_flag)
-    {
-      HDF5_InputFile.ReadScalarValue(HDF5RootGroup, BonA_Name, BonA_scalar);
+      mInputFile.readScalarValue(rootGroup, kAlphaCoeffName, mAlphaCoeffScalar);
     }
   }
 
-  rho0_scalar_flag = HDF5_InputFile.GetDatasetDimensionSizes(HDF5RootGroup, rho0_Name) == ScalarSizes;
-  if (rho0_scalar_flag)
+
+  mC0ScalarFlag = mInputFile.getDatasetDimensionSizes(rootGroup, kC0Name) == scalarSizes;
+  if (mC0ScalarFlag)
   {
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, rho0_Name, rho0_scalar);
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, rho0_sgx_Name, rho0_sgx_scalar);
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, rho0_sgy_Name, rho0_sgy_scalar);
-    HDF5_InputFile.ReadScalarValue(HDF5RootGroup, rho0_sgz_Name, rho0_sgz_scalar);
+    mInputFile.readScalarValue(rootGroup, kC0Name, mC0Scalar);
   }
-}// end of ReadScalarsFromHDF5InputFile
-//------------------------------------------------------------------------------
+
+  if (mNonLinearFlag)
+  {
+    mBOnAScalarFlag = mInputFile.getDatasetDimensionSizes(rootGroup, kBonAName) == scalarSizes;
+    if (mBOnAScalarFlag)
+    {
+      mInputFile.readScalarValue(rootGroup, kBonAName, mBOnAScalar);
+    }
+  }
+
+  mRho0ScalarFlag = mInputFile.getDatasetDimensionSizes(rootGroup, kRho0Name) == scalarSizes;
+  if (mRho0ScalarFlag)
+  {
+    mInputFile.readScalarValue(rootGroup, kRho0Name, mRho0Scalar);
+    mInputFile.readScalarValue(rootGroup, kRho0SgxName, mRho0SgxScalar);
+    mInputFile.readScalarValue(rootGroup, kRho0SgyName, mRho0SgyScalar);
+    mInputFile.readScalarValue(rootGroup, kRho0SgzName, mRho0SgzScalar);
+  }
+}// end of readScalarsFromInputFile
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Save scalars into the output HDF5 file.
- * @param [in] HDF5_OutputFile - Handle to an opened output file where to store
  */
-void TParameters::SaveScalarsToHDF5File(THDF5_File & HDF5_OutputFile)
+void Parameters::saveScalarsToOutputFile()
 {
-  const hid_t HDF5RootGroup = HDF5_OutputFile.GetRootGroup();
+  const hid_t rootGroup = mOutputFile.getRootGroup();
 
   // Write dimension sizes
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nx_Name, FullDimensionSizes.X);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Ny_Name, FullDimensionSizes.Y);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nz_Name, FullDimensionSizes.Z);
+  mOutputFile.writeScalarValue(rootGroup, kNxName, mFullDimensionSizes.nx);
+  mOutputFile.writeScalarValue(rootGroup, kNyName, mFullDimensionSizes.ny);
+  mOutputFile.writeScalarValue(rootGroup, kNzName, mFullDimensionSizes.nz);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, Nt_Name, Nt);
+  mOutputFile.writeScalarValue(rootGroup, kNtName, mNt);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, dt_Name, dt);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, dx_Name, dx);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, dy_Name, dy);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, dz_Name, dz);
+  mOutputFile.writeScalarValue(rootGroup, kDtName, mDt);
+  mOutputFile.writeScalarValue(rootGroup, kDxName, mDx);
+  mOutputFile.writeScalarValue(rootGroup, kDyName, mDy);
+  mOutputFile.writeScalarValue(rootGroup, kDzName, mDz);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, c_ref_Name, c_ref);
+  mOutputFile.writeScalarValue(rootGroup, kCRefName, mCRef);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, pml_x_size_Name, pml_x_size);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, pml_y_size_Name, pml_y_size);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, pml_z_size_Name, pml_z_size);
+  mOutputFile.writeScalarValue(rootGroup, kPmlXSizeName, mPmlXSize);
+  mOutputFile.writeScalarValue(rootGroup, kPmlYSizeName, mPmlYSize);
+  mOutputFile.writeScalarValue(rootGroup, kPmlZSizeName, mPmlZSize);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, pml_x_alpha_Name, pml_x_alpha);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, pml_y_alpha_Name, pml_y_alpha);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, pml_z_alpha_Name, pml_z_alpha);
+  mOutputFile.writeScalarValue(rootGroup, kPmlXAlphaName, mPmlXAlpha);
+  mOutputFile.writeScalarValue(rootGroup, kPmlYAlphaName, mPmlYAlpha);
+  mOutputFile.writeScalarValue(rootGroup, kPmlZAlphaName, mPmlZAlpha);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, ux_source_flag_Name, ux_source_flag);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, uy_source_flag_Name, uy_source_flag);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, uz_source_flag_Name, uz_source_flag);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, transducer_source_flag_Name, transducer_source_flag);
+  mOutputFile.writeScalarValue(rootGroup, kVelocityXSourceFlagName, mVelocityXSourceFlag);
+  mOutputFile.writeScalarValue(rootGroup, kVelocityYSourceFlagName, mVelocityYSourceFlag);
+  mOutputFile.writeScalarValue(rootGroup, kVelocityZSourceFlagName, mVelocityZSourceFlag);
+  mOutputFile.writeScalarValue(rootGroup, kTransducerSourceFlagName, mTransducerSourceFlag);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, p_source_flag_Name, p_source_flag);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, p0_source_flag_Name, p0_source_flag);
+  mOutputFile.writeScalarValue(rootGroup, kPressureSourceFlagName, mPressureSourceFlag);
+  mOutputFile.writeScalarValue(rootGroup, kInitialPressureSourceFlagName, mInitialPressureSourceFlag);
 
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, nonuniform_grid_flag_Name, nonuniform_grid_flag);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, absorbing_flag_Name, absorbing_flag);
-  HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, nonlinear_flag_Name, nonlinear_flag);
+  mOutputFile.writeScalarValue(rootGroup, kNonUniformGridFlagName, mNonUniformGridFlag);
+  mOutputFile.writeScalarValue(rootGroup, kAbsorbingFlagName, mAbsorbingFlag);
+  mOutputFile.writeScalarValue(rootGroup, kNonLinearFlagName, mNonLinearFlag);
 
 
   // uxyz_source_flags
-  if ((ux_source_flag > 0) || (uy_source_flag > 0) || (uz_source_flag > 0))
+  if ((mVelocityXSourceFlag > 0) || (mVelocityYSourceFlag > 0) || (mVelocityZSourceFlag > 0))
   {
-    HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, u_source_many_Name, u_source_many);
-    HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, u_source_mode_Name, u_source_mode);
+    mOutputFile.writeScalarValue(rootGroup, kVelocitySourceManyName, mVelocitySourceMany);
+    mOutputFile.writeScalarValue(rootGroup, kVelocitySourceModeName, mVelocitySourceMode);
   }
 
   // p_source_flag
-  if (p_source_flag != 0)
+  if (mPressureSourceFlag != 0)
   {
-    HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, p_source_many_Name, p_source_many);
-    HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, p_source_mode_Name, p_source_mode);
+    mOutputFile.writeScalarValue(rootGroup, kPressureSourceManyName, mPressureSourceMany);
+    mOutputFile.writeScalarValue(rootGroup, kPressureSourceModeName, mPressureSourceMode);
   }
 
   // absorb flag
-  if (absorbing_flag != 0)
+  if (mAbsorbingFlag != 0)
   {
-    HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, alpha_power_Name, alpha_power);
+    mOutputFile.writeScalarValue(rootGroup, kAlphaPowerName, mAlphaPower);
   }
 
   // if copy sensor mask, then copy the mask type
-  if (IsCopySensorMask())
+  if (getCopySensorMaskFlag())
   {
-    size_t SensorMaskTypeNumericValue = 0;
+    size_t sensorMaskTypeNumericValue = 0;
 
-    switch (sensor_mask_type)
+    switch (mSensorMaskType)
     {
-      case smt_index: SensorMaskTypeNumericValue = 0;
+      case SensorMaskType::kIndex: sensorMaskTypeNumericValue = 0;
         break;
-      case smt_corners: SensorMaskTypeNumericValue = 1;
+      case SensorMaskType::kCorners: sensorMaskTypeNumericValue = 1;
         break;
     }// switch
 
-    HDF5_OutputFile.WriteScalarValue(HDF5RootGroup, sensor_mask_type_Name, SensorMaskTypeNumericValue);
+    mOutputFile.writeScalarValue(rootGroup, kSensorMaskTypeName, sensorMaskTypeNumericValue);
   }
-}// end of SaveScalarsToHDF5File
-//------------------------------------------------------------------------------
+}// end of saveScalarsToFile
+//----------------------------------------------------------------------------------------------------------------------
 
 
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                            protected methods                               //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
 /**
  * Constructor.
  */
-TParameters::TParameters() :
-        HDF5_InputFile(), HDF5_OutputFile(), HDF5_CheckpointFile(), HDF5_FileHeader(),
-        CommandLinesParameters(),
-        Nt(0), t_index(0), dt(0.0f),
-        dx(0.0f), dy(0.0f), dz(0.0f),
-        c_ref(0.0f), alpha_power(0.0f),
-        FullDimensionSizes(0,0,0), ReducedDimensionSizes(0,0,0),
-        sensor_mask_ind_size (0), u_source_index_size(0), p_source_index_size(0), transducer_source_input_size(0),
-        ux_source_flag(0), uy_source_flag(0), uz_source_flag(0),
-        p_source_flag(0), p0_source_flag(0), transducer_source_flag(0),
-        u_source_many(0), u_source_mode(0), p_source_mode(0), p_source_many(0),
-        nonuniform_grid_flag(0), absorbing_flag(0), nonlinear_flag(0),
-        pml_x_size(0), pml_y_size(0), pml_z_size(0),
-        alpha_coeff_scalar_flag(false), alpha_coeff_scalar(0.0f),
-        c0_scalar_flag(false), c0_scalar(0.0f),
-        absorb_eta_scalar(0.0f), absorb_tau_scalar (0.0f),
-        BonA_scalar_flag(false), BonA_scalar (0.0f),
-        rho0_scalar_flag(false), rho0_scalar(0.0f), rho0_sgx_scalar(0.0f), rho0_sgy_scalar(0.0f), rho0_sgz_scalar(0.0f)
-
+Parameters::Parameters() :
+    mCommandLineParameters(),
+    mInputFile(), mOutputFile(), mCheckpointFile(), mFileHeader(),
+    mFullDimensionSizes(0,0,0), mReducedDimensionSizes(0,0,0),
+    mNt(0), mTimeIndex(0),
+    mDt(0.0f), mDx(0.0f), mDy(0.0f), mDz(0.0f),
+    mCRef(0.0f), mC0ScalarFlag(false),   mC0Scalar(0.0f),
+    mRho0ScalarFlag(false), mRho0Scalar(0.0f),
+    mRho0SgxScalar(0.0f),   mRho0SgyScalar(0.0f), mRho0SgzScalar(0.0f),
+    mNonUniformGridFlag(0), mAbsorbingFlag(0), mNonLinearFlag(0),
+    mAlphaCoeffScalarFlag(false), mAlphaCoeffScalar(0.0f), mAlphaPower(0.0f),
+    mAbsorbEtaScalar(0.0f), mAbsorbTauScalar(0.0f),
+    mBOnAScalarFlag(false), mBOnAScalar (0.0f),
+    mPmlXSize(0), mPmlYSize(0), mPmlZSize(0),
+    mPmlXAlpha(0.0f), mPmlYAlpha(0.0f), mPmlZAlpha(0.0f),
+    mPressureSourceFlag(0), mInitialPressureSourceFlag(0), mTransducerSourceFlag(0),
+    mVelocityXSourceFlag(0), mVelocityYSourceFlag(0), mVelocityZSourceFlag(0),
+    mPressureSourceIndexSize(0), mTransducerSourceInputSize(0),mVelocitySourceIndexSize(0),
+    mPressureSourceMode(0), mPressureSourceMany(0),  mVelocitySourceMode(0), mVelocitySourceMany(0),
+    mSensorMaskType(SensorMaskType::kIndex), mSensorMaskIndexSize (0), mSensorMaskCornersSize(0)
 {
 
-}// end of TFFT1DParameters
-//------------------------------------------------------------------------------
+}// end of Parameters
+//----------------------------------------------------------------------------------------------------------------------
 
 
 
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              private methods                               //
-//----------------------------------------------------------------------------//
-
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Private methods --------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 /**
  * Print usage end exit.
  */
-void TParameters::PrintUsageAndExit()
+void Parameters::printUsageAndExit()
 {
-  CommandLinesParameters.PrintUsageAndExit();
-}// end of PrintUsage
-//------------------------------------------------------------------------------
+  mCommandLineParameters.printUsage();
+}// end of printUsage
+//----------------------------------------------------------------------------------------------------------------------
 

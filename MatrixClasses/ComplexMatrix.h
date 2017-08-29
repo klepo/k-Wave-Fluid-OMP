@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
- *              25 September 2014, 12:27 (revised)
+ *              25 August    2017, 15:13 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,8 +30,8 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMPLEXMATRIXDATA_H
-#define	COMPLEXMATRIXDATA_H
+#ifndef COMPLEX_MATRIX_H
+#define COMPLEX_MATRIX_H
 
 #include <MatrixClasses/BaseFloatMatrix.h>
 #include <MatrixClasses/RealMatrix.h>
@@ -39,119 +39,126 @@
 #include <Utils/DimensionSizes.h>
 
 
-using namespace std;
-
 /**
- * @struct TFloatComplex
- * @brief  Structure for complex values
+ * @struct FloatComplex
+ * @brief  Structure for complex values.
  * @todo:  Change to classic C++ complex (better support of vectorisation)
  */
-struct TFloatComplex
+struct FloatComplex
 {
   /// real part
   float real;
   /// imaginary part
   float imag;
-};//TFloatComplex
-//------------------------------------------------------------------------------
+};//FloatComplex
+//----------------------------------------------------------------------------------------------------------------------
 
 
 /**
- * @class   TComplexMatrix
+ * @class   ComplexMatrix
  * @brief   The class for complex matrices.
  * @details The class for complex matrices.
  */
-class TComplexMatrix : public TBaseFloatMatrix
+class ComplexMatrix : public BaseFloatMatrix
 {
   public:
 
-    /// Constructor.
-    TComplexMatrix(const TDimensionSizes & DimensionSizes);
-
+   /// Default constructor not allowed.
+    ComplexMatrix() = delete;
+    /**
+     * @brief Constructor.
+     * @param [in] dimensionSizes - Dimension sizes of the matrix.
+     */
+    ComplexMatrix(const DimensionSizes& dimensionSizes);
+    /// Copy constructor not allowed.
+    ComplexMatrix(const ComplexMatrix&) = delete;
     /// Destructor.
-    virtual ~TComplexMatrix()
-    {
-      FreeMemory();
-    };
+    virtual ~ComplexMatrix();
+
+    /// Operator= is not allowed.
+    ComplexMatrix& operator= (const ComplexMatrix&);
 
     /**
-     * @brief   operator [].
-     * @details operator [].
-     * @param [in] index - 1D index into the array
-     * @return           - element of the matrix
+     * @brief   Read matrix from HDF5 file.
+     * @details Read matrix from HDF5 file.
+     * @param [in] file       - Handle to the HDF5 file.
+     * @param [in] matrixName - HDF5 dataset name to read from.
+     * @throw ios::failure    - If error occurred.
      */
-    inline TFloatComplex& operator [](const size_t& index)
-    {
-      return ((TFloatComplex *) pMatrixData)[index];
-    };
+    virtual void readData(Hdf5File&   file,
+                          MatrixName& matrixName);
 
     /**
-     * @brief   operator [], constant version.
-     * @details operator [], constant version.
-     * @param [in] index - 1D index into the array
-     * @return element of the matrix
+     * @brief   Write data into HDF5 file.
+     * @details Write data into HDF5 file.
+     * @param [in] file             - Handle to the HDF5 file
+     * @param [in] matrixName       - HDF5 dataset name to write to.
+     * @param [in] compressionLevel - Compression level for the HDF5 dataset.
+     * @throw ios::failure          - If an error occurred.
      */
-    inline const TFloatComplex& operator [](const size_t& index) const
+    virtual void writeData(Hdf5File&    file,
+                           MatrixName&  matrixName,
+                           const size_t compressionLevel);
+
+    /**
+     * @brief  Operator [].
+     * @param [in] index - 1D index into the matrix.
+     * @return An element of the matrix.
+     */
+    inline FloatComplex& operator[](const size_t& index)
     {
-      return ((TFloatComplex *) pMatrixData)[index];
+      return reinterpret_cast<FloatComplex*>(mData)[index];
+    };
+    /**
+     * @brief   Operator [], constant version.
+     * @param [in] index - 1D index into the matrix.
+     * @return An element of the matrix.
+     */
+    inline const FloatComplex& operator[](const size_t& index) const
+    {
+      return reinterpret_cast<FloatComplex*> (mData)[index];
     };
 
     /**
      * @brief   Get element from 3D matrix.
      * @details Get element from 3D matrix.
-     * @param [in] X - X dimension
-     * @param [in] Y - Y dimension
-     * @param [in] Z - Z dimension
+     * @param [in] x - x dimension
+     * @param [in] y - y dimension
+     * @param [in] z - z dimension
      * @return a complex element of the class
      */
-    inline  TFloatComplex& GetElementFrom3D(const size_t X,
-                                            const size_t Y,
-                                            const size_t Z)
+    inline  FloatComplex& GetElementFrom3D(const size_t x,
+                                           const size_t y,
+                                           const size_t z)
     {
-      return ((TFloatComplex *) pMatrixData)[Z * (p2DDataSliceSize>>1) + Y * (pDataRowSize>>1) + X];
+      return reinterpret_cast<FloatComplex*> (mData)[z * (mSlabSize>>1) + y * (mRowSize>>1) + x];
     };
 
     /**
      * @brief   Get element from 3D matrix, constant version.
      * @details Get element from 3D matrix, constant version.
-     * @param [in] X - X dimension
-     * @param [in] Y - Y dimension
-     * @param [in] Z - Z dimension
+     * @param [in] x - x dimension
+     * @param [in] y - y dimension
+     * @param [in] z - z dimension
      * @return a complex element of the class
      */
-    inline const TFloatComplex& GetElementFrom3D(const size_t X,
-                                                 const size_t Y,
-                                                 const size_t Z) const
+    inline const FloatComplex& GetElementFrom3D(const size_t x,
+                                                const size_t y,
+                                                const size_t z) const
     {
-      return ((TFloatComplex *) pMatrixData)[Z * (p2DDataSliceSize>>1) + Y * (pDataRowSize>>1) + X];
+      return reinterpret_cast<FloatComplex*> (mData)[z * (mSlabSize >> 1) + y * (mRowSize >> 1) + x];
     };
 
-
-    /// Load data from the HDF5_File.
-    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File,
-                                      const char * MatrixName);
-
-    /// Write data into the HDF5_File
-    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File,
-                                     const char * MatrixName,
-                                     const size_t CompressionLevel);
-
   protected:
-    /// Default constructor not allowed for public.
-    TComplexMatrix() : TBaseFloatMatrix() {};
-
-    /// Copy constructor not allowed for public.
-    TComplexMatrix(const TComplexMatrix& src);
-
-    /// Operator not allowed for public.
-    TComplexMatrix& operator = (const TComplexMatrix& src);
-
-    /// Initialize dimension sizes and related structures.
-    virtual void InitDimensions(const TDimensionSizes& DimensionSizes);
 
   private:
+   /**
+     * @brief Initialize dimension sizes
+     * @param [in] dimensionSizes - Dimension sizes of the matrix.
+     */
+    void initDimensions(const DimensionSizes& dimensionSizes);
 
-};// end of TComplexMatrix
-//------------------------------------------------------------------------------
+};// end of ComplexMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* COMPLEXMATRIXDATA_H */
+#endif	/* COMPLEX_MATRIX_H */

@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
- *              25 September 2014, 12:35 (revised)
+ *              29 August    2017, 10:15 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -33,151 +33,122 @@
 #include <iostream>
 
 #include <MatrixClasses/ComplexMatrix.h>
-
 #include <Utils/ErrorMessages.h>
 
-//----------------------------------------------------------------------------//
-//                              Constants                                     //
-//----------------------------------------------------------------------------//
-
-//----------------------------------------------------------------------------//
-//                              Definitions                                   //
-//----------------------------------------------------------------------------//
+using std::ios;
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              public methods                                //
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
  * Constructor.
- * @param [in] DimensionSizes - Dimension sizes
  */
-
-TComplexMatrix::TComplexMatrix(const TDimensionSizes & DimensionSizes)
-                      : TBaseFloatMatrix()
+ComplexMatrix::ComplexMatrix(const DimensionSizes& dimensionSizes)
+  : BaseFloatMatrix()
 {
-  InitDimensions(DimensionSizes);
+  initDimensions(dimensionSizes);
+  allocateMemory();
+} // end of ComplexMatrixData
+//----------------------------------------------------------------------------------------------------------------------
 
-  AllocateMemory();
-} // end of TComplexMatrixData
-//-----------------------------------------------------------------------------
-
+/**
+ * Destructor.
+ */
+ComplexMatrix::~ComplexMatrix()
+{
+  freeMemory();
+}// end of ComplexMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Read data from HDF5 file (do some basic checks). Only from the root group.
- * \throw ios::failure when there is a problem
- *
- * @param [in] HDF5_File   - HDF5 file
- * @param [in] MatrixName  - HDF5 dataset name
  */
-void TComplexMatrix::ReadDataFromHDF5File(THDF5_File & HDF5_File,
-                                          const char * MatrixName)
+void ComplexMatrix::readData(Hdf5File&   file,
+                             MatrixName& matrixName)
 {
   // check data type
-  if (HDF5_File.ReadMatrixDataType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_float)
+  if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kFloat)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, Matrix_ERR_FMT_MatrixNotFloat, MatrixName);
+    sprintf(ErrorMessage, kErrFmtMatrixNotFloat, matrixName.c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // check domain type
-  if (HDF5_File.ReadMatrixDomainType(HDF5_File.GetRootGroup(), MatrixName) != THDF5_File::hdf5_mdt_complex)
+  if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kComplex)
   {
     char ErrorMessage[256];
-    sprintf(ErrorMessage, Matrix_ERR_FMT_MatrixNotComplex, MatrixName);
+    sprintf(ErrorMessage, kErrFmtMatrixNotComplex, matrixName.c_str());
     throw ios::failure(ErrorMessage);
   }
 
   // Initialise dimensions
-  TDimensionSizes ComplexDims = pDimensionSizes;
-  ComplexDims.X = 2 * ComplexDims.X;
+  DimensionSizes complexDims = mDimensionSizes;
+  complexDims.nx = 2 * complexDims.nx;
 
   // Read data from the file
-  HDF5_File.ReadCompleteDataset(HDF5_File.GetRootGroup(),
-                                MatrixName,
-                                ComplexDims,
-                                pMatrixData);
-}// end of LoadDataFromMatlabFile
-//------------------------------------------------------------------------------
+  file.readCompleteDataset(file.getRootGroup(), matrixName, complexDims, mData);
+}// end of readData
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Write data to HDF5 file (only from the root group).
- * \throw ios::failure an exception what the operation fails
- *
- * @param [in] HDF5_File             - HDF5 file handle
- * @param [in] MatrixName            - HDF5 dataset name
- * @param [in] CompressionLevel      - Compression level for the dataset
  */
-void TComplexMatrix::WriteDataToHDF5File(THDF5_File & HDF5_File,
-                                         const char * MatrixName,
-                                         const size_t CompressionLevel)
+void ComplexMatrix::writeData(Hdf5File&    file,
+                              MatrixName&  matrixName,
+                              const size_t compressionLevel)
 {
   // set dimensions and chunks
-  TDimensionSizes ComplexDims = pDimensionSizes;
-  ComplexDims.X = 2 * ComplexDims.X;
+  DimensionSizes complexDims = mDimensionSizes;
+  complexDims.nx = 2 * complexDims.nx;
 
-  TDimensionSizes Chunks = ComplexDims;
-  ComplexDims.Z = 1;
+  DimensionSizes chunks = complexDims;
+  complexDims.nz = 1;
 
   // create a dataset
-  hid_t HDF5_Dataset_id = HDF5_File.CreateFloatDataset(HDF5_File.GetRootGroup(),
-                                                       MatrixName,
-                                                       ComplexDims,
-                                                       Chunks,
-                                                       CompressionLevel);
+  hid_t dataset = file.createDataset(file.getRootGroup(),
+                                     matrixName,
+                                     complexDims,
+                                     chunks,
+                                     Hdf5File::MatrixDataType::kFloat,
+                                     compressionLevel);
  // Write write the matrix at once.
-  HDF5_File.WriteHyperSlab(HDF5_Dataset_id,
-                           TDimensionSizes(0, 0, 0),
-                           pDimensionSizes,
-                           pMatrixData);
-  HDF5_File.CloseDataset(HDF5_Dataset_id);
+  file.writeHyperSlab(dataset, DimensionSizes(0, 0, 0), mDimensionSizes, mData);
+  file.closeDataset(dataset);
 
  // Write data and domain type
-  HDF5_File.WriteMatrixDataType(HDF5_File.GetRootGroup(),
-                                MatrixName,
-                                THDF5_File::hdf5_mdt_float);
-
-  HDF5_File.WriteMatrixDomainType(HDF5_File.GetRootGroup(),
-                                  MatrixName,
-                                  THDF5_File::hdf5_mdt_complex);
-}// end of WriteDataToHDF5File
-//---------------------------------------------------------------------------
+  file.writeMatrixDataType(file.getRootGroup()  , matrixName, Hdf5File::MatrixDataType::kFloat);
+  file.writeMatrixDomainType(file.getRootGroup(), matrixName, Hdf5File::MatrixDomainType::kComplex);
+}// end of writeData
+//----------------------------------------------------------------------------------------------------------------------
 
 
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
+//--------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------- Private methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                             protected methods                              //
-//----------------------------------------------------------------------------//
 /**
  * Initialize matrix dimension sizes.
- * @param [in] DimensionSizes
  */
-void TComplexMatrix::InitDimensions(const TDimensionSizes & DimensionSizes)
+void ComplexMatrix::initDimensions(const DimensionSizes& dimensionSizes)
 {
+  mDimensionSizes = dimensionSizes;
 
-  pDimensionSizes = DimensionSizes;
+  mSize = dimensionSizes.nx * dimensionSizes.ny * dimensionSizes.nz;
 
-  pTotalElementCount = pDimensionSizes.X *
-                       pDimensionSizes.Y *
-                       pDimensionSizes.Z;
-
-  pDataRowSize = (pDimensionSizes.X << 1);
-
-  p2DDataSliceSize = (pDimensionSizes.X *
-                      pDimensionSizes.Y) << 1;
-
+  mRowSize  = 2 * dimensionSizes.nx;
+  mSlabSize = 2 * dimensionSizes.nx * dimensionSizes.ny;
   // compute actual necessary memory sizes
-  pTotalAllocatedElementCount = pTotalElementCount << 1;
+  mCapacity = 2 * mSize;
 
-}// end of InitDimensions
-//------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------//
-//                              Implementation                                //
-//                              private methods                               //
-//----------------------------------------------------------------------------//
+}// end of initDimensions
+//----------------------------------------------------------------------------------------------------------------------

@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              29 September 2014, 12:23 (revised)
+ *              24 August    2017, 15:30 (revised)
  *
  *
  * @section License
@@ -48,48 +48,24 @@
   #include <omp.h>
 #endif
 
+#include <stdexcept>
 #include <Parameters/CommandLineParameters.h>
 
 #include <Utils/ErrorMessages.h>
-//----------------------------------------------------------------------------//
-//---------------------------- Constants -------------------------------------//
-//----------------------------------------------------------------------------//
-
-//----------------------------------------------------------------------------//
-//----------------------------- Public   -------------------------------------//
-//----------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------- Constants -----------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 
 
-/**
- * Constructor.
- */
-TCommandLineParameters::TCommandLineParameters() :
-        InputFileName(""), OutputFileName (""), CheckpointFileName(""),
-        #ifdef _OPENMP
-          NumberOfThreads(omp_get_num_procs()),
-        #else
-          NumberOfThreads(1),
-        #endif
-        VerboseInterval(DefaultVerboseInterval), CompressionLevel (DefaultCompressionLevel),
-        BenchmarkFlag (false), BenchmarkTimeStepsCount(0), CheckpointInterval(0),
-        PrintVersion (false),
-        Store_p_raw(false), Store_p_rms(false), Store_p_max(false), Store_p_min(false),
-        Store_p_max_all(false), Store_p_min_all(false), Store_p_final(false),
-        Store_u_raw(false), Store_u_non_staggered_raw(false),
-        Store_u_rms(false), Store_u_max(false), Store_u_min(false),
-        Store_u_max_all(false), Store_u_min_all(false), Store_u_final(false),
-        CopySensorMask(false),
-        StartTimeStep(0)
-{
-
-}// end of TCommandLineParameters
-//------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------- Public methods ---------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
 /**
  * Print usage and exit.
  */
-void TCommandLineParameters::PrintUsageAndExit()
+void CommandLineParameters::printUsage()
 {
   printf("---------------------------------- Usage ---------------------------------\n");
   printf("Mandatory parameters:\n");
@@ -104,9 +80,9 @@ void TCommandLineParameters::PrintUsageAndExit()
 #endif
 
   printf("  -r <interval_in_%%>              : Progress print interval\n");
-  printf("                                      (default = %ld%%)\n", DefaultVerboseInterval);
+  printf("                                      (default = %ld%%)\n", kDefaultProgressPrintInterval);
   printf("  -c <comp_level>                 : Output file compression level <0,9>\n");
-  printf("                                      (default = %ld)\n", DefaultCompressionLevel);
+  printf("                                      (default = %ld)\n", kDefaultCompressionLevel);
   printf("  --benchmark <steps>             : Run a specified number of time steps\n");
   printf("\n");
   printf("  --checkpoint_file <file_name>   : HDF5 checkpoint file\n");
@@ -149,60 +125,57 @@ void TCommandLineParameters::PrintUsageAndExit()
   printf("\n");
 
   exit(EXIT_FAILURE);
-}// end of PrintUsageAndExit
-//------------------------------------------------------------------------------
+}// end of printUsage
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Print setup.
+ * Print out commandline parameters.
  */
-void TCommandLineParameters::PrintSetup()
+void CommandLineParameters::printComandlineParamers()
 {
   printf("List of enabled parameters:\n");
 
-  printf("  Input  file               %s\n", InputFileName.c_str());
-  printf("  Output file               %s\n", OutputFileName.c_str());
+  printf("  Input  file               %s\n", mInputFileName.c_str());
+  printf("  Output file               %s\n", mOutputFileName.c_str());
   printf("\n");
-  printf("  Number of threads         %ld\n", NumberOfThreads);
-  printf("  Verbose interval[%%]       %ld\n", VerboseInterval);
-  printf("  Compression level         %ld\n", CompressionLevel);
+  printf("  Number of threads         %ld\n", mNumberOfThreads);
+  printf("  Verbose interval[%%]       %ld\n", mProgressPrintInterval);
+  printf("  Compression level         %ld\n", mCompressionLevel);
   printf("\n");
-  printf("  Benchmark flag            %d\n", BenchmarkFlag);
-  printf("  Benchmark time steps      %ld\n", BenchmarkTimeStepsCount);
+  printf("  Benchmark flag            %d\n", mBenchmarkFlag);
+  printf("  Benchmark time steps      %ld\n", mBenchmarkTimeStepCount);
   printf("\n");
-  printf("  Checkpoint_file           %s\n", CheckpointFileName.c_str());
-  printf("  Checkpoint_interval       %ld\n", CheckpointInterval);
+  printf("  Checkpoint_file           %s\n", mCheckpointFileName.c_str());
+  printf("  Checkpoint_interval       %ld\n", mCheckpointInterval);
   printf("\n");
-  printf("  Store p_raw               %d\n", Store_p_raw);
-  printf("  Store p_rms               %d\n", Store_p_rms);
-  printf("  Store p_max               %d\n", Store_p_max);
-  printf("  Store p_min               %d\n", Store_p_min);
-  printf("  Store p_max_all           %d\n", Store_p_max_all);
-  printf("  Store p_min_all           %d\n", Store_p_min_all);
-  printf("  Store p_final             %d\n", Store_p_final);
+  printf("  Store p_raw               %d\n", mStorePressureRawFlag);
+  printf("  Store p_rms               %d\n", mStorePressureRmsFlag);
+  printf("  Store p_max               %d\n", mStorePressureMaxFlag);
+  printf("  Store p_min               %d\n", mStorePressureMinFlag);
+  printf("  Store p_max_all           %d\n", mStorePressureMaxAllFlag);
+  printf("  Store p_min_all           %d\n", mStorePressureMinAllFlag);
+  printf("  Store p_final             %d\n", mStorePressureFinalAllFlag);
   printf("\n");
-  printf("  Store u_raw               %d\n", Store_u_raw);
-  printf("  Store u_non_staggered_raw %d\n", Store_u_non_staggered_raw);
-  printf("  Store u_rms               %d\n", Store_u_rms);
-  printf("  Store u_max               %d\n", Store_u_max);
-  printf("  Store u_min               %d\n", Store_u_min);
-  printf("  Store u_max_all           %d\n", Store_u_max_all);
-  printf("  Store u_min_all           %d\n", Store_u_min_all);
-  printf("  Store u_final             %d\n", Store_u_final);
+  printf("  Store u_raw               %d\n", mStoreVelocityRawFlag);
+  printf("  Store u_non_staggered_raw %d\n", mStoreVelocityNonStaggeredRawFlag);
+  printf("  Store u_rms               %d\n", mStoreVelocityRmsFlag);
+  printf("  Store u_max               %d\n", mStoreVelocityMaxFlag);
+  printf("  Store u_min               %d\n", mStoreVelocityMinFlag);
+  printf("  Store u_max_all           %d\n", mStoreVelocityMaxAllFlag);
+  printf("  Store u_min_all           %d\n", mStoreVelocityMinAllFlag);
+  printf("  Store u_final             %d\n", mStoreVelocityFinalAllFlag);
   printf("\n");
-  printf("  Copy sensor mask          %d\n", CopySensorMask);
+  printf("  Copy sensor mask          %d\n", mCopySensorMaskFlag);
   printf("\n");
-  printf("  Collection begins at      %ld\n", StartTimeStep + 1);
-}// end of PrintSetup
-//------------------------------------------------------------------------------
+  printf("  Collection begins at      %ld\n", mSamplingStartTimeStep + 1);
+}// end of  printComandlineParamers
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Parse command line.
- * @param [in, out] argc
- * @param [in, out] argv
  */
-void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
+void CommandLineParameters::parseCommandLine(int argc, char** argv)
 {
-
   char c;
   int longIndex;
   bool CheckpointFlag = false;
@@ -250,13 +223,13 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
     {
       case 'i':
       {
-         InputFileName = optarg;
+         mInputFileName = optarg;
          break;
       }
 
       case 'o':
       {
-         OutputFileName = optarg;
+         mOutputFileName = optarg;
          break;
       }
 
@@ -264,12 +237,12 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if ((optarg == NULL) || (atol(optarg) <= 0))
         {
-          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoVerboseIntreval);
-           PrintUsageAndExit();
+          fprintf(stderr,"%s", kErrFmtNoProgressPrintInterval);
+           printUsage();
         }
         else
         {
-          VerboseInterval = atol(optarg);
+          mProgressPrintInterval = atol(optarg);
         }
         break;
       }
@@ -278,12 +251,12 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if ((optarg == NULL) || (atol(optarg) <= 0))
         {
-          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoThreadNumbers);
-          PrintUsageAndExit();
+          fprintf(stderr,"%s", kErrFmtInvalidNumberOfThreads);
+          printUsage();
         }
         else
         {
-          NumberOfThreads = atol(optarg);
+          mNumberOfThreads = atol(optarg);
         }
         break;
       }
@@ -292,31 +265,31 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if ((optarg == NULL) || (atol(optarg) < 0) || atol(optarg) > 9)
         {
-          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCompressionLevel);
-          PrintUsageAndExit();
+          fprintf(stderr,"%s", kErrFmtNoCompressionLevel);
+          printUsage();
         }
         else
         {
-          CompressionLevel = atol(optarg);
+          mCompressionLevel = atol(optarg);
         }
          break;
       }
 
       case 'p':
       {
-        Store_p_raw = true;
+        mStorePressureRawFlag = true;
         break;
       }
 
       case 'u':
       {
-        Store_u_raw = true;
+        mStoreVelocityRawFlag = true;
         break;
       }
 
       case 'h':
       {
-        PrintUsageAndExit();
+        printUsage();
         break;
       }
 
@@ -324,10 +297,10 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if ((optarg == NULL) || (atol(optarg) < 1))
         {
-          fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoStartTimestep);
-          PrintUsageAndExit();
+          fprintf(stderr,"%s", kErrFmtNoSamplingStartTimeStep);
+          printUsage();
         }
-        StartTimeStep = (size_t) (atol(optarg) - 1);
+        mSamplingStartTimeStep = (size_t) (atol(optarg) - 1);
         break;
       }
 
@@ -336,15 +309,15 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
       {
         if( strcmp( "benchmark", longOpts[longIndex].name ) == 0 )
         {
-          BenchmarkFlag = true;
+          mBenchmarkFlag = true;
           if ((optarg == NULL) || (atol(optarg) <= 0))
           {
-            fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoBenchmarkTimeStepCount);
-            PrintUsageAndExit();
+            fprintf(stderr,"%s", kErrFmtNoBenchmarkTimeStep);
+            printUsage();
           }
           else
           {
-             BenchmarkTimeStepsCount = atol(optarg);
+             mBenchmarkTimeStepCount = atol(optarg);
           }
         }
         else if( strcmp( "checkpoint_file", longOpts[longIndex].name ) == 0 )
@@ -352,12 +325,12 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           CheckpointFlag = true;
           if ((optarg == NULL))
           {
-            fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCheckpointFile);
-            PrintUsageAndExit();
+            fprintf(stderr,"%s", kErrFmtNoCheckpointFile);
+            printUsage();
           }
           else
           {
-            CheckpointFileName = optarg;
+            mCheckpointFileName = optarg;
           }
         }
         else if( strcmp( "checkpoint_interval", longOpts[longIndex].name ) == 0 )
@@ -365,133 +338,165 @@ void TCommandLineParameters::ParseCommandLine(int argc, char** argv)
           CheckpointFlag = true ;
           if ((optarg == NULL) || (atol(optarg) <= 0))
           {
-            fprintf(stderr,"%s", CommandlineParameters_ERR_FMT_NoCheckpointInterval);
-            PrintUsageAndExit();
+            fprintf(stderr,"%s", kErrFmtNoCheckpointInterval);
+            printUsage();
           }
           else
           {
-            CheckpointInterval = atol(optarg);
+            mCheckpointInterval = atol(optarg);
           }
         }
         else if (strcmp("version", longOpts[longIndex].name) == 0)
         {
-          PrintVersion = true;
+          mPrintVersionFlag = true;
           return;
         }
 
         //-- pressure related flags
         else if (strcmp("p_rms", longOpts[longIndex].name) == 0)
         {
-          Store_p_rms = true;
+          mStorePressureRmsFlag = true;
         }
         else if (strcmp("p_max", longOpts[longIndex].name) == 0)
         {
-          Store_p_max = true;
+          mStorePressureMaxFlag = true;
         }
         else if (strcmp("p_min", longOpts[longIndex].name) == 0)
         {
-          Store_p_min = true;
+          mStorePressureMinFlag = true;
         }
         else if (strcmp("p_max_all", longOpts[longIndex].name) == 0)
         {
-          Store_p_max_all = true;
+          mStorePressureMaxAllFlag = true;
         }
         else if (strcmp("p_min_all", longOpts[longIndex].name) == 0)
         {
-          Store_p_min_all = true;
+          mStorePressureMinAllFlag = true;
         }
         else if (strcmp("p_final", longOpts[longIndex].name) == 0)
         {
-          Store_p_final = true;
+          mStorePressureFinalAllFlag = true;
         }
 
         //-- velocity related flags
         else if (strcmp("u_non_staggered_raw", longOpts[longIndex].name) == 0)
         {
-          Store_u_non_staggered_raw = true;
+          mStoreVelocityNonStaggeredRawFlag = true;
         }
         else if (strcmp("u_rms", longOpts[longIndex].name) == 0)
         {
-          Store_u_rms = true;
+          mStoreVelocityRmsFlag = true;
         }
         else if (strcmp("u_max", longOpts[longIndex].name) == 0)
         {
-          Store_u_max = true;
+          mStoreVelocityMaxFlag = true;
         }
         else if (strcmp("u_min", longOpts[longIndex].name) == 0)
         {
-          Store_u_min = true;
+          mStoreVelocityMinFlag = true;
         }
         else if (strcmp("u_max_all", longOpts[longIndex].name) == 0)
         {
-          Store_u_max_all = true;
+          mStoreVelocityMaxAllFlag = true;
         }
         else if (strcmp("u_min_all", longOpts[longIndex].name) == 0)
         {
-          Store_u_min_all = true;
+          mStoreVelocityMinAllFlag = true;
         }
         else if (strcmp("u_final", longOpts[longIndex].name) == 0)
         {
-          Store_u_final = true;
+          mStoreVelocityFinalAllFlag = true;
         }
 
         else if (strcmp("copy_sensor_mask", longOpts[longIndex].name) == 0)
         {
-          CopySensorMask = true;
+          mCopySensorMaskFlag = true;
         }
         else
         {
-          PrintUsageAndExit();
+          printUsage();
         }
 
         break;
       }
       default:
       {
-        PrintUsageAndExit();
+        printUsage();
       }
     }
   }
 
 
   //-- Post checks --//
-  if (InputFileName == "")
+  if (mInputFileName == "")
   {
-    fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoInputFile);
-    PrintUsageAndExit();
+    fprintf(stderr, "%s", kErrFmtNoInputFile);
+    printUsage();
   }
 
 
-  if (OutputFileName == "")
+  if (mOutputFileName == "")
   {
-    fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoOutputFile);
-    PrintUsageAndExit();
+    fprintf(stderr, "%s", kErrFmtNoOutputFile);
+    printUsage();
   }
 
   if (CheckpointFlag)
   {
-    if (CheckpointFileName == "")
+    if (mCheckpointFileName == "")
     {
-      fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoCheckpointFile);
-      PrintUsageAndExit();
+      fprintf(stderr, "%s", kErrFmtNoCheckpointFile);
+      printUsage();
     }
-    if (CheckpointInterval == 0)
+    if (mCheckpointInterval == 0)
     {
-      fprintf(stderr, "%s", CommandlineParameters_ERR_FMT_NoCheckpointInterval);
-      PrintUsageAndExit();
+      fprintf(stderr, "%s", kErrFmtNoCheckpointInterval);
+      printUsage();
     }
   }
 
-  if (!(Store_p_raw     || Store_p_rms     || Store_p_max   || Store_p_min ||
-        Store_p_max_all || Store_p_min_all || Store_p_final ||
-        Store_u_raw     || Store_u_non_staggered_raw        ||
-        Store_u_rms     || Store_u_max     || Store_u_min   ||
-        Store_u_max_all || Store_u_min_all || Store_u_final ))
+  if (!(mStorePressureRawFlag     || mStorePressureRmsFlag     || mStorePressureMaxFlag   || mStorePressureMinFlag ||
+        mStorePressureMaxAllFlag || mStorePressureMinAllFlag || mStorePressureFinalAllFlag ||
+        mStoreVelocityRawFlag     || mStoreVelocityNonStaggeredRawFlag        ||
+        mStoreVelocityRmsFlag     || mStoreVelocityMaxFlag     || mStoreVelocityMinFlag   ||
+        mStoreVelocityMaxAllFlag || mStoreVelocityMinAllFlag || mStoreVelocityFinalAllFlag ))
   {
-    Store_p_raw = true;
+    mStorePressureRawFlag = true;
   }
 
-  //PrintSetup();
+}// end of parseCommandLine
+//----------------------------------------------------------------------------------------------------------------------
 
-}// end of ParseCommandLine
-//------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------ Protected methods -------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+/**
+ * Constructor.
+ */
+CommandLineParameters::CommandLineParameters() :
+        mInputFileName(""), mOutputFileName (""), mCheckpointFileName(""),
+        #ifdef _OPENMP
+          mNumberOfThreads(omp_get_num_procs()),
+        #else
+          mNumberOfThreads(1),
+        #endif
+
+        mProgressPrintInterval(kDefaultProgressPrintInterval),
+        mCompressionLevel (kDefaultCompressionLevel),
+        mBenchmarkFlag (false), mBenchmarkTimeStepCount(0),
+        mCheckpointInterval(0),
+        mPrintVersionFlag (false),
+        // output flags
+        mStorePressureRawFlag(false), mStorePressureRmsFlag(false),
+        mStorePressureMaxFlag(false), mStorePressureMinFlag(false),
+        mStorePressureMaxAllFlag(false), mStorePressureMinAllFlag(false), mStorePressureFinalAllFlag(false),
+        mStoreVelocityRawFlag(false), mStoreVelocityNonStaggeredRawFlag(false),
+        mStoreVelocityRmsFlag(false), mStoreVelocityMaxFlag(false), mStoreVelocityMinFlag(false),
+        mStoreVelocityMaxAllFlag(false), mStoreVelocityMinAllFlag(false), mStoreVelocityFinalAllFlag(false),
+        mCopySensorMaskFlag(false),
+        mSamplingStartTimeStep(0)
+{
+
+}// end of constructor
+//----------------------------------------------------------------------------------------------------------------------

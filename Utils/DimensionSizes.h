@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August     2011, 12:34     (created) \n
- *              29 September  2014, 13:10     (revised)
+ *              22 August     2017, 12:59     (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,128 +31,135 @@
  */
 
 
-#ifndef DIMENSIONSIZES_H
-#define	DIMENSIONSIZES_H
+#ifndef DIMENSION_SIZES_H
+#define DIMENSION_SIZES_H
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
 
-using namespace std;
-
-#ifdef __AVX__
+#ifdef __AVX2__
 /**
- * @var DATA_ALIGNMENT
- * @brief memory alignment for AVX(32B)
+ * @var kDataAlignment
+ * @brief memory alignment for AVX2 (32B)
  */
-const int DATA_ALIGNMENT  = 32;
+constexpr int kDataAlignment  = 32;
+#elif __AVX__
+/**
+ * @var kDataAlignment
+ * @brief memory alignment for AVX (32B)
+ */
+constexpr int kDataAlignment  = 32;
 #else
 
 /**
- * @var DATA_ALIGNMENT
+ * @var kDataAlignment
  * @brief memory alignment for SSE, SSE2, SSE3, SSE4 (16B)
- */const int DATA_ALIGNMENT  = 16;
+ */
+constexpr int kDataAlignment  = 16;
 #endif
 
 /**
- * @struct TDimensionSizes
- * @brief  Structure with  4D dimension sizes (3 in space and 1 in time).
- * @details Structure with  4D dimension sizes (3 in space and 1 in time).
+ * @struct  DimensionSizes
+ * @brief   Structure with 4D dimension sizes (3 in space and 1 in time).
+ * @details Structure with 4D dimension sizes (3 in space and 1 in time).
  * The structure can be used for 3D (the time is then set to 1). \n
  * The structure contains only POD, so no C++ stuff is necessary.
  */
-struct TDimensionSizes
+struct DimensionSizes
 {
-  /// X dimension size.
-  size_t X;
-  /// Y dimension size.
-  size_t Y;
-  /// Z dimension size.
-  size_t Z;
-  /// Number of time steps (for time series datasets).
-  size_t T;
-
   /// Default constructor.
-  TDimensionSizes() : X(0), Y(0), Z(0), T(0) {};
+  DimensionSizes() : nx(0), ny(0), nz(0), nt(0) {};
 
   /**
-   * @brief Constructor.
+   * @brief   Constructor.
+   * @details Constructor.
    * @param [in] x, y, z, t - Three spatial dimensions and time.
    */
-  TDimensionSizes(const size_t x,
-                  const size_t y,
-                  const size_t z,
-                  const size_t t = 0)
-          : X(x), Y(y), Z(z), T(t)
-  { };
+  DimensionSizes(size_t x, size_t y, size_t z, size_t t = 0)
+    : nx(x), ny(y), nz(z), nt(t)
+  {};
+
 
   /**
-   * @brief Get element count, in 3D only spatial domain, in 4D with time.
+   * @brief Get the number of elements, in 3D only spatial domain, in 4D with time.
    * @details Get element count, in 3D only spatial domain, in 4D with time.
-   * @return spatial element count or number of elements over time.
+   * @return the number of elements the domain holds.
    */
-  size_t GetElementCount() const
+  inline size_t nElements() const
   {
-    if (Is3D()) return X * Y * Z;
-    else return X * Y * Z * T;
+    return (is3D()) ? nx * ny * nz : nx * ny * nz * nt;
   };
 
-  /// Is it a 3D object?
-  bool Is3D() const
+  /**
+   * @brief  Does the object include spatial dimensions only?
+   * @return true if the dimensions are 3D.
+   */
+  inline bool is3D() const
   {
-    return (T == 0);
-  }
-
-  /// Is it a 3D object with time?
-  bool Is4D() const
-  {
-    return (T > 0);
-  }
+    return (nt == 0);
+  };
 
   /**
-   * @brief Operator ==
-   * @param [in] other  - the second operand to compare with
-   * @return true if ==
+   * @brief  Does the object include spatial and temporal dimensions?
+   * @return true if the dimensions are 4D.
    */
-  bool operator==(const TDimensionSizes &other) const
+  inline bool is4D() const
   {
-    return ((X == other.X) && (Y == other.Y) && (Z == other.Z) && (T == other.T));
-  }
+    return (nt > 0);
+  };
+
+/**
+   * @brief Operator ==
+   * @param [in] other  - The second operand to compare with.
+   * @return true if the dimension sizes are equal.
+   */
+  inline bool operator==(const DimensionSizes& other) const
+  {
+    return ((nx == other.nx) && (ny == other.ny) && (nz == other.nz) && (nt == other.nt));
+  };
 
   /**
    * @brief Operator !=
-   * @param [in] other     - the second operand to compare with
+   * @param [in] other    - the second operand to compare with.
    * @return true if !=
    */
-  bool operator!=(const TDimensionSizes &other) const
+  inline bool operator!=(const DimensionSizes& other) const
   {
-    return ((X != other.X) || (Y != other.Y) || (Z != other.Z) || (T != other.T));
-  }
+    return ((nx != other.nx) || (ny != other.ny) || (nz != other.nz) || (nt != other.nt));
+  };
 
   /**
    * @brief Operator -
-   * @details Get the size of the cube by subtracting two corners
-   * @param [in] op1 - usually bottom right corner
-   * @param [in] op2 - usually top left corner
-   * @return  the size of the inner cuboid
+   *
+   * Get the size of the cube defined by two corners.
+   *
+   * @param [in] op1 - Usually bottom right corner.
+   * @param [in] op2 - Usually top left corner.
+   * @return the size of the inner cuboid
    */
-   inline friend TDimensionSizes operator-(const TDimensionSizes &op1,
-                                           const TDimensionSizes &op2)
-   {
-     // +1 because of planes (10.10.1 - 60.40.1)
-     if (op1.Is3D() && op2.Is3D())
-     {
-       return TDimensionSizes(op1.X - op2.X + 1,
-                              op1.Y - op2.Y + 1,
-                              op1.Z - op2.Z + 1);
-     }
-     else
-     {
-       return TDimensionSizes(op1.X - op2.X + 1,
-                              op1.Y - op2.Y + 1,
-                              op1.Z - op2.Z + 1,
-                              op1.T - op2.T + 1);
-     }
-   }
-}; // end of TDimensionSizes
-//------------------------------------------------------------------------------
-#endif	/* DIMENSIONSIZES_H */
+  inline friend DimensionSizes operator-(const DimensionSizes& op1,
+                                         const DimensionSizes& op2)
+  {
+    // +1 because of planes (10.10.1 - 60.40.1)
+    if (op1.is3D() && op2.is3D())
+    {
+      return DimensionSizes(op1.nx - op2.nx + 1, op1.ny - op2.ny + 1, op1.nz - op2.nz + 1);
+    }
+    else
+    {
+      return DimensionSizes(op1.nx - op2.nx + 1, op1.ny - op2.ny + 1,
+                            op1.nz - op2.nz + 1, op1.nt - op2.nt + 1);
+    }
+  };
+
+
+  /// Number of elements in the x direction.
+  size_t nx;
+  /// Number of elements in the y direction.
+  size_t ny;
+  /// Number of elements in the z direction.
+  size_t nz;
+  /// Number of time steps (for time series datasets).
+  size_t nt;
+}; // end of DimensionSizes
+//----------------------------------------------------------------------------------------------------------------------
+#endif	/* DIMENSION_SIZES_H */

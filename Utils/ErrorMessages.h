@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2011, 12:34      (created) \n
- *              29 September 2014, 14:09      (revised)
+ *              24 August    2017, 09:23      (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,141 +31,188 @@
  */
 
 
-#ifndef ERRORMESSAGES_H
-#define	ERRORMESSAGES_H
+#ifndef ERROR_MESSAGES_H
+#define ERROR_MESSAGES_H
 
-//----------------------------- HDF5 error messages --------------------------//
+/**
+ * @brief   Datatype for error messages.
+ * @details Datatype for error messages.
+ */
+using ErrorMessage = const char*;
+
+//----------------------------------------------- HDF5 error messages ------------------------------------------------//
 
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_FileNotCreated          = "Error: File \"%s\" could not be created!\n";
+ErrorMessage const kErrFmtCannotCreateFile
+ = "Error: File \"%s\" could not be created!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_FileCannotRecreated     = "Error: Cannot recreate an opened file \"%s\"!\n";
+ErrorMessage const kErrFmtCannotRecreateFile
+  = "Error: Cannot recreate an opened file \"%s\"!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_FileCannotReopen        = "Error: Cannot reopen an opened file \"%s\"!\n";
+ErrorMessage const kErrFmtCannotReopenFile
+  = "Error: Cannot reopen an opened file \"%s\"!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_FileNotClosed           = "Error: File \"%s\" could not be closed!\n";
+ErrorMessage const kErrFmtCannotCloseFile
+  = "Error: File \"%s\" could not be closed!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_CouldNotWriteTo         = "Error: Could not write into \"%s\" dataset!\n";
+ErrorMessage const kErrFmtCannotWriteDataset
+  = "Error: Could not write into \"%s\" dataset!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_CouldNotReadFrom        = "Error: Could not read from \"%s\" dataset!\n";
+ErrorMessage const kErrFmtCannotReadDataset
+  = "Error: Could not read from \"%s\" dataset!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_WrongDimensionSizes     = "Error: Dataset \"%s\"  has wrong dimension sizes!\n";
+ErrorMessage const kErrFmtBadDimensionSizes
+  = "Error: Dataset \"%s\"  has wrong dimension sizes!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_FileNotOpened           = "Error: File \"%s\" could not be opened!\n";
+ErrorMessage const kErrFmtFileNotOpen
+  = "Error: File \"%s\" could not be opened!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_NotHDF5File             = "Error: File \"%s\" is not a valid HDF5 file!\n";
+ErrorMessage const kErrFmtNotHdf5File
+  = "Error: File \"%s\" is not a valid HDF5 file!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_DatasetNotOpened        = "Error: File \"%s\" could not open dataset \"%s\"!\n";
+ErrorMessage const kErrFmtCannotOpenDataset
+  = "Error: File \"%s\" could not open dataset \"%s\"!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_CouldNotSetCompression  = "Error: File \"%s\", dataset \"%s\" could set compression level [%ld]!\n";
+ErrorMessage const kErrFmtCannotSetCompression
+  = "Error: File \"%s\", dataset \"%s\" could set compression level [%ld]!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_BadAttributeValue       = "Error: Bad attribute value: [%s,%s] = %s";
+ErrorMessage const kErrFmtBadAttributeValue
+  = "Error: Bad attribute value: [%s,%s] = %s";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_CouldNotWriteToAttribute  = "Error: Could not write into \"%s\" attribute of \"%s\" dataset!\n";
+ErrorMessage const kErrFmtCannotWriteAttribute
+  = "Error: Could not write into \"%s\" attribute of \"%s\" dataset!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_CouldNotReadFromAttribute = "Error: Could not read from \"%s\" attribute of \"%s\" dataset!\n";
+ErrorMessage const kErrFmtCannotReadAttribute
+  = "Error: Could not read from \"%s\" attribute of \"%s\" dataset!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_GroupNotCreated          = "Error: Could not create group \"%s\" in file \"%s\"!\n";
+ErrorMessage const kErrFmtCannotCreateGroup
+  = "Error: Could not create group \"%s\" in file \"%s\"!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_GroupNotOpened           = "Error: Could not open group \"%s\" in file \"%s\"!\n";
+ErrorMessage const kErrFmtCannotOpenGroup
+  = "Error: Could not open group \"%s\" in file \"%s\"!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_BadInputFileType         = "Error: The input file has not a valid format!\n";
+ErrorMessage const kErrFmtBadInputFileType
+  = "Error: The input file has not a valid format!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_BadOutputFileType        = "Error: The output file has not a valid format!\n";
+ErrorMessage const kErrFmtBadOutputFIleType
+  = "Error: The output file has not a valid format!\n";
 /// HDF5 error message
-const char * const HDF5_ERR_FMT_BadCheckpointFileType    = "Error: The checkpoint file has not a valid format!\n";
+ErrorMessage const kErrFmtBadCheckpointFileType
+  = "Error: The checkpoint file has not a valid format!\n";
 
-//---------------------------------- Matrix Classes  -------------------------//
+//------------------------------------------------- Matrix Classes ---------------------------------------------------//
 
 /// Matrix class error message
-const char * const  Matrix_ERR_FMT_NotEnoughMemory  = "Error: Class %s: Memory allocation failed: Not Enough Memory\n";
+ErrorMessage const  kErrFmtNotEnoughMemory
+  = "Error: Class %s: Memory allocation failed: Not Enough Memory\n";
 /// Matrix class error message
-const char * const  Matrix_ERR_FMT_MatrixNotFloat     = "Error: Matrix [%s] data type is not of single precision floating point!\n";
+ErrorMessage const  kErrFmtMatrixNotFloat
+  = "Error: Matrix [%s] data type is not of single precision floating point!\n";
 /// Matrix class error message
-const char * const  Matrix_ERR_FMT_MatrixNotReal      = "Error: Matrix [%s] domain is not real!\n";
+ErrorMessage const  kErrFmtMatrixNotReal
+  = "Error: Matrix [%s] domain is not real!\n";
 /// Matrix class error message
-const char * const  Matrix_ERR_FMT_MatrixNotComplex   = "Error: Matrix [%s] domain is not complex!\n";
+ErrorMessage const  kErrFmtMatrixNotComplex
+  = "Error: Matrix [%s] domain is not complex!\n";
 /// Matrix class error message
-const char * const  Matrix_ERR_FMT_MatrixNotLong      = "Error: Matrix [%s] data type is not unsigned long (uint64_t)!\n";
+ErrorMessage const  kErrFmtMatrixNotIndex
+  = "Error: Matrix [%s] data type is not unsigned long (uint64_t)!\n";
 
-//--------------------------------- Matrix Container  ------------------------//
-
+//------------------------------------------------ Matrix Container --------------------------------------------------//
 /// Matrix container error message
-const char * const  MatrixContainer_ERR_FMT_RecordUnknownDistributionType =
-    "K-Space panic: Matrix [%s] has unknown distribution type in the C++ code!\n\
+ErrorMessage const  kErrFmtBadMatrixType
+  = "K-Space panic: Matrix [%s] has unknown distribution type in the C++ code!\n\
     [File, line] : [%s,%d]!\n";
 
 /// Matrix container error message
-const char * const  MatrixContainer_ERR_FMT_ReloactaionError =
-    "K-Space panic: Matrix [%s] is being reallocated!\n\
+ErrorMessage const  kErrFmtRelocationError
+  = "K-Space panic: Matrix [%s] is being reallocated!\n\
     [File, line] : [%s,%d]!\n";
 
 
-//-------------------------- Command line Parameters  ------------------------//
+//-------------------------------------------- Command line Parameters -----------------------------------------------//
+/// Command line parameters error message
+ErrorMessage const kErrFmtNoProgressPrintInterval
+  = "Command line parsing error: No or invalid verbose interval provided!\n";
+/// Command line parameters error message
+ErrorMessage const kErrFmtInvalidNumberOfThreads
+  = "Command line parsing error: No or invalid number of CPU threads!\n";
+/// Command line parameters error message
+ErrorMessage const kErrFmtNoCompressionLevel
+  = "Command line parsing error: No or invalid compression level!\n";
+/// Command line parameters error message
+ErrorMessage const kErrFmtNoSamplingStartTimeStep
+  = "Command line parsing error: No or invalid collection start time step!\n";
+/// Command line parameters error message
+ErrorMessage const kErrFmtNoBenchmarkTimeStep
+  = "Command line parsing error: No or invalid benchmark time step count!\n";
+/// Command line parameters error message
+ErrorMessage const kErrFmtNoInputFile
+  = "Error: The input file was not specified!\n";
+/// Command line parameters error message
+ErrorMessage const kErrFmtNoOutputFile
+  = "Error: The output file was not specified!\n";
+/// Command line parameters error message
+ErrorMessage const kErrFmtNoCheckpointFile
+  = "Error: The checkpoint file was not specified!\n";
+/// Command line parameters error message
+ErrorMessage const kErrFmtNoCheckpointInterval
+  = "Error: The checkpoint interval was not specified!\n";
 
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoVerboseIntreval        = "Command line parsing error: No or invalid verbose interval provided!\n";
+ErrorMessage const kErrFmtIllegalAlphaPowerValue
+  = "Error: Illegal value of alpha_power!";
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoThreadNumbers          = "Command line parsing error: No or invalid number of CPU threads!\n";
+ErrorMessage const kErrFmtIllegalSamplingStartTimeStep
+  = "Error: The start index is out of the simulation span <%ld, %ld>!\n";
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoCompressionLevel       = "Command line parsing error: No or invalid compression level!\n";
+ErrorMessage const kErrFmtBadInputFileFormat
+  = "Error: Incorrect input file\"%s\" format!\n";
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoStartTimestep          = "Command line parsing error: No or invalid collection start time step!\n";
+ErrorMessage const kErrFmtBadMajorFileVersion
+  = "Error: Incorrect major version of the HDF5 file %s (expected is %s)!\n";
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoBenchmarkTimeStepCount = "Command line parsing error: No or invalid benchmark time step count!\n";
+ErrorMessage const kErrFmtBadMinorFileVersion
+  = "Error: Incorrect minor version of the HDF5 file %s (expected is %s)!\n";
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoInputFile              = "Error: The input file was not specified!\n";
+ErrorMessage const kErrFmtBadSensorMaskType
+  = "Error: The sensor mask type specified in the input file is not supported! \n";
 /// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoOutputFile             = "Error: The output file was not specified!\n";
-/// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoCheckpointFile         = "Error: The checkpoint file was not specified!\n";
-/// Command line parameters error message
-const char * const CommandlineParameters_ERR_FMT_NoCheckpointInterval     = "Error: The checkpoint interval was not specified!\n";
+ErrorMessage const kErrFmtNonStaggeredVelocityNotSupportedFileVersion
+  = "Error: --u_non_staggered_raw is not supported along with the input file of the version 1.0! \n";
 
-/// Command line parameters error message
-const char * const Parameters_ERR_FMT_Illegal_alpha_power_value = "Error: Illegal value of alpha_power!";
-/// Command line parameters error message
-const char * const Parameters_ERR_FMT_Illegal_StartTime_value   = "Error: The start index is out of the simulation span <%ld, %ld>!\n";
-/// Command line parameters error message
-const char * const Parameters_ERR_FMT_IncorrectInputFileFormat = "Error: Incorrect input file\"%s\" format!\n";
-/// Command line parameters error message
-const char * const Parameters_ERR_FMT_IncorrectMajorHDF5FileVersion = "Error: Incorrect major version of the HDF5 file %s (expected is %s)!\n";
-/// Command line parameters error message
-const char * const Parameters_ERR_FMT_IncorrectMinorHDF5FileVersion = "Error: Incorrect minor version of the HDF5 file %s (expected is %s)!\n";
-/// Command line parameters error message
-const char * const Parameters_ERR_FMT_WrongSensorMaskType = "Error: The sensor mask type specified in the input file is not supported! \n";
-/// Command line parameters error message
-const char * const Parameters_ERR_FMT_UNonStaggeredNotSupportedForFile10 = "Error: --u_non_staggered_raw is not supported along with the input file of the version 1.0! \n";
-
-//---------------------------------- FFTW Classes  -------------------------//
+//-------------------------------------------------- FFTW Classes  ---------------------------------------------------//
 /// FFTW error message
-const char * const FFTWComplexMatrix_ERR_FMT_PlanNotCreated = "Error: The FFTW plan creation for %s failed! \n";
+ErrorMessage const kErrFmtFftPlanNotCreated
+  = "Error: The FFTW plan creation for %s failed! \n";
 /// FFTW error message
-const char * const FFTWComplexMatrix_ERR_FMT_InvalidPlan    = "Error: Invalid plan for %s! \n";
+ErrorMessage const kErrFmtFftInvalidPlan
+  = "Error: Invalid plan for %s! \n";
 /// FFTW error message
-const char * const  FFTW_WARNING_FMT_WisdomNotExported = "Warning: Wisdom could not be exported!\n";
+ErrorMessage const kErrFmtFftWisdomNotExported
+  = "Warning: Wisdom could not be exported!\n";
 /// FFTW error message
-const char * const  FFTW_WARNING_FMT_WisdomNotImported = "Warning: Wisdom could not be imported!\n";
+ErrorMessage const ErrFmtFftWisdomNotImported
+= "Warning: Wisdom could not be imported!\n";
 
 
-//------------------------- KSpaceFirstOrder3DSolver Classes  ----------------//
-
+//-------------------------------------------- KSpaceFirstOrder3DSolver ----------------------------------------------//
 /// KSpaceFirstOrder3DSolver error message
-const char * const KSpaceFirstOrder3DSolver_ERR_FMT_IncorrectCheckpointFileFormat
+ErrorMessage const kErrFmtBadCheckpointFileFormat
   = "Error: Incorrect checkpoint file \"%s\" format!\n";
 
 /// KSpaceFirstOrder3DSolver error message
-const char * const KSpaceFirstOrder3DSolver_ERR_FMT_IncorrectOutputFileFormat
+ErrorMessage const kErrFmtBadOutputFileFormat
   = "Error: Incorrect output file \"%s\" format!\n";
 
 /// KSpaceFirstOrder3DSolver error message
-const char * const KSpaceFirstOrder3DSolver_ERR_FMT_CheckpointDimensionsDoNotMatch
-  = "Error: The dimensions [%ld, %ld, %ld] of the checkpoint file don't match the simulation dimensions [%ld, %ld, %ld] \n";
+ErrorMessage const kErrFmtCheckpointDimensionsMismatch
+  = "Error: The dimensions [%ld, %ld, %ld] of the checkpoint file don't match the simulation dimensions"
+    " [%ld, %ld, %ld] \n";
 
 /// KSpaceFirstOrder3DSolver error message
-const char * const KSpaceFirstOrder3DSolver_ERR_FMT_OutputDimensionsDoNotMatch
+ErrorMessage const kErrFmtOutputDimensionsMismatch
   = "Error: The dimensions [%ld, %ld, %ld] of the output file don't match the simulation dimensions [%ld, %ld, %ld] \n";
 
-
-#endif	/* ERRORMESSAGES_H */
+#endif	/* ERROR_MESSAGES_H */
 

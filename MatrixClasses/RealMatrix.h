@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 10:30 (created) \n
- *              25 September 2014, 17:34 (revised)
+ *              25 August    2017, 14:03 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,106 +30,115 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef REALMATRIXDATA_H
-#define	REALMATRIXDATA_H
+#ifndef REAL_MATRIX_H
+#define REAL_MATRIX_H
 
 
 #include <MatrixClasses/BaseFloatMatrix.h>
-
 #include <Utils/DimensionSizes.h>
 
-class TComplexMatrix;
+// forward declaration
+class ComplexMatrix;
 
 /**
- * @class TRealMatrix
- * @brief The class for real matrices
- * @details The class for real matrices (floats)
+ * @class   RealMatrix
+ * @brief   The class for real matrices.
+ * @details The class for real matrices (floats) on both CPU and GPU side.
  */
-class TRealMatrix : public TBaseFloatMatrix
+class RealMatrix : public BaseFloatMatrix
 {
   public:
 
-    /// Constructor
-    TRealMatrix(const TDimensionSizes & DimensionSizes);
-
-     /// Destructor.
-    virtual ~TRealMatrix()
-    {
-      FreeMemory();
-    };
-
-    /// Read data from the HDF5 file - only from the root group.
-    virtual void ReadDataFromHDF5File(THDF5_File & HDF5_File,
-                                      const char * MatrixName);
-
-    /// Write data into the HDF5 file.
-    virtual void WriteDataToHDF5File(THDF5_File & HDF5_File,
-                                     const char * MatrixName,
-                                     const size_t CompressionLevel);
-
+    /// Default constructor is not allowed.
+    RealMatrix() = delete;
     /**
-     * @brief operator [].
-     * @details operator [].
-     * @param [in] index - 1D index
-     * @return an element
+     * @brief Constructor.
+     * @param [in] dimensionSizes - Dimension sizes of the matrix.
      */
-    float& operator [](const size_t& index)
-    {
-      return pMatrixData[index];
-    };
+    RealMatrix(const DimensionSizes& dimensionSizes);
+    /// Copy constructor not allowed.
+    RealMatrix(const RealMatrix&) = delete;
+    /// Destructor.
+    virtual ~RealMatrix();
 
+    /// Operator= is not allowed.
+    RealMatrix& operator=(const RealMatrix&);
 
     /**
-     * @brief operator [], constant version.
-     * @details operator [], constant version.
-     * @param [in] index - 1D index
-     * @return an element
+     * @brief   Read matrix from HDF5 file.
+     * @details Read matrix from HDF5 file.
+     * @param [in] file       - Handle to the HDF5 file
+     * @param [in] matrixName - HDF5 dataset name to read from
+     * @throw ios::failure    - If error occurred.
      */
-    const float& operator [](const size_t& index) const
-    {
-      return pMatrixData[index];
-    };
+    virtual void readData(Hdf5File&   file,
+                          MatrixName& matrixName);
+    /**
+     * @brief   Write data into HDF5 file.
+     * @details Write data into HDF5 file.
+     * @param [in] file             - Handle to the HDF5 file
+     * @param [in] matrixName       - HDF5 dataset name to write to
+     * @param [in] compressionLevel - Compression level for the HDF5 dataset
+     * @throw ios::failure          - If an error occurred.
+     */
+    virtual void writeData(Hdf5File&    file,
+                           MatrixName&  matrixName,
+                           const size_t compressionLevel);
 
     /**
-     * @brief Get element from 3D matrix.
-     * @details Get element from 3D matrix.
-     * @param [in] X - X dimension
-     * @param [in] Y - Y dimension
-     * @param [in] Z - Z dimension
+     * @brief  operator[].
+     * @param [in] index - 1D index into the matrix.
+     * @return An element of the matrix.
+     */
+    inline float&       operator[](const size_t& index)       { return mData[index]; };
+    /**
+     * @brief   Operator[], constant version.
+     * @param [in] index - 1D index into the matrix.
+     * @return An element of the matrix.
+     */
+    inline const float& operator[](const size_t& index) const { return mData[index]; };
+
+    /**
+     * @brief   Get element from 3D matrix.
+     * @param [in] x - x dimension
+     * @param [in] y - y dimension
+     * @param [in] z - z dimension
      * @return  an element
      */
-    float& GetElementFrom3D(const size_t X, const size_t Y, const size_t Z)
+    float& getElementFrom3D(const size_t x, const size_t y, const size_t z)
     {
-      return pMatrixData[Z * p2DDataSliceSize + Y * pDataRowSize +  X];
+      return mData[z * mSlabSize + y * mRowSize +  x];
     };
 
+    /**
+     * @brief   Get element from 3D matrix, const version.
+     * @param [in] x - z dimension
+     * @param [in] y - y dimension
+     * @param [in] z - z dimension
+     * @return  an element
+     */
+    const float& getElementFrom3D(const size_t x, const size_t y, const size_t z) const
+    {
+      return mData[z * mSlabSize + y * mRowSize +  x];
+    };
 
-protected:
+  protected:
 
-    /// Default constructor is not allowed for public.
-    TRealMatrix() : TBaseFloatMatrix() {};
-
-    /// Copy constructor not allowed for public.
-    TRealMatrix(const TRealMatrix& src);
-
-    /// Operator = is not allowed for public.
-    TRealMatrix& operator = (const TRealMatrix& src);
-
+  private:
     /// Init dimension.
-    virtual void InitDimensions(const TDimensionSizes & DimensionSizes);
+     void initDimensions(const DimensionSizes& dimensionSizes);
 
-private:
+     /// Number of elements to get 4MB block of data.
+     static constexpr size_t kChunkSize1D4MB   = 1048576; //(4MB)
+     /// Number of elements to get 1MB block of data.
+     static constexpr size_t kChunkSize1D1MB   =  262144; //(1MB)
+     /// Number of elements to get 256KB block of data.
+     static constexpr size_t kChunkSize1D256kB =   65536; //(256KB)
 
-   /// Number of elements to get 4MB block of data.
-   static const size_t ChunkSize_1D_4MB   = 1048576; //(4MB)
-   /// Number of elements to get 1MB block of data.
-   static const size_t ChunkSize_1D_1MB   =  262144; //(1MB)
-   /// Number of elements to get 256KB block of data.
-   static const size_t ChunkSize_1D_256KB =   65536; //(256KB)
-};// end of class TRealMatrix
-//------------------------------------------------------------------------------
+};// end of RealMatrix
+//----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* REALMATRIXDATA_H */
+#endif	/* REAL_MATRIX_DATA_H */
 
 
 
