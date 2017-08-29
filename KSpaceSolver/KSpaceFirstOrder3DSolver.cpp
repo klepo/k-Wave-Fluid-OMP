@@ -962,15 +962,14 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
   const size_t ny = getRhoX().getDimensionSizes().ny;
   const size_t nx = getRhoX().getDimensionSizes().nx;
 
-  const float dt2 = 2.0f * mParameters.getDt();
   const float dt  = mParameters.getDt();
   const size_t slabSize = ny * nx;
 
   #pragma omp parallel
   {
-    float* rhox  = getRhoX().getData();
-    float* rhoy  = getRhoY().getData();
-    float* rhoz  = getRhoZ().getData();
+    float* rhoX  = getRhoX().getData();
+    float* rhoY  = getRhoY().getData();
+    float* rhoZ  = getRhoZ().getData();
 
     const float* pmlX  = getPmlX().getData();
     const float* pmlY  = getPmlY().getData();
@@ -983,60 +982,24 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
     //----------------------------------------------- rho0 is scalar -------------------------------------------------//
     if (mParameters.getRho0ScalarFlag())
     {
-      const float dtRho0 = mParameters.getRho0Scalar() * dt;
+      const float rho0 = mParameters.getRho0Scalar();
 
-      #pragma omp for schedule (static)
+      #pragma omp for schedule(static)
       for (size_t z = 0; z < nz; z++)
       {
-        register size_t i = z * slabSize;
+        size_t i = z * slabSize;
         for (size_t y = 0; y < ny; y++)
         {
           for (size_t x = 0; x < nx; x++)
           {
-            const float ePmlX   = pmlX[x];
-            const float eDuxdx  = duxdx[i];
+            const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0) * dt;
 
-            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * eDuxdx)) /
-                                (1.0f + (dt2 * eDuxdx)));
+            rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
+            rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
+            rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+
             i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
-        {
-          const float ePmlY = pmlY[y];
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float eDuydy = duydy[i];
-
-            rhoy[i] = ePmlY * (((ePmlY * rhoy[i]) - (dtRho0 * eDuydy))/
-                                (1.0f + (dt2 * eDuydy)));
-            i++;
-          } // x
-        }// y
-      }// z
-
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        const float ePmlZ = pmlZ[z];
-        for (size_t y = 0; y < ny; y++)
-        {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float eDuzdz  = duzdz[i];
-
-            rhoz[i] = ePmlZ * (((ePmlZ * rhoz[i]) - (dtRho0 * eDuzdz)) /
-                                (1.0f + (dt2 * eDuzdz)));
-            i++;
-          } // x
+          }// x
         }// y
       }// z
     }
@@ -1045,67 +1008,28 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
       // rho0 is a matrix
       const float* rho0  = getRho0().getData();
 
-      #pragma omp for schedule (static)
+      #pragma omp for schedule(static)
       for (size_t z = 0; z < nz; z++)
       {
-        register size_t i = z * slabSize;
+        size_t i = z * slabSize;
         for (size_t y = 0; y < ny; y++)
         {
           for (size_t x = 0; x < nx; x++)
           {
-            const float ePmlX  = pmlX[x];
-            const float dtRho0 = dt * rho0[i];
-            const float eDuxdx = duxdx[i];
+            const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0[i]) * dt;
 
-            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * eDuxdx))/
-                                (1.0f + (dt2 * eDuxdx)));
-            i++;
-          } // x
-        }// y
-      }// z
+            rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
+            rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
+            rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
 
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
-        {
-          const float pmlY = getPmlY()[y];
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float dtRho0 = dt * rho0[i];
-            const float eDuydy = duydy[i];
-
-            rhoy[i] = pmlY * (((pmlY * rhoy[i]) - (dtRho0 * eDuydy))/
-                               (1.0f + (dt2 * eDuydy)));
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        const float pmlZ = getPmlZ()[z];
-        for (size_t y = 0; y < ny; y++)
-        {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float dtRho0 = dt * rho0[i];
-            const float eDuzdz = duzdz[i];
-
-            rhoz[i] = pmlZ * (((pmlZ * rhoz[i]) - (dtRho0 * eDuzdz))/
-                               (1.0f + (dt2 * eDuzdz)));
             i++;
           } // x
         }// y
       }// z
     } // end rho is matrix
   }// parallel
-}// end of computeVelocityGradient
+}// end of computeDensityNonliner
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Calculate new values of acoustic density for linear case (rhoX, rhoy and rhoZ).
@@ -1647,10 +1571,6 @@ void KSpaceFirstOrder3DSolver::generateKappaAndNablas()
 
                 float k     = pi2 * sqrt(xPart + yzPart);
                 float cRefK = cRefDt2 * k;
-
-          // if the exponent is negative, then both abosorb coeffs are 0 not infinity
-          //absorbNabla1[i]   = ((alphaPower - 2) < 0) ? 0.0f : pow(k, alphaPower - 2);
-          //absorbNabla2[i]   = ((alphaPower - 1) < 0) ? 0.0f : pow(k, alphaPower - 1);
 
           kappa[i]          = (cRefK == 0.0f) ? 1.0f : sin(cRefK) / cRefK;
 
