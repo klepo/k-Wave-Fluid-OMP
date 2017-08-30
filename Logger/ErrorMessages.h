@@ -13,7 +13,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            30 August    2017, 11:39 (revised)
+ *            30 August    2017, 15:56 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -151,8 +151,6 @@ ErrorMessage kErrFmtNoProgressPrintInterval
 ErrorMessage kErrFmtInvalidNumberOfThreads
   = "Error: No or invalid number of CPU threads.";
 /// Command line parameters error message
-ErrorMessage kErrFmtNoDeviceIndex
-  = "Error: No or invalid id of the GPU device.";
 /// Command line parameters error message
 ErrorMessage kErrFmtNoCompressionLevel
   = "Error: No or invalid compression level.";
@@ -230,163 +228,87 @@ ErrorMessage kErrFmtOutputDimensionsMismatch
 
 
 
-//------------------------------------------------ Cuda fft errors ---------------------------------------------------//
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftInvalidPlan
-  = "Error: cuFFT was passed an invalid plan handle while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftAllocFailed
-  = "Error: cuFFT failed to allocate GPU or CPU memory while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftInvalidType
-  = "Error: cuFFT invalid type for of the transform while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftInvalidValue
-  = "Error: cuFFT was given an invalid pointer or parameter while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCuFFTInternalError
-  = "Error: Driver or internal cuFFT library error while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftExecFailed
-  = "Error: Failed to execute an cuFFT on the GPU while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftSetupFailed
-  = "Error: The cuFFT library failed to initialize while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftInvalidSize
-  = "Error: cuFFT was given an invalid transform size while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftUnalignedData
-  = "Error: Arrays for cuFFT was not properly aligned while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftIncompleteParaterList
-  = "Error: Missing parameters in the cuFFT call while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftInvalidDevice
-  = "Error: cuFFT execution of the plan was performed on a different GPU than plan was "
-    "created while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftParseError
-  = "Error: cuFFT internal plan database error while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftNoWorkspace
-  = "Error: No workspace has been provided prior to cuFFT plan execution while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftNotImplemented
-  = "Error: cuFFT feature is not implemented while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftLicenseError
-  = "Error: cuFFT license error while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftNotSupported
-  = "Error: cuFFT operation is not supported for parameters given while %s.";
-/// CUDA FFT error message.
-ErrorMessage kErrFmtCufftUnknownError
-  = "Error: cuFFT failed with unknown error while %s.";
-
-/// CUDA FFT error message.
+//-------------------------------------------------- FFTW errors -----------------------------------------------------//
+/// FFTW error message
 ErrorMessage kErrFmtCreateR2CFftPlan3D
-  = "creating plan for 3D real-to-complex fft";
-/// CUDA FFT error message.
+  = "creating plan for 3D real-to-complex fft.";
+/// FFTW error message
 ErrorMessage kErrFmtCreateC2RFftPlan3D
- = "creating plan for 3D complex-to-real fft";
-/// CUDA FFT error message.
+ = "creating plan for 3D complex-to-real fft.";
+//// FFTW error message
 ErrorMessage kErrFmtCreateR2CFftPlan1DX
- = "creating for 1D real-to-complex fft plan in X direction";
-/// CUDA FFT error message.
+ = "creating for 1D real-to-complex fft plan in X direction.";
+/// FFTW error message
 ErrorMessage kErrFmtCreateR2CFftPlan1DY
- = "creating for 1D real-to-complex fft plan in Y direction";
-/// CUDA FFT error message.
+ = "creating for 1D real-to-complex fft plan in Y direction.";
+/// FFTW error message
 ErrorMessage kErrFmtCreateR2CFftPlan1DZ
- = "creating for 1D real-to-complex fft plan in Z direction";
-/// CUDA FFT error message.
+ = "creating for 1D real-to-complex fft plan in Z direction.";
+/// FFTW error message
 ErrorMessage kErrFmtCreateC2RFftPlan1DX
-  = "creating for 1D complex-to-real fft plan in X direction";
-/// CUDA FFT error message.
+  = "creating for 1D complex-to-real fft plan in X direction.";
+/// FFTW error message
 ErrorMessage kErrFmtCreateC2RFftPlan1DY
-  = "creating for 1D complex-to-real fft plan in Y direction";
-/// CUDA FFT error message.
+  = "creating for 1D complex-to-real fft plan in Y direction.";
+/// FFTW error message
 ErrorMessage kErrFmtCreateC2RFftPlan1DZ
-  = "creating 1D complex-to-real fft plan in Z direction";
+  = "creating 1D complex-to-real fft plan in Z direction.";
 
-/// CUDA FFT error message.
+/// FFTW error message
 ErrorMessage kErrFmtDestroyR2CFftPlan3D
-  = "destroying plan for 3D real-to-complex fft";
-/// CUDA FFT error message.
+  = "destroying plan for 3D real-to-complex fft.";
+/// FFTW error message
 ErrorMessage kErrFmtDestroyC2RFftPlan3D
- = "destroying plan for 3D complex-to-real fft";
-/// CUDA FFT error message.
+ = "destroying plan for 3D complex-to-real fft.";
+/// FFTW error message
 ErrorMessage kErrFmtDestroyR2CFftPlan1DX
- = "destroying for 1D real-to-complex fft plan in X direction";
-/// CUDA FFT error message.
+ = "destroying for 1D real-to-complex fft plan in X direction.";
+/// FFTW error message
 ErrorMessage kErrFmtDestroyR2CFftPlan1DY
- = "destroying for 1D real-to-complex fft plan in Y direction";
-/// CUDA FFT error message.
+ = "destroying for 1D real-to-complex fft plan in Y direction.";
+/// FFTW error message
 ErrorMessage kErrFmtDestroyR2CFftPlan1DZ
- = "destroying for 1D real-to-complex fft plan in Z direction";
-/// CUDA FFT error message.
+ = "destroying for 1D real-to-complex fft plan in Z direction.";
+/// FFTW error message
 ErrorMessage kErrFmtDestroyC2RFftPlan1DX
-  = "destroying for 1D complex-to-real fft plan in X direction";
-/// CUDA FFT error message.
+  = "destroying for 1D complex-to-real fft plan in X direction.";
+/// FFTW error message
 ErrorMessage kErrFmtDestroyC2RFftPlan1DY
-  = "destroying for 1D complex-to-real fft plan in Y direction";
-/// CUDA FFT error message.
+  = "destroying for 1D complex-to-real fft plan in Y direction.";
+/// FFTW error message
 ErrorMessage kErrFmtDestroyC2RFftPlan1DZ
-  = "destroying 1D complex-to-real fft plan in Z direction";
+  = "destroying 1D complex-to-real fft plan in Z direction.";
 
-/// CUDA FFT error message.
+/// FFTW error message
 ErrorMessage kErrFmtExecuteR2CFftPlan3D
-  = "executing plan for 3D real-to-complex fft";
-/// CUDA FFT error message.
+  = "executing plan for 3D real-to-complex fft.";
+/// FFTW error message
 ErrorMessage kErrFmtExecuteC2RFftPlan3D
- = "executing plan for 3D complex-to-real fft";
-/// CUDA FFT error message.
+ = "executing plan for 3D complex-to-real fft.";
+/// FFTW error message
 ErrorMessage kErrFmtExecuteR2CFftPlan1DX
- = "executing for 1D real-to-complex fft plan in X direction";
-/// CUDA FFT error message.
+ = "executing for 1D real-to-complex fft plan in X direction.";
+/// FFTW error message
 ErrorMessage kErrFmtExecuteR2CFftPlan1DY
- = "executing for 1D real-to-complex fft plan in Y direction";
-/// CUDA FFT error message.
+ = "executing for 1D real-to-complex fft plan in Y direction.";
+/// FFTW error message
 ErrorMessage kErrFmtExecuteR2CFftPlan1DZ
- = "executing for 1D real-to-complex fft plan in Z direction";
-/// CUDA FFT error message.
+ = "executing for 1D real-to-complex fft plan in Z direction.";
+/// FFTW error message
 ErrorMessage kErrFmtExecuteC2RFftPlan1DX
-  = "executing for 1D complex-to-real fft plan in X direction";
-/// CUDA FFT error message.
+  = "executing for 1D complex-to-real fft plan in X direction.";
+/// FFTW error message
 ErrorMessage kErrFmtExecuteC2RFftPlan1DY
-  = "executing for 1D complex-to-real fft plan in Y direction";
-/// CUDA FFT error message.
+  = "executing for 1D complex-to-real fft plan in Y direction.";
+/// FFTW error message
 ErrorMessage kErrFmtExecuteC2RFftPlan1DZ
-  = "executing 1D complex-to-real fft plan in Z direction";
+  = "executing 1D complex-to-real fft plan in Z direction.";
 
-
-//---------------------------------------------- CudaParameters Class ------------------------------------------------//
-/// CUDATuner error message
-ErrorMessage kErrFmtBadDeviceIndex
-  = "Error: Wrong CUDA device id %d. Allowed devices <0, %d>.";
-/// CUDATuner error message
-ErrorMessage kErrFmtNoFreeDevice
-  = "Error: All CUDA-capable devices are busy or unavailable.";
-/// CUDATuner error message
-ErrorMessage kErrFmtDeviceIsBusy
-  = "Error: CUDA device id %d is busy or unavailable.";
-
-/// CUDAParameters error message
-ErrorMessage kErrFmtInsufficientCudaDriver
-  = "Error: Insufficient CUDA driver version. The code needs CUDA version "
-    "%d.%d but %d.%d is installed.";
-/// CUDAParameters error message
-ErrorMessage kErrFmtCannotReadCudaVersion
-  = "Error: Insufficient CUDA driver version. Install the latest drivers.";
-/// CUDAParameters error message
-ErrorMessage kErrFmtDeviceNotSupported
-  = "Error: CUDA device id %d is not supported by this k-Wave build.";
-
-
-//----------------------------------------------- CheckErrors header -------------------------------------------------//
-/// CUDAParameters error message
-ErrorMessage kErrFmtDeviceError
-  = "GPU error: %s routine name: %s in file %s, line %d.";
-
+/// FFTW error message
+ErrorMessage kErrFmtFftWisdomNotExported
+  = "Warning: Wisdom could not be exported.";
+/// FFTW error message
+ErrorMessage ErrFmtFftWisdomNotImported
+= "Warning: Wisdom could not be imported.";
 
 #endif	/* ERROR_MESSAGES_H */

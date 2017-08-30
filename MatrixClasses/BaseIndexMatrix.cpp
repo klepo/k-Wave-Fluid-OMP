@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 14:17 (created) \n
- *              29 August    2017, 10:14 (revised)
+ *              30 August    2017, 15:46 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org). .\n
@@ -95,7 +95,6 @@ void BaseIndexMatrix::allocateMemory()
 
   if (!mData)
   {
-    fprintf(stderr,kErrFmtNotEnoughMemory, "BaseIndexMatrix");
     throw std::bad_alloc();
   }
 
