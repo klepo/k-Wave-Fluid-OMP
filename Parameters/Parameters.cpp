@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2012, 13:39 (created) \n
- *              29 August    2017, 09:49 (revised)
+ *              30 August    2017, 15:13 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -34,16 +34,13 @@
   #include <omp.h>
 #endif
 
-#include <iostream>
-#include <string.h>
-#include <sstream>
 #include <exception>
 #include <stdexcept>
 
 #include <Parameters/Parameters.h>
 
 #include <Utils/MatrixNames.h>
-#include <Utils/ErrorMessages.h>
+#include <Logger/Logger.h>
 
 using std::ios;
 using std::string;
@@ -107,11 +104,17 @@ void Parameters::init(int argc, char** argv)
 {
   mCommandLineParameters.parseCommandLine(argc, argv);
 
+  if (getGitHash() != "")
+  {
+    Logger::log(Logger::LogLevel::kFull, kOutFmtGitHashLeft, getGitHash().c_str());
+    Logger::log(Logger::LogLevel::kFull, kOutFmtSeparator);
+  }
   if (mCommandLineParameters.isPrintVersionOnly())
   {
     return;
   }
 
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtReadingConfiguration);
   readScalarsFromInputFile();
 
   if (mCommandLineParameters.isBenchmarkEnabled())
@@ -119,13 +122,46 @@ void Parameters::init(int argc, char** argv)
     mNt = mCommandLineParameters.getBenchmarkTimeStepsCount();
   }
 
-  if ((mNt <= (size_t) mCommandLineParameters.getSamplingStartTimeIndex()) ||
-      ( 0 > mCommandLineParameters.getSamplingStartTimeIndex()) )
+  if ((mNt <= mCommandLineParameters.getSamplingStartTimeIndex()) ||
+      (0 > mCommandLineParameters.getSamplingStartTimeIndex()))
   {
-    fprintf(stderr,kErrFmtIllegalSamplingStartTimeStep, 1l, mNt);
-    mCommandLineParameters.printUsage();
+    throw std::invalid_argument(Logger::formatMessage(kErrFmtIllegalSamplingStartTimeStep, 1l, mNt));
   }
+
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
 }// end of parseCommandLine
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Print parameters of the simulation based in the actual level of verbosity.
+ */
+void Parameters::printSimulatoinSetup()
+{
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtNumberOfThreads, getNumberOfThreads());
+
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulationDetailsTitle);
+
+  const string domainsSizes = Logger::formatMessage(kOutFmtDomainSizeFormat,
+                                                    getFullDimensionSizes().nx,
+                                                    getFullDimensionSizes().ny,
+                                                    getFullDimensionSizes().nz);
+  // Print simulation size
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtDomainSize, domainsSizes.c_str());
+
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulatoinLenght, getNt());
+
+  // Print all command line parameters
+  mCommandLineParameters.printComandlineParamers();
+
+  if (getSensorMaskType() == SensorMaskType::kIndex)
+  {
+    Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSensorMaskIndex);
+  }
+  if (getSensorMaskType() == SensorMaskType::kCorners)
+  {
+    Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSensorMaskCuboid);
+  }
+}// end of printSimulatoinSetup
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -137,16 +173,8 @@ void Parameters::readScalarsFromInputFile()
 
   if (!mInputFile.isOpen())
   {
-    // Open file
-    try
-    {
-      mInputFile.open(mCommandLineParameters.getInputFileName());
-    }
-    catch (ios::failure e)
-    {
-      fprintf(stderr, "%s", e.what());
-      printUsageAndExit();
-    }
+    // Open file -- exceptions handled in main
+    mInputFile.open(mCommandLineParameters.getInputFileName());
   }
 
   mFileHeader.readHeaderFromInputFile(mInputFile);
@@ -154,26 +182,22 @@ void Parameters::readScalarsFromInputFile()
   // check file type
   if (mFileHeader.getFileType() != Hdf5FileHeader::FileType::kInput)
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, kErrFmtBadInputFileFormat, getInputFileName().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadInputFileFormat, getInputFileName().c_str()));
   }
 
   // check version
   if (!mFileHeader.checkMajorFileVersion())
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, kErrFmtBadMajorFileVersion, getInputFileName().c_str(),
-            mFileHeader.getFileMajorVersion().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadMajorFileVersion,
+                                             getInputFileName().c_str(),
+                                             mFileHeader.getFileMajorVersion().c_str()));
   }
 
   if (!mFileHeader.checkMinorFileVersion())
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, kErrFmtBadMinorFileVersion, getInputFileName().c_str(),
-            mFileHeader.getFileMinorVersion().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadMinorFileVersion,
+                                             getInputFileName().c_str(),
+                                             mFileHeader.getFileMinorVersion().c_str()));
   }
 
   const hid_t rootGroup = mInputFile.getRootGroup();
@@ -208,7 +232,7 @@ void Parameters::readScalarsFromInputFile()
   mReducedDimensionSizes.ny = y;
   mReducedDimensionSizes.nz = z;
 
-  // if the file is of version 1.0, there must be a sensor mask index (backward compatibility)
+// if the file is of version 1.0, there must be a sensor mask index (backward compatibility)
   if (mFileHeader.getFileVersion() == Hdf5FileHeader::FileVersion::kVersion10)
   {
     mSensorMaskIndexSize = mInputFile.getDatasetSize(rootGroup, kSensorMaskIndexName);
@@ -218,7 +242,7 @@ void Parameters::readScalarsFromInputFile()
     {
       throw ios::failure(kErrFmtNonStaggeredVelocityNotSupportedFileVersion);
     }
-  }
+  }// version 1.0
 
   // This is the current version 1.1
   if (mFileHeader.getFileVersion() == Hdf5FileHeader::FileVersion::kVersion11)
@@ -325,8 +349,7 @@ void Parameters::readScalarsFromInputFile()
     mInputFile.readScalarValue(rootGroup, kAlphaPowerName, mAlphaPower);
     if (mAlphaPower == 1.0f)
     {
-      fprintf(stderr, "%s", kErrFmtIllegalAlphaPowerValue);
-      printUsageAndExit();
+      throw std::invalid_argument(kErrFmtIllegalAlphaPowerValue);
     }
 
     mAlphaCoeffScalarFlag = mInputFile.getDatasetDimensionSizes(rootGroup, kAlphaCoeffName) == scalarSizes;
@@ -443,6 +466,18 @@ void Parameters::saveScalarsToOutputFile()
 }// end of saveScalarsToFile
 //----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Get GitHash of the code
+ */
+string Parameters::getGitHash() const
+{
+#if (defined (__KWAVE_GIT_HASH__))
+  return string(__KWAVE_GIT_HASH__);
+#else
+  return "";
+#endif
+}// end of getGitHash
+//----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------ Protected methods -------------------------------------------------//
@@ -478,16 +513,6 @@ Parameters::Parameters() :
 //----------------------------------------------------------------------------------------------------------------------
 
 
-
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Private methods --------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
-/**
- * Print usage end exit.
- */
-void Parameters::printUsageAndExit()
-{
-  mCommandLineParameters.printUsage();
-}// end of printUsage
-//----------------------------------------------------------------------------------------------------------------------
-
