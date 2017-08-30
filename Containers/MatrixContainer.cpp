@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created) \n
- *              29 August    2017, 09:49 (revised)
+ *              30 August    2017, 15:19 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -32,15 +32,16 @@
 #include <stdexcept>
 
 #include <Containers/MatrixContainer.h>
-
 #include <Parameters/Parameters.h>
-#include <Utils/ErrorMessages.h>
+#include <Logger/Logger.h>
 
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/ComplexMatrix.h>
 #include <MatrixClasses/FftwComplexMatrix.h>
 #include <MatrixClasses/VelocityMatrix.h>
 #include <MatrixClasses/IndexMatrix.h>
+
+
 
 using std::string;
 
@@ -81,7 +82,7 @@ void MatrixContainer::createMatrices()
   {
     if (it.second.matrixPtr != nullptr)
     {
-      printErrorAndThrowException(kErrFmtRelocationError, it.second.matrixName, __FILE__,__LINE__);
+      throw std::invalid_argument(Logger::formatMessage(kErrFmtRelocationError, it.second.matrixName.c_str()));
     }
 
     switch (it.second.matrixType)
@@ -118,7 +119,7 @@ void MatrixContainer::createMatrices()
 
       default:
       {
-        printErrorAndThrowException(kErrFmtBadMatrixType, it.second.matrixName, __FILE__, __LINE__);
+        throw std::invalid_argument(Logger::formatMessage(kErrFmtBadMatrixType, it.second.matrixName.c_str()));
         break;
       }
     }// switch
@@ -494,18 +495,4 @@ void MatrixContainer::storeDataIntoCheckpointFile()
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Private methods --------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
-
-
-/**
- * Print error and and throw an exception.
- */
-void MatrixContainer::printErrorAndThrowException(const char* fmt,
-                                                  MatrixName  matrixName,
-                                                  const char* file,
-                                                  const int   line)
-{
-  fprintf(stderr,fmt, matrixName.c_str(), file, line);
-  throw std::bad_alloc();
-}// end of printErrorAndAbort
-//----------------------------------------------------------------------------------------------------------------------
 
