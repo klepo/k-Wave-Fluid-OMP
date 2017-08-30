@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              24 August    2017, 15:30 (revised)
+ *              30 August    2017, 14:18 (revised)
  *
  *
  * @section License
@@ -42,16 +42,17 @@
   #include <GetoptWin64/Getopt.h>
 #endif
 
-#include <stdio.h>
-#include <string.h>
+#include <cstring>
 #ifdef _OPENMP
   #include <omp.h>
 #endif
 
 #include <stdexcept>
-#include <Parameters/CommandLineParameters.h>
 
-#include <Utils/ErrorMessages.h>
+#include <Parameters/CommandLineParameters.h>
+#include <Logger/Logger.h>
+
+using std::string;
 //--------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------- Constants -----------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
@@ -67,64 +68,13 @@
  */
 void CommandLineParameters::printUsage()
 {
-  printf("---------------------------------- Usage ---------------------------------\n");
-  printf("Mandatory parameters:\n");
-  printf("  -i <input_file_name>            : HDF5 input file\n");
-  printf("  -o <output_file_name>           : HDF5 output file\n");
-  printf("\n");
-  printf("Optional parameters: \n");
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtUsagePart1);
 
-#ifdef _OPENMP
-  printf("  -t <num_threads>                : Number of CPU threads\n");
-  printf("                                      (default = %d)\n", omp_get_num_procs());
-#endif
+  #ifdef _OPENMP
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtUsageThreads, omp_get_num_procs());
+  #endif
 
-  printf("  -r <interval_in_%%>              : Progress print interval\n");
-  printf("                                      (default = %ld%%)\n", kDefaultProgressPrintInterval);
-  printf("  -c <comp_level>                 : Output file compression level <0,9>\n");
-  printf("                                      (default = %ld)\n", kDefaultCompressionLevel);
-  printf("  --benchmark <steps>             : Run a specified number of time steps\n");
-  printf("\n");
-  printf("  --checkpoint_file <file_name>   : HDF5 checkpoint file\n");
-  printf("  --checkpoint_interval <seconds> : Stop after a given number of seconds and\n");
-  printf("                                      store the actual state\n");
-  printf("\n");
-  printf("  -h                              : Print help\n");
-  printf("  --help                          : Print help\n");
-  printf("  --version                       : Print version\n");
-  printf("\n");
-  printf("Output flags:\n");
-  printf("  -p                              : Store acoustic pressure \n");
-  printf("                                      (default if nothing else is on)\n");
-  printf("                                      (the same as --p_raw)\n");
-  printf("  --p_raw                         : Store raw time series of p (default)\n");
-  printf("  --p_rms                         : Store rms of p\n");
-  printf("  --p_max                         : Store max of p\n");
-  printf("  --p_min                         : Store min of p\n");
-  printf("  --p_max_all                     : Store max of p (whole domain)\n");
-  printf("  --p_min_all                     : Store min of p (whole domain)\n");
-  printf("  --p_final                       : Store final pressure field \n");
-  printf("\n");
-  printf("  -u                              : Store ux, uy, uz\n");
-  printf("                                      (the same as --u_raw)\n");
-  printf("  --u_raw                         : Store raw time series of ux, uy, uz\n");
-  printf("  --u_non_staggered_raw           : Store non-staggered raw time series of\n");
-  printf("                                      ux, uy, uz \n");
-  printf("  --u_rms                         : Store rms of ux, uy, uz\n");
-  printf("  --u_max                         : Store max of ux, uy, uz\n");
-  printf("  --u_min                         : Store min of ux, uy, uz\n");
-  printf("  --u_max_all                     : Store max of ux, uy, uz (whole domain)\n");
-  printf("  --u_min_all                     : Store min of ux, uy, uz (whole domain)\n");
-  printf("  --u_final                       : Store final acoustic velocity\n");
-  printf("\n");
-  printf("  --copy_sensor_mask              : Copy sensor mask to the output file\n");
-  printf("\n");
-  printf("  -s <timestep>                   : Time step when data collection begins\n");
-  printf("                                      (default = 1)\n");
-  printf("--------------------------------------------------------------------------\n");
-  printf("\n");
-
-  exit(EXIT_FAILURE);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtUsagePart2, kDefaultProgressPrintInterval, kDefaultCompressionLevel);
 }// end of printUsage
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -133,41 +83,126 @@ void CommandLineParameters::printUsage()
  */
 void CommandLineParameters::printComandlineParamers()
 {
-  printf("List of enabled parameters:\n");
+  Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSeparator);
 
-  printf("  Input  file               %s\n", mInputFileName.c_str());
-  printf("  Output file               %s\n", mOutputFileName.c_str());
-  printf("\n");
-  printf("  Number of threads         %ld\n", mNumberOfThreads);
-  printf("  Verbose interval[%%]       %ld\n", mProgressPrintInterval);
-  printf("  Compression level         %ld\n", mCompressionLevel);
-  printf("\n");
-  printf("  Benchmark flag            %d\n", mBenchmarkFlag);
-  printf("  Benchmark time steps      %ld\n", mBenchmarkTimeStepCount);
-  printf("\n");
-  printf("  Checkpoint_file           %s\n", mCheckpointFileName.c_str());
-  printf("  Checkpoint_interval       %ld\n", mCheckpointInterval);
-  printf("\n");
-  printf("  Store p_raw               %d\n", mStorePressureRawFlag);
-  printf("  Store p_rms               %d\n", mStorePressureRmsFlag);
-  printf("  Store p_max               %d\n", mStorePressureMaxFlag);
-  printf("  Store p_min               %d\n", mStorePressureMinFlag);
-  printf("  Store p_max_all           %d\n", mStorePressureMaxAllFlag);
-  printf("  Store p_min_all           %d\n", mStorePressureMinAllFlag);
-  printf("  Store p_final             %d\n", mStorePressureFinalAllFlag);
-  printf("\n");
-  printf("  Store u_raw               %d\n", mStoreVelocityRawFlag);
-  printf("  Store u_non_staggered_raw %d\n", mStoreVelocityNonStaggeredRawFlag);
-  printf("  Store u_rms               %d\n", mStoreVelocityRmsFlag);
-  printf("  Store u_max               %d\n", mStoreVelocityMaxFlag);
-  printf("  Store u_min               %d\n", mStoreVelocityMinFlag);
-  printf("  Store u_max_all           %d\n", mStoreVelocityMaxAllFlag);
-  printf("  Store u_min_all           %d\n", mStoreVelocityMinAllFlag);
-  printf("  Store u_final             %d\n", mStoreVelocityFinalAllFlag);
-  printf("\n");
-  printf("  Copy sensor mask          %d\n", mCopySensorMaskFlag);
-  printf("\n");
-  printf("  Collection begins at      %ld\n", mSamplingStartTimeStep + 1);
+  Logger::log(Logger::LogLevel::kAdvanced,
+              Logger::wordWrapString(kOutFmtInputFile + mInputFileName, kErrFmtPathDelimiters, 15).c_str());
+
+  Logger::log(Logger::LogLevel::kAdvanced,
+              Logger::wordWrapString(kOutFmtOutputFile + mOutputFileName,kErrFmtPathDelimiters, 15).c_str());
+
+  if (isCheckpointEnabled())
+  {
+    Logger::log(Logger::LogLevel::kAdvanced,
+                Logger::wordWrapString(kOutFmtCheckpointFile + mCheckpointFileName,kErrFmtPathDelimiters, 15).c_str());
+
+    Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSeparator);
+
+    Logger::log(Logger::LogLevel::kAdvanced, kOutFmtCheckpointInterval, mCheckpointInterval);
+  }
+  else
+  {
+    Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSeparator);
+  }
+
+
+  Logger::log(Logger::LogLevel::kAdvanced, kOutFmtCompressionLevel, mCompressionLevel);
+
+  Logger::log(Logger::LogLevel::kFull,     kOutFmtPrintProgressIntrerval, mProgressPrintInterval);
+
+  if (mBenchmarkFlag)
+  {
+    Logger::log(Logger::LogLevel::kFull, kOutFmtBenchmarkTimeStep, mBenchmarkTimeStepCount);
+  }
+
+  Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSamplingFlags);
+
+
+  string sampledQuantitiesList = "";
+  // Sampled p quantities
+
+  if (mStorePressureRawFlag)
+  {
+    sampledQuantitiesList += "p_raw, ";
+  }
+  if (mStorePressureRmsFlag)
+  {
+    sampledQuantitiesList += "p_rms, ";
+  }
+  if (mStorePressureMaxFlag)
+  {
+    sampledQuantitiesList += "p_max, ";
+  }
+  if (mStorePressureMinFlag)
+  {
+    sampledQuantitiesList += "p_min, ";
+  }
+  if (mStorePressureMaxAllFlag)
+  {
+    sampledQuantitiesList += "p_max_all, ";
+  }
+  if (mStorePressureMinAllFlag)
+  {
+    sampledQuantitiesList += "p_min_all, ";
+  }
+  if (mStorePressureFinalAllFlag)
+  {
+    sampledQuantitiesList += "p_final, ";
+  }
+
+  // Sampled u quantities
+  if (mStoreVelocityRawFlag)
+  {
+    sampledQuantitiesList += "u_raw, ";
+  }
+  if (mStoreVelocityRmsFlag)
+  {
+    sampledQuantitiesList += "u_rms, ";
+  }
+  if (mStoreVelocityMaxFlag)
+  {
+    sampledQuantitiesList += "u_max, ";
+  }
+  if (mStoreVelocityMinFlag)
+  {
+    sampledQuantitiesList += "u_min, ";
+  }
+  if (mStoreVelocityMaxAllFlag)
+  {
+    sampledQuantitiesList += "u_max_all, ";
+  }
+  if (mStoreVelocityMinAllFlag)
+  {
+    sampledQuantitiesList += "u_min_all, ";
+  }
+  if (mStoreVelocityFinalAllFlag)
+  {
+    sampledQuantitiesList += "u_final, ";
+  }
+
+  if (mStoreVelocityNonStaggeredRawFlag)
+  {
+    sampledQuantitiesList += "u_non_staggered_raw, ";
+  }
+
+  // remove comma and space symbols
+  if (sampledQuantitiesList.length() > 0)
+  {
+    sampledQuantitiesList.pop_back();
+    sampledQuantitiesList.pop_back();
+  }
+
+  Logger::log(Logger::LogLevel::kAdvanced,
+              Logger::wordWrapString(sampledQuantitiesList," ", 2).c_str());
+
+  Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSeparator);
+
+  Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSamplingStartsAt, mSamplingStartTimeStep + 1);
+
+  if (mCopySensorMaskFlag)
+  {
+    Logger::log(Logger::LogLevel::kAdvanced, kOutFmtCopySensorMask);
+  }
 }// end of  printComandlineParamers
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -177,107 +212,300 @@ void CommandLineParameters::printComandlineParamers()
 void CommandLineParameters::parseCommandLine(int argc, char** argv)
 {
   char c;
-  int longIndex;
-  bool CheckpointFlag = false;
+  int  longIndex = -1;
+  bool checkpointFlag = false;
 
-#ifdef _OPENMP
-  const char * shortOpts = "i:o:r:c:t:puhs:";
-#else
-  const char * shortOpts = "i:o:r:c:puhs:";
-#endif
+  constexpr int errorLineIndent = 9;
+
+  // all optional arguments are in fact requested. This was chosen to prevent
+  // getopt error messages and provide custom error handling.
+  #ifdef _OPENMP
+    const char* shortOpts = "i:o:r:c:t:puhs:";
+  #else
+    const char* shortOpts = "i:o:r:c:puhs:";
+  #endif
 
   const struct option longOpts[] =
   {
-    { "benchmark",           required_argument, NULL, 0},
-    { "help",                no_argument, NULL, 'h'},
-    { "version",             no_argument, NULL, 0},
-    { "checkpoint_file"    , required_argument, NULL, 0 },
-    { "checkpoint_interval", required_argument, NULL, 0 },
+    { "benchmark",            required_argument, nullptr, 1 },
+    { "copy_sensor_mask",     no_argument,       nullptr, 2 },
+    { "checkpoint_file"    ,  required_argument, nullptr, 3 },
+    { "checkpoint_interval",  required_argument, nullptr, 4 },
+    { "help",                 no_argument,       nullptr,'h'},
+    { "verbose",              required_argument, nullptr, 5 },
+    { "version",              no_argument,       nullptr, 6 },
 
-    { "p_raw",               no_argument, NULL, 'p'},
-    { "p_rms",               no_argument, NULL, 0},
-    { "p_max",               no_argument, NULL, 0},
-    { "p_min",               no_argument, NULL, 0},
-    { "p_max_all",           no_argument, NULL, 0},
-    { "p_min_all",           no_argument, NULL, 0},
-    { "p_final",             no_argument, NULL, 0},
+    { "p_raw",                no_argument, nullptr,'p' },
+    { "p_rms",                no_argument, nullptr, 10 },
+    { "p_max",                no_argument, nullptr, 11 },
+    { "p_min",                no_argument, nullptr, 12 },
+    { "p_max_all",            no_argument, nullptr, 13 },
+    { "p_min_all",            no_argument, nullptr, 14 },
+    { "p_final",              no_argument, nullptr, 15 },
 
-    { "u_raw",               no_argument, NULL, 'u'},
-    { "u_non_staggered_raw", no_argument, NULL, 0},
-    { "u_rms",               no_argument, NULL, 0},
-    { "u_max",               no_argument, NULL, 0},
-    { "u_min",               no_argument, NULL, 0},
-    { "u_max_all",           no_argument, NULL, 0},
-    { "u_min_all",           no_argument, NULL, 0},
-    { "u_final",             no_argument, NULL, 0},
+    { "u_raw",                no_argument, nullptr,'u' },
+    { "u_rms",                no_argument, nullptr, 20},
+    { "u_max",                no_argument, nullptr, 21},
+    { "u_min",                no_argument, nullptr, 22},
+    { "u_max_all",            no_argument, nullptr, 23},
+    { "u_min_all",            no_argument, nullptr, 24},
+    { "u_final",              no_argument, nullptr, 25},
+    { "u_non_staggered_raw",  no_argument, nullptr, 26},
 
-    { "copy_sensor_mask",    no_argument, NULL, 0},
-    { NULL,                  no_argument, NULL, 0}
+    { nullptr,                no_argument, nullptr, 0}
   };
 
+  // all optional arguments are in fact requested. This was chosen to prevent
+  // getopt error messages and provide custom error handling.
+  opterr = 0;
 
-   // Short parameters //
+  // Short parameters //
   while ((c = getopt_long (argc, argv, shortOpts, longOpts, &longIndex )) != -1)
   {
     switch (c)
     {
       case 'i':
       {
-         mInputFileName = optarg;
-         break;
+        // test if the wile was correctly entered (if not, getopt could eat
+        // the following parameter)
+        if ((optarg != nullptr) &&
+            ((strlen(optarg) > 0) && (optarg[0] != '-')))
+        {
+          mInputFileName = optarg;
+        }
+        else
+        {
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoInputFile, " ", errorLineIndent));
+        }
+        break;
       }
 
       case 'o':
       {
-         mOutputFileName = optarg;
-         break;
+        // test if the wile was correctly entered (if not, getopt could eat
+        // the following parameter)
+        if ((optarg != nullptr) &&
+            ((strlen(optarg) > 0) && (optarg[0] != '-')))
+        {
+          mOutputFileName = optarg;
+        }
+        else
+        {
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoOutputFile, " ", errorLineIndent));
+        }
+        break;
       }
 
       case 'r':
       {
-        if ((optarg == NULL) || (atol(optarg) <= 0))
+        try
         {
-          fprintf(stderr,"%s", kErrFmtNoProgressPrintInterval);
-           printUsage();
+          int convertedValue = std::stoi(optarg);
+          if ((convertedValue  < 1) || (convertedValue  > 100))
+          {
+            throw std::invalid_argument("-r");
+          }
+          mProgressPrintInterval = std::stoll(optarg);
         }
-        else
+        catch (...)
         {
-          mProgressPrintInterval = atol(optarg);
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoProgressPrintInterval, " ", errorLineIndent));
         }
         break;
       }
 
+  #ifdef _OPENMP
       case 't':
       {
-        if ((optarg == NULL) || (atol(optarg) <= 0))
+        try
         {
-          fprintf(stderr,"%s", kErrFmtInvalidNumberOfThreads);
-          printUsage();
+          if (std::stoi(optarg) < 1)
+          {
+            throw std::invalid_argument("-t");
+          }
+          mNumberOfThreads = std::stoll(optarg);
         }
-        else
+        catch (...)
         {
-          mNumberOfThreads = atol(optarg);
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtInvalidNumberOfThreads, " ", errorLineIndent));
         }
         break;
       }
+  #endif
 
       case 'c':
       {
-        if ((optarg == NULL) || (atol(optarg) < 0) || atol(optarg) > 9)
+        try
         {
-          fprintf(stderr,"%s", kErrFmtNoCompressionLevel);
+          int covertedValue = std::stoi(optarg);
+          if ((covertedValue < 0) || (covertedValue > 9))
+          {
+            throw std::invalid_argument("-c");
+          }
+          mCompressionLevel = std::stoll(optarg);
+        }
+        catch (...)
+        {
           printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoCompressionLevel, " ", errorLineIndent));
+        }
+        break;
+      }
+
+      case 'h':
+      {
+        printUsage();
+        exit(EXIT_SUCCESS);
+      }
+
+      case 's':
+      {
+        try
+        {
+          if (std::stoll(optarg) < 1)
+          {
+            throw std::invalid_argument("-s");
+          }
+          mSamplingStartTimeStep = std::stoll(optarg) - 1;
+        }
+        catch (...)
+        {
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoSamplingStartTimeStep, " ", errorLineIndent));
+        }
+        break;
+      }
+
+      case 1: // benchmark
+      {
+        try
+        {
+          mBenchmarkFlag = true;
+          if (std::stoll(optarg) <= 0)
+          {
+            throw std::invalid_argument("benchmark");
+          }
+          mBenchmarkTimeStepCount = std::stoll(optarg);
+        }
+        catch (...)
+        {
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoBenchmarkTimeStep, " ", errorLineIndent));
+        }
+        break;
+      }
+
+      case 2: // copy_sensor_mask
+      {
+        mCopySensorMaskFlag = true;
+        break;
+      }
+
+      case 3: // checkpoint_file
+      {
+        checkpointFlag = true;
+        // test if the wile was correctly entered (if not, getopt could eat
+        // the following parameter)
+        if ((optarg != NULL) &&
+            ((strlen(optarg) > 0) && (optarg[0] != '-')))
+        {
+          mCheckpointFileName = optarg;
         }
         else
         {
-          mCompressionLevel = atol(optarg);
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoCheckpointFile, " ", errorLineIndent));
         }
-         break;
+        break;
+      }
+
+      case 4: // checkpoint_interval
+      {
+        try
+        {
+          checkpointFlag = true;
+          if (std::stoll(optarg) <= 0)
+          {
+           throw std::invalid_argument("checkpoint_interval");
+          }
+          mCheckpointInterval = std::stoll(optarg);
+        }
+        catch (...)
+        {
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoCheckpointInterval, " ", errorLineIndent));
+        }
+        break;
+      }
+
+      case 5: // verbose
+      {
+        try
+        {
+          int verboseLevel = std::stoi(optarg);
+          if ((verboseLevel < 0) || (verboseLevel > 2))
+          {
+            throw std::invalid_argument("verbose");
+          }
+          Logger::setLevel(static_cast<Logger::LogLevel> (verboseLevel));
+        }
+        catch (...)
+        {
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoVerboseLevel, " ", errorLineIndent));
+        }
+        break;
+      }
+
+      case 6: // version
+      {
+        mPrintVersionFlag = true;
+        break;
       }
 
       case 'p':
       {
         mStorePressureRawFlag = true;
+        break;
+      }
+
+      case 10: // p_rms
+      {
+        mStorePressureRmsFlag = true;
+        break;
+      }
+
+      case 11: // p_max
+      {
+        mStorePressureMaxFlag = true;
+        break;
+      }
+
+      case 12: // p_min
+      {
+        mStorePressureMinFlag = true;
+        break;
+      }
+
+      case 13: // p_max_all
+      {
+        mStorePressureMaxAllFlag = true;
+        break;
+      }
+
+      case 14: // p_min_all
+      {
+        mStorePressureMinAllFlag = true;
+        break;
+      }
+
+      case 15: // p_final
+      {
+        mStorePressureFinalAllFlag = true;
         break;
       }
 
@@ -287,183 +515,182 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
         break;
       }
 
-      case 'h':
+      case 20: // u_rms
       {
-        printUsage();
+        mStoreVelocityRmsFlag = true;
         break;
       }
 
-      case 's':
+      case 21: // u_max
       {
-        if ((optarg == NULL) || (atol(optarg) < 1))
-        {
-          fprintf(stderr,"%s", kErrFmtNoSamplingStartTimeStep);
-          printUsage();
-        }
-        mSamplingStartTimeStep = (size_t) (atol(optarg) - 1);
+        mStoreVelocityMaxFlag = true;
         break;
       }
 
-      // long option without a short arg
-      case 0:
+      case 22: // u_min
       {
-        if( strcmp( "benchmark", longOpts[longIndex].name ) == 0 )
-        {
-          mBenchmarkFlag = true;
-          if ((optarg == NULL) || (atol(optarg) <= 0))
-          {
-            fprintf(stderr,"%s", kErrFmtNoBenchmarkTimeStep);
-            printUsage();
-          }
-          else
-          {
-             mBenchmarkTimeStepCount = atol(optarg);
-          }
-        }
-        else if( strcmp( "checkpoint_file", longOpts[longIndex].name ) == 0 )
-        {
-          CheckpointFlag = true;
-          if ((optarg == NULL))
-          {
-            fprintf(stderr,"%s", kErrFmtNoCheckpointFile);
-            printUsage();
-          }
-          else
-          {
-            mCheckpointFileName = optarg;
-          }
-        }
-        else if( strcmp( "checkpoint_interval", longOpts[longIndex].name ) == 0 )
-        {
-          CheckpointFlag = true ;
-          if ((optarg == NULL) || (atol(optarg) <= 0))
-          {
-            fprintf(stderr,"%s", kErrFmtNoCheckpointInterval);
-            printUsage();
-          }
-          else
-          {
-            mCheckpointInterval = atol(optarg);
-          }
-        }
-        else if (strcmp("version", longOpts[longIndex].name) == 0)
-        {
-          mPrintVersionFlag = true;
-          return;
-        }
-
-        //-- pressure related flags
-        else if (strcmp("p_rms", longOpts[longIndex].name) == 0)
-        {
-          mStorePressureRmsFlag = true;
-        }
-        else if (strcmp("p_max", longOpts[longIndex].name) == 0)
-        {
-          mStorePressureMaxFlag = true;
-        }
-        else if (strcmp("p_min", longOpts[longIndex].name) == 0)
-        {
-          mStorePressureMinFlag = true;
-        }
-        else if (strcmp("p_max_all", longOpts[longIndex].name) == 0)
-        {
-          mStorePressureMaxAllFlag = true;
-        }
-        else if (strcmp("p_min_all", longOpts[longIndex].name) == 0)
-        {
-          mStorePressureMinAllFlag = true;
-        }
-        else if (strcmp("p_final", longOpts[longIndex].name) == 0)
-        {
-          mStorePressureFinalAllFlag = true;
-        }
-
-        //-- velocity related flags
-        else if (strcmp("u_non_staggered_raw", longOpts[longIndex].name) == 0)
-        {
-          mStoreVelocityNonStaggeredRawFlag = true;
-        }
-        else if (strcmp("u_rms", longOpts[longIndex].name) == 0)
-        {
-          mStoreVelocityRmsFlag = true;
-        }
-        else if (strcmp("u_max", longOpts[longIndex].name) == 0)
-        {
-          mStoreVelocityMaxFlag = true;
-        }
-        else if (strcmp("u_min", longOpts[longIndex].name) == 0)
-        {
-          mStoreVelocityMinFlag = true;
-        }
-        else if (strcmp("u_max_all", longOpts[longIndex].name) == 0)
-        {
-          mStoreVelocityMaxAllFlag = true;
-        }
-        else if (strcmp("u_min_all", longOpts[longIndex].name) == 0)
-        {
-          mStoreVelocityMinAllFlag = true;
-        }
-        else if (strcmp("u_final", longOpts[longIndex].name) == 0)
-        {
-          mStoreVelocityFinalAllFlag = true;
-        }
-
-        else if (strcmp("copy_sensor_mask", longOpts[longIndex].name) == 0)
-        {
-          mCopySensorMaskFlag = true;
-        }
-        else
-        {
-          printUsage();
-        }
-
+        mStoreVelocityMinFlag = true;
         break;
       }
+
+      case 23: // u_max_all
+      {
+        mStoreVelocityMaxAllFlag = true;
+        break;
+      }
+
+      case 24: // u_min_all
+      {
+        mStoreVelocityMinAllFlag = true;
+        break;
+      }
+
+      case 25: // u_final
+      {
+        mStoreVelocityFinalAllFlag = true;
+        break;
+      }
+
+      case 26: // u_non_staggered_raw
+      {
+        mStoreVelocityNonStaggeredRawFlag = true;
+        break;
+      }
+
+      // unknown parameter or a missing mandatory argument
+      case ':':
+      case '?':
+      {
+        switch (optopt)
+        {
+          case 'i':
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoInputFile, " ", errorLineIndent));
+            break;
+          }
+          case 'o':
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoOutputFile, " ", errorLineIndent));
+            break;
+          }
+
+          case 'r':
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoProgressPrintInterval, " ", errorLineIndent));
+            break;
+          }
+
+          case 'c':
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoCompressionLevel, " ", errorLineIndent));
+            break;
+          }
+
+        #ifdef _OPENMP
+          case 't':
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtInvalidNumberOfThreads, " ", errorLineIndent));
+            break;
+          }
+        #endif
+
+          case 's':
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoSamplingStartTimeStep, " ", errorLineIndent));
+            break;
+          }
+
+          case 1: // benchmark
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoBenchmarkTimeStep, " ", errorLineIndent));
+            break;
+          }
+
+          case 3: // checkpoint_file
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoCheckpointFile, " ", errorLineIndent));
+            break;
+          }
+
+          case 4: // checkpoint_interval
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoCheckpointInterval," ", errorLineIndent));
+            break;
+          }
+
+          case 5: // verbose
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoVerboseLevel, " ", errorLineIndent));
+            break;
+          }
+
+          default :
+          {
+            printUsage();
+            Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtUnknownParameterOrArgument, " ", errorLineIndent));
+            break;
+          }
+        }
+      }
+
       default:
       {
         printUsage();
+        Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtUnknownParameter, " ", errorLineIndent));
+        break;
       }
     }
   }
 
+  if (mPrintVersionFlag) return;
 
   //-- Post checks --//
   if (mInputFileName == "")
   {
-    fprintf(stderr, "%s", kErrFmtNoInputFile);
     printUsage();
+    Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoInputFile, " ", errorLineIndent));
   }
-
 
   if (mOutputFileName == "")
   {
-    fprintf(stderr, "%s", kErrFmtNoOutputFile);
     printUsage();
+    Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoOutputFile, " ", errorLineIndent));
   }
 
-  if (CheckpointFlag)
+  if (checkpointFlag)
   {
     if (mCheckpointFileName == "")
     {
-      fprintf(stderr, "%s", kErrFmtNoCheckpointFile);
       printUsage();
+      Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoCheckpointFile, " ", errorLineIndent));
     }
-    if (mCheckpointInterval == 0)
+
+    if (mCheckpointInterval <= 0)
     {
-      fprintf(stderr, "%s", kErrFmtNoCheckpointInterval);
       printUsage();
+      Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtNoCheckpointInterval, " ", errorLineIndent));
     }
   }
 
-  if (!(mStorePressureRawFlag     || mStorePressureRmsFlag     || mStorePressureMaxFlag   || mStorePressureMinFlag ||
+  // set a default flag if necessary
+  if (!(mStorePressureRawFlag    || mStorePressureRmsFlag    || mStorePressureMaxFlag      || mStorePressureMinFlag ||
         mStorePressureMaxAllFlag || mStorePressureMinAllFlag || mStorePressureFinalAllFlag ||
-        mStoreVelocityRawFlag     || mStoreVelocityNonStaggeredRawFlag        ||
-        mStoreVelocityRmsFlag     || mStoreVelocityMaxFlag     || mStoreVelocityMinFlag   ||
+        mStoreVelocityRawFlag    || mStoreVelocityNonStaggeredRawFlag                      ||
+        mStoreVelocityRmsFlag    || mStoreVelocityMaxFlag    || mStoreVelocityMinFlag      ||
         mStoreVelocityMaxAllFlag || mStoreVelocityMinAllFlag || mStoreVelocityFinalAllFlag ))
   {
     mStorePressureRawFlag = true;
   }
-
 }// end of parseCommandLine
 //----------------------------------------------------------------------------------------------------------------------
 
