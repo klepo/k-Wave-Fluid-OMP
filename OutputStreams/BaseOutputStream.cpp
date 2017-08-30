@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:30 (created) \n
- *              29 August    2017, 10:17 (revised)
+ *              30 August    2017, 16:40 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,14 +31,12 @@
  */
 
 
-#include <cstring>
 #include <cmath>
 #include <immintrin.h>
 #include <limits>
 
 #include <OutputStreams/BaseOutputStream.h>
 #include <Parameters/Parameters.h>
-#include <Utils/ErrorMessages.h>
 
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -123,7 +121,6 @@ void BaseOutputStream::allocateMemory()
 
   if (!mStoreBuffer)
   {
-    fprintf(stderr, kErrFmtNotEnoughMemory, "BaseOutputHDF5Stream");
     throw std::bad_alloc();
   }
 
