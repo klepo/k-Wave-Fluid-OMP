@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              28 August    2017, 13:32 (revised)
+ *              29 August    2017, 16:43 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -962,15 +962,14 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
   const size_t ny = getRhoX().getDimensionSizes().ny;
   const size_t nx = getRhoX().getDimensionSizes().nx;
 
-  const float dt2 = 2.0f * mParameters.getDt();
   const float dt  = mParameters.getDt();
   const size_t slabSize = ny * nx;
 
   #pragma omp parallel
   {
-    float* rhox  = getRhoX().getData();
-    float* rhoy  = getRhoY().getData();
-    float* rhoz  = getRhoZ().getData();
+    float* rhoX  = getRhoX().getData();
+    float* rhoY  = getRhoY().getData();
+    float* rhoZ  = getRhoZ().getData();
 
     const float* pmlX  = getPmlX().getData();
     const float* pmlY  = getPmlY().getData();
@@ -983,60 +982,24 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
     //----------------------------------------------- rho0 is scalar -------------------------------------------------//
     if (mParameters.getRho0ScalarFlag())
     {
-      const float dtRho0 = mParameters.getRho0Scalar() * dt;
+      const float rho0 = mParameters.getRho0Scalar();
 
-      #pragma omp for schedule (static)
+      #pragma omp for schedule(static)
       for (size_t z = 0; z < nz; z++)
       {
-        register size_t i = z * slabSize;
+        size_t i = z * slabSize;
         for (size_t y = 0; y < ny; y++)
         {
           for (size_t x = 0; x < nx; x++)
           {
-            const float ePmlX   = pmlX[x];
-            const float eDuxdx  = duxdx[i];
+            const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0) * dt;
 
-            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * eDuxdx)) /
-                                (1.0f + (dt2 * eDuxdx)));
+            rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
+            rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
+            rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+
             i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
-        {
-          const float ePmlY = pmlY[y];
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float eDuydy = duydy[i];
-
-            rhoy[i] = ePmlY * (((ePmlY * rhoy[i]) - (dtRho0 * eDuydy))/
-                                (1.0f + (dt2 * eDuydy)));
-            i++;
-          } // x
-        }// y
-      }// z
-
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        const float ePmlZ = pmlZ[z];
-        for (size_t y = 0; y < ny; y++)
-        {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float eDuzdz  = duzdz[i];
-
-            rhoz[i] = ePmlZ * (((ePmlZ * rhoz[i]) - (dtRho0 * eDuzdz)) /
-                                (1.0f + (dt2 * eDuzdz)));
-            i++;
-          } // x
+          }// x
         }// y
       }// z
     }
@@ -1045,66 +1008,30 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
       // rho0 is a matrix
       const float* rho0  = getRho0().getData();
 
-      #pragma omp for schedule (static)
+      #pragma omp for schedule(static)
       for (size_t z = 0; z < nz; z++)
       {
-        register size_t i = z * slabSize;
+        size_t i = z * slabSize;
         for (size_t y = 0; y < ny; y++)
         {
           for (size_t x = 0; x < nx; x++)
           {
-            const float ePmlX  = pmlX[x];
-            const float dtRho0 = dt * rho0[i];
-            const float eDuxdx = duxdx[i];
+            const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0[i]) * dt;
 
-            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * eDuxdx))/
-                                (1.0f + (dt2 * eDuxdx)));
-            i++;
-          } // x
-        }// y
-      }// z
+            rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
+            rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
+            rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
 
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
-        {
-          const float pmlY = getPmlY()[y];
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float dtRho0 = dt * rho0[i];
-            const float eDuydy = duydy[i];
-
-            rhoy[i] = pmlY * (((pmlY * rhoy[i]) - (dtRho0 * eDuydy))/
-                               (1.0f + (dt2 * eDuydy)));
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        const float pmlZ = getPmlZ()[z];
-        for (size_t y = 0; y < ny; y++)
-        {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float dtRho0 = dt * rho0[i];
-            const float eDuzdz = duzdz[i];
-
-            rhoz[i] = pmlZ * (((pmlZ * rhoz[i]) - (dtRho0 * eDuzdz))/
-                               (1.0f + (dt2 * eDuzdz)));
             i++;
           } // x
         }// y
       }// z
     } // end rho is matrix
   }// parallel
-}// end of computeVelocityGradient
+}// end of computeDensityNonliner
 //----------------------------------------------------------------------------------------------------------------------
+
+
 
 
 /**
@@ -1648,10 +1575,6 @@ void KSpaceFirstOrder3DSolver::generateKappaAndNablas()
                 float k     = pi2 * sqrt(xPart + yzPart);
                 float cRefK = cRefDt2 * k;
 
-          // if the exponent is negative, then both abosorb coeffs are 0 not infinity
-          //absorbNabla1[i]   = ((alphaPower - 2) < 0) ? 0.0f : pow(k, alphaPower - 2);
-          //absorbNabla2[i]   = ((alphaPower - 1) < 0) ? 0.0f : pow(k, alphaPower - 1);
-
           kappa[i]          = (cRefK == 0.0f) ? 1.0f : sin(cRefK) / cRefK;
 
           absorbNabla1[i] = pow(k, alphaPower - 2);
@@ -2172,9 +2095,9 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinear(const RealMatrix& absor
     #pragma omp for schedule (static)
     for (size_t i = 0; i < nElements; i++)
     {
-      const float c2        = (c0ScalarFlag) ? c2Scalar        : c2Matrix[i];
-      const float absorbTau = (c0ScalarFlag) ? absorbTauScalar : absorbTauMatrix[i];
-      const float absorbEta = (c0ScalarFlag) ? absorbEtaScalar : absorbEtaMatrix[i];
+      const float c2        = (c0ScalarFlag) ?        c2Scalar        : c2Matrix[i];
+      const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
+      const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
 
       p[i] = c2 *(bOnA[i] + (divider * ((eAbsorbTauTerm[i] * absorbTau) - (eAbsorbEtaTerm[i] * absorbEta))));
     }
@@ -2189,8 +2112,8 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
                                                       const RealMatrix& absorbEtaTerm,
                                                       const RealMatrix& densitySum)
 {
-  const float * eAbsorbTauTerm = absorbTauTerm.getData();
-  const float * eAbsorbEtaTerm = absorbEtaTerm.getData();
+  const float* eAbsorbTauTerm = absorbTauTerm.getData();
+  const float* eAbsorbEtaTerm = absorbEtaTerm.getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
   const float  divider = 1.0f / static_cast<float>(nElements);
@@ -2214,9 +2137,9 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
     #pragma omp for schedule (static)
     for (size_t i = 0; i < nElements; i++)
     {
-      const float c2        = (c0ScalarFlag) ? c2Scalar        : c2Matrix[i];
-      const float absorbTau = (c0ScalarFlag) ? absorbTauScalar : absorbTauMatrix[i];
-      const float absorbEta = (c0ScalarFlag) ? absorbEtaScalar : absorbEtaMatrix[i];
+      const float c2        = (c0ScalarFlag) ?        c2Scalar        : c2Matrix[i];
+      const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
+      const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
 
       p[i] = c2 * (eDenistySum[i] + (divider * ((eAbsorbTauTerm[i] * absorbTau) - (eAbsorbEtaTerm[i] * absorbEta))));
     }
@@ -2243,7 +2166,7 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
     const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
     const bool   nonlinearFlag = mParameters.getBOnAScalarFlag();
-    const float  bOnAScalar    = (nonlinearFlag) ? mParameters.getBOnAScalarFlag() : 0;
+    const float  bOnAScalar    = (nonlinearFlag) ? mParameters.getBOnAScalar(): 0;
     const float* bOnAMatrix    = (nonlinearFlag) ? nullptr : getBOnA().getData();
 
     const bool   rho0ScalarFlag = mParameters.getRho0ScalarFlag();
