@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            30 August    2017, 11:39 (revised)
+ *            30 August    2017, 18:16 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -68,7 +68,7 @@ OutputMessage kOutFmtVerticalLine
 
 /// Output message
 OutputMessage kOutFmtCodeName
-  = "│                 %s                  │\n";
+  = "│                  %s                  │\n";
 /// Output message
 OutputMessage kOutFmtNumberOfThreads
   = "│ Number of CPU threads:                              %9lu │\n";
@@ -119,11 +119,8 @@ OutputMessage kOutFmtElapsedTime
 OutputMessage kOutFmtRecoveredFrom
   = "│ Recovered from time step:                            %8ld │\n";
 ///Output message
-OutputMessage kOutFmtHostMemoryUsage
-  = "│ Peak host memory in use:                           %8luMB │\n";
-///Output message
-OutputMessage kOutFmtDeviceMemoryUsage
-  = "│ Peak device memory in use:                         %8luMB │\n";
+OutputMessage kOutFmtMemoryUsage
+  = "│ Peak memory in use:                                %8luMB │\n";
 ///Output message
 OutputMessage kOutFmtTotalExecutionTime
   = "│ Total execution time:                               %8.2fs │\n";
@@ -135,15 +132,6 @@ OutputMessage kOutFmtLegExecutionTime
 ///Output message
 OutputMessage kOutFmtReadingConfiguration
   = "│ Reading simulation configuration:                      ";
-///Output message
-OutputMessage kOutFmtSelectedDevice
-  = "│ Selected GPU device id:                                ";
-///Output message
-OutputMessage kOutFmtDeviceId
-  = "%6d │\n";
-///Output message
-OutputMessage kOutFmtDeviceName
-  = "│ GPU device name: %44s │\n";
 ///Output message
 OutputMessage kOutFmtDomainSize
   = "│ Domain dimensions: %42s │\n";
@@ -167,7 +155,7 @@ OutputMessage kOutFmtGitHashLeft
 
 ///Output message
 OutputMessage kOutFmtKWaveVersion
-  = "kspaceFirstOrder3D-CUDA v1.2";
+  = "kspaceFirstOrder3D-OMP v1.1";
 
 ///Output message
 OutputMessage kOutFmtFftPlans
@@ -182,21 +170,8 @@ OutputMessage kOutFmtDataLoading
 OutputMessage kOutFmtMemoryAllocation
   = "│ Memory allocation:                                     ";
 ///Output message
-OutputMessage kOutFmtCurrentHostMemory
+OutputMessage kOutFmtCurrentMemory
   = "│ Current host memory in use:                        %8luMB │\n";
-///Output message
-OutputMessage kOutFmtCurrentDeviceMemory
-  = "│ Current device memory in use:                      %8luMB │\n";
-
-///Output message
-OutputMessage kOutFmtCudaGridShapeFormat
-  = "%d x %d";
-///Output message
-OutputMessage kOutFmtCudaSolverGridShape
-  = "│ CUDA solver grid size [blocks x threads]: %19s │\n";
-///Output message
-OutputMessage kOutFmtCudaSamplerGridShape
-  = "│ CUDA sampler grid size [blocks x threads]: %18s │\n";
 
 ///Output message
 OutputMessage kOutFmtSimulationProgress
@@ -220,6 +195,12 @@ OutputMessage kOutFmtPostProcessing
 ///Output message
 OutputMessage kOutFmtStoringCheckpointData
   = "│ + Storing checkpoint data:                             ";
+///Output message
+OutputMessage kOutFmtStoringFftwWisdom
+  = "│ + Storing FFTW wisdom:                                 ";
+///Output message
+OutputMessage kOutFmtLoadingFftwWisdom
+  = "│ Loading FFTW wisdom:                                   ";
 ///Output message
 OutputMessage kOutFmtStoringSensorData
   = "│ + Storing sensor data:                                 ";
@@ -274,10 +255,9 @@ OutputMessage kOutFmtCopySensorMask
 //------------------------------------------------ Print code version ------------------------------------------------//
 /// Print version output message
 OutputMessage kOutFmtBuildNoDataTime
-  = "├───────────────────────────────────────────────────────────────┤\n"
-    "│                       Build information                       │\n"
+  = "│                       Build information                       │\n"
     "├───────────────────────────────────────────────────────────────┤\n"
-    "│ Build number:     kspaceFirstOrder3D v3.5                     │\n"
+    "│ Build number:     kspaceFirstOrder3D v2.16                    │\n"
     "│ Build date:       %*.*s                                 │\n"
     "│ Build time:       %*.*s                                    │\n";
 
@@ -325,40 +305,6 @@ OutputMessage kOutFmtSSE2
   = "│ Instruction set:  Intel SSE 2                                 │\n";
 
 /// Print version output message
-OutputMessage kOutFmtCudaRuntimeNA
-  = "│ CUDA runtime:     N/A                                         │\n";
-/// Print version output message
-OutputMessage kOutFmtCudaRuntime
-  = "│ CUDA runtime:     %d.%d                                         │\n";
-/// Print version output message
-OutputMessage kOutFmtCudaDriver
-  = "│ CUDA driver:      %d.%d                                         │\n";
-
-/// Print version output message
-OutputMessage kOutFmtCudaDeviceInfoNA
-  = "│ CUDA code arch:   N/A                                         │\n"
-    "├───────────────────────────────────────────────────────────────┤\n"
-    "│ CUDA device id:   N/A                                         │\n"
-    "│ CUDA device name: N/A                                         │\n"
-    "│ CUDA capability:  N/A                                         │\n";
-
-/// Print version output message
-OutputMessage kOutFmtCudaCodeArch
-  = "│ CUDA code arch:   %1.1f                                         │\n";
-/// Print version output message
-OutputMessage kOutFmtCudaDevice
-  = "│ CUDA device id:   %d                                           │\n";
-/// Print version output message
-OutputMessage kOutFmtCudaDeviceName
-  = "│ CUDA device name: %s %.*s│\n";
-/// Print version output message
-OutputMessage kOutFmtCudaDeviceNamePadding
-  =  "                                        ";
-/// Print version output message
-OutputMessage kOutFmtCudaCapability
-  = "│ CUDA capability:  %d.%d                                         │\n";
-
-/// Print version output message
 OutputMessage kOutFmtLicense
   = "├───────────────────────────────────────────────────────────────┤\n"
     "│ Contact email:    jarosjir@fit.vutbr.cz                       │\n"
@@ -384,9 +330,7 @@ OutputMessage kOutFmtUsagePart1
 
 /// Usage massage
 OutputMessage kOutFmtUsagePart2
-  = "│ -g <device_number>            │ GPU device to run on          │\n"
-    "│                               │   (default = the first free)  │\n"
-    "│ -r <interval_in_%%>            │ Progress print interval       │\n"
+  = "│ -r <interval_in_%%>            │ Progress print interval       │\n"
     "│                               │   (default = %2ld%%)             │\n"
     "│ -c <compression_level>        │ Compression level <0,9>       │\n"
     "│                               │   (default = %1ld)               │\n"

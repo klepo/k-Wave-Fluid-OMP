@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              29 August    2017, 16:43 (revised)
+ *              30 August    2017, 18:11 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -33,13 +33,11 @@
 // Linux build
 #ifdef __linux__
   #include <sys/resource.h>
-  #include <cmath>
 #endif
 
 // Windows build
 #ifdef _WIN64
   #define _USE_MATH_DEFINES
-  #include <cmath>
   #include <Windows.h>
   #include <Psapi.h>
   #pragma comment(lib, "Psapi.lib")
@@ -49,19 +47,17 @@
   #include <omp.h>
 #endif
 
-#include <sstream>
-#include <cstdio>
-#include <limits>
-
 #include <immintrin.h>
+#include <cmath>
 #include <ctime>
+#include <limits>
 
 #include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
 #include <Containers/MatrixContainer.h>
 #include <Containers/OutputStreamContainer.h>
 
 #include <MatrixClasses/FftwComplexMatrix.h>
-#include <Utils/ErrorMessages.h>
+#include <Logger/Logger.h>
 
 using std::ios;
 
@@ -106,6 +102,9 @@ KSpaceFirstOrder3DSolver::~KSpaceFirstOrder3DSolver()
  */
 void KSpaceFirstOrder3DSolver::allocateMemory()
 {
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtMemoryAllocation);
+  Logger::flush(Logger::LogLevel::kBasic);
+
   // create container, then all matrices
   mMatrixContainer.addMatrices();
   mMatrixContainer.createMatrices();
@@ -113,6 +112,8 @@ void KSpaceFirstOrder3DSolver::allocateMemory()
   // add output streams into container
   //@todo Think about moving under LoadInputData routine...
   mOutputStreamContainer.addStreams(mMatrixContainer);
+
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
 }// end of allocateMemory
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -131,6 +132,8 @@ void KSpaceFirstOrder3DSolver::freeMemory()
  */
 void KSpaceFirstOrder3DSolver::loadInputData()
 {
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtDataLoading);
+  Logger::flush(Logger::LogLevel::kBasic);
   // Start timer
   mDataLoadTime.start();
 
@@ -140,10 +143,17 @@ void KSpaceFirstOrder3DSolver::loadInputData()
   Hdf5File& checkpointFile = mParameters.getCheckpointFile();
 
   // Load data from disk
+  Logger::log(Logger::LogLevel::kFull, kOutFmtNoDone);
+  Logger::log(Logger::LogLevel::kFull, kOutFmtReadingInputFile);
+  Logger::flush(Logger::LogLevel::kFull);
+
+  // Load data from disk
   mMatrixContainer.loadDataFromInputFile();
 
   // close the input file since we don't need it anymore.
   inputFile.close();
+
+  Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
 
   // The simulation does not use checkpointing or this is the first turn
   bool recoverFromCheckpoint = (mParameters.isCheckpointEnabled() &&
@@ -152,6 +162,9 @@ void KSpaceFirstOrder3DSolver::loadInputData()
   if (recoverFromCheckpoint)
   {
     //------------------------------------- Read data from the checkpoint file ---------------------------------------//
+    Logger::log(Logger::LogLevel::kFull, kOutFmtReadingCheckpointFile);
+    Logger::flush(Logger::LogLevel::kFull);
+
     // Open checkpoint file
     checkpointFile.open(mParameters.getCheckpointFileName());
 
@@ -167,8 +180,12 @@ void KSpaceFirstOrder3DSolver::loadInputData()
     mMatrixContainer.loadDataFromCheckpointFile();
 
     checkpointFile.close();
+    Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
 
     //--------------------------------------- Read data from the output file -----------------------------------------//
+    Logger::log(Logger::LogLevel::kFull, kOutFmtReadingOutputFile);
+    Logger::flush(Logger::LogLevel::kFull);
+
     // Reopen output file for RW access
     outputFile.open(mParameters.getOutputFileName(), H5F_ACC_RDWR);
     //Read file header of the output file
@@ -179,11 +196,16 @@ void KSpaceFirstOrder3DSolver::loadInputData()
     loadElapsedTimeFromOutputFile();
 
     mOutputStreamContainer.reopenStreams();
+    Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
   }
   else
   { //------------------------------------ First round of multi-leg simulation ---------------------------------------//
     // Create the output file
+    Logger::log(Logger::LogLevel::kFull, kOutFmtCreatingOutputFile);
+    Logger::flush(Logger::LogLevel::kFull);
+
     outputFile.create(mParameters.getOutputFileName());
+    Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
 
     // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
     mOutputStreamContainer.createStreams();
@@ -191,6 +213,10 @@ void KSpaceFirstOrder3DSolver::loadInputData()
 
  // Stop timer
   mDataLoadTime.stop();
+  if (Logger::getLevel() != Logger::LogLevel::kFull)
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
+  }
 }// end of loadInputData
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -200,83 +226,113 @@ void KSpaceFirstOrder3DSolver::loadInputData()
  */
 void KSpaceFirstOrder3DSolver::compute()
 {
-  mPreProcessingTime.start();
+  // fft initialisation and preprocessing
+  try
+  {
+    mPreProcessingTime.start();
 
-  fprintf(stdout,"FFT plans creation.........."); fflush(stdout);
+    // initilaise all FFTW plans
+    InitializeFftwPlans();
 
-    InitializeFftwPlans( );
+    // preprocessing phase generating necessary variables
+    preProcessing();
 
-  fprintf(stdout,"Done \n");
-  fprintf(stdout,"Pre-processing phase........"); fflush(stdout);
+    mPreProcessingTime.stop();
+  }
+  catch (const std::exception& e)
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
 
+    Logger::errorAndTerminate(Logger::wordWrapString(e.what(),kErrFmtPathDelimiters, 9));
+  }
 
-    preProcessing( );
+  // Logger header for simulation
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mPreProcessingTime.getElapsedTime());
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtCompResourcesHeader);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtCurrentMemory,   getMemoryUsage());
 
-  fprintf(stdout,"Done \n");
-  fprintf(stdout,"Current memory in use:%8ldMB\n", getMemoryUsage());
-  mPreProcessingTime.stop();
-
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",mPreProcessingTime.getElapsedTime());
-
-  mSimulationTime.start();
+  // Main loop
+  try
+  {
+    mSimulationTime.start();
 
     computeMainLoop();
 
-  mSimulationTime.stop();
+    mSimulationTime.stop();
 
-  mPostProcessingTime.start();
-
-  if (isCheckpointInterruption())
-  { // Checkpoint
-    fprintf(stdout,"-------------------------------------------------------------\n");
-    fprintf(stdout,".............. Interrupted to checkpoint! ...................\n");
-    fprintf(stdout,"Number of time steps completed:                    %10ld\n",  mParameters.getTimeIndex());
-    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",mSimulationTime.getElapsedTime());
-    fprintf(stdout,"-------------------------------------------------------------\n");
-    fprintf(stdout,"Checkpoint in progress......"); fflush(stdout);
-
-    saveCheckpointData();
+    Logger::log(Logger::LogLevel::kBasic,kOutFmtSimulationEndSeparator);
   }
-  else
-  { // Finish
-    fprintf(stdout,"-------------------------------------------------------------\n");
-    fprintf(stdout,"Elapsed time:                                       %8.2fs\n",mSimulationTime.getElapsedTime());
-    fprintf(stdout,"-------------------------------------------------------------\n");
-    fprintf(stdout,"Post-processing phase......."); fflush(stdout);
+  catch (const std::exception& e)
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulatoinFinalSeparator);
+    Logger::errorAndTerminate(Logger::wordWrapString(e.what(),kErrFmtPathDelimiters, 9));
+  }
 
-    postPorcessing();
+  // Post processing region
+  mPostProcessingTime.start();
+  try
+  {
+    if (isCheckpointInterruption())
+    { // Checkpoint
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime());
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtCheckpointTimeSteps, mParameters.getTimeIndex());
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtCheckpointHeader);
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtCreatingCheckpoint);
+      Logger::flush(Logger::LogLevel::kBasic);
 
-    // if checkpointing is enabled and the checkpoint file was created created in the past, delete it
-    if (mParameters.isCheckpointEnabled())
-    {
-      std::remove(mParameters.getCheckpointFileName().c_str());
-      FftwComplexMatrix::deleteStoredWisdom();
+      if (Logger::getLevel() == Logger::LogLevel::kFull)
+      {
+        Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
+      }
+
+      saveCheckpointData();
+
+      if (Logger::getLevel() != Logger::LogLevel::kFull)
+      {
+        Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
+      }
+    }
+    else
+    { // Finish
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime());
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtPostProcessing);
+      Logger::flush(Logger::LogLevel::kBasic);
+
+      postProcessing();
+
+      // if checkpointing is enabled and the checkpoint file was created in the past, delete it
+      if (mParameters.isCheckpointEnabled())
+      {
+        std::remove(mParameters.getCheckpointFileName().c_str());
+      }
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
     }
   }
+  catch (const std::exception &e)
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
 
+    Logger::errorAndTerminate(Logger::wordWrapString(e.what(), kErrFmtPathDelimiters,9));
+  }
   mPostProcessingTime.stop();
 
-  fprintf(stdout,"Done \n");
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",mPostProcessingTime.getElapsedTime());
-
+  // Final data written
+  try
+  {
     writeOutputDataInfo();
+    mParameters.getOutputFile().close();
 
-  mParameters.getOutputFile().close();
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mPostProcessingTime.getElapsedTime());
+    }
+  catch (const std::exception &e)
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
+    Logger::errorAndTerminate(Logger::wordWrapString(e.what(), kErrFmtPathDelimiters, 9));
+  }
 }// end of compute()
-//----------------------------------------------------------------------------------------------------------------------
-
-/**
- * Print parameters of the simulation.
- */
-void KSpaceFirstOrder3DSolver::printSimulationParameters(FILE* file) const
-{
-  fprintf(file,"Domain dims:   [%4ld, %4ld,%4ld]\n",
-                mParameters.getFullDimensionSizes().nx,
-                mParameters.getFullDimensionSizes().ny,
-                mParameters.getFullDimensionSizes().nz);
-
-  fprintf(file,"Simulation time steps:  %8ld\n", mParameters.getNt());
-}// end of printSimulationParameters
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -310,56 +366,67 @@ size_t KSpaceFirstOrder3DSolver::getMemoryUsage() const
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Print full code name and the license.
+ * Get release code version.
  */
-void KSpaceFirstOrder3DSolver::printFullCodeNameAndLicense(FILE* file) const
+std::string KSpaceFirstOrder3DSolver::getCodeName() const
 {
-  fprintf(file,"\n");
-  fprintf(file,"+----------------------------------------------------+\n");
-  fprintf(file,"| Build name:       kspaceFirstOrder3D v2.16         |\n");
-  fprintf(file,"| Build date:       %*.*s                      |\n", 10,11,__DATE__);
-  fprintf(file,"| Build time:       %*.*s                         |\n", 8,8,__TIME__);
-  #if (defined (__KWAVE_GIT_HASH__))
-    fprintf(file,"| Git hash: %s |\n",__KWAVE_GIT_HASH__);
-  #endif
-  fprintf(file,"|                                                    |\n");
+  return std::string(kOutFmtKWaveVersion);
+}// end of getCodeName
+//----------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * Print full code name and the license.
+ * @todo - Add __AVX512__ intrinsics
+ */
+void KSpaceFirstOrder3DSolver::printFullCodeNameAndLicense() const
+{
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtBuildNoDataTime, 10, 11, __DATE__, 8, 8, __TIME__);
+
+  if (mParameters.getGitHash() != "")
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtVersionGitHash, mParameters.getGitHash().c_str());
+  }
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
+
 
   // OS detection
   #ifdef __linux__
-    fprintf(file,"| Operating system: Linux x64                        |\n");
-  #endif
-  #ifdef _WIN64
-    fprintf(file,"| Operating system: Windows x64                      |\n");
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLinuxBuild);
+  #elif __APPLE__
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtMacOsBuild);
+  #elif _WIN32
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtWindowsBuild);
   #endif
 
   // Compiler detections
   #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
-    fprintf(file,"| Compiler name:    GNU C++ %.19s                    |\n", __VERSION__);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtGnuCompiler, __VERSION__);
   #endif
   #ifdef __INTEL_COMPILER
-    fprintf(file,"| Compiler name:    Intel C++ %d                   |\n", __INTEL_COMPILER);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtIntelCompiler, __INTEL_COMPILER);
+  #endif
+  #ifdef _MSC_VER
+	Logger::log(Logger::LogLevel::kBasic, kOutFmtVisualStudioCompiler, _MSC_VER);
   #endif
 
-  // instruction set
+     // instruction set
   #if (defined (__AVX2__))
-    fprintf(file,"| Instruction set:  Intel AVX 2                      |\n");
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtAVX2);
   #elif (defined (__AVX__))
-    fprintf(file,"| Instruction set:  Intel AVX                        |\n");
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtAVX);
   #elif (defined (__SSE4_2__))
-    fprintf(file,"| Instruction set:  Intel SSE 4.2                    |\n");
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtSSE42);
   #elif (defined (__SSE4_1__))
-    fprintf(file,"| Instruction set:  Intel SSE 4.1                    |\n");
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtSSE41);
   #elif (defined (__SSE3__))
-    fprintf(file,"| Instruction set:  Intel SSE 3                      |\n");
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtSSE3);
   #elif (defined (__SSE2__))
-    fprintf(file,"| Instruction set:  Intel SSE 2                      |\n");
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtSSE2);
   #endif
 
-  fprintf(file,"|                                                    |\n");
-  fprintf(file,"| Copyright (C) 2014 Jiri Jaros and Bradley Treeby   |\n");
-  fprintf(file,"| http://www.k-wave.org                              |\n");
-  fprintf(file,"+----------------------------------------------------+\n");
-  fprintf(file,"\n");
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtLicense);
+
 }// end of printFullCodeNameAndLicense
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -397,6 +464,7 @@ void KSpaceFirstOrder3DSolver::setProcessorAffinity()
  */
 void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
 {
+
   // initialization of FFTW library
   #ifdef _OPENMP
     fftwf_init_threads();
@@ -407,12 +475,31 @@ void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
   bool recoverFromPrevState = (mParameters.isCheckpointEnabled() &&
                                Hdf5File::canAccess(mParameters.getCheckpointFileName()));
 
-  // import FFTW wisdom if it is here
-  if (recoverFromPrevState)
-  {
-     // try to find the wisdom in the file that has the same name as the checkpoint file (different extension)
-    FftwComplexMatrix::importWisdom();
-  }
+
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+    // import FFTW wisdom if it is here
+    if (recoverFromPrevState)
+    {
+
+
+      Logger::log(Logger::LogLevel::kFull, kOutFmtLoadingFftwWisdom);
+      Logger::flush(Logger::LogLevel::kFull);
+      // import FFTW wisdom
+      try
+      {
+        // try to find the wisdom in the file that has the same name as the checkpoint file (different extension)
+        FftwComplexMatrix::importWisdom();
+        Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
+      }
+      catch (const std::runtime_error& e)
+      {
+        Logger::log(Logger::LogLevel::kFull, kOutFmtFailed);
+      }
+    }
+  #endif
+
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtFftPlans);
+  Logger::flush(Logger::LogLevel::kBasic);
 
   // create real to complex plans
   getTempFftwX().createR2CFftPlan3D(getP());
@@ -441,6 +528,8 @@ void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
     getTempFftwShift().createR2CFftPlan1DZ(getP());
     getTempFftwShift().createC2RFftPlan1DZ(getP());
   }// end u_non_staggered
+
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
 }// end of InitializeFftwPlans
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -449,6 +538,9 @@ void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
  */
 void KSpaceFirstOrder3DSolver::preProcessing()
 {
+  Logger::log(Logger::LogLevel::kBasic,kOutFmtPreProcessing);
+  Logger::flush(Logger::LogLevel::kBasic);
+
   // get the correct sensor mask and recompute indices
   if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
@@ -509,6 +601,8 @@ void KSpaceFirstOrder3DSolver::preProcessing()
 
   // calculate c^2. It has to be after kappa gen... because of c modification
   computeC2();
+
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
 }// end of preProcessing
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -524,7 +618,8 @@ void KSpaceFirstOrder3DSolver::computeMainLoop()
     mActPercent = (100 * mParameters.getTimeIndex()) / mParameters.getNt();
   }
 
-  printOtputHeader();
+  // Progress header
+  Logger::log(Logger::LogLevel::kBasic,kOutFmtSimulationHeader);
 
   mIterationTime.start();
 
@@ -584,7 +679,7 @@ void KSpaceFirstOrder3DSolver::computeMainLoop()
 /**
  * Post processing the quantities, closing the output streams and storing the sensor mask.
  */
-void KSpaceFirstOrder3DSolver::postPorcessing()
+void KSpaceFirstOrder3DSolver::postProcessing()
 {
   if (mParameters.getStorePressureFinalAllFlag())
   {
@@ -619,7 +714,7 @@ void KSpaceFirstOrder3DSolver::postPorcessing()
                                        mParameters.getCompressionLevel());
     }
   }
-}// end of postPorcessing
+}// end of postProcessing
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -681,13 +776,29 @@ void KSpaceFirstOrder3DSolver::writeOutputDataInfo()
  */
 void KSpaceFirstOrder3DSolver::saveCheckpointData()
 {
-  // export FFTW wisdom
-  FftwComplexMatrix::exportWisdom();
-
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+     Logger::log(Logger::LogLevel::kFull, kOutFmtStoringFftwWisdom);
+     Logger::flush(Logger::LogLevel::kFull);
+    // export FFTW wisdom
+     try
+     {
+       FftwComplexMatrix::exportWisdom();
+       Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
+     }
+     catch (const std::runtime_error& e)
+     {
+       Logger::log(Logger::LogLevel::kFull, kOutFmtFailed);
+     }
+  #endif
+  
   // Create Checkpoint file
   Hdf5File& checkpointFile = mParameters.getCheckpointFile();
   // if it happens and the file is opened (from the recovery, close it)
   if (checkpointFile.isOpen()) checkpointFile.close();
+
+  Logger::log(Logger::LogLevel::kFull, kOutFmtStoringCheckpointData);
+  Logger::flush(Logger::LogLevel::kFull);
+
   // Create the new file (overwrite the old one)
   checkpointFile.create(mParameters.getCheckpointFileName());
 
@@ -716,11 +827,17 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
 
   // Close the checkpoint file
   checkpointFile.close();
+  Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
 
   // checkpoint output streams only if necessary (t_index > start_index) - here we're at  step + 1
   if (mParameters.getTimeIndex() > mParameters.getSamplingStartTimeIndex())
   {
+    Logger::log(Logger::LogLevel::kFull,kOutFmtStoringSensorData);
+    Logger::flush(Logger::LogLevel::kFull);
+
     mOutputStreamContainer.checkpointStreams();
+
+    Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
   }
   mOutputStreamContainer.closeStreams();
 }// end of saveCheckpointData
@@ -2380,27 +2497,15 @@ void KSpaceFirstOrder3DSolver::printStatistics()
     now += toGo;
     current = localtime(&now);
 
-    fprintf(stdout, "%5li%c      %9.3fs      %9.3fs      %02i/%02i/%02i %02i:%02i:%02i\n",
-            static_cast<size_t>(((timeIndex) / (nt * 0.01f))) ,'%',
-            elTime, toGo,
-            current->tm_mday, current->tm_mon + 1, current->tm_year - 100,
-            current->tm_hour, current->tm_min, current->tm_sec
-            );
-
-    fflush(stdout);
+    Logger::log(Logger::LogLevel::kBasic,
+                kOutFmtSimulationProgress,
+                static_cast<size_t>(((timeIndex) / (nt * 0.01f))),'%',
+                elTime, toGo,
+                current->tm_mday, current->tm_mon+1, current->tm_year-100,
+                current->tm_hour, current->tm_min, current->tm_sec);
+    Logger::flush(Logger::LogLevel::kBasic);
   }
 }// end of printStatistics
-//----------------------------------------------------------------------------------------------------------------------
-
-/**
- * Print the header of the progress statistics.
- */
-void KSpaceFirstOrder3DSolver::printOtputHeader() const
-{
-  fprintf(stdout,"-------------------------------------------------------------\n");
-  fprintf(stdout,"....................... Simulation ..........................\n");
-  fprintf(stdout,"Progress...ElapsedTime........TimeToGo......TimeOfTermination\n");
-}// end of printOtputHeader
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -2438,30 +2543,23 @@ void KSpaceFirstOrder3DSolver::checkOutputFile()
   // test file type
   if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kOutput)
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, kErrFmtBadOutputFileFormat, mParameters.getOutputFileName().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadOutputFileFormat, mParameters.getOutputFileName().c_str()));
   }
 
   // test file major version
   if (!fileHeader.checkMajorFileVersion())
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, kErrFmtBadMajorFileVersion,
-            mParameters.getCheckpointFileName().c_str(),
-            fileHeader.getFileMajorVersion().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadMajorFileVersion,
+                                             mParameters.getCheckpointFileName().c_str(),
+                                             fileHeader.getFileMajorVersion().c_str()));
   }
 
   // test file minor version
   if (!fileHeader.checkMinorFileVersion())
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage,
-            kErrFmtBadMinorFileVersion,
-            mParameters.getCheckpointFileName().c_str(),
-            fileHeader.getFileMinorVersion().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadMinorFileVersion,
+                                             mParameters.getCheckpointFileName().c_str(),
+                                             fileHeader.getFileMinorVersion().c_str()));
   }
 
 
@@ -2477,17 +2575,13 @@ void KSpaceFirstOrder3DSolver::checkOutputFile()
 
  if (mParameters.getFullDimensionSizes() != outputDimSizes)
  {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage,
-            kErrFmtOutputDimensionsMismatch,
-            outputDimSizes.nx,
-            outputDimSizes.ny,
-            outputDimSizes.nz,
-            mParameters.getFullDimensionSizes().nx,
-            mParameters.getFullDimensionSizes().ny,
-            mParameters.getFullDimensionSizes().nz);
-
-   throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtOutputDimensionsMismatch,
+                                             outputDimSizes.nx,
+                                             outputDimSizes.ny,
+                                             outputDimSizes.nz,
+                                             mParameters.getFullDimensionSizes().nx,
+                                             mParameters.getFullDimensionSizes().ny,
+                                             mParameters.getFullDimensionSizes().nz));
  }
 }// end of checkOutputFile
 //----------------------------------------------------------------------------------------------------------------------
@@ -2507,31 +2601,24 @@ void KSpaceFirstOrder3DSolver::checkCheckpointFile()
   // test file type
   if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kCheckpoint)
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage, kErrFmtBadCheckpointFileFormat, mParameters.getCheckpointFileName().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadCheckpointFileFormat,
+                                             mParameters.getCheckpointFileName().c_str()));
   }
 
   // test file major version
   if (!fileHeader.checkMajorFileVersion())
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage,
-            kErrFmtBadMajorFileVersion,
-            mParameters.getCheckpointFileName().c_str(),
-            fileHeader.getFileMajorVersion().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadMajorFileVersion,
+                                             mParameters.getCheckpointFileName().c_str(),
+                                             fileHeader.getFileMajorVersion().c_str()));
   }
 
   // test file minor version
   if (!fileHeader.checkMinorFileVersion())
   {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage,
-            kErrFmtBadMinorFileVersion,
-            mParameters.getCheckpointFileName().c_str(),
-            fileHeader.getFileMinorVersion().c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadMinorFileVersion,
+                                             mParameters.getCheckpointFileName().c_str(),
+                                             fileHeader.getFileMinorVersion().c_str()));
   }
 
 
@@ -2543,17 +2630,13 @@ void KSpaceFirstOrder3DSolver::checkCheckpointFile()
 
  if (mParameters.getFullDimensionSizes() != checkpointDimSizes)
  {
-    char ErrorMessage[256] = "";
-    sprintf(ErrorMessage,
-            kErrFmtCheckpointDimensionsMismatch,
-            checkpointDimSizes.nx,
-            checkpointDimSizes.ny,
-            checkpointDimSizes.nz,
-            mParameters.getFullDimensionSizes().nx,
-            mParameters.getFullDimensionSizes().ny,
-            mParameters.getFullDimensionSizes().nz);
-
-   throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCheckpointDimensionsMismatch,
+                                             checkpointDimSizes.nx,
+                                             checkpointDimSizes.ny,
+                                             checkpointDimSizes.nz,
+                                             mParameters.getFullDimensionSizes().nx,
+                                             mParameters.getFullDimensionSizes().ny,
+                                             mParameters.getFullDimensionSizes().nz));
  }
 }// end of checkCheckpointFile
 //----------------------------------------------------------------------------------------------------------------------

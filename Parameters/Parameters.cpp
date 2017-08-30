@@ -283,7 +283,7 @@ void Parameters::readScalarsFromInputFile()
     }// switch
   }// version 1.1
 
-
+  
   // flags.
   mInputFile.readScalarValue(rootGroup, kVelocityXSourceFlagName,  mVelocityXSourceFlag);
   mInputFile.readScalarValue(rootGroup, kVelocityYSourceFlagName,  mVelocityYSourceFlag);

@@ -742,7 +742,6 @@ void FftwComplexMatrix::exportWisdom()
 {
   #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
     int success = fftwf_export_wisdom_to_filename(getWisdomFileName().c_str());
-
     if (success == 0)
     {
       throw std::runtime_error(kErrFmtFftWisdomNotExported);
@@ -761,8 +760,7 @@ void FftwComplexMatrix::importWisdom()
     if (success == 0)
     {
       // print out a warning!
-      //throw std::runtime_error(ErrFmtFftWisdomNotImported);
-
+      throw std::runtime_error(ErrFmtFftWisdomNotImported);
     }
   #endif
 }// end of importWisdom

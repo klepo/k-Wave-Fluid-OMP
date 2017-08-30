@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14      (created) \n
- *              30 August    2017, 15:32      (revised)
+ *              30 August    2017, 18:36      (revised)
  *
 
  * @section License
@@ -40,7 +40,6 @@
 
 //Windows 64 build
 #ifdef _WIN64
-  #include<stdio.h>
   #include<Winsock2.h>
   #pragma comment(lib, "Ws2_32.lib")
 #endif

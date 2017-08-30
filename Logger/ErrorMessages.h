@@ -13,7 +13,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            30 August    2017, 15:56 (revised)
+ *            30 August    2017, 18:18 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -53,7 +53,7 @@ ErrorMessage kErrFmtPathDelimiters
   = "/\\_,.:-| ()[]{}";
 /// error message - out of memory
 ErrorMessage  kErrFmtOutOfMemory
-  = "Error: Not enough CPU or GPU memory to run this simulation.";
+  = "Error: Not enough CPU memory to run this simulation.";
 /// Unknown error - unknown error
 ErrorMessage  kErrFmtUnknownError
   = "Error: An unknown error happened. ";
@@ -150,7 +150,6 @@ ErrorMessage kErrFmtNoProgressPrintInterval
 /// Command line parameters error message
 ErrorMessage kErrFmtInvalidNumberOfThreads
   = "Error: No or invalid number of CPU threads.";
-/// Command line parameters error message
 /// Command line parameters error message
 ErrorMessage kErrFmtNoCompressionLevel
   = "Error: No or invalid compression level.";

@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 32.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            30 August    2017, 15:39 (revised)
+ *            30 August    2017, 18:36 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -40,7 +40,6 @@
 
 //Windows 64 build
 #ifdef _WIN64
-  #include<stdio.h>
   #include<Winsock2.h>
   #pragma comment(lib, "Ws2_32.lib")
 #endif

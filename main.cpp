@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:57 (created) \n
- *              28 August    2017, 14:59 (revised)
+ *              30 August    2017, 17:17 (revised)
  *
  *
  * @mainpage kspaceFirstOrder3D-OMP
@@ -182,156 +182,150 @@
  *
  *
  *
- * @section Parameters 3 Command Line Parameters
- * The  C++ code requires two mandatory parameters and accepts a few optional parameters and flags.
- * The mandatory parameters \c -i and \c -o specify the input and output file. The
- * file names respect the path conventions for particular operating system.
- * If any of the files is not specified, cannot be found or created, an error
- * message is shown.
+ * The C++ code requires two mandatory parameters and accepts a few optional parameters and  flags. Ill parameters,
+ * bad simulation files, and runtime errors such as out-of-memory problems, lead to an exception followed by an error
+ * message shown and execution termination.
  *
- * The \c -t parameter sets the number of threads used, which defaults the system maximum.
- * On CPUs with Intel Hyper-Threading (HT), the performance is sometimes better if HT
- * is disabled in the BIOS settings. If HT is switched on, the default will be to
- * spawn twice as many threads as there are physical processor cores, which may but again
- * may not slow down the code execution. Therefore, if the HT is on, try specifying the
- * number of threads manually for best performance (e.g. 4 for Intel i7). We
- * recommend experimenting with this parameter to find the best configuration.
- * Note, if there are other tasks being executed on the system, it might be useful
- * to further limit the number of threads to prevent system overload.
+ * The mandatory parameters <tt>-i</tt> and <tt>-o</tt> specify the input and output file. The file names respect the
+ * path conventions for particular operating system. If any of the files is not specified, cannot be found or created,
+ * an error message is shown and the code terminates.
  *
- * The \c -r parameter specifies how often information about the simulation progress
- * is printed out to the command line. By default, the C++ code prints out the
- * progress of the simulation, the elapsed time, and the estimated time of
- * completion in intervals corresponding to 5% of the total number of times steps.
- *
- * The \c -c parameter specifies the compression level used by the ZIP library to
- * reduce the size of the output file. The actual compression rate is highly dependent
- * on the shape of the sensor mask and the range of stored quantities. In general,
- * the output data is very hard to compress, and using higher compression levels
- * can greatly increase the time to save data while not having a large impact on
- * the final file size. That's why we decided to disable compression in default settings.
- *
- * The \c <tt>--benchmark</tt> parameter enables the total length of simulation (i.e.,
- * the number of time steps) to be overridden by setting a new number of time
- * steps to simulate. This is particularly useful for performance evaluation and
- * benchmarking. As the code performance is relatively stable, 50-100 time steps is
- * usually enough to predict the simulation duration. This parameter can also be
- * used to quickly find the ideal number of CPU threads to use.
+ * The <tt>-t</tt> parameter sets the number of threads used, which defaults the system maximum. If possible enable
+ * tread binding and placement using export OMP_PROC_BIND=true.
  *
  *
+ * The <tt>-r</tt> parameter specifies how often information about the simulation progress is printed out to the command
+ * line. By default, the C++ code prints out the  progress of the simulation, the elapsed time, and the estimated
+ * time of completion in intervals corresponding to 5% of the total number of times steps.
  *
- * For jobs that are expected to run for a very long time, it may be useful to
- * checkpoint and restart the execution. One motivation is the wall clock limit
- * per task on clusters where jobs must fit within a given time span
- * (e.g. 24 hours). The second motivation is a level of fault-tolerance, where
- * you can back up the state of the simulation after a predefined period.
- * To enable checkpoint-restart, the user is asked to specify a file to store the
- * actual state of the simulation by  <tt>--checkpoint_file</tt> and the
- * period in seconds after which the simulation will be interrupted by <tt>--checkpoint_interval</tt>.
- * When running on a cluster, please allocate enough time for the checkpoint procedure
- * that can take a non-negligible amount of time (7 matrices have to be stored in
- * the checkpoint file and all aggregated quantities are flushed into the output file).
+ * The <tt>-c</tt> parameter specifies the compression level used by the ZIP library to reduce the size of the output
+ * file. The actual compression rate is highly dependent on the shape of the sensor mask and the range of stored
+ * quantities and may be computationally expensive. In general, the output data is very hard to compress, and using
+ * higher compression levels can greatly increase the time to save data while not having a large impact on the final
+ * file size. That's why we decided to disable compression in default settings.
  *
- * When controlling a multi-leg simulation by a script loop, the parameters of the code
- * remains the same in all legs. The first leg of the simulation creates a checkpoint
- * file while the last one deletes it. If the checkpoint file is not found the
- * simulation starts from the beginning. In order to find out how many steps have been
- * finished, please open the output file and read the variable <tt>t_index</tt>.
+ * The <tt>\--benchmark</tt> parameter enables the total length of simulation (i.e., the number of time steps) to be
+ * overridden by setting a new number of time  steps to simulate. This is particularly useful for performance evaluation
+ * and benchmarking. As the code performance is relatively stable, 50-100 time steps is usually enough to predict the
+ * simulation duration. This parameter can also be used to quickly check the simulation is set up correctly.
+ *
+ * The <tt>\--verbose</tt> parameter enables to select between three levels of verbosity. For  routine simulations, the
+ * verbose level of 0 (the default one) is usually sufficient. For more information about the simulation, checking the
+ * parameters of the simulation, code version, GPU used, file paths, and debugging running scripts, verbose levels
+ * 1 and 2 may be very useful.
+ *
+ * The <tt>-h</tt> and <tt>\--help</tt> parameters print all the parameters of the C++ code. The <tt>\--version </tt>
+ * parameter reports detail information about the code useful for  debugging and bug reports. It prints out the internal
+ * version, the build date and time, the git hash allowing us to track the version of the source code, the operating
+ * system, the compiler name and version and the instruction set used.
+ *
+ * For jobs that are expected to run for a very long time, it may be useful to  checkpoint and restart the execution.
+ * One motivation is the wall clock limit  per task on clusters where jobs must fit within a given time span (e.g. 24
+ * hours). The second motivation is a level of fault-tolerance, where you can back up the state of the simulation after
+ * a predefined period. To enable checkpoint-restart, the user is asked to specify a file to store the actual state of
+ * the simulation by  <tt>\--checkpoint_file</tt> and the period in seconds after which the simulation will be
+ * interrupted by <tt>\--checkpoint_interval</tt>.  When running on a cluster, please allocate enough time for the
+ * checkpoint procedure  that can take a non-negligible amount of time (7 matrices have to be stored in  the
+ * checkpoint file and all aggregated quantities are flushed into the output file). Please note, that the checkpoint
+ * file name and path is not checked at the beginning of the simulation, but at the time the code starts
+ * checkpointing. Thus make sure the file path was correctly specified (otherwise you will not find out the simulation
+ * crashed until the first leg of the simulation finishes). The rationale behind this is that to keep as high level of
+ * fault tolerance as possible, the checkpoint file should be touched even when really necessary.
+ *
+ * When controlling a multi-leg simulation by a script loop, the parameters of the code remains the same in all legs.
+ * The first leg of the simulation creates a checkpoint  file while the last one deletes it. If the checkpoint file is
+ * not found the simulation starts from the beginning. In order to find out how many steps have been finished, please
+ * open the output file and read the variable <tt>t_index</tt> and compare it with <tt>Nt</tt> (e.g. by the h5dump
+ * command).
  *
  *
- * The \c -h and \c --help parameters print all the parameters of the C++ code.
- * The <tt> --version </tt>parameter reports detail information about the code useful for
- * debugging and bug reports. It prints out the internal version, the build date and time, the
- * git hash allowing us to track the version of the source code, the operating system,
- * the compiler name and version and the instruction set used.
+ * The remaining flags specify the output quantities to be recorded during the  simulation and stored on disk analogous
+ * to  the sensor.record input. If the <tt>-p</tt> or <tt>\--p\_raw</tt> flags are set (these are equivalent), a time
+ * series of  the acoustic pressure at the grid points specified by  the sensor mask is recorded. If the
+ * <tt>\--p_rms</tt>, <tt>\--p_max</tt>, <tt>\--p_min</tt> flags  are set, the root mean square and/or maximum and/or
+ * minimum values of the pressure at the grid points specified by  the sensor mask are recorded. If the
+ * <tt>\--p_final</tt> flag is set, the values for the entire acoustic pressure field in the final time step of the
+ * simulation is stored (this will always include the PML, regardless of  the setting for <tt> 'PMLInside'</tt>).
+ * The flags <tt>\--p_max_all</tt> and <tt>\--p_min_all</tt> allow to calculate the maximum and  minimum values over the
+ * entire acoustic pressure field, regardless on the shape of the sensor mask. Flags to record the acoustic particle
+ * velocity are defined in an analogous fashion. For proper calculation of acoustic intensity, the particle velocity
+ * has to be shifted onto the same grid as the acoustic  pressure. This can be done by setting
+ * <tt>\--u_non_staggered_raw</tt> flag, that first shifts the  particle velocity and then samples the grid points
+ * specified by the sensor mask. Since the  shift operation requires additional FFTs, the impact on the simulation time
+ * may be significant.
  *
+ * Any combination of <tt>p</tt> and <tt>u</tt> flags is admissible. If no output flag is set, a time-series for the
+ * acoustic pressure is recorded. If it is not necessary to collect the output quantities over the entire simulation,
+ * the starting time step when the collection begins can be specified using the -s parameter.  Note, the index for the
+ * first time step is 1 (this follows the MATLAB indexing convention).
  *
- * The remaining flags specify the output quantities to be recorded during the
- * simulation and stored on disk analogous to  the sensor.record input. If
- * the \c -p or \c --p\_raw flags are set (these are equivalent), a time series of
- * the acoustic pressure at the grid points specified by the sensor mask is
- * recorded. If the \c --p_rms, \c --p_max, \c --p_min flags are set,
- * the root mean square and/or maximum and/or minimum values of the pressure at
- * the grid points specified by the sensor mask are recorded. If the
- * \c --p_final flag is set, the values for the entire acoustic pressure field
- * in the final time step of the simulation is stored (this will always include
- * the PML, regardless of  the setting for <tt> `PMLInside'</tt>).
- * The flags \c --p_max_all and \c --p_min_all allow to calculate the maximum and
- * minimum values over the entire acoustic pressure field, regardless on the shape
- * of the sensor mask.
- * Flags to record the acoustic particle velocity are defined in an analogous fashion.
- * For proper calculation of acoustic intensity, the particle velocity has to be
- * shifted onto the same grid as the acoustic pressure. This can be done by setting
- * \c --u_non_staggered_raw flag, that first shifts the particle velocity and then
- * samples the grid points specified by the sensor mask. Since the shift operation
- * requires additional FFTs, the impact on the simulation time may be significant.
- *
- * Any combination of <tt>p</tt> and <tt>u</tt> flags is admissible. If no output flag is set,
- * a time-series for the acoustic pressure is recorded. If it is not necessary
- * to collect the output quantities over the entire simulation, the starting time
- * step when the collection begins can be specified using the -s parameter.
- * Note, the index for the first time step is 1 (this follows the MATLAB indexing convention).
- *
- * The \c --copy_sensor_mask will copy the sensor from the input file to the output
- * one at the end of the simulation. This helps in post-processing and visualisation of
- * the outputs.
+ * The <tt>\--copy_sensor_mask</tt> will copy the sensor from the input file to the output  one at the end of the
+ * simulation. This helps in post-processing and visualisation of the outputs.
  *
 \verbatim
----------------------------------- Usage ---------------------------------
-Mandatory parameters:
-  -i <input_file_name>            : HDF5 input file
-  -o <output_file_name>           : HDF5 output file
-
-Optional parameters:
-  -t <num_threads>                : Number of CPU threads
-                                      (default = all)
-  -r <interval_in_%>              : Progress print interval
-                                      (default = 5%)
-  -c <comp_level>                 : Output file compression level <0,9>
-                                      (default = 0)
-  --benchmark <steps>             : Run a specified number of time steps
-
-  --checkpoint_file <file_name>   : HDF5 checkpoint file
-  --checkpoint_interval <seconds> : Stop after a given number of seconds and
-                                      store the actual state
-
-  -h                              : Print help
-  --help                          : Print help
-  --version                       : Print version
-
-Output flags:
-  -p                              : Store acoustic pressure
-                                      (default if nothing else is on)
-                                      (the same as --p_raw)
-  --p_raw                         : Store raw time series of p (default)
-  --p_rms                         : Store rms of p
-  --p_max                         : Store max of p
-  --p_min                         : Store min of p
-  --p_max_all                     : Store max of p (whole domain)
-  --p_min_all                     : Store min of p (whole domain)
-  --p_final                       : Store final pressure field
-
-  -u                              : Store ux, uy, uz
-                                      (the same as --u_raw)
-  --u_raw                         : Store raw time series of ux, uy, uz
-  --u_non_staggered_raw           : Store non-staggered raw time series of
-                                      ux, uy, uz
-  --u_rms                         : Store rms of ux, uy, uz
-  --u_max                         : Store max of ux, uy, uz
-  --u_min                         : Store min of ux, uy, uz
-  --u_max_all                     : Store max of ux, uy, uz (whole domain)
-  --u_min_all                     : Store min of ux, uy, uz (whole domain)
-  --u_final                       : Store final acoustic velocity
-
-  --copy_sensor_mask              : Copy sensor mask to the output file
-
-  -s <timestep>                   : Time step when data collection begins
-                                      (default = 1)
---------------------------------------------------------------------------
+┌───────────────────────────────────────────────────────────────┐
+│                  kspaceFirstOrder3D-OMP v1.1                  │
+├───────────────────────────────────────────────────────────────┤
+│                             Usage                             │
+├───────────────────────────────────────────────────────────────┤
+│                     Mandatory parameters                      │
+├───────────────────────────────────────────────────────────────┤
+│ -i <file_name>                │ HDF5 input file               │
+│ -o <file_name>                │ HDF5 output file              │
+├───────────────────────────────┴───────────────────────────────┤
+│                      Optional parameters                      │
+├───────────────────────────────┬───────────────────────────────┤
+│ -t <num_threads>              │ Number of CPU threads         │
+│                               │  (default =  4)               │
+│ -r <interval_in_%>            │ Progress print interval       │
+│                               │   (default =  5%)             │
+│ -c <compression_level>        │ Compression level <0,9>       │
+│                               │   (default = 0)               │
+│ --benchmark <time_steps>      │ Run only a specified number   │
+│                               │   of time steps               │
+│ --verbose <level>             │ Level of verbosity <0,2>      │
+│                               │   0 - basic, 1 - advanced,    │
+│                               │   2 - full                    │
+│                               │   (default = basic)           │
+│ -h, --help                    │ Print help                    │
+│ --version                     │ Print version and build info  │
+├───────────────────────────────┼───────────────────────────────┤
+│ --checkpoint_file <file_name> │ HDF5 Checkpoint file          │
+│ --checkpoint_interval <sec>   │ Checkpoint after a given      │
+│                               │   number of seconds           │
+├───────────────────────────────┴───────────────────────────────┤
+│                          Output flags                         │
+├───────────────────────────────┬───────────────────────────────┤
+│ -p                            │ Store acoustic pressure       │
+│                               │   (default output flag)       │
+│                               │   (the same as --p_raw)       │
+│ --p_raw                       │ Store raw time series of p    │
+│ --p_rms                       │ Store rms of p                │
+│ --p_max                       │ Store max of p                │
+│ --p_min                       │ Store min of p                │
+│ --p_max_all                   │ Store max of p (whole domain) │
+│ --p_min_all                   │ Store min of p (whole domain) │
+│ --p_final                     │ Store final pressure field    │
+├───────────────────────────────┼───────────────────────────────┤
+│ -u                            │ Store ux, uy, uz              │
+│                               │    (the same as --u_raw)      │
+│ --u_raw                       │ Store raw time series of      │
+│                               │    ux, uy, uz                 │
+│ --u_non_staggered_raw         │ Store non-staggered raw time  │
+│                               │   series of ux, uy, uz        │
+│ --u_rms                       │ Store rms of ux, uy, uz       │
+│ --u_max                       │ Store max of ux, uy, uz       │
+│ --u_min                       │ Store min of ux, uy, uz       │
+│ --u_max_all                   │ Store max of ux, uy, uz       │
+│                               │   (whole domain)              │
+│ --u_min_all                   │ Store min of ux, uy, uz       │
+│                               │   (whole domain)              │
+│ --u_final                     │ Store final acoustic velocity │
+├───────────────────────────────┼───────────────────────────────┤
+│ -s <time_step>                │ When data collection begins   │
+│                               │   (default = 1)               │
+└───────────────────────────────┴───────────────────────────────┘
 \endverbatim
- *
- *
- *
  *
  *
  *
@@ -786,13 +780,12 @@ Output flags:
 #endif
 
 #include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
+#include <Logger/Logger.h>
 
 
 using std::ios;
+using std::string;
 
-
-/// separator
-static const char* fmtSmallSeparator = "--------------------------------\n";
 
 /**
  * The main function of the ksppaceFirstOrder3D-OMP.
@@ -808,93 +801,116 @@ int main(int argc, char** argv)
   KSpaceFirstOrder3DSolver kSpaceSolver;
 
   // print header
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout,"  %s\n",kSpaceSolver.getCodeName().c_str());
-  fprintf(stdout,"%s",fmtSmallSeparator);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtFirstSeparator);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtCodeName, kSpaceSolver.getCodeName().c_str());
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
+
 
   // Create parameters and parse command line
   Parameters& parameters = Parameters::getInstance();
 
-  parameters.init(argc,argv);
-  if (parameters.isPrintVersionOnly())
+  //------------------------------------- Init simulation ---------------------------------------//
+  try
   {
-    kSpaceSolver.printFullCodeNameAndLicense(stdout);
-    return 0;
-  }
+    parameters.init(argc,argv);
 
+    if (parameters.isPrintVersionOnly())
+    {
+      kSpaceSolver.printFullCodeNameAndLicense();
+      return EXIT_SUCCESS;
+    }
+  }
+  catch (const std::exception &e)
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
+    Logger::errorAndTerminate(Logger::wordWrapString(e.what(),kErrFmtPathDelimiters, 9));
+  }
 
   // set number of threads and bind them to cores
   #ifdef _OPENMP
-    kSpaceSolver.setProcessorAffinity();
+     // Affinity was disabled as it may interfere with batch schedulers on some clusters. The user is resposible to
+     // set it properly
+    //kSpaceSolver.setProcessorAffinity();
     omp_set_num_threads(parameters.getNumberOfThreads());
   #endif
 
+  // Print simulation setup
+  parameters.printSimulatoinSetup();
 
-  fprintf(stdout, "Number of CPU threads:    %6ld\n", parameters.getNumberOfThreads());
-  kSpaceSolver.printSimulationParameters(stdout);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtInitializationHeader);
 
-
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout,"........ Initialization ........\n");
-  fprintf(stdout,"Memory allocation ..........");
-  fflush(stdout);
-
-
-  // allocate memory
+  //-------------------------------------- Allocate memory --------------------------------------//
   try
   {
     kSpaceSolver.allocateMemory();
   }
-  catch (std::exception e)
+  catch (const std::bad_alloc& e)
   {
-    fprintf(stdout, "Failed!\nk-Wave panic: Not enough memory to run this simulation!\n%s\n", e.what());
-    fprintf(stderr, "k-Wave panic: Not enough memory to run this simulation! \n%s\n", e.what());
-    return EXIT_FAILURE;
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
+    // 9 = Indentation of Error:
+    Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtOutOfMemory," ", 9));
   }
-  fprintf(stdout, "Done\n");
+  catch (const std::exception& e)
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
+
+    const string errorMessage = string(kErrFmtUnknownError) + e.what();
+    Logger::errorAndTerminate(Logger::wordWrapString(errorMessage, kErrFmtPathDelimiters, 9));
+  };
 
 
-  // Load data from disk
-  fprintf(stdout, "Data loading................");
-  fflush(stdout);
+    //-------------------------------------- Load input data --------------------------------------//
   try
   {
     kSpaceSolver.loadInputData();
   }
-  catch (ios::failure e)
+   catch (const std::ios::failure& e)
   {
-    fprintf(stdout, "Failed!\nk-Wave panic: Data loading was not successful!\n%s\n", e.what());
-    fprintf(stderr, "k-Wave panic: Data loading was not successful! \n%s\n", e.what());
-    return EXIT_FAILURE;
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
+    // 9 = Indentation of Error:
+    Logger::errorAndTerminate(Logger::wordWrapString(e.what(), kErrFmtPathDelimiters, 9));
   }
-  fprintf(stdout, "Done\n");
+  catch (const std::exception& e)
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
 
-  fprintf(stdout,"Elapsed time:          %8.2fs\n",kSpaceSolver.getDataLoadTime());
+    const string errorMessage = string(kErrFmtUnknownError) + e.what();
+    Logger::errorAndTerminate(Logger::wordWrapString(errorMessage, kErrFmtPathDelimiters, 9));
+  }
 
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, kSpaceSolver.getDataLoadTime());
+
+  // did we recover from checkpoint?
   if (parameters.getTimeIndex() > 0)
   {
-    fprintf(stdout, "Recovered from t_index: %8ld\n", parameters.getTimeIndex());
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtRecoveredFrom, parameters.getTimeIndex());
   }
 
-  // start computation
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout, ".......... Computation .........\n");
 
+  //----------------------------------------- Simulation ----------------------------------------//
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
+  // exception are caught inside due to different log formats
   kSpaceSolver.compute();
 
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout, "............ Summary ...........\n");
-  fprintf(stdout, "Peak memory in use:   %8ldMB\n",kSpaceSolver.getMemoryUsage());
+  //------------------------------------------- Summary -----------------------------------------//
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtSummaryHeader);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtMemoryUsage,   kSpaceSolver.getMemoryUsage());
+
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
+
   if (kSpaceSolver.getCumulatedTotalTime() != kSpaceSolver.getTotalTime())
   {
-    fprintf(stdout,"This leg execution time:%7.2fs\n",kSpaceSolver.getTotalTime());
+   Logger::log(Logger::LogLevel::kBasic, kOutFmtLegExecutionTime, kSpaceSolver.getTotalTime());
   }
-  fprintf(stdout, "Total execution time:  %8.2fs\n",kSpaceSolver.getCumulatedTotalTime());
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtTotalExecutionTime, kSpaceSolver.getCumulatedTotalTime());
 
-
-  fprintf(stdout,"%s",fmtSmallSeparator);
-  fprintf(stdout,"       End of computation \n");
-  fprintf(stdout,"%s",fmtSmallSeparator);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtEndOfSimulation);
 
   return  EXIT_SUCCESS;
 }// end of main

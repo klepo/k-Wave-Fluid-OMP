@@ -89,12 +89,6 @@ class KSpaceFirstOrder3DSolver
     virtual void compute();
 
     /**
-     * @brief Print parameters of the simulation.
-     * @param [in, out] file - Where to write the parameters (stdout/stderr)
-     */
-    virtual void printSimulationParameters(FILE* file) const;
-
-    /**
      * @brief  Get memory usage in MB on the host side.
      * @return Memory consumed on the host side in MB.
      */
@@ -104,18 +98,15 @@ class KSpaceFirstOrder3DSolver
      * @brief  Get code name - release code version.
      * @return Release code version.
      */
-    std::string getCodeName() const {return "kspaceFirstOrder3D-OMP v1.1"; };
+    std::string getCodeName() const;
 
-    /**
-     * @brief Print the code name and license.
-     * @param [in] file - file to print the data (stdout).
-     */
-    void   printFullCodeNameAndLicense(FILE* file) const;
+    /// Print the code name and license.
+    void   printFullCodeNameAndLicense() const;
 
     /**
      * @brief   Set processor affinity.
      * @warning This may not work on some OS, it should be done by user before launching the code. Moreover, the user
-     * may want to change the thread placement, e.g. on NUMA systems.
+     * may want to change the thread placement, e.g. on NUMA systems. This the routine was disabled in ver 2.16
      */
     void   setProcessorAffinity();
 
@@ -187,7 +178,7 @@ class KSpaceFirstOrder3DSolver
     /// Compute the main time loop of the kspaceFirstOrder3D.
     void computeMainLoop();
     /// Post processing, and closing the output streams.
-    void postPorcessing();
+    void postProcessing();
 
     /// Store sensor data.
     void storeSensorData();
@@ -293,10 +284,7 @@ class KSpaceFirstOrder3DSolver
 
     /// Print progress statistics.
     void printStatistics();
-
-    /// Print the header of the progress statistics.
-    void printOtputHeader() const;
-
+    
     /**
      * @brief  Is time to checkpoint (save actual state on disk).
      * @return true if it is time to interrupt the simulation and checkpoint.
