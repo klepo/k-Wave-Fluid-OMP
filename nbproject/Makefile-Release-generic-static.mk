@@ -41,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Hdf5/Hdf5File.o \
 	${OBJECTDIR}/Hdf5/Hdf5FileHeader.o \
 	${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o \
+	${OBJECTDIR}/Logger/Logger.o \
 	${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o \
 	${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/ComplexMatrix.o \
@@ -122,6 +123,11 @@ ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o: KSpaceSolver/KSpaceFirstOr
 	${MKDIR} -p ${OBJECTDIR}/KSpaceSolver
 	${RM} "$@.d"
 	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
+
+${OBJECTDIR}/Logger/Logger.o: Logger/Logger.cpp
+	${MKDIR} -p ${OBJECTDIR}/Logger
+	${RM} "$@.d"
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger/Logger.o Logger/Logger.cpp
 
 ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o: MatrixClasses/BaseFloatMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses

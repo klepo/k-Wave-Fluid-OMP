@@ -12,6 +12,7 @@
             <sourceRootList>
                 <sourceRootElem>OutputStreams</sourceRootElem>
                 <sourceRootElem>Containers</sourceRootElem>
+                <sourceRootElem>Logger</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
