@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 10:30 (created) \n
- *              26 August    2017, 11:18 (revised)
+ *              30 August    2017, 16:08 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,13 +31,10 @@
  */
 
 
-#include <iostream>
-#include <string.h>
-
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/ComplexMatrix.h>
+#include <Logger/Logger.h>
 
-#include <Utils/ErrorMessages.h>
 
 using std::ios;
 //--------------------------------------------------------------------------------------------------------------------//
@@ -79,17 +76,12 @@ void RealMatrix::readData(Hdf5File&   file,
   // test matrix datatype
   if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kFloat)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtMatrixNotFloat, matrixName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotFloat, matrixName.c_str()));
   }
-
 
   if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kReal)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtMatrixNotReal, matrixName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotReal, matrixName.c_str()));
   }
 
   // Read matrix

@@ -188,12 +188,6 @@ ErrorMessage const kErrFmtFftPlanNotCreated
 /// FFTW error message
 ErrorMessage const kErrFmtFftInvalidPlan
   = "Error: Invalid plan for %s! \n";
-/// FFTW error message
-ErrorMessage const kErrFmtFftWisdomNotExported
-  = "Warning: Wisdom could not be exported!\n";
-/// FFTW error message
-ErrorMessage const ErrFmtFftWisdomNotImported
-= "Warning: Wisdom could not be imported!\n";
 
 
 //-------------------------------------------- KSpaceFirstOrder3DSolver ----------------------------------------------//

@@ -211,6 +211,7 @@ $(TARGET):	main.o 					 \
 		Hdf5/Hdf5File.o				 \
 		Hdf5/Hdf5FileHeader.o			 \
 		KSpaceSolver/KSpaceFirstOrder3DSolver.o	 \
+		Logger/Logger.o				 \
 		MatrixClasses/BaseFloatMatrix.o		 \
 		MatrixClasses/BaseIndexMatrix.o		 \
 		MatrixClasses/ComplexMatrix.o		 \
@@ -233,6 +234,7 @@ $(TARGET):	main.o 					 \
 		Hdf5/Hdf5File.o				 \
 		Hdf5/Hdf5FileHeader.o			 \
 		KSpaceSolver/KSpaceFirstOrder3DSolver.o	 \
+		Logger/Logger.o				 \
 		MatrixClasses/BaseFloatMatrix.o		 \
 		MatrixClasses/BaseIndexMatrix.o		 \
 		MatrixClasses/ComplexMatrix.o		 \

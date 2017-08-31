@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
- *              29 August    2017, 10:15 (revised)
+ *              30 August    2017, 15:47 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,10 +30,9 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 
 #include <MatrixClasses/ComplexMatrix.h>
-#include <Utils/ErrorMessages.h>
+#include <Logger/Logger.h>
 
 using std::ios;
 //--------------------------------------------------------------------------------------------------------------------//
@@ -74,17 +73,13 @@ void ComplexMatrix::readData(Hdf5File&   file,
   // check data type
   if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kFloat)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtMatrixNotFloat, matrixName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotFloat, matrixName.c_str()));
   }
 
   // check domain type
   if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kComplex)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtMatrixNotComplex, matrixName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotComplex, matrixName.c_str()));
   }
 
   // Initialise dimensions

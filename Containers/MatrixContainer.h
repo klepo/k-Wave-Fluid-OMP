@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        14 September 2012, 14:33 (created) \n
- *              29 August    2017, 09:56 (revised)
+ *              30 August    2017, 15:19 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -33,7 +33,6 @@
 #ifndef MATRIX_CONTAINER_H
 #define MATRIX_CONTAINER_H
 
-#include <string.h>
 #include <map>
 
 #include <MatrixClasses/BaseMatrix.h>
@@ -276,20 +275,6 @@ class MatrixContainer
     /// Map holding the container.
     std::map<MatrixIdx, MatrixRecord> mContainer;
 
-    /**
-     * @brief Print error and and throw an exception.
-     *
-     * @param [in] FMT - format of error
-     * @param [in] HDF5MatrixName - HDF5 dataset name
-     * @param [in] File - File of error
-     * @param [in] Line - Line of error
-     *
-     * @throw std::bad_alloc
-     */
-    void printErrorAndThrowException(const char* fmt,
-                                     MatrixName  matrixName,
-                                     const char* file,
-                                     const int   line);
 
 };// end of MatrixContainer
 //----------------------------------------------------------------------------------------------------------------------

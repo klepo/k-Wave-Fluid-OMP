@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              29 August    2017, 10:20 (revised)
+ *              30 August    2017, 14:37 (revised)
  *
  * @section Params Command Line Parameters
  *
@@ -97,57 +97,70 @@
  *
  *
 \verbatim
----------------------------------- Usage ---------------------------------
-Mandatory parameters:
-  -i <input_file_name>            : HDF5 input file
-  -o <output_file_name>           : HDF5 output file
-
-Optional parameters:
-  -t <num_threads>                : Number of CPU threads
-                                      (default = all)
-  -r <interval_in_%>              : Progress print interval
-                                      (default = 5%)
-  -c <comp_level>                 : Output file compression level <0,9>
-                                      (default = 0)
-  --benchmark <steps>             : Run a specified number of time steps
-
-  --checkpoint_file <file_name>   : HDF5 checkpoint file
-  --checkpoint_interval <seconds> : Stop after a given number of seconds and
-                                      store the actual state
-
-  -h                              : Print help
-  --help                          : Print help
-  --version                       : Print version
-
-Output flags:
-  -p                              : Store acoustic pressure
-                                      (default if nothing else is on)
-                                      (the same as --p_raw)
-  --p_raw                         : Store raw time series of p (default)
-  --p_rms                         : Store rms of p
-  --p_max                         : Store max of p
-  --p_min                         : Store min of p
-  --p_max_all                     : Store max of p (whole domain)
-  --p_min_all                     : Store min of p (whole domain)
-  --p_final                       : Store final pressure field
-
-  -u                              : Store ux, uy, uz
-                                      (the same as --u_raw)
-  --u_raw                         : Store raw time series of ux, uy, uz
-  --u_non_staggered_raw           : Store non-staggered raw time series of
-                                      ux, uy, uz
-  --u_rms                         : Store rms of ux, uy, uz
-  --u_max                         : Store max of ux, uy, uz
-  --u_min                         : Store min of ux, uy, uz
-  --u_max_all                     : Store max of ux, uy, uz (whole domain)
-  --u_min_all                     : Store min of ux, uy, uz (whole domain)
-  --u_final                       : Store final acoustic velocity
-
-  --copy_sensor_mask              : Copy sensor mask to the output file
-
-  -s <timestep>                   : Time step when data collection begins
-                                      (default = 1)
---------------------------------------------------------------------------
+┌───────────────────────────────────────────────────────────────┐
+│                  kspaceFirstOrder3D-OMP v1.1                  │
+├───────────────────────────────────────────────────────────────┤
+│                             Usage                             │
+├───────────────────────────────────────────────────────────────┤
+│                     Mandatory parameters                      │
+├───────────────────────────────────────────────────────────────┤
+│ -i <file_name>                │ HDF5 input file               │
+│ -o <file_name>                │ HDF5 output file              │
+├───────────────────────────────┴───────────────────────────────┤
+│                      Optional parameters                      │
+├───────────────────────────────┬───────────────────────────────┤
+│ -t <num_threads>              │ Number of CPU threads         │
+│                               │  (default =  4)               │
+│ -g <device_number>            │ GPU device to run on          │
+│                               │   (default = the first free)  │
+│ -r <interval_in_%>            │ Progress print interval       │
+│                               │   (default =  5%)             │
+│ -c <compression_level>        │ Compression level <0,9>       │
+│                               │   (default = 0)               │
+│ --benchmark <time_steps>      │ Run only a specified number   │
+│                               │   of time steps               │
+│ --verbose <level>             │ Level of verbosity <0,2>      │
+│                               │   0 - basic, 1 - advanced,    │
+│                               │   2 - full                    │
+│                               │   (default = basic)           │
+│ -h, --help                    │ Print help                    │
+│ --version                     │ Print version and build info  │
+├───────────────────────────────┼───────────────────────────────┤
+│ --checkpoint_file <file_name> │ HDF5 Checkpoint file          │
+│ --checkpoint_interval <sec>   │ Checkpoint after a given      │
+│                               │   number of seconds           │
+├───────────────────────────────┴───────────────────────────────┤
+│                          Output flags                         │
+├───────────────────────────────┬───────────────────────────────┤
+│ -p                            │ Store acoustic pressure       │
+│                               │   (default output flag)       │
+│                               │   (the same as --p_raw)       │
+│ --p_raw                       │ Store raw time series of p    │
+│ --p_rms                       │ Store rms of p                │
+│ --p_max                       │ Store max of p                │
+│ --p_min                       │ Store min of p                │
+│ --p_max_all                   │ Store max of p (whole domain) │
+│ --p_min_all                   │ Store min of p (whole domain) │
+│ --p_final                     │ Store final pressure field    │
+├───────────────────────────────┼───────────────────────────────┤
+│ -u                            │ Store ux, uy, uz              │
+│                               │    (the same as --u_raw)      │
+│ --u_raw                       │ Store raw time series of      │
+│                               │    ux, uy, uz                 │
+│ --u_non_staggered_raw         │ Store non-staggered raw time  │
+│                               │   series of ux, uy, uz        │
+│ --u_rms                       │ Store rms of ux, uy, uz       │
+│ --u_max                       │ Store max of ux, uy, uz       │
+│ --u_min                       │ Store min of ux, uy, uz       │
+│ --u_max_all                   │ Store max of ux, uy, uz       │
+│                               │   (whole domain)              │
+│ --u_min_all                   │ Store min of ux, uy, uz       │
+│                               │   (whole domain)              │
+│ --u_final                     │ Store final acoustic velocity │
+├───────────────────────────────┼───────────────────────────────┤
+│ -s <time_step>                │ When data collection begins   │
+│                               │   (default = 1)               │
+└───────────────────────────────┴───────────────────────────────┘
 \endverbatim
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
@@ -167,10 +180,8 @@ Output flags:
  */
 
 
-
-
 #ifndef COMMAND_LINE_PARAMETERS_H
-#define	COMMAND_LINE_PARAMETERS_H
+#define COMMAND_LINE_PARAMETERS_H
 
 #include <string>
 

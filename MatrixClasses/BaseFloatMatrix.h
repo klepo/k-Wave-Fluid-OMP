@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 12:13 (created) \n
- *              25 August    2017, 12:37 (revised)
+ *              30 August    2017, 15:43 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -131,7 +131,7 @@ class BaseFloatMatrix : public BaseMatrix
 
   private:
 
-};//end of class BaseFloatMatrix
+};//end of BaseFloatMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
 #endif	/* BASE_FLOAT_MATRIX_H */

@@ -34,8 +34,6 @@
 #ifndef TIME_MEASURE_H
 #define TIME_MEASURE_H
 
-#include <exception>
-
 #ifdef _OPENMP
   #include <omp.h>
 #else

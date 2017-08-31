@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        27 July      2012, 14:14      (created) \n
- *              29 August    2017, 10:02      (revised)
+ *              30 August    2017, 18:36      (revised)
  *
 
  * @section License
@@ -31,7 +31,6 @@
  */
 
 
-#include <iostream>
 #include <stdexcept>
 
 // Linux build
@@ -41,15 +40,13 @@
 
 //Windows 64 build
 #ifdef _WIN64
-  #include<stdio.h>
   #include<Winsock2.h>
   #pragma comment(lib, "Ws2_32.lib")
 #endif
 
 #include <Hdf5/Hdf5File.h>
-
 #include <Parameters/Parameters.h>
-#include <Utils/ErrorMessages.h>
+#include <Logger/Logger.h>
 
 using std::ios;
 using std::string;
@@ -100,9 +97,7 @@ void Hdf5File::create(const string& fileName,
   // file is opened
   if (isOpen())
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotRecreateFile,fileName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotRecreateFile, fileName.c_str()));
   }
 
   // Create a new file using default properties.
@@ -112,9 +107,7 @@ void Hdf5File::create(const string& fileName,
 
   if (mFile < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotCreateFile,fileName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotCreateFile, fileName.c_str()));
   }
 }// end of create
 //----------------------------------------------------------------------------------------------------------------------
@@ -129,27 +122,21 @@ void Hdf5File::open(const string& fileName,
 
   if (isOpen())
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotReopenFile,cFileName);
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotReopenFile, cFileName));
   };
 
   mFileName = fileName;
 
   if (H5Fis_hdf5(cFileName) == 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtNotHdf5File,cFileName);
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtNotHdf5File, cFileName));
   }
 
   mFile = H5Fopen(cFileName, flags, H5P_DEFAULT);
 
   if (mFile < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtFileNotOpen,cFileName);
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtFileNotOpen, cFileName));
   }
 }// end of open
 //----------------------------------------------------------------------------------------------------------------------
@@ -178,9 +165,7 @@ void Hdf5File::close()
   herr_t status = H5Fclose(mFile);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotCloseFile,mFileName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotCloseFile, mFileName.c_str()));
   }
 
   mFileName    = "";
@@ -199,9 +184,7 @@ hid_t Hdf5File::createGroup(const hid_t parentGroup,
   //if error
   if (group == H5I_INVALID_HID)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotCreateGroup, groupName.c_str(), mFileName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotCreateGroup, groupName.c_str(), mFileName.c_str()));
   }
 
   return group;
@@ -219,9 +202,7 @@ hid_t Hdf5File::openGroup(const hid_t parentGroup,
   //if error
   if (group == H5I_INVALID_HID)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotOpenGroup, groupName.c_str(), mFileName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotOpenGroup, groupName.c_str(), mFileName.c_str()));
   }
 
   return group;
@@ -248,9 +229,7 @@ hid_t Hdf5File::openDataset(const hid_t parentGroup,
 
   if (dataset == H5I_INVALID_HID)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotOpenDataset, mFileName.c_str(), datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotOpenDataset, mFileName.c_str(), datasetName.c_str()));
   }
 
   return dataset;
@@ -307,19 +286,17 @@ hid_t Hdf5File::createDataset(const hid_t                    parentGroup,
   status = H5Pset_chunk(propertyList, rank, chunk);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotOpenDataset, mFileName.c_str(), datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotOpenDataset, mFileName.c_str(), datasetName.c_str()));
   }
 
   // set compression level
   status = H5Pset_deflate(propertyList, static_cast<unsigned int>(compressionLevel));
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotSetCompression, mFileName.c_str(),
-            datasetName.c_str(), compressionLevel);
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotSetCompression,
+                                             mFileName.c_str(),
+                                             datasetName.c_str(),
+                                             compressionLevel));
   }
 
   const hid_t datasetType = (matrixDataType == MatrixDataType::kFloat) ? H5T_NATIVE_FLOAT : H5T_STD_U64LE;
@@ -335,9 +312,7 @@ hid_t Hdf5File::createDataset(const hid_t                    parentGroup,
 
   if (dataset == H5I_INVALID_HID)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotOpenDataset, mFileName.c_str(), datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotOpenDataset, mFileName.c_str(), datasetName.c_str()));
   }
 
   H5Pclose(propertyList);
@@ -402,10 +377,7 @@ void Hdf5File::writeHyperSlab(const hid_t           dataset,
   status = H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offset, NULL, nElement, NULL);
   if (status < 0)
   {
-    //throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotWriteDataset,"");
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
   }
 
   // assign memspace
@@ -426,10 +398,7 @@ void Hdf5File::writeHyperSlab(const hid_t           dataset,
 
   if (status < 0)
   {
-    //throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotWriteDataset,"");
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
   }
 
   H5Sclose(memspace);
@@ -488,9 +457,7 @@ void Hdf5File::writeCuboidToHyperSlab(const hid_t dataset,
   status = H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offsetInDataset, NULL, slabSize, NULL);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotWriteDataset,"");
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
   }
 
 
@@ -504,18 +471,14 @@ void Hdf5File::writeCuboidToHyperSlab(const hid_t dataset,
                                NULL);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotWriteDataset,"");
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
   }
 
   // Write the data
   status = H5Dwrite(dataset, H5T_NATIVE_FLOAT, memspace, filespace, H5P_DEFAULT, matrixData);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotWriteDataset,"");
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
   }
 
   // close memspace and filespace
@@ -558,9 +521,7 @@ void Hdf5File::writeSensorByMaskToHyperSlab(const hid_t           dataset,
                                NULL);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotWriteDataset,"");
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
   }
 
   // assign 1D memspace and select the elements within the array
@@ -571,9 +532,7 @@ void Hdf5File::writeSensorByMaskToHyperSlab(const hid_t           dataset,
                                ( hsize_t *) (indexSensorData));
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotWriteDataset,"");
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
   }
 
   // Write the data
@@ -585,9 +544,7 @@ void Hdf5File::writeSensorByMaskToHyperSlab(const hid_t           dataset,
                     matrixData);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotWriteDataset,"");
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
   }
 
   // close memspace and filespace
@@ -642,19 +599,13 @@ void Hdf5File::writeScalarValue(const hid_t parentGroup,
   // was created correctly?
   if (dataset == H5I_INVALID_HID)
   {
-    //throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, cDatasetName));
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotWriteDataset, datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, cDatasetName));
   }
 
   status = H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, &value);
   if (status < 0)
   {
-    //throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, cDatasetName));
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotWriteDataset, datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, cDatasetName));
   }
 
   if (std::is_same<T, float>())
@@ -733,10 +684,7 @@ void Hdf5File::readCompleteDataset(const hid_t           parentGroup,
   // Check Dimensions sizes
   if (getDatasetDimensionSizes(parentGroup, datasetName).nElements() != dimensionSizes.nElements())
   {
-    //throw ios::failure(Logger::formatMessage(kErrFmtBadDimensionSizes, cDatasetName));
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtBadDimensionSizes, datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtBadDimensionSizes, cDatasetName));
   }
 
   herr_t status = -1;
@@ -751,10 +699,7 @@ void Hdf5File::readCompleteDataset(const hid_t           parentGroup,
 
   if (status < 0)
   {
-    //throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, cDatasetName));
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotReadDataset, datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, cDatasetName));
   }
 }// end of readCompleteDataset
 //----------------------------------------------------------------------------------------------------------------------
@@ -793,9 +738,7 @@ DimensionSizes Hdf5File::getDatasetDimensionSizes(const hid_t parentGroup,
   herr_t status = H5LTget_dataset_info(parentGroup, datasetName.c_str(), dims, NULL, NULL);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotReadDataset, datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, datasetName.c_str()));
   }
 
   if (ndims == 3)
@@ -820,9 +763,7 @@ size_t Hdf5File::getDatasetNumberOfDimensions(const hid_t parentGroup,
   herr_t status = H5LTget_dataset_ndims(parentGroup, datasetName.c_str(), &dims);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotReadDataset, datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, datasetName.c_str()));
   }
 
   return dims;
@@ -840,9 +781,7 @@ size_t Hdf5File::getDatasetSize(const hid_t parentGroup,
   herr_t status = H5LTget_dataset_info(parentGroup, datasetName.c_str(), dims, NULL, NULL);
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotReadDataset, datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, datasetName.c_str()));
   }
 
   return dims[0] * dims[1] * dims[2];
@@ -894,10 +833,10 @@ Hdf5File::MatrixDataType Hdf5File::readMatrixDataType(const hid_t parentGroup,
     return static_cast<MatrixDataType>(1);
   }
 
-  char ErrorMessage[256];
-  sprintf(ErrorMessage, kErrFmtBadAttributeValue, datasetName.c_str(),
-          kMatrixDataTypeName.c_str(), paramValue.c_str());
-  throw ios::failure(ErrorMessage);
+  throw ios::failure(Logger::formatMessage(kErrFmtBadAttributeValue,
+                                           datasetName.c_str(),
+                                           kMatrixDataTypeName.c_str(),
+                                           paramValue.c_str()));
 
 // this will never be executed (just to prevent warning)
   return  static_cast<MatrixDataType> (0);
@@ -921,10 +860,10 @@ Hdf5File::MatrixDomainType Hdf5File::readMatrixDomainType(const hid_t parentGrou
     return static_cast<MatrixDomainType> (1);
   }
 
-  char ErrorMessage[256];
-  sprintf(ErrorMessage, kErrFmtBadAttributeValue, datasetName.c_str(),
-          kMatrixDomainTypeName.c_str(), paramValue.c_str());
-  throw ios::failure(ErrorMessage);
+  throw ios::failure(Logger::formatMessage(kErrFmtBadAttributeValue,
+                                           datasetName.c_str(),
+                                           kMatrixDomainTypeName.c_str(),
+                                           paramValue.c_str()));
 
   // This line will never be executed (just to prevent warning)
   return static_cast<MatrixDomainType> (0);
@@ -943,9 +882,7 @@ void Hdf5File::writeStringAttribute(const hid_t   parentGroup,
   herr_t status = H5LTset_attribute_string(parentGroup, datasetName.c_str(), attributeName.c_str(), value.c_str());
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtCannotWriteAttribute, attributeName.c_str(), datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteAttribute, attributeName.c_str(), datasetName.c_str()));
   }
 }// end of writeIntAttribute
 //----------------------------------------------------------------------------------------------------------------------
@@ -962,9 +899,7 @@ string Hdf5File::readStringAttribute(const hid_t  parentGroup,
 
   if (status < 0)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtCannotReadAttribute,attributeName.c_str(), datasetName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadAttribute, attributeName.c_str(), datasetName.c_str()));
   }
 
   return value;

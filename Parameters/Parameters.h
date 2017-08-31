@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        08 December  2011, 16:34 (created) \n
- *              28 August    2017, 14:25 (revised)
+ *              30 August    2017, 15:13 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -86,6 +86,9 @@ class Parameters
      */
     void init(int argc, char** argv);
 
+    /// Print the simulation setup (all parameters).
+    void printSimulatoinSetup();
+
     /**
      * @brief  Shall the code print version and exit?
      * @return True if the flag is set.
@@ -105,6 +108,12 @@ class Parameters
      * @warning The file is expected to be open.
      */
     void saveScalarsToOutputFile();
+
+    /**
+     * @brief Get git hash of the code
+     * @return Git hash compiled in using -D parameter.
+     */
+    std::string getGitHash() const;
 
     /**
      * @brief Get number of CPU threads to use.
@@ -715,8 +724,6 @@ class Parameters
     /// Singleton instance
     static Parameters* sPrametersInstance;
 
-    /// Print usage and exit.
-    void printUsageAndExit();
 }; // end of Parameters
 //----------------------------------------------------------------------------------------------------------------------
 #endif	/* PARAMETERS_H */

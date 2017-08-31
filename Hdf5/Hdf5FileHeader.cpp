@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 32.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            29 August    2017, 10:04 (revised)
+ *            30 August    2017, 18:36 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -40,7 +40,6 @@
 
 //Windows 64 build
 #ifdef _WIN64
-  #include<stdio.h>
   #include<Winsock2.h>
   #pragma comment(lib, "Ws2_32.lib")
 #endif
@@ -49,6 +48,7 @@
 
 #include <Parameters/Parameters.h>
 #include <Utils/ErrorMessages.h>
+#include <Logger/Logger.h>
 
 using std::string;
 using std::ios;
@@ -284,18 +284,14 @@ void Hdf5FileHeader::writeHeaderToCheckpointFile(Hdf5File& checkpointFile)
  */
 void Hdf5FileHeader::setActualCreationTime()
 {
-  struct tm *current;
+  struct tm* current;
   time_t now;
   time(&now);
   current = localtime(&now);
 
-  char dateString[20];
-
-  sprintf(dateString, "%02i/%02i/%02i, %02i:%02i:%02i",
-          current->tm_mday, current->tm_mon+1, current->tm_year-100,
-          current->tm_hour, current->tm_min, current->tm_sec);
-
-  mHeaderValues[FileHeaderItems::kCreationDate] = dateString;
+  mHeaderValues[FileHeaderItems::kCreationDate] = Logger::formatMessage("%02i/%02i/%02i, %02i:%02i:%02i",
+                                                  current->tm_mday, current->tm_mon + 1, current->tm_year - 100,
+                                                  current->tm_hour, current->tm_min, current->tm_sec);
 }// end of setActualCreationTime
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -379,13 +375,11 @@ void Hdf5FileHeader::setHostName()
  */
 void Hdf5FileHeader::setMemoryConsumption(const size_t totalMemory)
 {
-  char Text[20] = "";
-  sprintf(Text, "%ld MB", totalMemory);
+  mHeaderValues[FileHeaderItems::kTotalMemoryConsumption] = Logger::formatMessage("%ld MB", totalMemory);
 
-  mHeaderValues[FileHeaderItems::kTotalMemoryConsumption] = Text;
+  mHeaderValues[FileHeaderItems::kPeakMemoryConsumption]
+          = Logger::formatMessage("%ld MB", totalMemory / Parameters::getInstance().getNumberOfThreads());
 
-  sprintf(Text, "%ld MB", totalMemory / Parameters::getInstance().getNumberOfThreads());
-  mHeaderValues[FileHeaderItems::kPeakMemoryConsumption]  = Text;
 }// end of setMemoryConsumption
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -399,24 +393,11 @@ void Hdf5FileHeader::setExecutionTimes(const double totalTime,
                                        const double simulationTime,
                                        const double postprocessingTime)
 {
-  char text [30] = "";
-  // shortcut
-  using FHI = FileHeaderItems;
-
-  sprintf(text,"%8.2fs", totalTime);
-  mHeaderValues[FHI::kTotalExecutionTime] = text;
-
-  sprintf(text,"%8.2fs", loadTime);
-  mHeaderValues[FHI::kDataLoadTime] = text;
-
-  sprintf(text,"%8.2fs", preProcessingTime);
-  mHeaderValues[FHI::kPreProcessingTime] = text;
-
-  sprintf(text,"%8.2fs", simulationTime);
-  mHeaderValues[FHI::kSimulationTime] = text;
-
-  sprintf(text,"%8.2fs", postprocessingTime);
-  mHeaderValues[FHI::kPostProcessingTime] = text;
+  mHeaderValues[FileHeaderItems::kTotalExecutionTime] = Logger::formatMessage("%8.2fs", totalTime);
+  mHeaderValues[FileHeaderItems::kDataLoadTime]       = Logger::formatMessage("%8.2fs", loadTime);
+  mHeaderValues[FileHeaderItems::kPreProcessingTime]  = Logger::formatMessage("%8.2fs", preProcessingTime);
+  mHeaderValues[FileHeaderItems::kSimulationTime]     = Logger::formatMessage("%8.2fs", simulationTime);
+  mHeaderValues[FileHeaderItems::kPostProcessingTime] = Logger::formatMessage("%8.2fs", postprocessingTime);
 }// end of setExecutionTimes
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -443,10 +424,8 @@ void Hdf5FileHeader::getExecutionTimes(double& totalTime,
  */
 void Hdf5FileHeader::setNumberOfCores()
 {
-  char text[12] = "";
-  sprintf(text, "%ld",Parameters::getInstance().getNumberOfThreads());
-
-  mHeaderValues[FileHeaderItems::kNumberOfCores] = text;
+  mHeaderValues[FileHeaderItems::kNumberOfCores]
+          = Logger::formatMessage("%ld", Parameters::getInstance().getNumberOfThreads());
 }// end of setNumberOfCores
 //----------------------------------------------------------------------------------------------------------------------
 

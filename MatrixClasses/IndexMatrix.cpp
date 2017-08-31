@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 July      2011, 15:16 (created) \n
- *              29 August    2017, 10:16 (revised)
+ *              30 August    2017, 16:05 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,12 +31,9 @@
  */
 
 
-
-#include <iostream>
-
 #include <MatrixClasses/IndexMatrix.h>
+#include <Logger/Logger.h>
 
-#include <Utils/ErrorMessages.h>
 
 using std::ios;
 //--------------------------------------------------------------------------------------------------------------------//
@@ -77,17 +74,13 @@ void IndexMatrix::readData(Hdf5File&   file,
   // check the datatype
   if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kLong)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtMatrixNotIndex,matrixName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotIndex, matrixName.c_str()));
   }
 
   // check the domain type
   if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kReal)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage,kErrFmtMatrixNotReal, matrixName.c_str());
-    throw ios::failure(ErrorMessage);
+    throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotReal,matrixName.c_str()));
   }
 
   // read data

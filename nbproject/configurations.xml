@@ -23,6 +23,16 @@
       <itemPath>KSpaceSolver/KSpaceFirstOrder3DSolver.cpp</itemPath>
       <itemPath>KSpaceSolver/KSpaceFirstOrder3DSolver.h</itemPath>
     </logicalFolder>
+    <logicalFolder name="Logger" displayName="Logger" projectFiles="true">
+      <itemPath>Logger/ErrorMessages.h</itemPath>
+      <itemPath>Logger/ErrorMessagesLinux.h</itemPath>
+      <itemPath>Logger/ErrorMessagesWindows.h</itemPath>
+      <itemPath>Logger/Logger.cpp</itemPath>
+      <itemPath>Logger/Logger.h</itemPath>
+      <itemPath>Logger/OutputMessages.h</itemPath>
+      <itemPath>Logger/OutputMessagesLinux.h</itemPath>
+      <itemPath>Logger/OutputMessagesWindows.h</itemPath>
+    </logicalFolder>
     <logicalFolder name="MatrixData" displayName="MatrixClases" projectFiles="true">
       <itemPath>MatrixClasses/BaseFloatMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/BaseFloatMatrix.h</itemPath>
@@ -90,6 +100,7 @@
   <sourceRootList>
     <Elem>OutputStreams</Elem>
     <Elem>Containers</Elem>
+    <Elem>Logger</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -105,7 +116,6 @@
           <warningLevel>2</warningLevel>
         </cTool>
         <ccTool>
-          <developmentMode>0</developmentMode>
           <architecture>2</architecture>
           <standard>8</standard>
           <incDir>
@@ -178,6 +188,22 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/Logger.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Logger/Logger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesWindows.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -349,6 +375,22 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="Logger/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/Logger.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Logger/Logger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
@@ -517,6 +559,22 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/Logger.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Logger/Logger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesWindows.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -687,6 +745,22 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/Logger.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Logger/Logger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesWindows.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -860,6 +934,22 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="Logger/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/Logger.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Logger/Logger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
@@ -1031,6 +1121,22 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/Logger.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Logger/Logger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesWindows.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
@@ -1204,6 +1310,22 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="Logger/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/Logger.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Logger/Logger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.h" ex="false" tool="3" flavor2="0">
@@ -1375,6 +1497,22 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/ErrorMessagesWindows.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/Logger.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Logger/Logger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessages.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesLinux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Logger/OutputMessagesWindows.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MatrixClasses/BaseFloatMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>

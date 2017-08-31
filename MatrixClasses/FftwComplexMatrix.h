@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        09 August    2011, 13:10 (created) \n
- *              26 August    2017, 12:54 (revised)
+ *              30 August    2017, 16:04 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -291,6 +291,6 @@ protected:
 
 private:
 
-};// FftwComplexMatrix
+};// end of FftwComplexMatrix
 //----------------------------------------------------------------------------------------------------------------------
 #endif	/* FFTW_COMPLEX_MATRIX_H */

@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        09 August    2011, 13:10 (created) \n
- *              29 August    2017, 10:13 (revised)
+ *              30 August    2017, 16:09 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,15 +30,13 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
+
 #include <MatrixClasses/FftwComplexMatrix.h>
 #include <MatrixClasses/RealMatrix.h>
 
 #include <Parameters/Parameters.h>
-#include <Utils/ErrorMessages.h>
-
-#include <stdexcept>
-#include <string.h>
-#include <cstdio>
+#include <Logger/Logger.h>
 
 
 
@@ -112,9 +110,7 @@ void FftwComplexMatrix::createR2CFftPlan3D(RealMatrix& inMatrix)
 
   if (!mR2CFftPlan3D)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_3D_R2C");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtCreateR2CFftPlan3D);
   }
 }// end of createR2CFftPlan3D
 //----------------------------------------------------------------------------------------------------------------------
@@ -133,9 +129,7 @@ void FftwComplexMatrix::createC2RFftPlan3D(RealMatrix& outMatrix)
 
   if (!mC2RFftPlan3D)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_3D_C2R");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtCreateC2RFftPlan3D);
   }
 }//end of createC2RFftPlan3D
 //----------------------------------------------------------------------------------------------------------------------
@@ -198,9 +192,7 @@ void FftwComplexMatrix::createR2CFftPlan1DX(RealMatrix& inMatrix)
 
   if (!mR2CFftPlan1DX)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DX_R2C");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtCreateR2CFftPlan1DX);
   }
 }// end of createR2CFftPlan1DX
 //----------------------------------------------------------------------------------------------------------------------
@@ -264,9 +256,7 @@ void FftwComplexMatrix::createR2CFftPlan1DY(RealMatrix& inMatrix)
 
   if (!mR2CFftPlan1DY)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DY_R2C");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtCreateR2CFftPlan1DY);
   }
 }// end of createR2CFftPlan1DY
 //----------------------------------------------------------------------------------------------------------------------
@@ -328,9 +318,7 @@ void FftwComplexMatrix::createR2CFftPlan1DZ(RealMatrix& inMatrix)
 
   if (!mR2CFftPlan1DZ)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DZ_R2C");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtCreateR2CFftPlan1DZ);
   }
 }// end of createR2CFftPlan1DZ
 //----------------------------------------------------------------------------------------------------------------------
@@ -393,9 +381,7 @@ void FftwComplexMatrix::createC2RFftPlan1DX(RealMatrix& outMatrix)
 
   if (!mC2RFftPlan1DX)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DX_C2R");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtCreateC2RFftPlan1DX);
   }
 }// end of createC2RFftPlan1DX
 //----------------------------------------------------------------------------------------------------------------------
@@ -458,9 +444,7 @@ void FftwComplexMatrix::createC2RFftPlan1DY(RealMatrix& outMatrix)
 
   if (!mC2RFftPlan1DY)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DY_C2R");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtCreateC2RFftPlan1DY);
   }
 }// end of createC2RFftPlan1DY
 //----------------------------------------------------------------------------------------------------------------------
@@ -522,9 +506,7 @@ void FftwComplexMatrix::createC2RFftPlan1DZ(RealMatrix& outMatrix)
 
   if (!mC2RFftPlan1DZ)
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftPlanNotCreated, "FFT_1DZ_C2R");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtCreateC2RFftPlan1DX);
   }
 }// end of createC2RFftPlan1DZ
 //----------------------------------------------------------------------------------------------------------------------
@@ -540,9 +522,7 @@ void FftwComplexMatrix::computeR2CFft3D(RealMatrix& inMatrix)
   }
   else //error
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_3D_R2C");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtExecuteR2CFftPlan3D);
   }
 }// end of computeR2CFft3D
 //----------------------------------------------------------------------------------------------------------------------
@@ -558,9 +538,7 @@ void FftwComplexMatrix::computeC2RFft3D(RealMatrix & outMatrix)
   }
   else // error
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_3D_C2R");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtExecuteC2RFftPlan3D);
   }
 }// end of computeC2RFft3D
 //----------------------------------------------------------------------------------------------------------------------
@@ -592,9 +570,7 @@ void FftwComplexMatrix::computeR2CFft1DX(RealMatrix& inMatrix)
   }
   else //error
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DX_R2C");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtExecuteR2CFftPlan1DX);
   }
 }// end of computeR2CFft1DX
 //----------------------------------------------------------------------------------------------------------------------
@@ -626,9 +602,7 @@ void FftwComplexMatrix::computeR2CFft1DY(RealMatrix& inMatrix)
   }
   else //error
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DY_R2C");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtExecuteR2CFftPlan1DY);
   }
 }// end of computeR2CFft1DY
 //----------------------------------------------------------------------------------------------------------------------
@@ -660,9 +634,7 @@ void FftwComplexMatrix::computeR2CFft1DZ(RealMatrix& inMatrix)
   }
   else //error
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DZ_R2C");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtExecuteR2CFftPlan1DZ);
   }
 }// end of computeR2CFft1DZ
 //----------------------------------------------------------------------------------------------------------------------
@@ -694,9 +666,7 @@ void FftwComplexMatrix::computeC2RFft1DX(RealMatrix& outMatrix)
   }
   else //error
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DX_C2R");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtExecuteC2RFftPlan1DX);
   }
 }// end of computeR2CFft1DX
 //----------------------------------------------------------------------------------------------------------------------
@@ -728,9 +698,7 @@ void FftwComplexMatrix::computeC2RFft1DY(RealMatrix& outMatrix)
   }
   else //error
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DY_C2R");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtExecuteC2RFftPlan1DY);
   }
 }// end of computeR2CFft1DY
 //----------------------------------------------------------------------------------------------------------------------
@@ -762,9 +730,7 @@ void FftwComplexMatrix::computeC2RFft1DZ(RealMatrix& outMatrix)
   }
   else //error
   {
-    char ErrorMessage[256];
-    sprintf(ErrorMessage, kErrFmtFftInvalidPlan, "FFT_1DZ_C2R");
-    throw std::runtime_error(ErrorMessage);
+    throw std::runtime_error(kErrFmtExecuteC2RFftPlan1DZ);
   }
 }// end of computeR2CFft1DZ
 //----------------------------------------------------------------------------------------------------------------------
@@ -776,10 +742,9 @@ void FftwComplexMatrix::exportWisdom()
 {
   #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
     int success = fftwf_export_wisdom_to_filename(getWisdomFileName().c_str());
-
     if (success == 0)
     {
-      fprintf(stderr,kErrFmtFftWisdomNotExported);
+      throw std::runtime_error(kErrFmtFftWisdomNotExported);
     }
   #endif
 }// end of exportWisdom
@@ -794,7 +759,8 @@ void FftwComplexMatrix::importWisdom()
     int success = fftwf_import_wisdom_from_filename(getWisdomFileName().c_str());
     if (success == 0)
     {
-      fprintf(stderr,ErrFmtFftWisdomNotImported);
+      // print out a warning!
+      throw std::runtime_error(ErrFmtFftWisdomNotImported);
     }
   #endif
 }// end of importWisdom
@@ -824,7 +790,6 @@ void FftwComplexMatrix::allocateMemory()
 
   if (!mData)
   {
-    fprintf(stderr,kErrFmtNotEnoughMemory, "FFTWComplexMatrix");
     throw std::bad_alloc();
   }
 

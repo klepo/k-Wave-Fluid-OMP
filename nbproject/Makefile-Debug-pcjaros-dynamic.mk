@@ -41,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Hdf5/Hdf5File.o \
 	${OBJECTDIR}/Hdf5/Hdf5FileHeader.o \
 	${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o \
+	${OBJECTDIR}/Logger/Logger.o \
 	${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o \
 	${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/ComplexMatrix.o \
@@ -84,102 +85,107 @@ ${CND_DISTDIR}/${CND_CONF}/k-wave-fluid-omp: ${OBJECTFILES}
 ${OBJECTDIR}/Containers/MatrixContainer.o: Containers/MatrixContainer.cpp
 	${MKDIR} -p ${OBJECTDIR}/Containers
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/MatrixContainer.o Containers/MatrixContainer.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/MatrixContainer.o Containers/MatrixContainer.cpp
 
 ${OBJECTDIR}/Containers/MatrixRecord.o: Containers/MatrixRecord.cpp
 	${MKDIR} -p ${OBJECTDIR}/Containers
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/MatrixRecord.o Containers/MatrixRecord.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/MatrixRecord.o Containers/MatrixRecord.cpp
 
 ${OBJECTDIR}/Containers/OutputStreamContainer.o: Containers/OutputStreamContainer.cpp
 	${MKDIR} -p ${OBJECTDIR}/Containers
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/OutputStreamContainer.o Containers/OutputStreamContainer.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Containers/OutputStreamContainer.o Containers/OutputStreamContainer.cpp
 
 ${OBJECTDIR}/Hdf5/Hdf5File.o: Hdf5/Hdf5File.cpp
 	${MKDIR} -p ${OBJECTDIR}/Hdf5
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hdf5/Hdf5File.o Hdf5/Hdf5File.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hdf5/Hdf5File.o Hdf5/Hdf5File.cpp
 
 ${OBJECTDIR}/Hdf5/Hdf5FileHeader.o: Hdf5/Hdf5FileHeader.cpp
 	${MKDIR} -p ${OBJECTDIR}/Hdf5
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hdf5/Hdf5FileHeader.o Hdf5/Hdf5FileHeader.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hdf5/Hdf5FileHeader.o Hdf5/Hdf5FileHeader.cpp
 
 ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o: KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
 	${MKDIR} -p ${OBJECTDIR}/KSpaceSolver
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
+
+${OBJECTDIR}/Logger/Logger.o: Logger/Logger.cpp
+	${MKDIR} -p ${OBJECTDIR}/Logger
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Logger/Logger.o Logger/Logger.cpp
 
 ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o: MatrixClasses/BaseFloatMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o MatrixClasses/BaseFloatMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o MatrixClasses/BaseFloatMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o: MatrixClasses/BaseIndexMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o MatrixClasses/BaseIndexMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o MatrixClasses/BaseIndexMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/ComplexMatrix.o: MatrixClasses/ComplexMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/ComplexMatrix.o MatrixClasses/ComplexMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/ComplexMatrix.o MatrixClasses/ComplexMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/FftwComplexMatrix.o: MatrixClasses/FftwComplexMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/FftwComplexMatrix.o MatrixClasses/FftwComplexMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/FftwComplexMatrix.o MatrixClasses/FftwComplexMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/IndexMatrix.o: MatrixClasses/IndexMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/IndexMatrix.o MatrixClasses/IndexMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/IndexMatrix.o MatrixClasses/IndexMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/RealMatrix.o: MatrixClasses/RealMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/RealMatrix.o MatrixClasses/RealMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/RealMatrix.o MatrixClasses/RealMatrix.cpp
 
 ${OBJECTDIR}/MatrixClasses/VelocityMatrix.o: MatrixClasses/VelocityMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/VelocityMatrix.o MatrixClasses/VelocityMatrix.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/VelocityMatrix.o MatrixClasses/VelocityMatrix.cpp
 
 ${OBJECTDIR}/OutputStreams/BaseOutputStream.o: OutputStreams/BaseOutputStream.cpp
 	${MKDIR} -p ${OBJECTDIR}/OutputStreams
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/BaseOutputStream.o OutputStreams/BaseOutputStream.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/BaseOutputStream.o OutputStreams/BaseOutputStream.cpp
 
 ${OBJECTDIR}/OutputStreams/CuboidOutputStream.o: OutputStreams/CuboidOutputStream.cpp
 	${MKDIR} -p ${OBJECTDIR}/OutputStreams
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/CuboidOutputStream.o OutputStreams/CuboidOutputStream.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/CuboidOutputStream.o OutputStreams/CuboidOutputStream.cpp
 
 ${OBJECTDIR}/OutputStreams/IndexOutputStream.o: OutputStreams/IndexOutputStream.cpp
 	${MKDIR} -p ${OBJECTDIR}/OutputStreams
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/IndexOutputStream.o OutputStreams/IndexOutputStream.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/IndexOutputStream.o OutputStreams/IndexOutputStream.cpp
 
 ${OBJECTDIR}/OutputStreams/WholeDomainOutputStream.o: OutputStreams/WholeDomainOutputStream.cpp
 	${MKDIR} -p ${OBJECTDIR}/OutputStreams
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/WholeDomainOutputStream.o OutputStreams/WholeDomainOutputStream.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OutputStreams/WholeDomainOutputStream.o OutputStreams/WholeDomainOutputStream.cpp
 
 ${OBJECTDIR}/Parameters/CommandLineParameters.o: Parameters/CommandLineParameters.cpp
 	${MKDIR} -p ${OBJECTDIR}/Parameters
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Parameters/CommandLineParameters.o Parameters/CommandLineParameters.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Parameters/CommandLineParameters.o Parameters/CommandLineParameters.cpp
 
 ${OBJECTDIR}/Parameters/Parameters.o: Parameters/Parameters.cpp
 	${MKDIR} -p ${OBJECTDIR}/Parameters
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Parameters/Parameters.o Parameters/Parameters.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Parameters/Parameters.o Parameters/Parameters.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:

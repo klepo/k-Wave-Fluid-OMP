@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 17:03 (created) \n
- *              29 August    2017, 10:17 (revised)
+ *              30 August    2017, 16:43 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -31,7 +31,6 @@
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstring>
 #include <OutputStreams/CuboidOutputStream.h>
 #include <Parameters/Parameters.h>
 
