@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              30 August    2017, 18:11 (revised)
+ *              31 August    2017, 16:55 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -790,7 +790,7 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
        Logger::log(Logger::LogLevel::kFull, kOutFmtFailed);
      }
   #endif
-  
+
   // Create Checkpoint file
   Hdf5File& checkpointFile = mParameters.getCheckpointFile();
   // if it happens and the file is opened (from the recovery, close it)
@@ -1339,13 +1339,13 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
     RealMatrix& absorbEtaTerm = densitySum;
 
 
-    computePressureTermsNonlinearSSE2(densitySum, nonlinearTerm, velocitGradientSum);
+    computePressureTermsNonlinear(densitySum, nonlinearTerm, velocitGradientSum);
 
     // ifftn( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
     getTempFftwX().computeR2CFft3D(velocitGradientSum);
     getTempFftwY().computeR2CFft3D(densitySum);
 
-    computeAbsorbtionTermSSE2(getTempFftwX(), getTempFftwY());
+    computeAbsorbtionTerm(getTempFftwX(), getTempFftwY());
 
     getTempFftwX().computeC2RFft3D(absorbTauTerm);
     getTempFftwY().computeC2RFft3D(absorbEtaTerm);
@@ -1399,7 +1399,7 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
     getTempFftwX().computeR2CFft3D(velocityGradientTerm);
     getTempFftwY().computeR2CFft3D(densitySum);
 
-    computeAbsorbtionTermSSE2(getTempFftwX(), getTempFftwY());
+    computeAbsorbtionTerm(getTempFftwX(), getTempFftwY());
 
     getTempFftwX().computeC2RFft3D(absorbTauTerm);
     getTempFftwY().computeC2RFft3D(absorbEtaTerm);
@@ -1936,15 +1936,12 @@ void KSpaceFirstOrder3DSolver::computePressureGradient()
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Calculate three temporary sums in the new pressure formula non-linear absorbing case, SSE2 version.
+ * Calculate three temporary sums in the new pressure formula non-linear absorbing case.
  */
-void KSpaceFirstOrder3DSolver::computePressureTermsNonlinearSSE2(RealMatrix& densitySum,
-                                                                 RealMatrix& nonlinearTerm,
-                                                                 RealMatrix& velocityGradientSum)
+void KSpaceFirstOrder3DSolver::computePressureTermsNonlinear(RealMatrix& densitySum,
+                                                             RealMatrix& nonlinearTerm,
+                                                             RealMatrix& velocityGradientSum)
 {
-  // step of 4
-  const size_t nElementsSSE = (densitySum.size() >> 2) << 2;
-
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
   const float* rhoZ = getRhoZ().getData();
@@ -1953,117 +1950,33 @@ void KSpaceFirstOrder3DSolver::computePressureTermsNonlinearSSE2(RealMatrix& den
   const float* duydy = getDuydy().getData();
   const float* duzdz = getDuzdz().getData();
 
-  float  bOnAScalaValue  = mParameters.getBOnAScalar();
-  float  rho0ScalarValue = mParameters.getRho0Scalar();
   // set BonA to be either scalar or a matrix
-        float* bOnA;
-        size_t bOnAShift;
-  const bool   bOnAFlag = mParameters.getBOnAScalarFlag();
+  const bool   bOnAScalarFlag = mParameters.getBOnAScalarFlag();
+  const float  bOnAScalar     = (bOnAScalarFlag) ? mParameters.getBOnAScalar() : 0;
+  const float* bOnAMatrix     = (bOnAScalarFlag) ? nullptr : getBOnA().getData();
 
-  if (bOnAFlag)
+  const bool   rho0ScalarFlag = mParameters.getRho0ScalarFlag();
+  const float  rho0Scalar     = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
+  const float* rho0Matrix     = (rho0ScalarFlag) ? nullptr : getRho0().getData();
+
+
+  float* eDensitySum          = densitySum.getData();
+  float* eNonlinearTerm       = nonlinearTerm.getData();
+  float* eVelocityGradientSum = velocityGradientSum.getData();
+
+
+  #pragma omp parallel for schedule(static)
+  for (size_t i = 0; i < densitySum.size() ; i++)
   {
-    bOnA = &bOnAScalaValue;
-    bOnAShift = 0;
+    const float rhoSum = rhoX[i] + rhoY[i] + rhoZ[i];
+    const float bOnA   = (bOnAScalarFlag) ? bOnAScalar : bOnAMatrix[i];
+    const float rho0   = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
+
+    eDensitySum[i]          = rhoSum;
+    eNonlinearTerm[i]       = (bOnA * rhoSum * rhoSum) / (2.0f * rho0) + rhoSum;
+    eVelocityGradientSum[i] = rho0 * (duxdx[i] + duydy[i] + duzdz[i]);
   }
-  else
-  {
-    bOnA = getBOnA().getData();
-    bOnAShift = 1;
-  }
-
-
-  // set rho0 to be either scalar or a matrix
-        float* rho0Data;
-        size_t rho0Shift;
-  const bool   rho0Flag = mParameters.getRho0ScalarFlag();
-
-
-  if (rho0Flag)
-  {
-    rho0Data = &rho0ScalarValue;
-    rho0Shift = 0;
-  }
-  else
-  {
-    rho0Data = getRho0().getData();
-    rho0Shift = 1;
-  }
-
-  // compute loop
-  #pragma  omp parallel
-  {
-    float* eDensitySum          = densitySum.getData();
-    float* eNonlinearTerm       = nonlinearTerm.getData();
-    float* eVelocityGradientSum = velocityGradientSum.getData();
-
-
-    const __m128 sseTwo   = _mm_set1_ps(2.0f);
-          __m128 sseBOnA  = _mm_set1_ps(mParameters.getBOnAScalar());
-          __m128 sseRho0  = _mm_set1_ps(mParameters.getRho0Scalar());
-
-
-   #pragma omp for schedule (static) nowait
-   for (size_t i = 0; i < nElementsSSE; i +=4 )
-   {
-      if (!bOnAFlag) sseBOnA = _mm_load_ps(&bOnA[i]);
-
-      __m128 xmm1 = _mm_load_ps(&rhoX[i]);
-      __m128 xmm2 = _mm_load_ps(&rhoY[i]);
-      __m128 xmm3 = _mm_load_ps(&rhoZ[i]);
-
-      if (!rho0Flag)  sseRho0 = _mm_load_ps(&rho0Data[i]);
-
-      __m128 sseRhoSumSq;
-      __m128 sseRhoSum;
-
-      //  register const float rho_xyz_el = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
-      sseRhoSum = _mm_add_ps(xmm1, xmm2);
-      sseRhoSum = _mm_add_ps(xmm3, sseRhoSum);
-
-      // RHO_Temp_Data[i]  = rho_xyz_el;
-      _mm_stream_ps(&eDensitySum[i], sseRhoSum);
-
-      //  BonA_Temp_Data[i] =  ((BonA * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i])) + rho_xyz_el;
-      sseRhoSumSq = _mm_mul_ps(sseRhoSum, sseRhoSum);// (rho_xyz_el * rho_xyz_el)
-
-      xmm1           = _mm_mul_ps(sseRhoSumSq, sseBOnA);      //((BonA * (rho_xyz_el * rho_xyz_el))
-      xmm2           = _mm_mul_ps(sseTwo, sseRho0);             // (2.0f * rho0_data[i])
-      xmm3           = _mm_div_ps(xmm1, xmm2);                    // (BonA * (rho_xyz_el * rho_xyz_el)) /  (2.0f * rho0_data[i])
-
-      xmm1           = _mm_add_ps(xmm3, sseRhoSum);          // + rho_xyz_el
-
-      _mm_stream_ps(&eNonlinearTerm[i], xmm1);   //bypass cache
-
-      xmm1       = _mm_load_ps(&duxdx[i]); //dudx
-      xmm2       = _mm_load_ps(&duydy[i]); //dudu
-      xmm3       = _mm_load_ps(&duzdz[i]); //dudz
-
-      __m128 xmmAcc = _mm_add_ps(xmm1, xmm2);
-      xmmAcc        = _mm_add_ps(xmmAcc, xmm3);
-      xmmAcc        = _mm_mul_ps(xmmAcc, sseRho0);
-
-      _mm_stream_ps(&eVelocityGradientSum[i],xmmAcc);
-
-    // BonA_Temp_Data[i] =  ((BonA * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i])) + rho_xyz_el;
-    }
-
-    // non SSE code, in OpenMP only the last thread does this
-    #ifdef _OPENMP
-      if (omp_get_thread_num() == omp_get_num_threads() -1)
-    #endif
-    {
-      for (size_t i = nElementsSSE; i < densitySum.size() ; i++)
-      {
-        register const float rhoSum = rhoX[i] + rhoY[i] + rhoZ[i];
-
-        eDensitySum[i]          = rhoSum;
-        eNonlinearTerm[i]       = ((bOnA[i * bOnAShift] * (rhoSum * rhoSum)) /
-                                   (2.0f * rho0Data[i* rho0Shift])) + rhoSum;
-        eVelocityGradientSum[i] = rho0Data[i * rho0Shift] * (duxdx[i] + duydy[i] + duzdz[i]);
-      }
-    }
-  }// parallel
- } // end of computePressureTermsNonlinearSSE2
+ } // end of computePressureTermsNonlinear
 //----------------------------------------------------------------------------------------------------------------------
 
 
@@ -2124,59 +2037,28 @@ void KSpaceFirstOrder3DSolver::computePressureTermsLinear(RealMatrix& densitySum
 
 
  /**
-  * Compute absorbing term with abosrbNabla1 and absorbNabla2, SSE2 version
+  * Compute absorbing term with abosrbNabla1 and absorbNabla2.
   */
-void KSpaceFirstOrder3DSolver::computeAbsorbtionTermSSE2(FftwComplexMatrix& fftPart1,
-                                                         FftwComplexMatrix& fftPart2)
+void KSpaceFirstOrder3DSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
+                                                     FftwComplexMatrix& fftPart2)
 {
   const float* absorbNabla1 = getAbsorbNabla1().getData();
   const float* absorbNabla2 = getAbsorbNabla2().getData();
 
   const size_t nElements     = fftPart1.size();
-  const size_t nElementsSSE = (fftPart1.size() >> 1) << 1;
 
-  #pragma omp parallel
-  {
-    float * fft1Data  = fftPart1.getData();
-    float * fft2Data  = fftPart2.getData();
+  float* fft1Data  = fftPart1.getData();
+  float* fft2Data  = fftPart2.getData();
 
-    #pragma omp for schedule (static) nowait
-    for (size_t i = 0; i < nElementsSSE; i += 2)
-    {
-       __m128 sseAbsorbNabla1 = _mm_set_ps(absorbNabla1[i + 1], absorbNabla1[i + 1], absorbNabla1[i], absorbNabla1[i]);
-       __m128 sseFft1  = _mm_load_ps(&fft1Data[2 * i]);
-
-              sseFft1  = _mm_mul_ps(sseAbsorbNabla1, sseFft1);
-                         _mm_store_ps(&fft1Data[2 * i],    sseFft1);
-    }
-
-    #pragma omp for schedule (static)
-    for (size_t i = 0; i < nElements; i += 2)
-    {
-      __m128 sseAbsorbNabla2 = _mm_set_ps(absorbNabla2[i + 1 ], absorbNabla2[i + 1], absorbNabla2[i], absorbNabla2[i]);
-      __m128 sseFft2  = _mm_load_ps(&fft2Data[2 * i]);
-
-             sseFft2  = _mm_mul_ps(sseAbsorbNabla2, sseFft2);
-                        _mm_store_ps(&fft2Data[2 * i], sseFft2);
-      }
-
-    //-- non SSE code --//
-    #ifdef _OPENMP
-      if (omp_get_thread_num() == omp_get_num_threads() -1)
-    #endif
-    {
-      for (size_t i = nElementsSSE; i < nElements ; i++)
-      {
-        fft1Data[(i << 1) ]    *= absorbNabla1[i];
-        fft1Data[(i << 1) + 1] *= absorbNabla1[i];
-
-        fft2Data[(i << 1) ]    *=  absorbNabla2[i];
-        fft2Data[(i << 1) + 1] *=  absorbNabla2[i];
-      }
-    }
-
-  }// parallel
- } // end of computeAbsorbtionTermSSE2
+  #pragma omp parallel for schedule(static)
+  for (size_t i = 0; i < nElements ; i++)
+   {
+     fft1Data[2 * i]     *= absorbNabla1[i];
+     fft1Data[2 * i + 1] *= absorbNabla1[i];
+     fft2Data[2 * i]     *=  absorbNabla2[i];
+     fft2Data[2 * i + 1] *=  absorbNabla2[i];
+   }
+ } // end of computeAbsorbtionTerm
 //----------------------------------------------------------------------------------------------------------------------
 
 

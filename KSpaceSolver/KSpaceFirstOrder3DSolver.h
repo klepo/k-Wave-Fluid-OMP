@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        12 July      2012, 10:27 (created)\n
- *              28 August    2017, 13:28 (revised)
+ *              31 August    2017, 16:54 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -229,14 +229,14 @@ class KSpaceFirstOrder3DSolver
     void computePressureGradient();
     /**
      * @brief Calculate three temporary sums in the new pressure formula before taking the FFT,
-     *        nonlinear absorbing case, SSE2 version.
+     *        nonlinear absorbing case.
      * @param [out] densitySum          - rhoX + rhoY + rhoZ
      * @param [out] nonlinearTerm       - BOnA + densitySum ^2 / 2 * rho0
      * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
      */
-    void computePressureTermsNonlinearSSE2(RealMatrix& densitySum,
-                                           RealMatrix& nonlinearTerm,
-                                           RealMatrix& velocityGradientSum);
+    void computePressureTermsNonlinear(RealMatrix& densitySum,
+                                       RealMatrix& nonlinearTerm,
+                                       RealMatrix& velocityGradientSum);
     /**
      * @brief Calculate two temporary sums in the new pressure formula before taking the FFT,
      *        linear absorbing case.
@@ -247,13 +247,13 @@ class KSpaceFirstOrder3DSolver
                                     RealMatrix& velocityGradientSum);
 
     /**
-     * @brief Compute absorbing term with abosrbNabla1 and absorbNabla2, SSE2 version
+     * @brief Compute absorbing term with abosrbNabla1 and absorbNabla2.
      *
      * @param [in,out] fftPart1 - fftPart1 = absorbNabla1 .* fftPart1
      * @param [in,out] fftPart2 - fftPart1 = absorbNabla1 .* fftPart2
      */
-    void computeAbsorbtionTermSSE2(FftwComplexMatrix& fftPart1,
-                                   FftwComplexMatrix& fftPart2);
+    void computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
+                               FftwComplexMatrix& fftPart2);
 
     /**
      * @brief Sum sub-terms to calculate new pressure, after FFTs, nonlinear case.
@@ -284,7 +284,7 @@ class KSpaceFirstOrder3DSolver
 
     /// Print progress statistics.
     void printStatistics();
-    
+
     /**
      * @brief  Is time to checkpoint (save actual state on disk).
      * @return true if it is time to interrupt the simulation and checkpoint.
