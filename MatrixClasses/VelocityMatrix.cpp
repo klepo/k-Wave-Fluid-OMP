@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              28 August    2017, 14:45 (revised)
+ *              01 September 2017, 17:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -51,12 +51,13 @@ void VelocityMatrix::computeInitialVelocity(const RealMatrix&  dtRho0Sgxyz,
 {
   fftTemp.computeC2RFft3D(*this);
 
-  const float divider = 1.0f / (2.0f * static_cast<float>(mSize));
+  const float  divider      = 1.0f / (2.0f * static_cast<float>(mSize));
+  const float* pDtRho0Sgxyz = dtRho0Sgxyz.getData();
 
-  #pragma omp parallel for schedule (static) firstprivate(divider)
+  #pragma omp parallel for simd schedule (static) aligned(pDtRho0Sgxyz)
   for (size_t i = 0; i < mSize; i++)
   {
-    mData[i] *= dtRho0Sgxyz[i] * divider;
+    mData[i] *= pDtRho0Sgxyz[i] * divider;
   }
 }// end of computeInitialVelocity
 //----------------------------------------------------------------------------------------------------------------------
@@ -71,7 +72,7 @@ void VelocityMatrix::computeInitialVelocityHomogeneousUniform(const float dtRho0
 
   const float divider = 1.0f / (2.0f * static_cast<float>(mSize)) * dtRho0Sgxyz;
 
-  #pragma omp parallel for schedule (static) firstprivate(divider)
+  #pragma omp parallel for simd schedule (static)
   for (size_t i = 0; i < mSize; i++)
   {
     mData[i] *= divider;
@@ -89,17 +90,18 @@ void VelocityMatrix::computeInitialVelocityXHomogeneousNonuniform(const float   
   fftTemp.computeC2RFft3D(*this);
 
   const float divider = 1.0f / (2.0f * static_cast<float>(mSize)) * dtRho0Sgx;
+  const float* pDxudxnSgx = dxudxnSgx.getData();
 
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * mDimensionSizes.ny * mDimensionSizes.nx;
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        mData[i] *=  divider * dxudxnSgx[x];
-        i++;
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
+        mData[i] *=  divider * pDxudxnSgx[x];
       } // x
     } // y
   } // z
@@ -120,14 +122,14 @@ void VelocityMatrix::computeInitialVelocityYHomogeneousNonuniform(const float   
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * mDimensionSizes.ny * mDimensionSizes.nx;
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
       const float eDyudynSgy = dyudynSgy[y] * divider;
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
         mData[i] *= eDyudynSgy;
-        i++;
       } // x
     } // y
   } // z
@@ -148,15 +150,14 @@ void VelocityMatrix::computeInitialVelocityZHomogeneousNonuniform(const float dt
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * mDimensionSizes.ny * mDimensionSizes.nx;
     const float eDzudznSgz = dzudznSgz[z] * divider;
-
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
         mData[i] *= eDzudznSgz;
-        i++;
       } // x
     } // y
   } // z
@@ -170,31 +171,26 @@ void VelocityMatrix::computeVelocityX(const RealMatrix& ifftX,
                                       const RealMatrix& dtRho0Sgx,
                                       const RealMatrix& pmlX)
 {
-  const float divider = 1.0f / static_cast<float>(mSize);
+  const float divider     = 1.0f / static_cast<float>(mSize);
 
-  #pragma omp for schedule (static)
+  const float* dIfftX     = ifftX.getData();
+  const float* dDtRho0Sgx = dtRho0Sgx.getData();
+  const float* dPmlX      = pmlX.getData();
+
+  #pragma omp for schedule(static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * mSlabSize;
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftX = divider * ifftX[i] * dtRho0Sgx[i];
+        const float eIfftX = divider * dIfftX[i] * dDtRho0Sgx[i];
+        const float ePmlX  = dPmlX[x];
 
-        //BSXElementRealMultiply_1D_X(pml);
-        eData *= pmlX[x];
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftX;
-
-        //BSXElementRealMultiply_1D_X(pml);
-        mData[i] = eData * pmlX[x];
-
-        i++;
+        mData[i] = (mData[i] * ePmlX - eIfftX) * ePmlX;
       } // x
     } // y
   } // z
@@ -210,29 +206,20 @@ void VelocityMatrix::computeVelocityXHomogeneousUniform(const RealMatrix& ifftX,
 {
   const float divider = dtRho0 / static_cast<float>(mSize);
 
+  const float* eIfftX = ifftX.getData();
+  const float* ePmlX  = pmlX.getData();
+
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * mSlabSize;
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftX = divider * ifftX[i];
-
-        //BSXElementRealMultiply_1D_X(pml);
-        eData *= pmlX[x];
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftX;
-
-        //BSXElementRealMultiply_1D_X(pml);
-        mData[i] = eData * pmlX[x];
-
-        i++;
+        mData[i] = (mData[i] * ePmlX[x] - divider * eIfftX[i]) * ePmlX[x];
       } // x
     } // y
   } // z
@@ -247,31 +234,24 @@ void VelocityMatrix::computeVelocityXHomogeneousNonuniform(const RealMatrix& iff
                                                            const RealMatrix& dxudxnSgx,
                                                            const RealMatrix& pmlX)
 {
-  const float divider = dtRho0 / static_cast<float>(mSize);
+  const float divider     = dtRho0 / static_cast<float>(mSize);
+
+  const float* eIfftX     = ifftX.getData();
+  const float* eDxudxnSgx = dxudxnSgx.getData();
+  const float* ePmlX      = pmlX.getData();
+
 
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    register size_t i = z * mSlabSize;
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftX = (divider * dxudxnSgx[x]) * ifftX[i];
-
-        //BSXElementRealMultiply_1D_X(pml);
-        eData *= pmlX[x];
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftX;
-
-        //BSXElementRealMultiply_1D_X(pml);
-        mData[i] = eData * pmlX[x];
-
-        i++;
+        mData[i] = (mData[i] * ePmlX[x] - (divider * eDxudxnSgx[x] * eIfftX[i])) * ePmlX[x];
       } // x
     } // y
   } // z
@@ -287,30 +267,22 @@ void VelocityMatrix::computeVelocityY(const RealMatrix& ifftY,
 {
   const float divider = 1.0f / static_cast<float>(mSize);
 
+  const float* dIfftY = ifftY.getData();
+  const float* dDtRho0Sgy = dtRho0Sgy.getData();
+
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * mSlabSize;
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
       const float ePmlY = pmlY[y];
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
+        const float eIfftY = divider * dIfftY[i] * dDtRho0Sgy[i];
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftY = divider * ifftY[i] * dtRho0Sgy[i];
-
-        //BSXElementRealMultiply_1D_X(pml);
-        eData *= ePmlY;
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftY;
-
-        //BSXElementRealMultiply_1D_X(pml);
-        mData[i] = eData * ePmlY;
-
-        i++;
+        mData[i] = (mData[i] * ePmlY - eIfftY) * ePmlY;
       } // x
     } // y
   } // z
@@ -326,30 +298,20 @@ void VelocityMatrix::computeVelocityYHomogeneousUniform(const RealMatrix& ifftY,
 {
   const float divider = dtRho0 / static_cast<float>(mSize);
 
+  const float* eIfftY = ifftY.getData();
+
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * mSlabSize;
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
       const float ePmlY = pmlY[y];
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftY = divider * ifftY[i];
-
-        //BSXElementRealMultiply_1D_X(pml);
-        eData *= ePmlY;
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftY;
-
-        //BSXElementRealMultiply_1D_X(pml);
-        mData[i] = eData * ePmlY;
-
-        i++;
+        mData[i] = (mData[i] * ePmlY - divider * eIfftY[i]) * ePmlY;
       } // x
     } // y
   } // z
@@ -364,33 +326,22 @@ void VelocityMatrix::computeVelocityYHomogeneousNonuniform(const RealMatrix& iff
                                                            const RealMatrix& dyudynSgy,
                                                            const RealMatrix& pmlY)
 {
-  const float divider = dtRho0 / static_cast<float>(mSize);
+  const float  divider = dtRho0 / static_cast<float>(mSize);
+  const float* eIfftY  = ifftY.getData();
 
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * mSlabSize;
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
       const float ePmlY      = pmlY[y];
       const float eDyudynSgy = dyudynSgy[y];
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftY = (divider * eDyudynSgy) * ifftY[i];
-
-        //BSXElementRealMultiply_1D_X(pml);
-        eData *= ePmlY;
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftY;
-
-        //BSXElementRealMultiply_1D_X(pml);
-        mData[i] = eData * ePmlY;
-
-        i++;
+        mData[i] = (mData[i] * ePmlY - (divider * eDyudynSgy * eIfftY[i])) * ePmlY;
       } // x
     } // y
   } // z
@@ -406,30 +357,22 @@ void VelocityMatrix::computeVelocityZ(const RealMatrix& ifftZ,
 {
   const float divider = 1.0f / static_cast<float>(mSize);
 
+  const float* dIfftZ     = ifftZ.getData();
+  const float* dDtRho0Sgz = dtRho0Sgz.getData();
+
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * mSlabSize;
     const float ePmlZ = pmlZ[z];
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
+        const float eIfftZ = divider * dIfftZ[i] * dDtRho0Sgz[i];
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftZ = divider * ifftZ[i] * dtRho0Sgz[i];
-
-        //BSXElementRealMultiply_1D_X(pml);
-        eData *= ePmlZ;
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftZ;
-
-        //BSXElementRealMultiply_1D_X(pml);
-        mData[i] = eData * ePmlZ;
-
-        i++;
+        mData[i] = (mData[i] * ePmlZ - eIfftZ) * ePmlZ;
       } // x
     } // y
   } // z
@@ -444,32 +387,20 @@ void VelocityMatrix::computeVelocityZHomogeneousUniform(const RealMatrix& ifftZ,
                                                         const RealMatrix& pmlZ)
 {
   const float divider = dtRho0 / static_cast<float>(mSize);
+  const float* eIfftZ = ifftZ.getData();
 
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z* mSlabSize;
     const float ePmlZ = pmlZ[z];
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftZ = divider * ifftZ[i];
-
-        //BSXElementRealMultiply_1D_X(abc);
-        eData *= ePmlZ;
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftZ;
-
-        //BSXElementRealMultiply_1D_X(abc);
-
-        mData[i] = eData * ePmlZ;
-
-        i++;
+        mData[i] = (mData[i] * ePmlZ - divider * eIfftZ[i]) * ePmlZ;
       } // x
     } // y
   } // z
@@ -485,34 +416,21 @@ void VelocityMatrix::computeVelocityZHomogeneousNonuniform(const RealMatrix& iff
                                                            const RealMatrix& pmlZ)
 {
   const float divider = dtRho0 / static_cast<float>(mSize);
+  const float* eIfftZ = ifftZ.getData();
 
   #pragma omp for schedule (static)
   for (size_t z = 0; z < mDimensionSizes.nz; z++)
   {
-    size_t i = z * mSlabSize;
     const float ePmlZ = pmlZ[z];
-    const float eDzudznSgz_data = dzudznSgz[z];
-
+    const float eDzudznSgz = dzudznSgz[z];
     for (size_t y = 0; y < mDimensionSizes.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < mDimensionSizes.nx; x++)
       {
-        register float eData = mData[i];
+        const size_t i = get1DIndex(z, y, x, mDimensionSizes);
 
-        //FFT_p.ElementMultiplyMatrices(dt_rho0);
-        const float eIfftZ = (divider * eDzudznSgz_data) * ifftZ[i];
-
-        //BSXElementRealMultiply_1D_X(abc);
-        eData *= ePmlZ;
-
-        //ElementSubMatrices(FFT_p);
-        eData -= eIfftZ;
-
-        //BSXElementRealMultiply_1D_X(abc);
-
-        mData[i] = eData * ePmlZ;
-
-        i++;
+        mData[i] = (mData[i] * ePmlZ - (divider * eDzudznSgz * eIfftZ[i])) * ePmlZ;
       } // x
     } // y
   } // z
@@ -579,3 +497,13 @@ void VelocityMatrix::addVelocitySource(const RealMatrix & velocitySourceInput,
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Private methods --------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
+
+#pragma omp declare simd
+inline size_t VelocityMatrix::get1DIndex(const size_t          z,
+                                         const size_t          y,
+                                         const size_t          x,
+                                         const DimensionSizes& dimensionSizes)
+{
+  return (z * dimensionSizes.ny + y) * dimensionSizes.nx + x;
+}// end of get1DIndex
+//----------------------------------------------------------------------------------------------------------------------

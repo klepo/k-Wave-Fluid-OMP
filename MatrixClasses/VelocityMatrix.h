@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        28 July      2011, 11:37 (created) \n
- *              28 August    2017, 14:25 (revised)
+ *              01 September 2017, 17:17 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -279,6 +279,19 @@ class VelocityMatrix : public RealMatrix
 
   private:
 
+   /**
+    * @brief Compute 1D index using 3 spatial coordinates and the size of the matrix.
+    * @param [in] z              - z coordinate
+    * @param [in] y              - y coordinate
+    * @param [in] x              - x coordinate
+    * @param [in] dimensionSizes - Size of the matrix.
+    * @return
+    */
+   #pragma omp declare simd
+    size_t get1DIndex(const size_t          z,
+                      const size_t          y,
+                      const size_t          x,
+                      const DimensionSizes& dimensionSizes);
 }; // end of VelocityMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
