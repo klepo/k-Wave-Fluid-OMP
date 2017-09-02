@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              31 August    2017, 16:55 (revised)
+ *              02 September 2017, 30:49 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -635,10 +635,8 @@ void KSpaceFirstOrder3DSolver::computeMainLoop()
     // add in the transducer source term (t = t1) to ux
     if (mParameters.getTransducerSourceFlag() > timeIndex)
     {
-     getUxSgx().addTransducerSource(getVelocitySourceIndex(),
-                                    getTransducerSourceInput(),
-                                    getDelayMask(),
-                                    mParameters.getTimeIndex());
+      // transducer source is added only to the x component of the particle velocity
+      addTransducerSource();
     }
 
     // compute gradient of velocity
@@ -867,58 +865,29 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
  */
  void KSpaceFirstOrder3DSolver::computeVelocity()
  {
-  // bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)), for all 3 dims
-  computePressureGradient();
+    // bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)), for all 3 dims
+    computePressureGradient();
 
-   getTempFftwX().computeC2RFft3D(getTemp1Real3D());
-   getTempFftwY().computeC2RFft3D(getTemp2Real3D());
-   getTempFftwZ().computeC2RFft3D(getTemp3Real3D());
+    getTempFftwX().computeC2RFft3D(getTemp1Real3D());
+    getTempFftwY().computeC2RFft3D(getTemp2Real3D());
+    getTempFftwZ().computeC2RFft3D(getTemp3Real3D());
 
-  #pragma omp parallel
-  {
     if (mParameters.getRho0ScalarFlag())
     { // scalars
       if (mParameters.getNonUniformGridFlag())
       {
-        getUxSgx().computeVelocityXHomogeneousNonuniform(getTemp1Real3D(),
-                                                         mParameters.getDtRho0SgxScalar(),
-                                                         getDxudxnSgx(),
-                                                         getPmlXSgx());
-        getUySgy().computeVelocityYHomogeneousNonuniform(getTemp2Real3D(),
-                                                         mParameters.getDtRho0SgyScalar(),
-                                                         getDyudynSgy(),
-                                                         getPmlYSgy());
-        getUzSgz().computeVelocityZHomogeneousNonuniform(getTemp3Real3D(),
-                                                         mParameters.getDtRho0SgzScalar(),
-                                                         getDzudznSgz(),
-                                                         getPmlZSgz());
+        computeVelocityHomogeneousNonuniform();
        }
       else
       {
-        getUxSgx().computeVelocityXHomogeneousUniform(getTemp1Real3D(),
-                                                      mParameters.getDtRho0SgxScalar(),
-                                                      getPmlXSgx());
-        getUySgy().computeVelocityYHomogeneousUniform(getTemp2Real3D(),
-                                                      mParameters.getDtRho0SgyScalar(),
-                                                      getPmlYSgy());
-        getUzSgz().computeVelocityZHomogeneousUniform(getTemp3Real3D(),
-                                                      mParameters.getDtRho0SgzScalar(),
-                                                      getPmlZSgz());
+        computeVelocityHomogeneousUniform();
       }
     }
     else
     {// matrices
-      getUxSgx().computeVelocityX(getTemp1Real3D(),
-                                  getDtRho0Sgx(),
-                                  getPmlXSgx());
-      getUySgy().computeVelocityY(getTemp2Real3D(),
-                                  getDtRho0Sgy(),
-                                  getPmlYSgy());
-      getUzSgz().computeVelocityZ(getTemp3Real3D(),
-                                  getDtRho0Sgz(),
-                                  getPmlZSgz());
+      computeVelocityHeterogeneous();
+
     }
-  } // parallel
 }// end of computeVelocity
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -1423,31 +1392,56 @@ void KSpaceFirstOrder3DSolver::addVelocitySource()
 
   if (mParameters.getVelocityXSourceFlag() > timeIndex)
   {
-    getUxSgx().addVelocitySource(GetVelocityXSourceInput(),
-                                 getVelocitySourceIndex(),
-                                 timeIndex,
-                                 mParameters.getVelocitySourceMode(),
-                                 mParameters.getVelocitySourceMany());
+    computeVelocitySourceTerm(getUxSgx(), GetVelocityXSourceInput(), getVelocitySourceIndex());
   }
 
   if (mParameters.getVelocityYSourceFlag() > timeIndex)
   {
-    getUySgy().addVelocitySource(GetVelocityYSourceInput(),
-                                 getVelocitySourceIndex(),
-                                 timeIndex,
-                                 mParameters.getVelocitySourceMode(),
-                                 mParameters.getVelocitySourceMany());
+    computeVelocitySourceTerm(getUySgy(), GetVelocityYSourceInput(), getVelocitySourceIndex());
   }
 
   if (mParameters.getVelocityZSourceFlag() > timeIndex)
   {
-    getUzSgz().addVelocitySource(getVelocityZSourceInput(),
-                                 getVelocitySourceIndex(),
-                                 timeIndex,
-                                 mParameters.getVelocitySourceMode(),
-                                 mParameters.getVelocitySourceMany());
+    computeVelocitySourceTerm(getUzSgz(), getVelocityZSourceInput(), getVelocitySourceIndex());
   }
 }// end of addVelocitySource
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add in velocity source terms.
+ */
+void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
+                                                         const RealMatrix&  velocitySourceInput,
+                                                         const IndexMatrix& velocitySourceIndex)
+{
+
+  const size_t timeIndex  = mParameters.getTimeIndex();
+  const size_t sourceSize = velocitySourceIndex.size();
+  const size_t index2D    = (mParameters.getVelocitySourceMany() != 0) ? timeIndex * sourceSize : timeIndex;
+
+  const bool velocitySourceMode = mParameters.getVelocitySourceMode();
+  const bool velocitySourceMany = mParameters.getVelocitySourceMany();
+
+  if (velocitySourceMode == 0)
+  {
+    #pragma omp parallel for if (sourceSize > 16384)
+    for (size_t i = 0; i < sourceSize; i++)
+    {
+      const size_t signalIndex = (velocitySourceMany != 0) ? index2D + i : index2D;
+      velocityMatrix[velocitySourceIndex[i]] = velocitySourceInput[signalIndex];
+    }
+  }// end of Dirichlet
+
+  if (velocitySourceMode == 1)
+  {
+    #pragma omp parallel for if (sourceSize > 16384)
+    for (size_t i = 0; i < sourceSize; i++)
+    {
+      const size_t signalIndex = (velocitySourceMany != 0) ? index2D + i : index2D;
+      velocityMatrix[velocitySourceIndex[i]] += velocitySourceInput[signalIndex];
+    }
+  }// end of add
+}// end of computeVelocitySourceTerm
 //----------------------------------------------------------------------------------------------------------------------
 
  /**
@@ -1553,32 +1547,42 @@ void KSpaceFirstOrder3DSolver::addInitialPressureSource()
   if (mParameters.getRho0ScalarFlag())
   {
     if (mParameters.getNonUniformGridFlag())
-    { // non uniform grid
-      getUxSgx().computeInitialVelocityXHomogeneousNonuniform(mParameters.getDtRho0SgxScalar(),
-                                                              getDxudxnSgx(),
-                                                              getTempFftwX());
-      getUySgy().computeInitialVelocityYHomogeneousNonuniform(mParameters.getDtRho0SgyScalar(),
-                                                              getDyudynSgy(),
-                                                              getTempFftwY());
-      getUzSgz().computeInitialVelocityZHomogeneousNonuniform(mParameters.getDtRho0SgzScalar(),
-                                                              getDzudznSgz(),
-                                                              getTempFftwZ());
+    { // non uniform grid, homogeneous case
+      computeInitialVelocityHomogeneousNonuniform();
     }
     else
     { //uniform grid, heterogeneous
-      getUxSgx().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgxScalar(), getTempFftwX());
-      getUySgy().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgyScalar(), getTempFftwY());
-      getUzSgz().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgzScalar(), getTempFftwZ());
+      computeInitialVelocityHomogeneousUniform();
     }
   }
   else
   { // homogeneous, unifrom grid
     // divide the matrix by 2 and multiply with st./rho0_sg
-    getUxSgx().computeInitialVelocity(getDtRho0Sgx(), getTempFftwX());
-    getUySgy().computeInitialVelocity(getDtRho0Sgy(), getTempFftwY());
-    getUzSgz().computeInitialVelocity(getDtRho0Sgz(), getTempFftwZ());
+    computeInitialVelocityHeterogeneous();
   }
 }// end of addInitialPressureSource
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add transducer data source to velocity x component.
+ */
+void KSpaceFirstOrder3DSolver::addTransducerSource()
+{
+  float* uxSgx = getUxSgx().getData();
+
+  const size_t* velocitySourceIndex   = getVelocitySourceIndex().getData();
+  const float*  transducerSourceInput = getTransducerSourceInput().getData();
+  const size_t* delayMask             = getDelayMask().getData();
+
+  const size_t timeIndex  = mParameters.getTimeIndex();
+  const size_t sourceSize = getVelocitySourceIndex().size();
+
+  #pragma omp parallel for schedule(static) if (sourceSize > 16384)
+  for (size_t i = 0; i < sourceSize; i++)
+  {
+    uxSgx[velocitySourceIndex[i]] += transducerSourceInput[delayMask[i] + timeIndex];
+  }
+}// end of addTransducerSource
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -1867,6 +1871,363 @@ void KSpaceFirstOrder3DSolver::computeC2()
     }
   }// matrix
 }// computeC2
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for initial pressure problem.
+ */
+void KSpaceFirstOrder3DSolver::computeInitialVelocityHeterogeneous()
+{
+  getTempFftwX().computeC2RFft3D(getUxSgx());
+  getTempFftwY().computeC2RFft3D(getUySgy());
+  getTempFftwZ().computeC2RFft3D(getUzSgz());
+
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+  const float  divider   = 1.0f / (2.0f * static_cast<float>(nElements));
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  const float* dtRho0Sgx = getDtRho0Sgx().getData();
+  const float* dtRho0Sgy = getDtRho0Sgy().getData();
+  const float* dtRho0Sgz = getDtRho0Sgz().getData();
+
+
+  #pragma omp parallel for simd schedule (static) \
+          aligned(uxSgx, uySgy, uzSgz, dtRho0Sgx, dtRho0Sgy, dtRho0Sgz)
+  for (size_t i = 0; i < nElements; i++)
+  {
+    uxSgx[i] *= dtRho0Sgx[i] * divider;
+    uySgy[i] *= dtRho0Sgy[i] * divider;
+    uzSgz[i] *= dtRho0Sgz[i] * divider;
+  }
+}// end of computeInitialVelocityHeterogeneous
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
+ */
+void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousUniform()
+{
+  getTempFftwX().computeC2RFft3D(getUxSgx());
+  getTempFftwY().computeC2RFft3D(getUySgy());
+  getTempFftwZ().computeC2RFft3D(getUzSgz());
+
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+  const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
+  const float dividerY = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
+  const float dividerZ = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  #pragma omp parallel for simd schedule(static) aligned(uxSgx, uySgy, uzSgz)
+  for (size_t i = 0; i < nElements; i++)
+  {
+    uxSgx[i] *= dividerX;
+    uySgy[i] *= dividerY;
+    uzSgz[i] *= dividerZ;
+  }
+}// end of computeInitialVelocityHomogeneousUniform
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
+ */
+void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousNonuniform()
+{
+  getTempFftwX().computeC2RFft3D(getUxSgx());
+  getTempFftwY().computeC2RFft3D(getUySgy());
+  getTempFftwZ().computeC2RFft3D(getUzSgz());
+
+  const DimensionSizes dimensionSizes = mParameters.getFullDimensionSizes();
+  const size_t nElements              = dimensionSizes.nElements();
+
+  const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
+  const float dividerY = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
+  const float dividerZ = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar();
+
+  const float* dxudxnSgx = getDxudxnSgx().getData();
+  const float* dyudynSgy = getDyudynSgy().getData();
+  const float* dzudznSgz = getDzudznSgz().getData();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+
+  #pragma omp for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+        uxSgx[i] *=  dividerX * dxudxnSgx[x];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      const float eDyudynSgy = dyudynSgy[y] * dividerY;
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+        uySgy[i] *= eDyudynSgy;
+      } // x
+    } // y
+  } // z
+
+  #pragma omp for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    const float eDzudznSgz = dzudznSgz[z] * dividerZ;
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+        uzSgz[i] *= eDzudznSgz;
+      } // x
+    } // y
+  } // z
+}// end of computeInitialVelocityHomogeneousNonuniform
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for heterogeneous medium and a uniform grid, x direction.
+ */
+void KSpaceFirstOrder3DSolver::computeVelocityHeterogeneous()
+{
+  const DimensionSizes dimensionSizes = mParameters.getFullDimensionSizes();
+  const size_t nElements   = dimensionSizes.nElements();
+  const float  divider     = 1.0f / static_cast<float>(nElements);
+
+  const float* ifftX = getTemp1Real3D().getData();
+  const float* ifftY = getTemp2Real3D().getData();
+  const float* ifftZ = getTemp3Real3D().getData();
+
+  const float* dtRho0Sgx = getDtRho0Sgx().getData();
+  const float* dtRho0Sgy = getDtRho0Sgy().getData();
+  const float* dtRho0Sgz = getDtRho0Sgz().getData();
+
+  const float* pmlX = getPmlXSgx().getData();
+  const float* pmlY = getPmlYSgy().getData();
+  const float* pmlZ = getPmlZSgz().getData();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uxSgx[i] = (uxSgx[i] * pmlX[x] - divider * ifftX[i] * dtRho0Sgx[i]) * pmlX[x];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      const float ePmlY = pmlY[y];
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uySgy[i] = (uySgy[i] * ePmlY - divider * ifftY[i] * dtRho0Sgy[i]) * ePmlY;
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    const float ePmlZ = pmlZ[z];
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uzSgz[i] = (uzSgz[i] * ePmlZ - divider * ifftZ[i] * dtRho0Sgz[i]) * ePmlZ;
+      } // x
+    } // y
+  } // z
+}// end of computeVelocityHeterogeneous
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for homogeneous medium and a uniform grid.
+ */
+void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousUniform()
+{
+  const DimensionSizes dimensionSizes = mParameters.getFullDimensionSizes();
+  const size_t nElements = dimensionSizes.nElements();
+
+  const float dividerX = mParameters.getDtRho0SgxScalar() / static_cast<float>(nElements);
+  const float dividerY = mParameters.getDtRho0SgyScalar() / static_cast<float>(nElements);
+  const float dividerZ = mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements);
+
+  const float* ifftX = getTemp1Real3D().getData();
+  const float* ifftY = getTemp2Real3D().getData();
+  const float* ifftZ = getTemp3Real3D().getData();
+
+  const float* pmlX = getPmlXSgx().getData();
+  const float* pmlY = getPmlYSgy().getData();
+  const float* pmlZ = getPmlZSgz().getData();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uxSgx[i] = (uxSgx[i] * pmlX[x] - dividerX * ifftX[i]) * pmlX[x];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      const float ePmlY = pmlY[y];
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uySgy[i] = (uySgy[i] * ePmlY - dividerY * ifftY[i]) * ePmlY;
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    const float ePmlZ = pmlZ[z];
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uzSgz[i] = (uzSgz[i] * ePmlZ - dividerZ * ifftZ[i]) * ePmlZ;
+      } // x
+    } // y
+  } // z
+}// end of computeVelocityXHomogeneousUniform
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for homogenous medium and nonuniform grid, x direction.
+ */
+void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousNonuniform()
+{
+  const DimensionSizes dimensionSizes = mParameters.getFullDimensionSizes();
+  const size_t nElements = dimensionSizes.nElements();
+
+  const float dividerX = mParameters.getDtRho0SgxScalar() / static_cast<float>(nElements);
+  const float dividerY = mParameters.getDtRho0SgyScalar() / static_cast<float>(nElements);
+  const float dividerZ = mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements);
+
+  const float* ifftX = getTemp1Real3D().getData();
+  const float* ifftY = getTemp2Real3D().getData();
+  const float* ifftZ = getTemp3Real3D().getData();
+
+  const float* dxudxnSgx = getDxudxnSgx().getData();
+  const float* dyudynSgy = getDyudynSgy().getData();
+  const float* dzudznSgz = getDzudznSgz().getData();
+
+  const float* pmlX = getPmlXSgx().getData();
+  const float* pmlY = getPmlYSgy().getData();
+  const float* pmlZ = getPmlZSgz().getData();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  #pragma omp for schedule (static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uxSgx[i] = (uxSgx[i] * pmlX[x] - (dividerX * dxudxnSgx[x] * ifftX[i])) * pmlX[x];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp for schedule (static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      const float ePmlY      = pmlY[y];
+      const float eDyudynSgy = dyudynSgy[y];
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uySgy[i] = (uySgy[i] * ePmlY - (dividerY * eDyudynSgy * ifftY[i])) * ePmlY;
+      } // x
+    } // y
+  } // z
+
+  #pragma omp for schedule (static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    const float ePmlZ = pmlZ[z];
+    const float eDzudznSgz = dzudznSgz[z];
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uzSgz[i] = (uzSgz[i] * ePmlZ - (dividerZ * eDzudznSgz * ifftZ[i])) * ePmlZ;
+      } // x
+    } // y
+  } // z
+}// end of computeVelocityHomogeneousNonuniform
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -2544,6 +2905,15 @@ void KSpaceFirstOrder3DSolver::loadElapsedTimeFromOutputFile()
   mPostProcessingTime.SetElapsedTimeOverPreviousLegs(postProcessingTime);
 
 }// end of loadElapsedTimeFromOutputFile
+//----------------------------------------------------------------------------------------------------------------------
+
+inline size_t KSpaceFirstOrder3DSolver::get1DIndex(const size_t          z,
+                                                   const size_t          y,
+                                                   const size_t          x,
+                                                   const DimensionSizes& dimensionSizes)
+{
+  return (z * dimensionSizes.ny + y) * dimensionSizes.nx + x;
+}// end of get1DIndex
 //----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//

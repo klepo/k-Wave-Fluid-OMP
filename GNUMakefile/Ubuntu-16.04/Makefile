@@ -4,11 +4,11 @@
 # *              Faculty of Information Technology
 # *              Brno University of Technology 
 # * @Email       jarosjir@fit.vutbr.cz
-# * @Comments    Linux makefile for Ubuntu 14.04
+# * @Comments    Linux makefile for Ubuntu 16:04
 # * 
 # * @Tool        kspaceFirstOrder3D 2.15
 # * @Created     18 September 2014, 12:32 
-# * @LastModif   29 Aufust    2017, 10:25
+# * @LastModif   02 September 2017, 22:32
 #
 # * @License: 
 # * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org)
@@ -218,7 +218,6 @@ $(TARGET):	main.o 					 \
 		MatrixClasses/FftwComplexMatrix.o	 \
 		MatrixClasses/IndexMatrix.o		 \
 		MatrixClasses/RealMatrix.o		 \
-		MatrixClasses/VelocityMatrix.o		 \
 		OutputStreams/BaseOutputStream.o         \
 		OutputStreams/IndexOutputStream.o        \
 		OutputStreams/CuboidOutputStream.o       \
@@ -241,7 +240,6 @@ $(TARGET):	main.o 					 \
 		MatrixClasses/FftwComplexMatrix.o	 \
 		MatrixClasses/IndexMatrix.o		 \
 		MatrixClasses/RealMatrix.o		 \
-		MatrixClasses/VelocityMatrix.o		 \
 		OutputStreams/BaseOutputStream.o         \
 		OutputStreams/IndexOutputStream.o        \
 		OutputStreams/CuboidOutputStream.o       \

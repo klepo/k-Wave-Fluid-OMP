@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        27 August    2017, 08:54 (created) \n
- *              27 August    2017, 10:00 (revised)
+ *              02 September 2017, 20:48 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -60,9 +60,7 @@ struct MatrixRecord
     /// Matrix for index values.
     kIndex,
     /// Matrix for FFTW.
-    kFftw,
-    /// Matrix for acoustic velocity.
-    kVelocity
+    kFftw
   };
 
    /// Default constructor.

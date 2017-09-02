@@ -47,8 +47,6 @@
       <itemPath>MatrixClasses/IndexMatrix.h</itemPath>
       <itemPath>MatrixClasses/RealMatrix.cpp</itemPath>
       <itemPath>MatrixClasses/RealMatrix.h</itemPath>
-      <itemPath>MatrixClasses/VelocityMatrix.cpp</itemPath>
-      <itemPath>MatrixClasses/VelocityMatrix.h</itemPath>
     </logicalFolder>
     <logicalFolder name="OutputStreams"
                    displayName="OutputStreams"
@@ -234,10 +232,6 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
@@ -420,10 +414,6 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
@@ -604,10 +594,6 @@
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -790,10 +776,6 @@
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -979,10 +961,6 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
@@ -1166,10 +1144,6 @@
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -1355,10 +1329,6 @@
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="OutputStreams/BaseOutputStream.h" ex="false" tool="3" flavor2="0">
@@ -1542,10 +1512,6 @@
       <item path="MatrixClasses/RealMatrix.cpp" ex="false" tool="1" flavor2="9">
       </item>
       <item path="MatrixClasses/RealMatrix.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.cpp" ex="false" tool="1" flavor2="9">
-      </item>
-      <item path="MatrixClasses/VelocityMatrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="OutputStreams/BaseOutputStream.cpp" ex="false" tool="1" flavor2="0">
       </item>

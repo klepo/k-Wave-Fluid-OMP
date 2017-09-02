@@ -9,7 +9,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created) \n
- *              30 August    2017, 15:19 (revised)
+ *              02 September 2017, 20:48 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -38,7 +38,6 @@
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/ComplexMatrix.h>
 #include <MatrixClasses/FftwComplexMatrix.h>
-#include <MatrixClasses/VelocityMatrix.h>
 #include <MatrixClasses/IndexMatrix.h>
 
 
@@ -108,12 +107,6 @@ void MatrixContainer::createMatrices()
       case MatrixType::kFftw:
       {
         it.second.matrixPtr = new FftwComplexMatrix(it.second.dimensionSizes);
-        break;
-      }
-
-      case MatrixType::kVelocity:
-      {
-        it.second.matrixPtr = new VelocityMatrix(it.second.dimensionSizes);
         break;
       }
 
