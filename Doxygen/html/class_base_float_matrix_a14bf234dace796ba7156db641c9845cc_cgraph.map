@@ -1,0 +1,5 @@
+<map id="BaseFloatMatrix::getData" name="BaseFloatMatrix::getData">
+<area shape="rect" id="node2" href="$class_base_float_matrix.html#a45030eb00edf4f50984b71e7e2f06e17" title="Aligned memory allocation (both on CPU and GPU). " alt="" coords="223,5,382,44"/>
+<area shape="rect" id="node4" href="$class_base_float_matrix.html#a135999ade3133dae60e3ddefa2dd7082" title="Memory allocation (both on CPU and GPU). " alt="" coords="212,68,393,93"/>
+<area shape="rect" id="node3" href="$class_base_float_matrix.html#a413c6795908db07a503128b79aa99cbc" title="Zero all elements of the matrix (NUMA first touch). " alt="" coords="441,12,615,37"/>
+</map>

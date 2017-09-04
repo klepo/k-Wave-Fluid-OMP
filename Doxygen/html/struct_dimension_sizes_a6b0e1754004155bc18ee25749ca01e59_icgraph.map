@@ -1,0 +1,44 @@
+<map id="DimensionSizes::is3D" name="DimensionSizes::is3D">
+<area shape="rect" id="node2" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="689,895,839,921"/>
+<area shape="rect" id="node34" href="$struct_dimension_sizes.html#a111a46005e13578e52d0c92cedb8b8ac" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="196,1390,371,1415"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#a2484959886e6067685cb627ff13aca34" title="Get handle to the root group of the file. " alt="" coords="916,853,1067,878"/>
+<area shape="rect" id="node20" href="$class_complex_matrix.html#a00f98f57af23b00246f3da87ecf2fce9" title="Write data into HDF5 file. " alt="" coords="1154,403,1317,429"/>
+<area shape="rect" id="node22" href="$class_index_matrix.html#a61a89e4c5845adf5ede8d63f980d1e6c" title="Write data into HDF5 file. " alt="" coords="1164,1187,1307,1213"/>
+<area shape="rect" id="node24" href="$class_t_index_output_h_d_f5_stream.html#afc865b5d2d44387a096b085a392a10a1" title="Create a HDF5 stream and allocate data for it. " alt="" coords="1152,341,1319,379"/>
+<area shape="rect" id="node28" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0e177c166b45ef1501633de357defc54" title="Create a HDF5 stream and allocate data for it. " alt="" coords="1128,453,1343,491"/>
+<area shape="rect" id="node31" href="$class_real_matrix.html#abee43b845583fbd6f0ece07ef8f5c869" title="Write data into HDF5 file. " alt="" coords="1166,1138,1305,1163"/>
+<area shape="rect" id="node33" href="$class_t_cuboid_output_h_d_f5_stream.html#ad32c05893dfc36984c58a2ab511f5f95" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="903,1066,1079,1105"/>
+<area shape="rect" id="node4" href="$class_hdf5_file_header.html#a4e9c4bce3720deba2912d68262d554cb" title="Read header from the input file. " alt="" coords="1145,515,1326,554"/>
+<area shape="rect" id="node5" href="$class_parameters.html#a64ac186b60226dd447580b0a15b98aa1" title="Read scalar values from the input HDF5 file. " alt="" coords="1391,566,1576,605"/>
+<area shape="rect" id="node9" href="$class_hdf5_file_header.html#a95204b20d1c95890a39c3bbd6591986b" title="Read header from output file (necessary for checkpoint&#45;restart). " alt="" coords="1393,681,1574,719"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a3669de8b5aa4c8847a11039357b9b281" title="Load simulation data from the input file. " alt="" coords="1631,623,1809,662"/>
+<area shape="rect" id="node11" href="$class_hdf5_file_header.html#a8a7b3a9f343debd489dc6baa13f1d4a0" title="Read the file header form the checkpoint file. " alt="" coords="1145,731,1326,770"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#aebf7461323308eb62f861fd3c270c796" title="Check the checkpoint file has the correct format and version. " alt="" coords="1395,743,1572,782"/>
+<area shape="rect" id="node13" href="$class_hdf5_file_header.html#aa6f0ce2c5863f67a70ef5bb2487a7227" title="Write header into the output file. " alt="" coords="1144,961,1327,999"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="1395,931,1572,970"/>
+<area shape="rect" id="node16" href="$class_hdf5_file_header.html#a97dc738bc381a402b5bf6ab33f7b718a" title="Write header to the output file (only a subset of all possible fields are written). " alt="" coords="1144,1023,1327,1062"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="1395,1046,1572,1085"/>
+<area shape="rect" id="node18" href="$class_t_k_space_first_order3_d_solver.html#a68f38df42c3a290d1c50b339f69f0e84" title="Check the output file has the correct format and version. " alt="" coords="1147,63,1324,102"/>
+<area shape="rect" id="node19" href="$class_complex_matrix.html#a0e52f43c59b9634847bf1221b0f8aed2" title="Read matrix from HDF5 file. " alt="" coords="1155,1474,1316,1499"/>
+<area shape="rect" id="node21" href="$class_index_matrix.html#affa0a0a83dac1aad8ef7db8b733232a1" title="Read matrix from HDF5 file. " alt="" coords="1164,229,1307,254"/>
+<area shape="rect" id="node25" href="$class_t_index_output_h_d_f5_stream.html#ae7beb560dd32be91c46500a43e1b1190" title="Reopen the output stream after restart and reload data. " alt="" coords="1152,1299,1319,1338"/>
+<area shape="rect" id="node26" href="$class_t_cuboid_output_h_d_f5_stream.html#aa06e50911303e33944f8bb6af2dc9a2f" title="Create a HDF5 stream and allocate data for it. " alt="" coords="1147,1237,1323,1275"/>
+<area shape="rect" id="node27" href="$class_t_cuboid_output_h_d_f5_stream.html#ac6c36acdb69dbd048eb8101e7c7d6aa8" title="Reopen the output stream after restart and reload data. " alt="" coords="1147,1362,1323,1401"/>
+<area shape="rect" id="node29" href="$class_t_whole_domain_output_h_d_f5_stream.html#a507830a4ec48323a9ef621a0bec49d6f" title="Reopen the output stream after restart and reload data. " alt="" coords="1128,278,1343,317"/>
+<area shape="rect" id="node30" href="$class_real_matrix.html#a9b875981400e72e14f9c15859042cbec" title="Read matrix from HDF5 file. " alt="" coords="1166,1425,1305,1450"/>
+<area shape="rect" id="node32" href="$class_parameters.html#a8efc66975054f85805d8c7b68b366844" title="Save scalar values into the output HDF5 file. " alt="" coords="1149,846,1321,885"/>
+<area shape="rect" id="node6" href="$class_parameters.html#ab5a94d4c887319ee776bc7feb40fcdd1" title="Parse command line and read scalar values form the input file. " alt="" coords="1667,574,1773,599"/>
+<area shape="rect" id="node8" href="$class_parameters.html#ab22c04bf1f6ada208355f0437cd5f34f" title="Shall the code print version and exit? " alt="" coords="1624,686,1816,711"/>
+<area shape="rect" id="node7" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1864,658,1913,683"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="1631,1046,1809,1085"/>
+<area shape="rect" id="node23" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="1395,1131,1572,1170"/>
+<area shape="rect" id="node35" href="$class_hdf5_file.html#a112d8041f8dedc169ae70fe4a704bf0c" title="Read data from the dataset at a specified place in the file tree. " alt="" coords="425,1130,619,1155"/>
+<area shape="rect" id="node37" href="$class_t_k_space_first_order3_d_solver.html#a605a65536a407fd41eaafc4c94cc1e02" title="Calculate two temporary sums in the new pressure formula, linear absorbing case. " alt="" coords="419,1571,625,1610"/>
+<area shape="rect" id="node40" href="$class_t_k_space_first_order3_d_solver.html#ac5311980f3f2ece68a910d865a8567cc" title="Sum sub&#45;terms to calculate new pressure, linear case. " alt="" coords="433,1446,611,1485"/>
+<area shape="rect" id="node41" href="$class_t_k_space_first_order3_d_solver.html#a8c12f0598297c648fb756b0ce716cdb3" title="Sum sub&#45;terms for new p, linear lossless case. " alt="" coords="419,1383,625,1422"/>
+<area shape="rect" id="node43" href="$class_t_k_space_first_order3_d_solver.html#aecc0858f386df7c2aa89e6aed75db33a" title="Sum sub&#45;terms for new p, linear lossless case. " alt="" coords="429,1509,615,1547"/>
+<area shape="rect" id="node36" href="$class_hdf5_file.html#a7b1d06060632f114a22ad4bde6860862" title="Read the scalar value under a specified group. " alt="" coords="681,170,847,195"/>
+<area shape="rect" id="node38" href="$class_t_k_space_first_order3_d_solver.html#abdeb70ec2795fec7c2cdf24f61ff962a" title="Calculate new p linear&#45;case, absorbing. " alt="" coords="675,1509,853,1547"/>
+<area shape="rect" id="node39" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="903,1509,1080,1547"/>
+<area shape="rect" id="node42" href="$class_t_k_space_first_order3_d_solver.html#a0d967415e111376e1a2e5eccbe6c0f2d" title="Calculate new p, non&#45;linear case. " alt="" coords="673,1414,855,1453"/>
+</map>

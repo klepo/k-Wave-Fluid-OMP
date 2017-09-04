@@ -1,0 +1,15 @@
+<map id="TKSpaceFirstOrder3DSolver::Sum_Subterms_linear" name="TKSpaceFirstOrder3DSolver::Sum_Subterms_linear">
+<area shape="rect" id="node2" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="245,5,403,31"/>
+<area shape="rect" id="node3" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="231,55,417,93"/>
+<area shape="rect" id="node4" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="237,117,411,143"/>
+<area shape="rect" id="node6" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="233,167,415,192"/>
+<area shape="rect" id="node7" href="$class_parameters.html#a782bd821b89e08baa5d41d12d04f58b8" title="Get scalar value of sound speed. " alt="" coords="245,216,403,241"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a55415952dd55b00af0ed995868030696" title="Get the c^2 matrix from the container. " alt="" coords="235,265,413,304"/>
+<area shape="rect" id="node9" href="$class_parameters.html#abc0a2f4dea841c3a3e3502549daeba4f" title="Is alpha absorption coefficient homogeneous (scalar value)? " alt="" coords="239,328,409,367"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a8e8165c0541544a2bb521fc35c733c74" title="Get absorb tau coefficient for homogeneous medium. " alt="" coords="240,391,408,429"/>
+<area shape="rect" id="node11" href="$class_parameters.html#ac223b4d7d8fd5cc278745599744d1a1b" title="Get absorb eta coefficient for homogeneous medium (scalar value)? " alt="" coords="241,453,407,492"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#af6b171ccd214893308849ed104bc07f9" title="Get the absorb_tau matrix from the container. " alt="" coords="235,516,413,555"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#ae7cf7b5809a81d3534f5914dde48e598" title="Get the absorb_eta matrix from the container. " alt="" coords="235,579,413,617"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#aaec0c2d11f0b556c27b08a695929bd11" title="Get the p matrix from the container. " alt="" coords="235,641,413,680"/>
+<area shape="rect" id="node5" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="465,117,608,143"/>
+</map>

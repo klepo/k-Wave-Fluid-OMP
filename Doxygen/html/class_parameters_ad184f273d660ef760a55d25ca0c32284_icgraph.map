@@ -1,0 +1,15 @@
+<map id="Parameters::getCheckpointFileName" name="Parameters::getCheckpointFileName">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a158019a08bff430f0d5af5a223e4875d" title="Load simulation data. " alt="" coords="443,111,613,149"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1364,168,1535,207"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="661,315,832,353"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="661,225,832,264"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#a39aa8d400c984454df2d70ca79085250" title="Check the output file has the correct format and version. " alt="" coords="224,168,395,207"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#a184df4f95ecd81be7c6a90e5e3dc186d" title="Check the file type and the version of the checkpoint file. " alt="" coords="224,53,395,92"/>
+<area shape="rect" id="node11" href="$class_fftw_complex_matrix.html#ae10892df26fdf8fd26191043a4b5648f" title="FftwComplexMatrix::\lgetWisdomFileName" alt="" coords="241,311,377,349"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1583,147,1632,172"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="880,168,1097,207"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1145,168,1316,207"/>
+<area shape="rect" id="node12" href="$class_fftw_complex_matrix.html#afab7eff93f9b0bee1cfdab1fe5c7193e" title="Export wisdom to the file. " alt="" coords="462,279,594,317"/>
+<area shape="rect" id="node13" href="$class_fftw_complex_matrix.html#aa55883b5ce23a549726926214564ba79" title="Import wisdom from the file. " alt="" coords="462,341,594,380"/>
+<area shape="rect" id="node14" href="$class_fftw_complex_matrix.html#a328405dae7c02b4cbe94c0025f3260c9" title="Destroy wisdom in the file (delete it). " alt="" coords="460,404,596,443"/>
+</map>

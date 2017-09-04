@@ -1,0 +1,6 @@
+<map id="Hdf5File::ReadCompleteDataset" name="Hdf5File::ReadCompleteDataset">
+<area shape="rect" id="node2" href="$class_hdf5_file.html#abdc220fd24db882662e5126e93d96e07" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="252,5,447,44"/>
+<area shape="rect" id="node4" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="262,68,437,93"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#a17f91488a9aaf91ea45b7570d75f015b" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="495,5,673,44"/>
+<area shape="rect" id="node5" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="513,68,655,93"/>
+</map>

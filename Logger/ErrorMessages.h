@@ -13,7 +13,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            30 August    2017, 18:18 (revised)
+ *            04 September 2017, 15:05 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -135,12 +135,12 @@ ErrorMessage  kErrFmtMatrixNotIndex
 
 //------------------------------------------------ Matrix Container --------------------------------------------------//
 /// Matrix container error message
-ErrorMessage  kErrFmtBadMatrixType =
-  "Error: Matrix [%s] has unknown type in the C++ code. [File, Line] : [%s,%d].";
+ErrorMessage  kErrFmtBadMatrixType
+  = "Error: Matrix [%s] has unknown type in the C++ code. [File, Line] : [%s,%d].";
 
 /// Matrix container error message
-ErrorMessage  kErrFmtRelocationError =
-  "Error: Matrix [%s] is being reallocated in matrix container.";
+ErrorMessage  kErrFmtRelocationError
+  = "Error: Matrix [%s] is being reallocated in matrix container.";
 
 
 //-------------------------------------------- Command line Parameters -----------------------------------------------//
@@ -234,7 +234,7 @@ ErrorMessage kErrFmtCreateR2CFftPlan3D
 /// FFTW error message
 ErrorMessage kErrFmtCreateC2RFftPlan3D
  = "creating plan for 3D complex-to-real fft.";
-//// FFTW error message
+/// FFTW error message
 ErrorMessage kErrFmtCreateR2CFftPlan1DX
  = "creating for 1D real-to-complex fft plan in X direction.";
 /// FFTW error message

@@ -1,0 +1,8 @@
+<map id="Parameters::getNumberOfThreads" name="Parameters::getNumberOfThreads">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="263,33,433,72"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1184,97,1233,123"/>
+<area shape="rect" id="node7" href="$class_parameters.html#ae4c482d1bc83940c835ff12aff1181a5" title="Print the simulation setup (all parameters). " alt="" coords="503,148,677,187"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="965,33,1136,72"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="481,33,699,72"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="747,33,917,72"/>
+</map>

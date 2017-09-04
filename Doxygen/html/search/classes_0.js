@@ -1,27 +1,7 @@
 var searchData=
 [
-  ['tbasefloatmatrix',['TBaseFloatMatrix',['../class_t_base_float_matrix.html',1,'']]],
-  ['tbaseindexmatrix',['TBaseIndexMatrix',['../class_t_base_index_matrix.html',1,'']]],
-  ['tbasematrix',['TBaseMatrix',['../class_t_base_matrix.html',1,'']]],
-  ['tbaseoutputhdf5stream',['TBaseOutputHDF5Stream',['../class_t_base_output_h_d_f5_stream.html',1,'']]],
-  ['tcommandlineparameters',['TCommandLineParameters',['../class_t_command_line_parameters.html',1,'']]],
-  ['tcomplexmatrix',['TComplexMatrix',['../class_t_complex_matrix.html',1,'']]],
-  ['tcuboidinfo',['TCuboidInfo',['../struct_t_cuboid_output_h_d_f5_stream_1_1_t_cuboid_info.html',1,'TCuboidOutputHDF5Stream']]],
-  ['tcuboidoutputhdf5stream',['TCuboidOutputHDF5Stream',['../class_t_cuboid_output_h_d_f5_stream.html',1,'']]],
-  ['tdimensionsizes',['TDimensionSizes',['../struct_t_dimension_sizes.html',1,'']]],
-  ['tfftwcomplexmatrix',['TFFTWComplexMatrix',['../class_t_f_f_t_w_complex_matrix.html',1,'']]],
-  ['tfloatcomplex',['TFloatComplex',['../struct_t_float_complex.html',1,'']]],
-  ['thdf5_5ffile',['THDF5_File',['../class_t_h_d_f5___file.html',1,'']]],
-  ['thdf5_5ffileheader',['THDF5_FileHeader',['../class_t_h_d_f5___file_header.html',1,'']]],
-  ['tindexmatrix',['TIndexMatrix',['../class_t_index_matrix.html',1,'']]],
-  ['tindexoutputhdf5stream',['TIndexOutputHDF5Stream',['../class_t_index_output_h_d_f5_stream.html',1,'']]],
-  ['tkspacefirstorder3dsolver',['TKSpaceFirstOrder3DSolver',['../class_t_k_space_first_order3_d_solver.html',1,'']]],
-  ['tmatrixcontainer',['TMatrixContainer',['../class_t_matrix_container.html',1,'']]],
-  ['tmatrixrecord',['TMatrixRecord',['../struct_t_matrix_record.html',1,'']]],
-  ['toutputstreamcontainer',['TOutputStreamContainer',['../class_t_output_stream_container.html',1,'']]],
-  ['tparameters',['TParameters',['../class_t_parameters.html',1,'']]],
-  ['trealmatrix',['TRealMatrix',['../class_t_real_matrix.html',1,'']]],
-  ['ttimemeasure',['TTimeMeasure',['../class_t_time_measure.html',1,'']]],
-  ['tuxyz_5fsgxyzmatrix',['Tuxyz_sgxyzMatrix',['../class_tuxyz__sgxyz_matrix.html',1,'']]],
-  ['twholedomainoutputhdf5stream',['TWholeDomainOutputHDF5Stream',['../class_t_whole_domain_output_h_d_f5_stream.html',1,'']]]
+  ['basefloatmatrix',['BaseFloatMatrix',['../class_base_float_matrix.html',1,'']]],
+  ['baseindexmatrix',['BaseIndexMatrix',['../class_base_index_matrix.html',1,'']]],
+  ['basematrix',['BaseMatrix',['../class_base_matrix.html',1,'']]],
+  ['baseoutputstream',['BaseOutputStream',['../class_base_output_stream.html',1,'']]]
 ];

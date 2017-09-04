@@ -1,0 +1,12 @@
+<map id="Parameters::getRho0Scalar" name="Parameters::getRho0Scalar">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#ada7ca1729bb1ebfcca2929307c37a21d" title="Compute new values of rhox, rhoy, rhoz for non&#45;linear case. " alt="" coords="482,5,662,44"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a7d72cd92743592e21d3fd3cb9d5bd7a1" title="Compute new values of rhox, rhoy, rhoz for linear case. " alt="" coords="483,68,661,107"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a982020d1dda2f6ea810d9b785e6a801b" title="Calculate three temporary sums in the new pressure formula, non&#45;linear absorbing case, SSE2 version. " alt="" coords="241,113,419,165"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a605a65536a407fd41eaafc4c94cc1e02" title="Calculate two temporary sums in the new pressure formula, linear absorbing case. " alt="" coords="227,252,433,291"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a8c12f0598297c648fb756b0ce716cdb3" title="Sum sub&#45;terms for new p, linear lossless case. " alt="" coords="227,189,433,228"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="711,100,888,139"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="936,100,1113,139"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1161,107,1211,132"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a0d967415e111376e1a2e5eccbe6c0f2d" title="Calculate new p, non&#45;linear case. " alt="" coords="481,131,663,169"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#abdeb70ec2795fec7c2cdf24f61ff962a" title="Calculate new p linear&#45;case, absorbing. " alt="" coords="483,223,661,261"/>
+</map>

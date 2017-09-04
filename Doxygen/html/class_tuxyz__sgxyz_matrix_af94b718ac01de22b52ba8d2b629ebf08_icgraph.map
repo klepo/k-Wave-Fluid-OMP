@@ -1,0 +1,7 @@
+<map id="Tuxyz_sgxyzMatrix::Add_u_source" name="Tuxyz_sgxyzMatrix::Add_u_source">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a9d3512ebd2bd906c2d6b12e4e2188aa9" title="Add u source to the particle velocity. " alt="" coords="184,5,361,44"/>
+<area shape="rect" id="node6" href="$class_tuxyz__sgxyz_matrix.html#a7d55f7be3c976fe627c09221d22ad89a" title="Constructor. " alt="" coords="207,68,338,107"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="409,5,587,44"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="635,5,812,44"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="860,12,909,37"/>
+</map>

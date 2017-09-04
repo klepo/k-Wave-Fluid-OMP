@@ -1,0 +1,9 @@
+<map id="Parameters::getVelocityXSourceFlag" name="Parameters::getVelocityXSourceFlag">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="515,5,692,44"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a9d3512ebd2bd906c2d6b12e4e2188aa9" title="Add u source to the particle velocity. " alt="" coords="283,67,460,105"/>
+<area shape="rect" id="node7" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="276,129,467,168"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="740,67,917,105"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="965,105,1015,131"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="515,68,692,107"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="740,129,917,168"/>
+</map>

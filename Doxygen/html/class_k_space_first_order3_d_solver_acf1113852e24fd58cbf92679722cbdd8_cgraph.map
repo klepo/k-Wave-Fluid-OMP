@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::addInitialPressureSource" name="KSpaceFirstOrder3DSolver::addInitialPressureSource">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#afdc5cc9f0b66c5943bcf7ce61f122e46" title="Get pressure matrix. " alt="" coords="520,212,691,251"/>
+<area shape="rect" id="node6" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="1226,1817,1413,1856"/>
+<area shape="rect" id="node8" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="1228,1941,1411,1967"/>
+<area shape="rect" id="node9" href="$class_parameters.html#ad76a0fb737c095702e1bb16431c5f4fc" title="Is density in the medium homogeneous (scalar value)? " alt="" coords="1221,2051,1418,2076"/>
+<area shape="rect" id="node10" href="$class_parameters.html#ad7855f2fca8bffe1042bef1e28a3d760" title="Enable non uniform grid? &#45; not implemented yet. " alt="" coords="1232,2220,1407,2259"/>
+<area shape="rect" id="node14" href="$class_base_float_matrix.html#afdeb76c65fe85198e8a36620985a61ff" title="Copy data from other matrix with the same size. " alt="" coords="256,2316,424,2341"/>
+<area shape="rect" id="node15" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="758,1744,917,1769"/>
+<area shape="rect" id="node16" href="$class_k_space_first_order3_d_solver.html#a16d79e856f458c2207d8c8bda0db6048" title="Get initial pressure source input data (whole matrix). " alt="" coords="245,5,435,44"/>
+<area shape="rect" id="node17" href="$class_parameters.html#a6ab9c9208100f13a6f5c2d5c9a13ba69" title="Get scalar value of sound speed squared. " alt="" coords="261,2519,419,2544"/>
+<area shape="rect" id="node18" href="$class_k_space_first_order3_d_solver.html#ab8c225afe7e85466e7e122d54eb83740" title="Get the c^2 matrix from the container. " alt="" coords="255,77,425,116"/>
+<area shape="rect" id="node19" href="$class_k_space_first_order3_d_solver.html#a9c6ec227e0d799245857992548efb01a" title="Get density matrix in x direction. " alt="" coords="255,160,425,199"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#ae29d6a3518343dc0da0fb0cf9a3d2454" title="Get density matrix in y direction. " alt="" coords="255,261,425,300"/>
+<area shape="rect" id="node21" href="$class_k_space_first_order3_d_solver.html#a088717c923775762ac9ad3cc708806e3" title="Get density matrix in z direction. " alt="" coords="255,609,425,648"/>
+<area shape="rect" id="node22" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="518,1875,693,1900"/>
+<area shape="rect" id="node24" href="$class_k_space_first_order3_d_solver.html#a81ded7054aab8638d6dd7f6de5ef1375" title="Compute part of the new velocity term &#45; gradient of pressure. " alt="" coords="255,677,425,716"/>
+<area shape="rect" id="node35" href="$class_k_space_first_order3_d_solver.html#adbd6b55638a2510205e3d24a3ae1ec15" title="Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid..." alt="" coords="226,1591,454,1643"/>
+<area shape="rect" id="node46" href="$class_k_space_first_order3_d_solver.html#aa427b58e8cf72ade7d701d57ffcb6824" title="Compute velocity for the initial pressure problem, homogeneous medium, uniform grid. " alt="" coords="226,1691,454,1743"/>
+<area shape="rect" id="node47" href="$class_k_space_first_order3_d_solver.html#a7087928cac639a5502ad5c8217f20a53" title="Compute velocity for the initial pressure problem, heterogeneous medium, uniform grid. " alt="" coords="224,1239,456,1277"/>
+<area shape="rect" id="node3" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="755,849,920,875"/>
+<area shape="rect" id="node4" href="$class_matrix_container.html#a9973c09a2bb15fa6c1d38f83e1b7edb7" title="Create all matrix objects in the container. " alt="" coords="968,968,1163,993"/>
+<area shape="rect" id="node5" href="$class_matrix_container.html#ac07e369441915288927f5c8c7705e44d" title="Populate the container based on the simulation type. " alt="" coords="974,744,1157,769"/>
+<area shape="rect" id="node11" href="$class_matrix_container.html#a603541865d8f1d3ffda39288d1514bf8" title="Destroy and free all matrices. " alt="" coords="974,793,1157,819"/>
+<area shape="rect" id="node12" href="$class_matrix_container.html#ac0cb21a1d1d3b0713df28eda11acf46b" title="Load all marked matrices from the input HDF5 file. " alt="" coords="983,843,1148,881"/>
+<area shape="rect" id="node13" href="$class_matrix_container.html#adc34543e615aea2e6f85c80d9503a8db" title="Load selected matrices from the checkpoint HDF5 file. " alt="" coords="983,905,1148,944"/>
+<area shape="rect" id="node7" href="$class_parameters.html#a92fd1aff7e90f3553e524f7eeb6b24bc" title="Get reduced dimension sizes of the simulation (complex classes). " alt="" coords="1211,529,1428,568"/>
+<area shape="rect" id="node23" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="766,1875,909,1900"/>
+<area shape="rect" id="node25" href="$class_k_space_first_order3_d_solver.html#afc38ac60f042b7657fba197347ea947a" title="Get temporary matrix for 1D fft in x. " alt="" coords="520,1145,691,1184"/>
+<area shape="rect" id="node26" href="$class_fftw_complex_matrix.html#aa3daff0b28811286030521404f204f95" title="Compute forward out&#45;of&#45;place 3D Real&#45;to&#45;Complex FFT. " alt="" coords="539,680,671,719"/>
+<area shape="rect" id="node27" href="$class_complex_matrix.html#a7fb01e884eac9faf413e9575b41984c9" title="Get raw complex data out of the class (for direct kernel access). " alt="" coords="504,743,707,768"/>
+<area shape="rect" id="node28" href="$class_k_space_first_order3_d_solver.html#acecc8b7f8f60a3f05cd710a39ac05693" title="Get temporary matrix for 1D fft in y. " alt="" coords="520,1208,691,1247"/>
+<area shape="rect" id="node29" href="$class_k_space_first_order3_d_solver.html#afd158a7b7474ee05c09e403ff73d88ac" title="Get temporary matrix for 1D fft in z. " alt="" coords="520,1271,691,1309"/>
+<area shape="rect" id="node30" href="$class_k_space_first_order3_d_solver.html#a3efb75cb470c83845f410d879cf87031" title="Get positive Fourier shift in x. " alt="" coords="520,377,691,416"/>
+<area shape="rect" id="node31" href="$class_k_space_first_order3_d_solver.html#a3875f1cac462dba6ee9b150f8be1dd9e" title="Get positive Fourier shift in y. " alt="" coords="520,440,691,479"/>
+<area shape="rect" id="node32" href="$class_k_space_first_order3_d_solver.html#af4a3f7c6d19eec6a87472ed2e2b24a50" title="Get positive Fourier shift in z. " alt="" coords="520,503,691,541"/>
+<area shape="rect" id="node33" href="$class_k_space_first_order3_d_solver.html#a902f0b84de6f280b49166fd4673ec66d" title="Get the kappa matrix from the container. " alt="" coords="520,565,691,604"/>
+<area shape="rect" id="node34" href="$class_k_space_first_order3_d_solver.html#a540215b2cef3b444e650c3a18b2eb32b" title="Compute 1D index using 3 spatial coordinates and the size of the matrix. " alt="" coords="520,1083,691,1121"/>
+<area shape="rect" id="node36" href="$class_fftw_complex_matrix.html#acf6f9256e5329b47e8baa67e53abe7c1" title="Compute forward out&#45;of&#45;place 3D Complex&#45;to&#45;Real FFT. " alt="" coords="539,1709,671,1748"/>
+<area shape="rect" id="node37" href="$class_k_space_first_order3_d_solver.html#a77069932c43bcb4eeb1653d7c7467a48" title="Get velocity matrix on staggered grid in x direction. " alt="" coords="520,1647,691,1685"/>
+<area shape="rect" id="node38" href="$class_k_space_first_order3_d_solver.html#afca4083335ce33b2ae4438cd4aca9491" title="Get velocity matrix on staggered grid in y direction. " alt="" coords="520,1333,691,1372"/>
+<area shape="rect" id="node39" href="$class_k_space_first_order3_d_solver.html#a875d422a158e241f6959af028944ab74" title="Get velocity matrix on staggered grid in z direction. " alt="" coords="520,1396,691,1435"/>
+<area shape="rect" id="node40" href="$class_parameters.html#a6129b5530976a346022bafa6b225903a" title="Get value of dt / rho0Sgx. " alt="" coords="520,1924,691,1963"/>
+<area shape="rect" id="node41" href="$class_parameters.html#a18d1911afbc4e2d97342123a166f842b" title="Get value of dt / rho0Sgy. " alt="" coords="520,1987,691,2025"/>
+<area shape="rect" id="node42" href="$class_parameters.html#a21480540fa713d4ca2473d1fab6a7e74" title="Get value of dt / rho0Sgz. " alt="" coords="520,2049,691,2088"/>
+<area shape="rect" id="node43" href="$class_k_space_first_order3_d_solver.html#a30f6e840e35436831589c478d020ea19" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="520,1459,691,1497"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#acec99d087a12528825ad08257193d089" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="520,1521,691,1560"/>
+<area shape="rect" id="node45" href="$class_k_space_first_order3_d_solver.html#a4877d1055ca2a2dff2b42549ecdee6c6" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="520,1584,691,1623"/>
+<area shape="rect" id="node48" href="$class_k_space_first_order3_d_solver.html#a43f0e3cac36c58bbc9f55873e3a8a549" title="Get dt * rho0Sgx matrix (time step size * ambient velocity on staggered grid in x direction)..." alt="" coords="520,792,691,831"/>
+<area shape="rect" id="node49" href="$class_k_space_first_order3_d_solver.html#aa708679b70922946a55459a6947a02d7" title="Get dt * rho0Sgy matrix (time step size * ambient velocity on staggered grid in y direction)..." alt="" coords="520,855,691,893"/>
+<area shape="rect" id="node50" href="$class_k_space_first_order3_d_solver.html#a795139132c527461b9fb7b3de0c1510e" title="Get dt * rho0Sgz matrix (time step size * ambient velocity on staggered grid in z direction)..." alt="" coords="520,917,691,956"/>
+</map>

@@ -1,4 +1,6 @@
 <map id="Parameters/CommandLineParameters.cpp" name="Parameters/CommandLineParameters.cpp">
-<area shape="rect" id="node4" href="$_command_line_parameters_8h.html" title="The header file containing the command line parameters. " alt="" coords="175,81,417,106"/>
-<area shape="rect" id="node7" href="$_error_messages_8h.html" title="The header file containing all error messages of the project. " alt="" coords="442,81,584,106"/>
+<area shape="rect" id="node4" href="$_command_line_parameters_8h.html" title="The header file containing the command line parameters. " alt="" coords="187,79,429,104"/>
+<area shape="rect" id="node6" href="$_logger_8h.html" title="The header file containing a class responsible for printing out info and error messages (stdout..." alt="" coords="454,79,567,104"/>
+<area shape="rect" id="node9" href="$_output_messages_8h.html" title="The header file including output messages based on the operating system. " alt="" coords="557,152,723,177"/>
+<area shape="rect" id="node10" href="$_error_messages_8h.html" title="The header file containing routines for error messages and error messages common for both linux and w..." alt="" coords="748,152,905,177"/>
 </map>

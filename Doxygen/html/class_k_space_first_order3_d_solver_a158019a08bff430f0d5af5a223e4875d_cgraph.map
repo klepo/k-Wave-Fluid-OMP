@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::loadInputData" name="KSpaceFirstOrder3DSolver::loadInputData">
+<area shape="rect" id="node2" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="286,362,370,387"/>
+<area shape="rect" id="node6" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="532,453,625,478"/>
+<area shape="rect" id="node8" href="$class_time_measure.html#aefe6a04c6738896ad7d966b83af703ff" title="Take start timestamp. " alt="" coords="265,1650,391,1675"/>
+<area shape="rect" id="node9" href="$class_parameters.html#a4faef48c8cd2782203449522c9abc053" title="Get input file handle. " alt="" coords="501,601,656,626"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a43a65353c4e6c731efc8d577be0a5915" title="Get output file handle. " alt="" coords="497,1743,661,1769"/>
+<area shape="rect" id="node11" href="$class_parameters.html#a0010e3144ebf47ea3c3b451f099fc5bf" title="Get checkpoint file handle. " alt="" coords="483,502,674,527"/>
+<area shape="rect" id="node12" href="$class_matrix_container.html#ac0cb21a1d1d3b0713df28eda11acf46b" title="Load all marked matrices from the input HDF5 file. " alt="" coords="245,590,411,629"/>
+<area shape="rect" id="node14" href="$class_hdf5_file.html#a2f2ba2b43b8fb3b12db9ea327b369248" title="Close the HDF5 file. " alt="" coords="765,101,868,126"/>
+<area shape="rect" id="node15" href="$class_parameters.html#aea354cdb22dcfd11501dd987e16d2e4d" title="Is checkpoint enabled? " alt="" coords="247,1699,409,1738"/>
+<area shape="rect" id="node17" href="$class_hdf5_file.html#a80728801e0d787e8a6dcdfd18303a316" title="Can I access the file. " alt="" coords="750,202,883,227"/>
+<area shape="rect" id="node18" href="$class_parameters.html#ad184f273d660ef760a55d25ca0c32284" title="Get checkpoint file name. " alt="" coords="493,1629,664,1667"/>
+<area shape="rect" id="node20" href="$class_hdf5_file.html#a7ff9c11dcb7b1e171d7e6e7a498b0545" title="Open the HDF5 file. " alt="" coords="277,101,379,126"/>
+<area shape="rect" id="node22" href="$class_k_space_first_order3_d_solver.html#a184df4f95ecd81be7c6a90e5e3dc186d" title="Check the file type and the version of the checkpoint file. " alt="" coords="243,1050,413,1089"/>
+<area shape="rect" id="node24" href="$class_hdf5_file.html#a757c1108f5f459f03d10433d07ba3a81" title="Get handle to the root group of the file. " alt="" coords="741,815,892,841"/>
+<area shape="rect" id="node31" href="$class_hdf5_file.html#a7b1d06060632f114a22ad4bde6860862" title="Read the scalar value under a specified group. " alt="" coords="979,1025,1145,1050"/>
+<area shape="rect" id="node39" href="$class_parameters.html#a3830f4ce52a3ca2666eeaae80e6d5ca1" title="Set simulation time step &#45; should be used only when recovering from checkpoint. " alt="" coords="246,1762,410,1787"/>
+<area shape="rect" id="node40" href="$class_matrix_container.html#adc34543e615aea2e6f85c80d9503a8db" title="Load selected matrices from the checkpoint HDF5 file. " alt="" coords="245,527,411,566"/>
+<area shape="rect" id="node41" href="$class_parameters.html#a52a22d3112f04597eee700e0e21e3221" title="Get output file name. " alt="" coords="480,1793,677,1818"/>
+<area shape="rect" id="node42" href="$class_parameters.html#a613f9c265cb287a21a14086c057d0569" title="Get file header handle. " alt="" coords="494,1842,663,1867"/>
+<area shape="rect" id="node43" href="$class_hdf5_file_header.html#a95204b20d1c95890a39c3bbd6591986b" title="Read header from output file (necessary for checkpoint&#45;restart). " alt="" coords="488,854,669,893"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#a39aa8d400c984454df2d70ca79085250" title="Check the output file has the correct format and version. " alt="" coords="243,1319,413,1358"/>
+<area shape="rect" id="node45" href="$class_k_space_first_order3_d_solver.html#ae9dad87cd7eba989051efbdd247511bf" title="Reads the header of the output file and sets the cumulative elapsed time from the first log..." alt="" coords="224,1535,432,1574"/>
+<area shape="rect" id="node46" href="$class_output_stream_container.html#a77dbf799f66297f001be1419a47e09bb" title="Reopen streams after checkpoint file (datasets). " alt="" coords="253,1811,403,1850"/>
+<area shape="rect" id="node47" href="$class_hdf5_file.html#a221729661d8548219175b4cece2f064c" title="Create the HDF5 file. " alt="" coords="274,151,382,177"/>
+<area shape="rect" id="node48" href="$class_output_stream_container.html#af7c8cb6124fd42dfe654fde47eb41fd0" title="Create all streams &#45; opens the datasets. " alt="" coords="253,1874,403,1913"/>
+<area shape="rect" id="node49" href="$class_time_measure.html#afd34544fb28963c2906aa6ba0ca86ca8" title="Take stop timestamp. " alt="" coords="265,1937,391,1962"/>
+<area shape="rect" id="node50" href="$class_logger.html#a9037a21510052c0bcc285a5cea5daa80" title="Logger::getLevel" alt="" coords="271,1986,385,2011"/>
+<area shape="rect" id="node3" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="1459,683,1609,709"/>
+<area shape="rect" id="node4" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="532,403,625,429"/>
+<area shape="rect" id="node5" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="493,253,664,278"/>
+<area shape="rect" id="node7" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="501,302,656,327"/>
+<area shape="rect" id="node13" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="501,551,656,577"/>
+<area shape="rect" id="node16" href="$class_command_line_parameters.html#a6d5dd5cf7c7e9068925b5cd5149e16a1" title="Is checkpoint enabled? " alt="" coords="495,1891,662,1930"/>
+<area shape="rect" id="node19" href="$class_command_line_parameters.html#a51dcf8623f9a79289d4a8859a5c5f41d" title="Get Checkpoint file name. " alt="" coords="733,1629,900,1667"/>
+<area shape="rect" id="node21" href="$class_hdf5_file.html#aa360ceb797433a9e761b6edefe6376ee" title="Is the file opened? " alt="" coords="522,101,635,126"/>
+<area shape="rect" id="node23" href="$class_hdf5_file_header.html#a8a7b3a9f343debd489dc6baa13f1d4a0" title="Read the file header form the checkpoint file. " alt="" coords="488,917,669,955"/>
+<area shape="rect" id="node33" href="$class_hdf5_file_header.html#ab9fa468c2d068375960784535174679e" title="Get File type. " alt="" coords="727,981,906,1006"/>
+<area shape="rect" id="node34" href="$class_hdf5_file_header.html#aa38e806502a6fd5c5665f8aa11efaeef" title="Check major file version. " alt="" coords="489,1463,668,1502"/>
+<area shape="rect" id="node35" href="$class_hdf5_file_header.html#a70cb1884a6421cf942b1bdd5d48602f9" title="Get string representing of current Major version of the file. " alt="" coords="725,1463,908,1502"/>
+<area shape="rect" id="node36" href="$class_hdf5_file_header.html#af3ef655a2ba46ddbdbd4e577b942876d" title="Check minor file version. " alt="" coords="489,1349,668,1387"/>
+<area shape="rect" id="node37" href="$class_hdf5_file_header.html#a268a9113bbce57d134fe0c2ec40cfc3f" title="Get string representing of current Minor version of the file. " alt="" coords="725,1349,908,1387"/>
+<area shape="rect" id="node38" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="485,1183,672,1222"/>
+<area shape="rect" id="node25" href="$class_hdf5_file.html#ab09e1d1114830bccc80e7fee04df2004" title="Open a dataset at a specified place in the file tree. " alt="" coords="1241,818,1385,843"/>
+<area shape="rect" id="node26" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="1238,893,1389,918"/>
+<area shape="rect" id="node27" href="$class_hdf5_file.html#a286eb597f1da666cc3cee6d19259a4e4" title="Close dataset. " alt="" coords="989,873,1135,898"/>
+<area shape="rect" id="node28" href="$class_hdf5_file.html#a6967bff33507f44a57e1a397acf3bbcb" title="Write a hyperslab into the dataset. " alt="" coords="1234,658,1393,683"/>
+<area shape="rect" id="node29" href="$class_hdf5_file.html#a3210d2273ea3e90320673eff70e91caf" title="Write a cuboid selected within the matrixData into a hyperslab. " alt="" coords="956,709,1168,734"/>
+<area shape="rect" id="node30" href="$class_hdf5_file.html#a667746624294c81046bc04ee3971d423" title="Write sensor data selected by the sensor mask &#45; Occasionally very slow, do not use! ..." alt="" coords="971,758,1153,797"/>
+<area shape="rect" id="node32" href="$class_hdf5_file.html#a112d8041f8dedc169ae70fe4a704bf0c" title="Read data from the dataset at a specified place in the file tree. " alt="" coords="1216,974,1411,999"/>
+</map>

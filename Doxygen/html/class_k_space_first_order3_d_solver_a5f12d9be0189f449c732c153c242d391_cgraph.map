@@ -1,0 +1,15 @@
+<map id="KSpaceFirstOrder3DSolver::sumPressureTermsNonlinear" name="KSpaceFirstOrder3DSolver::sumPressureTermsNonlinear">
+<area shape="rect" id="node2" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="255,5,414,31"/>
+<area shape="rect" id="node3" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="241,55,428,93"/>
+<area shape="rect" id="node4" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="247,117,422,143"/>
+<area shape="rect" id="node6" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="243,167,426,192"/>
+<area shape="rect" id="node7" href="$class_parameters.html#a6ab9c9208100f13a6f5c2d5c9a13ba69" title="Get scalar value of sound speed squared. " alt="" coords="255,216,414,241"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#ab8c225afe7e85466e7e122d54eb83740" title="Get the c^2 matrix from the container. " alt="" coords="249,265,420,304"/>
+<area shape="rect" id="node9" href="$class_parameters.html#abc0a2f4dea841c3a3e3502549daeba4f" title="Is alpha absorption coefficient homogeneous (scalar value)? " alt="" coords="250,328,419,367"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a6b9299c7cae694d5826cbfbde0812e50" title="Get absorb tau coefficient for homogeneous medium. " alt="" coords="251,391,419,429"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#ad7c636526efc7da54b7327f9dddd0142" title="Get absorbing coefficient Tau. " alt="" coords="249,453,420,492"/>
+<area shape="rect" id="node12" href="$class_parameters.html#a784d56c9736befc734e1051e52f3ed37" title="Get absorb eta coefficient for homogeneous medium (scalar value)? " alt="" coords="252,516,417,555"/>
+<area shape="rect" id="node13" href="$class_k_space_first_order3_d_solver.html#a82a2afce941f1f6df9109548be0e60a5" title="Get absorbing coefficient Eta. " alt="" coords="249,579,420,617"/>
+<area shape="rect" id="node14" href="$class_k_space_first_order3_d_solver.html#afdc5cc9f0b66c5943bcf7ce61f122e46" title="Get pressure matrix. " alt="" coords="249,641,420,680"/>
+<area shape="rect" id="node5" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="476,117,619,143"/>
+</map>

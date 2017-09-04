@@ -1,0 +1,9 @@
+<map id="CommandLineParameters::getNumberOfThreads" name="CommandLineParameters::getNumberOfThreads">
+<area shape="rect" id="node2" href="$class_parameters.html#a12e7e0e755e20296697b5b5ed98f01ab" title="Get number of CPU threads to use. " alt="" coords="220,97,429,123"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="477,33,648,72"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1399,97,1448,123"/>
+<area shape="rect" id="node8" href="$class_parameters.html#ae4c482d1bc83940c835ff12aff1181a5" title="Print the simulation setup (all parameters). " alt="" coords="718,148,891,187"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1180,33,1351,72"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="696,33,913,72"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="961,33,1132,72"/>
+</map>

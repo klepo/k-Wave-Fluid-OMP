@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::allocateMemory" name="KSpaceFirstOrder3DSolver::allocateMemory">
+<area shape="rect" id="node2" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="257,229,341,255"/>
+<area shape="rect" id="node6" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="469,304,563,329"/>
+<area shape="rect" id="node8" href="$class_matrix_container.html#ac07e369441915288927f5c8c7705e44d" title="Populate the container based on the simulation type. " alt="" coords="877,743,1059,768"/>
+<area shape="rect" id="node34" href="$class_matrix_container.html#a9973c09a2bb15fa6c1d38f83e1b7edb7" title="Create all matrix objects in the container. " alt="" coords="871,156,1065,181"/>
+<area shape="rect" id="node35" href="$class_output_stream_container.html#a97bd5bc7cd18225fc5a9e79ddd4d4418" title="Add all streams in simulation in the container, set all streams records here! " alt="" coords="224,855,375,893"/>
+<area shape="rect" id="node3" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="1151,8,1302,33"/>
+<area shape="rect" id="node4" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="469,156,563,181"/>
+<area shape="rect" id="node5" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="431,255,601,280"/>
+<area shape="rect" id="node7" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="439,205,593,231"/>
+<area shape="rect" id="node9" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="1149,1401,1304,1427"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="1133,519,1320,557"/>
+<area shape="rect" id="node11" href="$class_parameters.html#a92fd1aff7e90f3553e524f7eeb6b24bc" title="Get reduced dimension sizes of the simulation (complex classes). " alt="" coords="1118,581,1335,620"/>
+<area shape="rect" id="node12" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="1135,644,1318,669"/>
+<area shape="rect" id="node13" href="$class_parameters.html#ad76a0fb737c095702e1bb16431c5f4fc" title="Is density in the medium homogeneous (scalar value)? " alt="" coords="1128,693,1325,719"/>
+<area shape="rect" id="node14" href="$class_parameters.html#a792445d4cbd4bfef4f78702b1148fcfe" title="Is the wave propagation nonlinear? " alt="" coords="1131,743,1322,768"/>
+<area shape="rect" id="node15" href="$class_parameters.html#ad3be941594589f9061487544fe13c381" title="Is nonlinear coefficient homogeneous in the medium (scalar value)? " alt="" coords="1127,792,1326,817"/>
+<area shape="rect" id="node16" href="$class_parameters.html#a3983946bb7b535f5165cf699f2584c90" title="Is the simulation absrobing or lossless? " alt="" coords="1133,841,1321,867"/>
+<area shape="rect" id="node17" href="$class_parameters.html#abc0a2f4dea841c3a3e3502549daeba4f" title="Is alpha absorption coefficient homogeneous (scalar value)? " alt="" coords="1142,891,1311,929"/>
+<area shape="rect" id="node18" href="$class_parameters.html#a7c36e5176ad893dce7f8d07e607b88bb" title="Get sensor mask type (linear or corners). " alt="" coords="1125,1352,1328,1377"/>
+<area shape="rect" id="node19" href="$class_parameters.html#a6ac960040cb45439ac471b1f0986920b" title="Get spatial size of the index sensor mask. " alt="" coords="1139,953,1315,992"/>
+<area shape="rect" id="node20" href="$class_parameters.html#ad0b7e11921b7031063697c0fc1d0b60c" title="Get number of cuboids the sensor is composed of. " alt="" coords="1139,1016,1315,1055"/>
+<area shape="rect" id="node21" href="$class_parameters.html#a2ba747370f0154ec72736e3490faed7d" title="Get initial pressure source flag (p0). " alt="" coords="1133,1079,1320,1117"/>
+<area shape="rect" id="node22" href="$class_parameters.html#a595111584447c224639a673dd0ecea80" title="Get transducer source flag. " alt="" coords="1141,1141,1312,1180"/>
+<area shape="rect" id="node23" href="$class_parameters.html#ac2c34618d26d71791ff76e671b1cf2c0" title="Get velocity in x source flag. " alt="" coords="1115,1204,1338,1229"/>
+<area shape="rect" id="node24" href="$class_parameters.html#a3d98e8d2c9a011cc1405c1a9b5754abb" title="Get velocity in y source flag. " alt="" coords="1115,1253,1338,1279"/>
+<area shape="rect" id="node25" href="$class_parameters.html#ae11cfc5fba879fdd4567d22e362f04ce" title="Get velocity in z source flag. " alt="" coords="1116,1303,1337,1328"/>
+<area shape="rect" id="node26" href="$class_parameters.html#a3a1cb828ce3f65962bbfab8ff97e9fb2" title="Get spatial size of the velocity source. " alt="" coords="1131,120,1322,159"/>
+<area shape="rect" id="node27" href="$class_parameters.html#a84263de37bcd4d1d7a7f66abca0c9010" title="Get spatial size of the transducer source. " alt="" coords="1141,183,1312,221"/>
+<area shape="rect" id="node28" href="$class_parameters.html#a9a6cf68851b4df1313574835984523fe" title="Get pressure source flag. " alt="" coords="1117,245,1337,271"/>
+<area shape="rect" id="node29" href="$class_parameters.html#aa64f70bc76f16b0cf2354914a1b7602e" title="Get number of time series in the pressure source. " alt="" coords="1113,295,1340,320"/>
+<area shape="rect" id="node30" href="$class_parameters.html#a03bf0fb3fdaef038f4c64406ad3b7a1e" title="Get spatial size of the pressure source. " alt="" coords="1129,344,1325,383"/>
+<area shape="rect" id="node31" href="$class_parameters.html#adc19724e0c86da74b31de2483b252369" title="Get number of time series in the velocity sources. " alt="" coords="1117,407,1337,432"/>
+<area shape="rect" id="node32" href="$class_parameters.html#ad7855f2fca8bffe1042bef1e28a3d760" title="Enable non uniform grid? &#45; not implemented yet. " alt="" coords="1139,456,1314,495"/>
+<area shape="rect" id="node33" href="$class_parameters.html#af33d8630ce8a083055aa590eb1651ab4" title="Is –u_non_staggered_raw set? " alt="" coords="1137,57,1317,96"/>
+<area shape="rect" id="node36" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="657,788,823,813"/>
+<area shape="rect" id="node37" href="$class_parameters.html#aa491f1ffb280aee85776dfdb0630d06b" title="Is &#45;p or –p_raw specified at the command line? " alt="" coords="423,1363,609,1401"/>
+<area shape="rect" id="node38" href="$class_output_stream_container.html#ae8baf6a7e9d1365c752ae50c8920c497" title="Create a new output stream. " alt="" coords="441,1197,591,1236"/>
+<area shape="rect" id="node39" href="$class_parameters.html#a43a65353c4e6c731efc8d577be0a5915" title="Get output file handle. " alt="" coords="658,1261,822,1287"/>
+<area shape="rect" id="node40" href="$class_parameters.html#af0b5d4fae484929265db15fcca9ecf2c" title="Is –p_rms set? " alt="" coords="423,456,609,495"/>
+<area shape="rect" id="node41" href="$class_parameters.html#a0e0b99eecbacccb4de7235eb1bbe3f46" title="Is –p_max set? " alt="" coords="423,519,609,557"/>
+<area shape="rect" id="node42" href="$class_parameters.html#a8cb0c9f270205d452686bcf318fe11a4" title="Is –p_min set? " alt="" coords="423,581,609,620"/>
+<area shape="rect" id="node43" href="$class_parameters.html#a5a12cd5e8ca2f41195749ef6e6e767d8" title="Is –p_max_all set? " alt="" coords="423,644,609,683"/>
+<area shape="rect" id="node44" href="$class_parameters.html#ab8b876a2bc37ad671a10a7a7da11ceef" title="Is –p_min_all set? " alt="" coords="423,707,609,745"/>
+<area shape="rect" id="node45" href="$class_parameters.html#a79c6230d3cc2fee1a6b339221db72226" title="Is &#45;u or –u_raw specified at the command line? " alt="" coords="426,769,606,808"/>
+<area shape="rect" id="node46" href="$class_parameters.html#aa7af34da0c40b95c18ed41d083b91a8e" title="Is –u_rms set? " alt="" coords="426,884,606,923"/>
+<area shape="rect" id="node47" href="$class_parameters.html#ac82369c2b9ad79841889e9307d842f60" title="Is –u_max set? " alt="" coords="426,947,606,985"/>
+<area shape="rect" id="node48" href="$class_parameters.html#a3abf75a45753841d5a7cdb3d8b06a1e8" title="Is –u_min set? " alt="" coords="426,1009,606,1048"/>
+<area shape="rect" id="node49" href="$class_parameters.html#aca0f86c6d72e186b8e6614ad44ce30c3" title="Is –u_max_all set? " alt="" coords="426,1072,606,1111"/>
+<area shape="rect" id="node50" href="$class_parameters.html#a24bae6adcb015707e43a0a783bc283d5" title="Is –u_min set? " alt="" coords="426,1135,606,1173"/>
+</map>

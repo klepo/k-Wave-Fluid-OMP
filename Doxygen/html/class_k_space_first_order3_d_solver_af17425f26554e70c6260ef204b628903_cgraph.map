@@ -1,0 +1,8 @@
+<map id="KSpaceFirstOrder3DSolver::isTimeToCheckpoint" name="KSpaceFirstOrder3DSolver::isTimeToCheckpoint">
+<area shape="rect" id="node2" href="$class_parameters.html#aea354cdb22dcfd11501dd987e16d2e4d" title="Is checkpoint enabled? " alt="" coords="239,5,401,44"/>
+<area shape="rect" id="node4" href="$class_time_measure.html#afd34544fb28963c2906aa6ba0ca86ca8" title="Take stop timestamp. " alt="" coords="257,68,383,93"/>
+<area shape="rect" id="node5" href="$class_time_measure.html#a995e00f7ecd4ac3b2dc16807fc5d40bc" title="Get elapsed time. " alt="" coords="224,117,416,143"/>
+<area shape="rect" id="node6" href="$class_parameters.html#ad5f91b52a74688b54f571e7d54195832" title="Get checkpoint interval. " alt="" coords="235,167,405,205"/>
+<area shape="rect" id="node3" href="$class_command_line_parameters.html#a6d5dd5cf7c7e9068925b5cd5149e16a1" title="Is checkpoint enabled? " alt="" coords="464,5,631,44"/>
+<area shape="rect" id="node7" href="$class_command_line_parameters.html#a7c07d9449842226594a2a7a77761eff0" title="Get checkpoint interval. " alt="" coords="464,167,631,205"/>
+</map>

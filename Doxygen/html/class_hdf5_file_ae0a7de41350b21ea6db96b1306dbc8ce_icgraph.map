@@ -1,0 +1,17 @@
+<map id="Hdf5File::closeGroup" name="Hdf5File::closeGroup">
+<area shape="rect" id="node2" href="$class_hdf5_file.html#aa360ceb797433a9e761b6edefe6376ee" title="Is the file opened? " alt="" coords="203,123,316,148"/>
+<area shape="rect" id="node15" href="$class_cuboid_output_stream.html#ae5e806f102c901e0544ad98bc3751855" title="Close stream (apply post&#45;processing if necessary, flush data and close). " alt="" coords="191,197,328,236"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#ac94747e6778e12ccb0dc31deaa6f0ecb" title="Destructor. " alt="" coords="388,48,515,73"/>
+<area shape="rect" id="node4" href="$class_hdf5_file.html#a221729661d8548219175b4cece2f064c" title="Create the HDF5 file. " alt="" coords="397,147,505,172"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="582,172,753,211"/>
+<area shape="rect" id="node11" href="$class_hdf5_file.html#a7ff9c11dcb7b1e171d7e6e7a498b0545" title="Open the HDF5 file. " alt="" coords="400,97,503,123"/>
+<area shape="rect" id="node12" href="$class_parameters.html#a64ac186b60226dd447580b0a15b98aa1" title="Read scalar values from the input HDF5 file. " alt="" coords="575,19,760,57"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#a158019a08bff430f0d5af5a223e4875d" title="Load simulation data. " alt="" coords="582,100,753,139"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1532,81,1581,107"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1303,157,1473,196"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="808,157,1025,196"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1073,157,1244,196"/>
+<area shape="rect" id="node13" href="$class_parameters.html#ab5a94d4c887319ee776bc7feb40fcdd1" title="Parse command line and read scalar values form the input file. " alt="" coords="1105,56,1212,81"/>
+<area shape="rect" id="node14" href="$class_parameters.html#a1d0af7d1d611f8643ed7fe3240deb1b2" title="Shall the code print version and exit? " alt="" coords="1292,5,1484,31"/>
+<area shape="rect" id="node16" href="$class_cuboid_output_stream.html#aec96de71acd4e70a442e70a5a715cc19" title="Destructor. " alt="" coords="376,248,527,287"/>
+</map>

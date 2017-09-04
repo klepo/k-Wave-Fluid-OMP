@@ -1,0 +1,6 @@
+<map id="TIndexMatrix::GetTotalNumberOfElementsInAllCuboids" name="TIndexMatrix::GetTotalNumberOfElementsInAllCuboids">
+<area shape="rect" id="node2" href="$class_t_index_matrix.html#ad40aeb72381a50f5b3069a7f54cf344d" title="Get the bottom right corner of the index&#45;th cuboid. " alt="" coords="241,36,425,75"/>
+<area shape="rect" id="node5" href="$class_t_index_matrix.html#a3f5a86cba15f3ae8712b8f58e6dfc601" title="Get the top left corner of the index&#45;th cuboid. " alt="" coords="254,99,413,137"/>
+<area shape="rect" id="node3" href="$class_t_index_matrix.html#abe151db01397cec08b3e5d6efa2b9ed8" title="Recompute indices MATALAB&#45;&gt;C++. " alt="" coords="473,5,673,44"/>
+<area shape="rect" id="node4" href="$class_t_index_matrix.html#ad64f46a5e17332ad9addb1dd540039e3" title="Recompute indices C++ &#45;&gt; MATLAB. " alt="" coords="473,68,673,107"/>
+</map>

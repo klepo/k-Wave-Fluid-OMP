@@ -1,0 +1,5 @@
+<map id="BaseOutputStream" name="BaseOutputStream">
+<area shape="rect" id="node2" href="$class_cuboid_output_stream.html" title="Output stream for quantities sampled by a cuboid corner sensor mask. " alt="" coords="5,79,143,104"/>
+<area shape="rect" id="node3" href="$class_index_output_stream.html" title="Output stream for quantities sampled by an index sensor mask. " alt="" coords="167,79,293,104"/>
+<area shape="rect" id="node4" href="$class_whole_domain_output_stream.html" title="Output stream for quantities sampled in the whole domain. " alt="" coords="317,79,492,104"/>
+</map>

@@ -1,0 +1,25 @@
+var annotated_dup =
+[
+    [ "BaseFloatMatrix", "class_base_float_matrix.html", "class_base_float_matrix" ],
+    [ "BaseIndexMatrix", "class_base_index_matrix.html", "class_base_index_matrix" ],
+    [ "BaseMatrix", "class_base_matrix.html", "class_base_matrix" ],
+    [ "BaseOutputStream", "class_base_output_stream.html", "class_base_output_stream" ],
+    [ "CommandLineParameters", "class_command_line_parameters.html", "class_command_line_parameters" ],
+    [ "ComplexMatrix", "class_complex_matrix.html", "class_complex_matrix" ],
+    [ "CuboidOutputStream", "class_cuboid_output_stream.html", "class_cuboid_output_stream" ],
+    [ "DimensionSizes", "struct_dimension_sizes.html", "struct_dimension_sizes" ],
+    [ "FftwComplexMatrix", "class_fftw_complex_matrix.html", "class_fftw_complex_matrix" ],
+    [ "Hdf5File", "class_hdf5_file.html", "class_hdf5_file" ],
+    [ "Hdf5FileHeader", "class_hdf5_file_header.html", "class_hdf5_file_header" ],
+    [ "IndexMatrix", "class_index_matrix.html", "class_index_matrix" ],
+    [ "IndexOutputStream", "class_index_output_stream.html", "class_index_output_stream" ],
+    [ "KSpaceFirstOrder3DSolver", "class_k_space_first_order3_d_solver.html", "class_k_space_first_order3_d_solver" ],
+    [ "Logger", "class_logger.html", "class_logger" ],
+    [ "MatrixContainer", "class_matrix_container.html", "class_matrix_container" ],
+    [ "MatrixRecord", "struct_matrix_record.html", "struct_matrix_record" ],
+    [ "OutputStreamContainer", "class_output_stream_container.html", "class_output_stream_container" ],
+    [ "Parameters", "class_parameters.html", "class_parameters" ],
+    [ "RealMatrix", "class_real_matrix.html", "class_real_matrix" ],
+    [ "TimeMeasure", "class_time_measure.html", "class_time_measure" ],
+    [ "WholeDomainOutputStream", "class_whole_domain_output_stream.html", "class_whole_domain_output_stream" ]
+];

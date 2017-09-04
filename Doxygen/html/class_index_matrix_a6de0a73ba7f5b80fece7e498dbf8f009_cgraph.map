@@ -1,0 +1,5 @@
+<map id="IndexMatrix::IndexMatrix" name="IndexMatrix::IndexMatrix">
+<area shape="rect" id="node2" href="$class_index_matrix.html#ab56b58682626147586e9a6cf0b50f71c" title="Init dimension. " alt="" coords="208,5,380,31"/>
+<area shape="rect" id="node3" href="$class_base_index_matrix.html#ad6af7cda3f63b7f2928b46f269a675f2" title="Aligned memory allocation (both on CPU and GPU). " alt="" coords="213,55,375,93"/>
+<area shape="rect" id="node4" href="$class_base_index_matrix.html#af5c8aa93d646100d0ec9fa8c26c26a10" title="Zero all elements of the matrix (NUMA first touch). " alt="" coords="428,61,604,87"/>
+</map>

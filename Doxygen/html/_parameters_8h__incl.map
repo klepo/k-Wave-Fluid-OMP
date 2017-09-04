@@ -1,5 +1,7 @@
 <map id="Parameters/Parameters.h" name="Parameters/Parameters.h">
-<area shape="rect" id="node3" href="$_command_line_parameters_8h.html" title="The header file containing the command line parameters. " alt="" coords="5,81,248,106"/>
-<area shape="rect" id="node5" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes. " alt="" coords="258,155,405,181"/>
-<area shape="rect" id="node8" href="$_h_d_f5___file_8h.html" title="The header file containing the HDF5 related classes. " alt="" coords="383,81,509,106"/>
+<area shape="rect" id="node3" href="$_command_line_parameters_8h.html" title="The header file containing the command line parameters. " alt="" coords="5,152,248,177"/>
+<area shape="rect" id="node4" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes. " alt="" coords="249,225,397,251"/>
+<area shape="rect" id="node6" href="$_hdf5_file_8h.html" title="The header file containing the HDF5 related classes. " alt="" coords="440,152,547,177"/>
+<area shape="rect" id="node11" href="$_hdf5_file_header_8h.html" title="The header file containing the class processing file headers. Detail about the file header are descri..." alt="" coords="425,79,573,104"/>
+<area shape="rect" id="node10" href="$_matrix_names_8h.html" title="The header file storing names of all variables. " alt="" coords="669,225,800,251"/>
 </map>

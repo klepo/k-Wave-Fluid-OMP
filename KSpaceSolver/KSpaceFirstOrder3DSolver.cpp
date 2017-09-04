@@ -1,33 +1,32 @@
 /**
- * @file        KSpaceFirstOrder3DSolver.cpp
- * @author      Jiri Jaros              \n
- *              Faculty of Information Technology\n
- *              Brno University of Technology \n
- *              jarosjir@fit.vutbr.cz
+ * @file      KSpaceFirstOrder3DSolver.cpp
  *
- * @brief       The implementation file containing the main class of the project
- *              responsible for the entire simulation.
+ * @author    Jiri Jaros \n
+ *            Faculty of Information Technology \n
+ *            Brno University of Technology \n
+ *            jarosjir@fit.vutbr.cz
  *
- * @version     kspaceFirstOrder3D 2.16
- * @date        12 July      2012, 10:27 (created)\n
- *              03 September 2017, 23:51 (revised)
+ * @brief     The implementation file containing the main class of the project responsible for the entire simulation.
  *
- * @section License
- * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2014 Jiri Jaros and Bradley Treeby.
+ * @version   kspaceFirstOrder3D 2.16
  *
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * @date      12 July      2012, 10:27 (created) \n
+ *            04 September 2017, 10:59 (revised)
  *
- * k-Wave is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
+ *
+ * This file is part of the k-Wave. k-Wave is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
+ * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
 // Linux build

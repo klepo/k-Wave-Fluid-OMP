@@ -1,34 +1,33 @@
 /**
- * @file        CuboidOutputStream.h
- * @author      Jiri Jaros \n
- *              Faculty of Information Technology\n
- *              Brno University of Technology \n
- *              jarosjir@fit.vutbr.cz
+ * @file      CuboidOutputStream.h
  *
- * @brief       The header file of classes responsible for storing output quantities based on the
- *              cuboid sensor mask into the output HDF5 file.
+ * @author    Jiri Jaros \n
+ *            Faculty of Information Technology \n
+ *            Brno University of Technology \n
+ *            jarosjir@fit.vutbr.cz
  *
- * @version     kspaceFirstOrder3D 2.16
+ * @brief     The header file of classes responsible for storing output quantities based on the
+ *            cuboid sensor mask into the output HDF5 file.
  *
- * @date        26 August    2017, 16:55 (created) \n
- *              26 August    2017, 21:51 (revised)
+ * @version   kspaceFirstOrder3D 2.16
  *
- * @section License
- * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
+ * @date      26 August    2017, 16:55 (created) \n
+ *            04 September 2017, 11:10 (revised)
  *
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
- * k-Wave is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the k-Wave. k-Wave is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
+ * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
 #ifndef CUBOID_OUTPUT_STREAM_H

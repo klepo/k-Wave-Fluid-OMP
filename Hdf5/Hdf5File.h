@@ -1,15 +1,17 @@
 /**
- * @file        Hdf5File.h
- * @author      Jiri Jaros \n
- *              Faculty of Information Technology\n
- *              Brno University of Technology \n
- *              jarosjir@fit.vutbr.cz
+ * @file      Hdf5File.h
  *
- * @brief       The header file containing the HDF5 related classes.
+ * @author    Jiri Jaros \n
+ *            Faculty of Information Technology\n
+ *            Brno University of Technology \n
+ *            jarosjir@fit.vutbr.cz
  *
- * @version     kspaceFirstOrder3D 2.16
- * @date        27 July      2012, 14:14 (created) \n
- *              24 August    2017, 14:22 (revised)
+ * @brief     The header file containing the HDF5 related classes.
+ *
+ * @version   kspaceFirstOrder3D 2.16
+ *
+ * @date      27 July      2012, 14:14 (created) \n
+ *            04 September 2017, 10:58 (revised)
  *
  *
  *

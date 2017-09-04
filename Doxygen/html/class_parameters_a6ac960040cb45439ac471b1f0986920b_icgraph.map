@@ -1,0 +1,51 @@
+<map id="Parameters::getSensorMaskIndexSize" name="Parameters::getSensorMaskIndexSize">
+<area shape="rect" id="node2" href="$class_matrix_container.html#ac07e369441915288927f5c8c7705e44d" title="Populate the container based on the simulation type. " alt="" coords="229,2154,412,2180"/>
+<area shape="rect" id="node3" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="460,1436,625,1461"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#a7eaf336838afbecdfd7cec33de1831e4" title="Memory allocation. " alt="" coords="1091,1458,1261,1497"/>
+<area shape="rect" id="node4" href="$class_output_stream_container.html#a97bd5bc7cd18225fc5a9e79ddd4d4418" title="Add all streams in simulation in the container, set all streams records here! " alt="" coords="892,50,1043,89"/>
+<area shape="rect" id="node6" href="$class_output_stream_container.html#ae8baf6a7e9d1365c752ae50c8920c497" title="Create a new output stream. " alt="" coords="683,50,834,89"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a902f0b84de6f280b49166fd4673ec66d" title="Get the kappa matrix from the container. " alt="" coords="673,113,844,152"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#ab8c225afe7e85466e7e122d54eb83740" title="Get the c^2 matrix from the container. " alt="" coords="673,176,844,214"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#afdc5cc9f0b66c5943bcf7ce61f122e46" title="Get pressure matrix. " alt="" coords="673,238,844,277"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#a77069932c43bcb4eeb1653d7c7467a48" title="Get velocity matrix on staggered grid in x direction. " alt="" coords="673,301,844,340"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#afca4083335ce33b2ae4438cd4aca9491" title="Get velocity matrix on staggered grid in y direction. " alt="" coords="673,364,844,402"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#a875d422a158e241f6959af028944ab74" title="Get velocity matrix on staggered grid in z direction. " alt="" coords="673,426,844,465"/>
+<area shape="rect" id="node13" href="$class_k_space_first_order3_d_solver.html#a2078517eaf4789b25fd9e6e2bba5e317" title="Get velocity shifted on normal grid in x direction. " alt="" coords="673,489,844,528"/>
+<area shape="rect" id="node14" href="$class_k_space_first_order3_d_solver.html#aec50a06ee5ea6d28122ab91127e271a8" title="Get velocity shifted on normal grid in y direction. " alt="" coords="673,552,844,590"/>
+<area shape="rect" id="node15" href="$class_k_space_first_order3_d_solver.html#a9be6ffb82dbbeb8a95caef84a6a57560" title="Get velocity shifted on normal grid in z direction. " alt="" coords="673,614,844,653"/>
+<area shape="rect" id="node16" href="$class_k_space_first_order3_d_solver.html#a620ba8aba070a9e2be8463a4cda86373" title="Get velocity gradient on in x direction. " alt="" coords="673,677,844,716"/>
+<area shape="rect" id="node17" href="$class_k_space_first_order3_d_solver.html#a71573dec690c2cd2aa8558d9ee2a2250" title="Get velocity gradient on in y direction. " alt="" coords="673,740,844,778"/>
+<area shape="rect" id="node18" href="$class_k_space_first_order3_d_solver.html#a0e23ef024667ba608e6178df7f14252e" title="Get velocity gradient on in z direction. " alt="" coords="673,802,844,841"/>
+<area shape="rect" id="node19" href="$class_k_space_first_order3_d_solver.html#a43f0e3cac36c58bbc9f55873e3a8a549" title="Get dt * rho0Sgx matrix (time step size * ambient velocity on staggered grid in x direction)..." alt="" coords="673,865,844,904"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#aa708679b70922946a55459a6947a02d7" title="Get dt * rho0Sgy matrix (time step size * ambient velocity on staggered grid in y direction)..." alt="" coords="673,928,844,966"/>
+<area shape="rect" id="node21" href="$class_k_space_first_order3_d_solver.html#a795139132c527461b9fb7b3de0c1510e" title="Get dt * rho0Sgz matrix (time step size * ambient velocity on staggered grid in z direction)..." alt="" coords="673,990,844,1029"/>
+<area shape="rect" id="node22" href="$class_k_space_first_order3_d_solver.html#a9c6ec227e0d799245857992548efb01a" title="Get density matrix in x direction. " alt="" coords="673,1053,844,1092"/>
+<area shape="rect" id="node23" href="$class_k_space_first_order3_d_solver.html#ae29d6a3518343dc0da0fb0cf9a3d2454" title="Get density matrix in y direction. " alt="" coords="673,1116,844,1154"/>
+<area shape="rect" id="node24" href="$class_k_space_first_order3_d_solver.html#a088717c923775762ac9ad3cc708806e3" title="Get density matrix in z direction. " alt="" coords="673,1178,844,1217"/>
+<area shape="rect" id="node25" href="$class_k_space_first_order3_d_solver.html#ac455df90d5e7a76ce1beeea3aabb7986" title="Get ambient density matrix. " alt="" coords="673,1241,844,1280"/>
+<area shape="rect" id="node26" href="$class_k_space_first_order3_d_solver.html#a3efb75cb470c83845f410d879cf87031" title="Get positive Fourier shift in x. " alt="" coords="673,1304,844,1342"/>
+<area shape="rect" id="node27" href="$class_k_space_first_order3_d_solver.html#a3875f1cac462dba6ee9b150f8be1dd9e" title="Get positive Fourier shift in y. " alt="" coords="673,1366,844,1405"/>
+<area shape="rect" id="node28" href="$class_k_space_first_order3_d_solver.html#af4a3f7c6d19eec6a87472ed2e2b24a50" title="Get positive Fourier shift in z. " alt="" coords="673,1429,844,1468"/>
+<area shape="rect" id="node29" href="$class_k_space_first_order3_d_solver.html#a6448678dbe66a89e91979643d13419c7" title="Get negative Fourier shift in x. " alt="" coords="673,1492,844,1530"/>
+<area shape="rect" id="node30" href="$class_k_space_first_order3_d_solver.html#a9b771910447f884f9a8cdfc7a2c38053" title="Get negative Fourier shift in y. " alt="" coords="673,1554,844,1593"/>
+<area shape="rect" id="node31" href="$class_k_space_first_order3_d_solver.html#aebf1b9ac6121a49c400b957d52d030b9" title="Get negative Fourier shift in z. " alt="" coords="673,1617,844,1656"/>
+<area shape="rect" id="node32" href="$class_k_space_first_order3_d_solver.html#ab04ad1c0ba0a92ee7619093ba47d8742" title="Get negative shift for non&#45;staggered velocity in x. " alt="" coords="673,1680,844,1718"/>
+<area shape="rect" id="node33" href="$class_k_space_first_order3_d_solver.html#a0e0a70e4a661b12ad559eb8e991f159a" title="Get negative shift for non&#45;staggered velocity in y. " alt="" coords="673,1742,844,1781"/>
+<area shape="rect" id="node34" href="$class_k_space_first_order3_d_solver.html#aa0af88b70479456876997b209d55fc21" title="Get negative shift for non&#45;staggered velocity in z. " alt="" coords="673,1805,844,1844"/>
+<area shape="rect" id="node35" href="$class_k_space_first_order3_d_solver.html#aca62d64f1ef7dcc62ac8d9478424ace2" title="Get PML on staggered grid x. " alt="" coords="673,1868,844,1906"/>
+<area shape="rect" id="node36" href="$class_k_space_first_order3_d_solver.html#a4afd54648dca3aebec1278d1ef076bba" title="Get PML on staggered grid y. " alt="" coords="673,1930,844,1969"/>
+<area shape="rect" id="node37" href="$class_k_space_first_order3_d_solver.html#ac14f26d0d7c3f8dcb8c8800ea30d42ad" title="Get PML on staggered grid z. " alt="" coords="673,1993,844,2032"/>
+<area shape="rect" id="node38" href="$class_k_space_first_order3_d_solver.html#a29699658d29cb19b34e1da5e5b00b8ca" title="Get PML in x. " alt="" coords="673,2056,844,2094"/>
+<area shape="rect" id="node39" href="$class_k_space_first_order3_d_solver.html#a1e688ec8404dc080d3cffbed327d5783" title="Get PML in y. " alt="" coords="673,2118,844,2157"/>
+<area shape="rect" id="node40" href="$class_k_space_first_order3_d_solver.html#a07db3da4c87150677756e5a9b17abb8a" title="Get PML in z. " alt="" coords="673,2181,844,2220"/>
+<area shape="rect" id="node41" href="$class_k_space_first_order3_d_solver.html#a900a10ba6f71bb66e127421f6f68af33" title="Non uniform grid acoustic velocity in x. " alt="" coords="673,2244,844,2282"/>
+<area shape="rect" id="node42" href="$class_k_space_first_order3_d_solver.html#aa69a31be2295ac57be9c4e1fc4b4ecc1" title="Non uniform grid acoustic velocity in y. " alt="" coords="673,2306,844,2345"/>
+<area shape="rect" id="node43" href="$class_k_space_first_order3_d_solver.html#a41c9e788158e0463eff89fe542cd1710" title="Non uniform grid acoustic velocity in z. " alt="" coords="673,2369,844,2408"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#a30f6e840e35436831589c478d020ea19" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="673,2432,844,2470"/>
+<area shape="rect" id="node45" href="$class_k_space_first_order3_d_solver.html#acec99d087a12528825ad08257193d089" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="673,2494,844,2533"/>
+<area shape="rect" id="node46" href="$class_k_space_first_order3_d_solver.html#a4877d1055ca2a2dff2b42549ecdee6c6" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="673,2557,844,2596"/>
+<area shape="rect" id="node47" href="$class_k_space_first_order3_d_solver.html#a3b1892fe075028a3c1a12b608684a03b" title="Get B on A (nonlinear coefficient). " alt="" coords="673,2620,844,2658"/>
+<area shape="rect" id="node48" href="$class_k_space_first_order3_d_solver.html#ad7c636526efc7da54b7327f9dddd0142" title="Get absorbing coefficient Tau. " alt="" coords="673,2682,844,2721"/>
+<area shape="rect" id="node49" href="$class_k_space_first_order3_d_solver.html#a82a2afce941f1f6df9109548be0e60a5" title="Get absorbing coefficient Eta. " alt="" coords="673,2745,844,2784"/>
+<area shape="rect" id="node50" href="$class_k_space_first_order3_d_solver.html#ac8eb6d205dd5a0bd598a488edf868c7d" title="Get absorbing coefficient Nabla1. " alt="" coords="673,2808,844,2846"/>
+</map>

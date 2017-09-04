@@ -1,0 +1,43 @@
+<map id="IndexOutputStream::reopen" name="IndexOutputStream::reopen">
+<area shape="rect" id="node2" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="202,5,357,31"/>
+<area shape="rect" id="node4" href="$class_base_index_matrix.html#adec50ba75c317ae79b82d188adbcfa05" title="Size of the matrix. " alt="" coords="209,55,350,80"/>
+<area shape="rect" id="node5" href="$class_base_output_stream.html#afdf6a28f47a5ed79658cdda3b938f111" title="Allocate memory using proper memory alignment. " alt="" coords="192,104,367,143"/>
+<area shape="rect" id="node6" href="$class_hdf5_file.html#ab09e1d1114830bccc80e7fee04df2004" title="Open a dataset at a specified place in the file tree. " alt="" coords="700,957,844,983"/>
+<area shape="rect" id="node9" href="$class_hdf5_file.html#a757c1108f5f459f03d10433d07ba3a81" title="Get handle to the root group of the file. " alt="" coords="204,660,355,685"/>
+<area shape="rect" id="node21" href="$class_hdf5_file.html#a112d8041f8dedc169ae70fe4a704bf0c" title="Read data from the dataset at a specified place in the file tree. " alt="" coords="675,324,869,349"/>
+<area shape="rect" id="node29" href="$class_parameters.html#a74a45ad55bfb91e8e39153a01d0dd9d8" title="Get actual simulation time step. " alt="" coords="197,709,362,735"/>
+<area shape="rect" id="node30" href="$class_parameters.html#afdf48d8de5070c384783b3eb1a7452ca" title="Get start time index when sensor data collection begins. " alt="" coords="187,167,372,205"/>
+<area shape="rect" id="node3" href="$class_parameters.html#af4d94ee360ac0157d9065f78797fe9a1" title="Constructor not allowed for public. " alt="" coords="444,5,599,31"/>
+<area shape="rect" id="node7" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="1431,660,1582,685"/>
+<area shape="rect" id="node8" href="$class_logger.html#a12c65c342201179b9b3fc9ded2555d4c" title="Extract a word from a string stream based on delimiters. " alt="" coords="1640,371,1753,396"/>
+<area shape="rect" id="node10" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="942,685,1093,711"/>
+<area shape="rect" id="node12" href="$class_hdf5_file.html#a286eb597f1da666cc3cee6d19259a4e4" title="Close dataset. " alt="" coords="449,535,594,560"/>
+<area shape="rect" id="node13" href="$class_hdf5_file.html#a6967bff33507f44a57e1a397acf3bbcb" title="Write a hyperslab into the dataset. " alt="" coords="1188,787,1347,812"/>
+<area shape="rect" id="node14" href="$class_hdf5_file.html#a3210d2273ea3e90320673eff70e91caf" title="Write a cuboid selected within the matrixData into a hyperslab. " alt="" coords="1161,836,1373,861"/>
+<area shape="rect" id="node15" href="$class_hdf5_file.html#a667746624294c81046bc04ee3971d423" title="Write sensor data selected by the sensor mask &#45; Occasionally very slow, do not use! ..." alt="" coords="1176,885,1359,924"/>
+<area shape="rect" id="node16" href="$class_hdf5_file.html#acb2a105dfb942edf47c9dfaa9f9736ae" title="Write the scalar value under a specified group. " alt="" coords="438,1040,605,1065"/>
+<area shape="rect" id="node17" href="$class_hdf5_file.html#a9e1f04c286dba6a6afe9821a402e7243" title="Write matrix data type into the dataset at a specified place in the file tree. " alt="" coords="679,1120,865,1145"/>
+<area shape="rect" id="node18" href="$class_hdf5_file.html#a0bf4466acb32565bcc8935a228544cb6" title="Write string attribute into the dataset under the root group. " alt="" coords="929,1107,1106,1132"/>
+<area shape="rect" id="node19" href="$class_hdf5_file.html#a2719b646df65c46962bc101954d23371" title="Write matrix data type into the dataset at a specified place in the file tree. " alt="" coords="671,1071,873,1096"/>
+<area shape="rect" id="node20" href="$class_hdf5_file.html#a7b1d06060632f114a22ad4bde6860862" title="Read the scalar value under a specified group. " alt="" coords="438,281,605,307"/>
+<area shape="rect" id="node22" href="$class_hdf5_file.html#af561b101cb41c96d67266be823b123e7" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="921,368,1113,407"/>
+<area shape="rect" id="node23" href="$class_hdf5_file.html#a4e511c8bd3d6d48f7ca895bf6bd6069d" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="1179,420,1356,459"/>
+<area shape="rect" id="node25" href="$class_hdf5_file.html#a97212fd272ab3452ee67c6e15ee5830e" title="Get dataset element count at a specified place in the file tree. " alt="" coords="693,508,851,533"/>
+<area shape="rect" id="node26" href="$class_hdf5_file.html#a0d809dcf87519a67c03fd7566b0f47a1" title="Read matrix data type from the dataset at a specified place in the file tree. " alt="" coords="429,584,614,609"/>
+<area shape="rect" id="node27" href="$class_hdf5_file.html#afb0e924858798ceafcde23a48a0ba182" title="Read string attribute from the dataset under the root group. " alt="" coords="684,635,860,660"/>
+<area shape="rect" id="node28" href="$class_hdf5_file.html#a191248f03bffe6c3db7667d702250978" title="Read matrix dataset domain type at a specified place in the file tree. " alt="" coords="420,685,623,711"/>
+<area shape="rect" id="node11" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="1196,483,1339,508"/>
+<area shape="rect" id="node24" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="930,483,1105,508"/>
+<area shape="rect" id="node31" href="$class_command_line_parameters.html#a560478f7605c5fb40edcfc79c9358751" title="Get start time index when sensor data collection begins. " alt="" coords="432,167,611,205"/>
+<area shape="rect" id="node32" href="$class_command_line_parameters.html#a22173760e90ea28bbbc987b3148dee87" title="Print usage of the code. " alt="" coords="934,153,1101,192"/>
+<area shape="rect" id="node38" href="$class_command_line_parameters.html#a9bd65d0cfa42fffefdc9c69932bb987c" title="Print setup commandline parameters. " alt="" coords="931,39,1103,77"/>
+<area shape="rect" id="node40" href="$class_command_line_parameters.html#aee5810a913506149904ac8986661de85" title="Parse commandline parameters. " alt="" coords="689,187,855,225"/>
+<area shape="rect" id="node42" href="$class_command_line_parameters.html#a6feba967b7930dbe2f3091177edb31e2" title="Default constructor &#45; only friend class can create an instance. " alt="" coords="686,249,858,288"/>
+<area shape="rect" id="node33" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="1225,160,1309,185"/>
+<area shape="rect" id="node34" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="1460,208,1553,233"/>
+<area shape="rect" id="node35" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="1421,263,1592,288"/>
+<area shape="rect" id="node36" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="1460,159,1553,184"/>
+<area shape="rect" id="node37" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="1429,105,1584,131"/>
+<area shape="rect" id="node39" href="$class_command_line_parameters.html#a6d5dd5cf7c7e9068925b5cd5149e16a1" title="Is checkpoint enabled? " alt="" coords="1184,39,1351,77"/>
+<area shape="rect" id="node41" href="$class_logger.html#a41e108f83fa9caf16a11ef9f84a3daed" title="Set the log level. " alt="" coords="961,216,1074,241"/>
+</map>

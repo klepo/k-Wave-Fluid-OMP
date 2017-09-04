@@ -1,0 +1,51 @@
+<map id="OutputStreamContainer::addStreams" name="OutputStreamContainer::addStreams">
+<area shape="rect" id="node2" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="945,123,1099,148"/>
+<area shape="rect" id="node4" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="448,236,613,261"/>
+<area shape="rect" id="node19" href="$class_parameters.html#af33d8630ce8a083055aa590eb1651ab4" title="Is –u_non_staggered_raw set? " alt="" coords="932,781,1112,820"/>
+<area shape="rect" id="node25" href="$class_parameters.html#aa491f1ffb280aee85776dfdb0630d06b" title="Is &#45;p or –p_raw specified at the command line? " alt="" coords="204,175,391,213"/>
+<area shape="rect" id="node27" href="$class_output_stream_container.html#ae8baf6a7e9d1365c752ae50c8920c497" title="Create a new output stream. " alt="" coords="222,407,373,445"/>
+<area shape="rect" id="node28" href="$class_parameters.html#a43a65353c4e6c731efc8d577be0a5915" title="Get output file handle. " alt="" coords="449,471,613,496"/>
+<area shape="rect" id="node29" href="$class_parameters.html#af0b5d4fae484929265db15fcca9ecf2c" title="Is –p_rms set? " alt="" coords="204,572,391,611"/>
+<area shape="rect" id="node31" href="$class_parameters.html#a0e0b99eecbacccb4de7235eb1bbe3f46" title="Is –p_max set? " alt="" coords="204,635,391,673"/>
+<area shape="rect" id="node33" href="$class_parameters.html#a8cb0c9f270205d452686bcf318fe11a4" title="Is –p_min set? " alt="" coords="204,697,391,736"/>
+<area shape="rect" id="node35" href="$class_parameters.html#a5a12cd5e8ca2f41195749ef6e6e767d8" title="Is –p_max_all set? " alt="" coords="204,760,391,799"/>
+<area shape="rect" id="node37" href="$class_parameters.html#ab8b876a2bc37ad671a10a7a7da11ceef" title="Is –p_min_all set? " alt="" coords="204,823,391,861"/>
+<area shape="rect" id="node39" href="$class_parameters.html#a79c6230d3cc2fee1a6b339221db72226" title="Is &#45;u or –u_raw specified at the command line? " alt="" coords="207,885,387,924"/>
+<area shape="rect" id="node41" href="$class_parameters.html#aa7af34da0c40b95c18ed41d083b91a8e" title="Is –u_rms set? " alt="" coords="207,948,387,987"/>
+<area shape="rect" id="node43" href="$class_parameters.html#ac82369c2b9ad79841889e9307d842f60" title="Is –u_max set? " alt="" coords="207,1011,387,1049"/>
+<area shape="rect" id="node45" href="$class_parameters.html#a3abf75a45753841d5a7cdb3d8b06a1e8" title="Is –u_min set? " alt="" coords="207,1073,387,1112"/>
+<area shape="rect" id="node47" href="$class_parameters.html#aca0f86c6d72e186b8e6614ad44ce30c3" title="Is –u_max_all set? " alt="" coords="207,1136,387,1175"/>
+<area shape="rect" id="node49" href="$class_parameters.html#a24bae6adcb015707e43a0a783bc283d5" title="Is –u_min set? " alt="" coords="207,1199,387,1237"/>
+<area shape="rect" id="node3" href="$class_parameters.html#af4d94ee360ac0157d9065f78797fe9a1" title="Constructor not allowed for public. " alt="" coords="1200,123,1355,148"/>
+<area shape="rect" id="node5" href="$class_matrix_container.html#a9973c09a2bb15fa6c1d38f83e1b7edb7" title="Create all matrix objects in the container. " alt="" coords="671,55,865,80"/>
+<area shape="rect" id="node7" href="$class_matrix_container.html#ac07e369441915288927f5c8c7705e44d" title="Populate the container based on the simulation type. " alt="" coords="677,395,859,420"/>
+<area shape="rect" id="node21" href="$class_matrix_container.html#a603541865d8f1d3ffda39288d1514bf8" title="Destroy and free all matrices. " alt="" coords="677,5,859,31"/>
+<area shape="rect" id="node22" href="$class_matrix_container.html#ac0cb21a1d1d3b0713df28eda11acf46b" title="Load all marked matrices from the input HDF5 file. " alt="" coords="685,167,851,205"/>
+<area shape="rect" id="node23" href="$class_matrix_container.html#adc34543e615aea2e6f85c80d9503a8db" title="Load selected matrices from the checkpoint HDF5 file. " alt="" coords="685,104,851,143"/>
+<area shape="rect" id="node24" href="$class_matrix_container.html#af6fe7b98ad2c834ed3097e9c22e1ab3e" title="Store selected matrices into the checkpoint file. " alt="" coords="684,229,852,268"/>
+<area shape="rect" id="node6" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="947,55,1097,80"/>
+<area shape="rect" id="node8" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="929,669,1115,708"/>
+<area shape="rect" id="node9" href="$class_parameters.html#a92fd1aff7e90f3553e524f7eeb6b24bc" title="Get reduced dimension sizes of the simulation (complex classes). " alt="" coords="913,172,1131,211"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="931,235,1113,260"/>
+<area shape="rect" id="node11" href="$class_parameters.html#ad76a0fb737c095702e1bb16431c5f4fc" title="Is density in the medium homogeneous (scalar value)? " alt="" coords="923,284,1121,309"/>
+<area shape="rect" id="node12" href="$class_parameters.html#a792445d4cbd4bfef4f78702b1148fcfe" title="Is the wave propagation nonlinear? " alt="" coords="927,333,1117,359"/>
+<area shape="rect" id="node13" href="$class_parameters.html#ad3be941594589f9061487544fe13c381" title="Is nonlinear coefficient homogeneous in the medium (scalar value)? " alt="" coords="923,383,1121,408"/>
+<area shape="rect" id="node14" href="$class_parameters.html#a3983946bb7b535f5165cf699f2584c90" title="Is the simulation absrobing or lossless? " alt="" coords="928,432,1116,457"/>
+<area shape="rect" id="node15" href="$class_parameters.html#abc0a2f4dea841c3a3e3502549daeba4f" title="Is alpha absorption coefficient homogeneous (scalar value)? " alt="" coords="937,481,1107,520"/>
+<area shape="rect" id="node16" href="$class_parameters.html#a7c36e5176ad893dce7f8d07e607b88bb" title="Get sensor mask type (linear or corners). " alt="" coords="921,732,1123,757"/>
+<area shape="rect" id="node17" href="$class_parameters.html#a6ac960040cb45439ac471b1f0986920b" title="Get spatial size of the index sensor mask. " alt="" coords="934,544,1110,583"/>
+<area shape="rect" id="node18" href="$class_parameters.html#ad0b7e11921b7031063697c0fc1d0b60c" title="Get number of cuboids the sensor is composed of. " alt="" coords="934,607,1110,645"/>
+<area shape="rect" id="node20" href="$class_command_line_parameters.html#ac38435b06eee289e970d55d2f788d653" title="Is –u_non_staggered_raw set? " alt="" coords="1179,775,1376,827"/>
+<area shape="rect" id="node26" href="$class_command_line_parameters.html#ae4df228a24c4bc73a6cf1e36b3b2aa87" title="Is –p_raw set? " alt="" coords="445,173,617,212"/>
+<area shape="rect" id="node30" href="$class_command_line_parameters.html#a336fe38dd17085afd8a933fd6299b128" title="Is –p_rms set? " alt="" coords="445,572,617,611"/>
+<area shape="rect" id="node32" href="$class_command_line_parameters.html#a9c90a7a6a96ed1e3f2f1a88022e490a4" title="Is –p_max set? " alt="" coords="445,635,616,673"/>
+<area shape="rect" id="node34" href="$class_command_line_parameters.html#a4828a041ea866bd46912309907b1558d" title="Is –p_min set? " alt="" coords="447,697,614,736"/>
+<area shape="rect" id="node36" href="$class_command_line_parameters.html#a7f15469b9223db459876c30cfac72da0" title="Is –p_max_all set? " alt="" coords="439,760,623,799"/>
+<area shape="rect" id="node38" href="$class_command_line_parameters.html#a02f029dadfca895a64222b21374e262f" title="Is –p_min_all set? " alt="" coords="440,823,621,861"/>
+<area shape="rect" id="node40" href="$class_command_line_parameters.html#a7c1beae12cde90f3673985f398eb1f18" title="Is –u_raw set? " alt="" coords="447,885,614,924"/>
+<area shape="rect" id="node42" href="$class_command_line_parameters.html#ac0dd7de30a23ef0afebbb760121abf03" title="Is –u_rms set? " alt="" coords="447,948,614,987"/>
+<area shape="rect" id="node44" href="$class_command_line_parameters.html#af2b2b3f0700b5e652f9f69c6061fbcc4" title="Is –u_max set? " alt="" coords="447,1011,614,1049"/>
+<area shape="rect" id="node46" href="$class_command_line_parameters.html#ac379f37f671666bd6c124ba1dd457aff" title="Is –u_min set? " alt="" coords="447,1073,614,1112"/>
+<area shape="rect" id="node48" href="$class_command_line_parameters.html#a22406e60b8653ce0a224f2566cc49309" title="Is –u_max_all set? " alt="" coords="441,1136,620,1175"/>
+<area shape="rect" id="node50" href="$class_command_line_parameters.html#a21cfcbb0d28591e2ce9c232d3e28281a" title="Is –u_min set? " alt="" coords="443,1199,618,1237"/>
+</map>

@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['imag',['imag',['../struct_t_float_complex.html#ab2d54b9d390a38cb86621383dd1dbd17',1,'TFloatComplex']]],
-  ['inputfilename',['InputFileName',['../class_t_command_line_parameters.html#a659af6b2efb950f83ec6daec433b2cb7',1,'TCommandLineParameters']]],
-  ['iterationtime',['IterationTime',['../class_t_k_space_first_order3_d_solver.html#ac8c91392443b1a20aaa8162ab96c515b',1,'TKSpaceFirstOrder3DSolver']]]
+  ['nt',['nt',['../struct_dimension_sizes.html#a7340b058b3cdb3932d3bd943516a75f8',1,'DimensionSizes']]],
+  ['nx',['nx',['../struct_dimension_sizes.html#ae936dd9cfd0b69d71004b30507cc3c8f',1,'DimensionSizes']]],
+  ['ny',['ny',['../struct_dimension_sizes.html#ad146f6dde377786c3b05da425254adfd',1,'DimensionSizes']]],
+  ['nz',['nz',['../struct_dimension_sizes.html#a4ef015cecc37c0b84f94b105ee7a930c',1,'DimensionSizes']]]
 ];

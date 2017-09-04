@@ -1,0 +1,6 @@
+<map id="CommandLineParameters::getNumberOfThreads" name="CommandLineParameters::getNumberOfThreads">
+<area shape="rect" id="node2" href="$class_parameters.html#aecbfe6d428f2b92fbeb4bee321202358" title="Get number of CPU threads to use. " alt="" coords="220,41,429,67"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#ab11cbf74a1e06cfd258270cef3daa12f" title="Initialize FFT plans. " alt="" coords="477,5,655,44"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="928,41,977,67"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="703,5,880,44"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="FftwComplexMatrix::computeR2CFft1DY" name="FftwComplexMatrix::computeR2CFft1DY">
+<area shape="rect" id="node2" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="199,5,358,31"/>
+<area shape="rect" id="node3" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="201,55,356,80"/>
+<area shape="rect" id="node5" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="185,104,372,143"/>
+<area shape="rect" id="node4" href="$class_parameters.html#af4d94ee360ac0157d9065f78797fe9a1" title="Constructor not allowed for public. " alt="" coords="420,55,575,80"/>
+</map>

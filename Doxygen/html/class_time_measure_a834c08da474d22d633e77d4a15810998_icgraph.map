@@ -1,0 +1,7 @@
+<map id="TimeMeasure::getElapsedTime" name="TimeMeasure::getElapsedTime">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="696,5,873,44"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a4e0cfb97e23f5df12385ee1966691aa8" title="Print progress statistics. " alt="" coords="245,33,423,72"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#ae6473ea5f05f0afe7f381fc0f88eadd0" title="Is time to checkpoint (save actual state on disk)? " alt="" coords="245,96,423,135"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="921,12,971,37"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="471,33,648,72"/>
+</map>

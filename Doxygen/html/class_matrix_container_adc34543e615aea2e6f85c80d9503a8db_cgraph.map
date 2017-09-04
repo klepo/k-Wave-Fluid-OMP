@@ -1,0 +1,5 @@
+<map id="MatrixContainer::loadDataFromCheckpointFile" name="MatrixContainer::loadDataFromCheckpointFile">
+<area shape="rect" id="node2" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="237,5,391,31"/>
+<area shape="rect" id="node4" href="$class_parameters.html#a0010e3144ebf47ea3c3b451f099fc5bf" title="Get checkpoint file handle. " alt="" coords="219,55,409,80"/>
+<area shape="rect" id="node3" href="$class_parameters.html#af4d94ee360ac0157d9065f78797fe9a1" title="Constructor not allowed for public. " alt="" coords="457,5,612,31"/>
+</map>

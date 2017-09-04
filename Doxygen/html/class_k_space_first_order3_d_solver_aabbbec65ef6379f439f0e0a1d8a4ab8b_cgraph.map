@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::storeSensorData" name="KSpaceFirstOrder3DSolver::storeSensorData">
+<area shape="rect" id="node2" href="$class_parameters.html#a74a45ad55bfb91e8e39153a01d0dd9d8" title="Get actual simulation time step. " alt="" coords="234,615,399,640"/>
+<area shape="rect" id="node3" href="$class_parameters.html#afdf48d8de5070c384783b3eb1a7452ca" title="Get start time index when sensor data collection begins. " alt="" coords="224,664,409,703"/>
+<area shape="rect" id="node18" href="$class_parameters.html#af33d8630ce8a083055aa590eb1651ab4" title="Is –u_non_staggered_raw set? " alt="" coords="1166,1207,1346,1245"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#aaf86e5341ff67ec4d8e13d2418121e61" title="compute shifted velocity for –u_non_staggered flag. " alt="" coords="231,727,402,765"/>
+<area shape="rect" id="node50" href="$class_output_stream_container.html#a00ebcc87ff93bcd2d8dc6d8171a2e31f" title="Sample all streams. " alt="" coords="241,1315,392,1353"/>
+<area shape="rect" id="node4" href="$class_command_line_parameters.html#a560478f7605c5fb40edcfc79c9358751" title="Get start time index when sensor data collection begins. " alt="" coords="469,81,648,120"/>
+<area shape="rect" id="node5" href="$class_command_line_parameters.html#a22173760e90ea28bbbc987b3148dee87" title="Print usage of the code. " alt="" coords="936,272,1103,311"/>
+<area shape="rect" id="node13" href="$class_command_line_parameters.html#a9bd65d0cfa42fffefdc9c69932bb987c" title="Print setup commandline parameters. " alt="" coords="933,56,1105,95"/>
+<area shape="rect" id="node15" href="$class_command_line_parameters.html#aee5810a913506149904ac8986661de85" title="Parse commandline parameters. " alt="" coords="711,164,877,203"/>
+<area shape="rect" id="node17" href="$class_command_line_parameters.html#a6feba967b7930dbe2f3091177edb31e2" title="Default constructor &#45; only friend class can create an instance. " alt="" coords="708,24,880,63"/>
+<area shape="rect" id="node6" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="1214,171,1298,196"/>
+<area shape="rect" id="node7" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="1425,271,1575,296"/>
+<area shape="rect" id="node9" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="1453,123,1547,148"/>
+<area shape="rect" id="node10" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="1415,221,1585,247"/>
+<area shape="rect" id="node11" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="1453,172,1547,197"/>
+<area shape="rect" id="node12" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="1423,73,1577,99"/>
+<area shape="rect" id="node8" href="$class_logger.html#a12c65c342201179b9b3fc9ded2555d4c" title="Extract a word from a string stream based on delimiters. " alt="" coords="1647,172,1760,197"/>
+<area shape="rect" id="node14" href="$class_command_line_parameters.html#a6d5dd5cf7c7e9068925b5cd5149e16a1" title="Is checkpoint enabled? " alt="" coords="1173,5,1339,44"/>
+<area shape="rect" id="node16" href="$class_logger.html#a41e108f83fa9caf16a11ef9f84a3daed" title="Set the log level. " alt="" coords="963,171,1076,196"/>
+<area shape="rect" id="node19" href="$class_command_line_parameters.html#ac38435b06eee289e970d55d2f788d653" title="Is –u_non_staggered_raw set? " alt="" coords="1401,1200,1599,1252"/>
+<area shape="rect" id="node21" href="$class_k_space_first_order3_d_solver.html#ab04ad1c0ba0a92ee7619093ba47d8742" title="Get negative shift for non&#45;staggered velocity in x. " alt="" coords="473,319,644,357"/>
+<area shape="rect" id="node27" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="1163,1001,1349,1040"/>
+<area shape="rect" id="node32" href="$class_complex_matrix.html#a7fb01e884eac9faf413e9575b41984c9" title="Get raw complex data out of the class (for direct kernel access). " alt="" coords="457,144,660,169"/>
+<area shape="rect" id="node33" href="$class_k_space_first_order3_d_solver.html#a0e0a70e4a661b12ad559eb8e991f159a" title="Get negative shift for non&#45;staggered velocity in y. " alt="" coords="473,381,644,420"/>
+<area shape="rect" id="node34" href="$class_k_space_first_order3_d_solver.html#aa0af88b70479456876997b209d55fc21" title="Get negative shift for non&#45;staggered velocity in z. " alt="" coords="473,444,644,483"/>
+<area shape="rect" id="node35" href="$class_k_space_first_order3_d_solver.html#a5c9565fbff818268a546df153368af80" title="Get temporary matrix for fft shift. " alt="" coords="473,507,644,545"/>
+<area shape="rect" id="node36" href="$class_fftw_complex_matrix.html#a0a1a09944585359fe46e64b56dd7d51e" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the x dimension. " alt="" coords="953,787,1085,825"/>
+<area shape="rect" id="node38" href="$class_k_space_first_order3_d_solver.html#a77069932c43bcb4eeb1653d7c7467a48" title="Get velocity matrix on staggered grid in x direction. " alt="" coords="473,569,644,608"/>
+<area shape="rect" id="node39" href="$class_k_space_first_order3_d_solver.html#a540215b2cef3b444e650c3a18b2eb32b" title="Compute 1D index using 3 spatial coordinates and the size of the matrix. " alt="" coords="473,193,644,232"/>
+<area shape="rect" id="node40" href="$class_fftw_complex_matrix.html#a263b515e8d26fea4bd9cf935795dea10" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the x dimension. " alt="" coords="953,849,1085,888"/>
+<area shape="rect" id="node41" href="$class_k_space_first_order3_d_solver.html#a2078517eaf4789b25fd9e6e2bba5e317" title="Get velocity shifted on normal grid in x direction. " alt="" coords="473,632,644,671"/>
+<area shape="rect" id="node42" href="$class_fftw_complex_matrix.html#accb5eeb163bf4178cfc4d525f185f5ff" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the y dimension. " alt="" coords="953,912,1085,951"/>
+<area shape="rect" id="node43" href="$class_k_space_first_order3_d_solver.html#afca4083335ce33b2ae4438cd4aca9491" title="Get velocity matrix on staggered grid in y direction. " alt="" coords="473,695,644,733"/>
+<area shape="rect" id="node44" href="$class_fftw_complex_matrix.html#a4eae758747fe1fe56e7b6559a7ff00c1" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the y dimension. " alt="" coords="953,975,1085,1013"/>
+<area shape="rect" id="node45" href="$class_k_space_first_order3_d_solver.html#aec50a06ee5ea6d28122ab91127e271a8" title="Get velocity shifted on normal grid in y direction. " alt="" coords="473,757,644,796"/>
+<area shape="rect" id="node46" href="$class_fftw_complex_matrix.html#a7ba7468abf27ebb7ad4e28ca4f938933" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the z dimension. " alt="" coords="953,1037,1085,1076"/>
+<area shape="rect" id="node47" href="$class_k_space_first_order3_d_solver.html#a875d422a158e241f6959af028944ab74" title="Get velocity matrix on staggered grid in z direction. " alt="" coords="473,820,644,859"/>
+<area shape="rect" id="node48" href="$class_fftw_complex_matrix.html#a17a531b6696389aeb995b0631e867819" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the z dimension. " alt="" coords="953,1100,1085,1139"/>
+<area shape="rect" id="node49" href="$class_k_space_first_order3_d_solver.html#a9be6ffb82dbbeb8a95caef84a6a57560" title="Get velocity shifted on normal grid in z direction. " alt="" coords="473,256,644,295"/>
+<area shape="rect" id="node22" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="711,591,877,616"/>
+<area shape="rect" id="node23" href="$class_matrix_container.html#a9973c09a2bb15fa6c1d38f83e1b7edb7" title="Create all matrix objects in the container. " alt="" coords="1159,345,1353,371"/>
+<area shape="rect" id="node24" href="$class_matrix_container.html#ac07e369441915288927f5c8c7705e44d" title="Populate the container based on the simulation type. " alt="" coords="928,1163,1111,1188"/>
+<area shape="rect" id="node28" href="$class_matrix_container.html#a603541865d8f1d3ffda39288d1514bf8" title="Destroy and free all matrices. " alt="" coords="928,549,1111,575"/>
+<area shape="rect" id="node29" href="$class_matrix_container.html#ac0cb21a1d1d3b0713df28eda11acf46b" title="Load all marked matrices from the input HDF5 file. " alt="" coords="937,724,1102,763"/>
+<area shape="rect" id="node30" href="$class_matrix_container.html#adc34543e615aea2e6f85c80d9503a8db" title="Load selected matrices from the checkpoint HDF5 file. " alt="" coords="937,661,1102,700"/>
+<area shape="rect" id="node31" href="$class_matrix_container.html#af6fe7b98ad2c834ed3097e9c22e1ab3e" title="Store selected matrices into the checkpoint file. " alt="" coords="935,599,1103,637"/>
+<area shape="rect" id="node25" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="1179,892,1333,917"/>
+<area shape="rect" id="node26" href="$class_parameters.html#af4d94ee360ac0157d9065f78797fe9a1" title="Constructor not allowed for public. " alt="" coords="1423,892,1577,917"/>
+<area shape="rect" id="node37" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="1177,949,1335,975"/>
+</map>

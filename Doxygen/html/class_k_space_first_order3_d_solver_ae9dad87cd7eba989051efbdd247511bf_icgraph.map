@@ -1,0 +1,7 @@
+<map id="KSpaceFirstOrder3DSolver::loadElapsedTimeFromOutputFile" name="KSpaceFirstOrder3DSolver::loadElapsedTimeFromOutputFile">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a158019a08bff430f0d5af5a223e4875d" title="Load simulation data. " alt="" coords="527,5,697,44"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="261,68,479,107"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="964,43,1013,68"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="527,68,697,107"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="745,65,916,104"/>
+</map>

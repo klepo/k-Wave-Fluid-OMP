@@ -1,0 +1,8 @@
+<map id="KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousNonuniform" name="KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousNonuniform">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#acf1113852e24fd58cbf92679722cbdd8" title="Calculate initial pressure source. " alt="" coords="281,56,452,95"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="719,63,936,101"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="500,5,671,44"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1203,35,1373,73"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1421,41,1471,67"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="984,63,1155,101"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2" name="Tuxyz_sgxyzMatrix::Compute_dt_rho_sg_mul_ifft_div_2">
+<area shape="rect" id="node2" href="$class_fftw_complex_matrix.html#acf6f9256e5329b47e8baa67e53abe7c1" title="Compute forward out&#45;of&#45;place 3D Complex&#45;to&#45;Real FFT. " alt="" coords="959,56,1091,95"/>
+<area shape="rect" id="node4" href="$class_tuxyz__sgxyz_matrix.html#a8ea0ff263e209384546249ebed89c105" title="Compute dt ./ rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, x component. " alt="" coords="215,37,415,89"/>
+<area shape="rect" id="node3" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="1139,63,1297,88"/>
+<area shape="rect" id="node5" href="$class_tuxyz__sgxyz_matrix.html#a4935a201838e4dc9eaa3cd38e11c7d8c" title="Compute dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, y component. " alt="" coords="463,88,663,140"/>
+<area shape="rect" id="node6" href="$class_tuxyz__sgxyz_matrix.html#aa35f80a3990cf2c79afa7e26d61fbf6e" title="Compute dt./rho0_sgx .* ifft (FFT), if rho0_sgx is scalar, non uniform grid, z component. " alt="" coords="711,139,911,191"/>
+</map>

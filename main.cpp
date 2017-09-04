@@ -1,7 +1,8 @@
 /**
  * @file        main.cpp
- * @author      Jiri Jaros              \n
- *              Faculty of Information Technology\n
+ *
+ * @author      Jiri Jaros \n
+ *              Faculty of Information Technology \n
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
@@ -10,70 +11,69 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:57 (created) \n
- *              30 August    2017, 17:17 (revised)
- *
+ *              04 September 2017, 14:15 (revised)
  *
  * @mainpage kspaceFirstOrder3D-OMP
  *
  * @section Overview 1 Overview
  *
- * k-Wave is an open source MATLAB toolbox designed for the time-domain simulation
- * of propagating acoustic waves in 1D, 2D, or 3D. The toolbox has a wide range of
- * functionality, but at its heart is an advanced numerical model that can account
- * for both linear or nonlinear wave propagation, an arbitrary distribution of weakly
- * heterogeneous material parameters, and power law acoustic absorption
- * (http://www.k-wave.org).
+ * k-Wave is an open source MATLAB toolbox designed for the time-domain simulation of propagating acoustic waves in 1D,
+ * 2D, or 3D. The toolbox has a wide range of functionality, but at its heart is an advanced numerical model that can
+ * account for both linear or nonlinear wave propagation, an arbitrary distribution of weakly heterogeneous material
+ * parameters, and power law acoustic absorption, see website [k-Wave](http://www.k-wave.org).
  *
- * This project is a part of the k-Wave toolbox accelerating 3D simulations using
- * an optimized C++ implementation to run moderate to big grid sizes.
- * Compiled binaries of the C++ code for x86 architectures are available from
- * (http://www.k-wave.org/download). Both 64-bit Linux (Ubuntu / Debian) and 64-bit Windows
- * versions are provided.
- *
+ * This project is a part of the k-Wave toolbox accelerating 3D simulations using an optimized C++ implementation to
+ * run moderate to big grid sizes (64x64x64 to 512x512x512). Compiled binaries of the C++ code for x86 architectures
+ * are available from [k-Wave download site] (http://www.k-wave.org/download). Both 64-bit Linux (Ubuntu / Debian) and
+ * 64-bit Windows versions are provided. This Doxygen documentation was created based on the Linux version and provides
+ * details on the implementation of the CUDA/C++ code.
  *
  *
  * @section Compilation 2 Compilation
  *
  *
- * The source codes of <tt>kpsaceFirstOrder3D-OMP</tt> are written using the C++
- * 2003 standard and the OpenMP 3.0 library. There are variety of different C++
- * compilers that can be used to compile the source codes. We recommend using either
- * the GNU C++ compiler (gcc/g++) version 4.4 and higher, or the Intel C++ compiler
- * version 11.0 and higher. The codes can be compiled on 64-bit Linux and Windows.
- * 32-bit systems are not supported!
- * This section describes the compilation procedure using GNU and Intel compilers on Linux.
- * (The Windows users are encouraged to download the Visual Studio 2012 project
- * and compile it using Intel Compiler from within Visual Studio.)
+ * The source codes of <tt>kpsaceFirstOrder3D-OMP</tt> are written using the C++-11 standard and the OpenMP 4.0 library.
+ * There are variety of different C++ compilers that can be used to compile the source codes. We recommend using either
+ * the GNU C++ compiler (gcc/g++) version 5.0 and higher, or the Intel C++ compiler version 2015 and higher. Please note
+ * that Visual Studio compilers do not support OpenMP 4.0 standard and cannot be used thus. Be also aware of Intel
+ * compilers 2017 and their MKL bug producing incorrect results when AVX2 is enabled.
  *
- * Before compiling the code, it is necessary to install a C++ compiler and several
- * libraries.  The GNU compiler is usually part of Linux distributions and distributed
- * as open source.  It can be downloaded from http://gcc.gnu.org/ if necessary.
- * The Intel compiler can be downloaded from  http://software.intel.com/en-us/intel-composer-xe/.
- * This package also includes the Intel MKL (Math Kernel Library) library that contains FFT.
- * The Intel compiler is only free for non-commercial use.
+ * The codes  can be compiled on 64-bit Linux and Windows.  32-bit systems are not supported!
+ *
+ * This section describes the compilation procedure using GNU and Intel compilers on Linux.  (The Windows users are
+ * encouraged to download the Visual Studio 2015 project and compile it using Intel Compiler from within Visual Studio.)
+ *
+ * Before compiling the code, it is necessary to install a C++ compiler and several  libraries.  The GNU compiler is
+ * usually part of Linux distributions and distributed as open source.  It can be downloaded from [http://gcc.gnu.org/]
+ * (http://gcc.gnu.org/) if necessary.
+ * The Intel compiler can be downloaded from [http://software.intel.com/en-us/intel-composer-xe/]
+ * (http://software.intel.com/en-us/intel-composer-xe/). This package also includes the Intel MKL (Math Kernel Library)
+ * library that contains FFT. The Intel compiler is only free for non-commercial use.
  *
  * The code also relies on several libraries that are to be installed before compiling:
  *
- * \li HDF5 library - Mandatory I/O library, version 1.8 or higher (http://www.hdfgroup.org/HDF5/).
- * \li FFTW library - Optional library for FFT, version 3.0 or higher (http://www.fftw.org/).
- * \li MKL library  - Optional library for FFT, version 11.0 or higher (http://software.intel.com/en-us/intel-composer-xe/).
-
+ * \li HDF5 library - Mandatory I/O library, [version 1.8.x](https://support.hdfgroup.org/HDF5/release/obtain518.html).
+ * \li FFTW library - Optional library for FFT, [version 3.3.x](http://www.fftw.org/).
+ * \li MKL library  - Optional library for FFT, [version 2015 or higher]
+ * (http://software.intel.com/en-us/intel-composer-xe/).
  *
- * Although it is possible to use any combination of the FFT library and the compiler,
- * the best performance is observed when using GNU compiler and FFTW, or Intel Compiler and Intel MKL.
+ *
+ * Although it is possible to use any combination of the FFT library and the compiler, the best performance is observed
+ * when using GNU compiler and FFTW, or Intel Compiler and Intel MKL.
 
  * <b> 2.1 The HDF5 library installation procedure </b>
 
- * 1. Download a 64-bit HDF5 library package for your platform (http://www.hdfgroup.org/HDF5/release/obtain5.html).
+ * 1.Download the 64-bit HDF5 library [package for your platform]
+ * (https://support.hdfgroup.org/HDF5/release/obtain518.html). Please use version 1.8.x, the version 1.10.x
+ * is not compatible with MATLAB yet.
  *
- * 2. Configure the HDF5 distribution. Enable the high-level library and specify
- * an installation folder by typing:
+ * 2. Configure the HDF5 distribution. Enable the high-level library and specify  an installation folder by typing:
  \verbatim
   ./configure --enable-hl --prefix=folder_to_install
 \endverbatim
  * 3. Make the HDF5 library by typing:
 \verbatim
-  make
+  make -j
 \endverbatim
  * 4. Install the HDF5 library by typing:
 \verbatim
@@ -84,27 +84,28 @@
  *
  * <b> 2.2 The FFTW library installation procedure </b>
  *
- * 1. Download the FFTW library  package for your platform (http://www.fftw.org/download.html).
+ * 1. Download the FFTW library [package for your platform](http://www.fftw.org/download.html).
  *
- * 2. Configure the FFTW distribution. Enable OpenMP support, SSE instruction set,
- * single precision floating point arithmetic, and specify an installation folder:
+ * 2. Configure the FFTW distribution. Enable OpenMP support, and desired SIMD instruction set, single precision
+ * floating point arithmetic, and specify an installation folder:
 \verbatim
   ./configure --enable-single --enable-sse --enable-openmp --enable-shared --prefix=folder_to_install
 \endverbatim
- *    if you intend to use the FFTW library (and the C++ code) only on a selected
- *    machine and want to get the best possible performance, you may also add processor
- *    specific optimisations and AVX instructions set. Note, the compiled binary
- *    code is not likely to be portable on different CPUs (e.g. even from Intel
- *    Sandy Bridge to Intel Nehalem).
+ *    if you intend to use the FFTW library (and the C++ code) only on a selected machine and want to get the best
+ *    possible performance, you may also add processor specific optimisations and AVX or AVX2 instructions set. Note,
+ *    the compiled binary code is not likely to be portable on different CPUs. SSE2 version will work on any processor,
+ *    AVX on Intel Sandy Bridge and newer, AVX2 on Intel Haswell and newer.
 \verbatim
-  ./configure --enable-single --enable-avx --enable-openmp  --enable-shared --with-gcc-arch=native --prefix=folder_to_install
+  ./configure --enable-single --enable-avx --enable-openmp  --enable-shared --with-gcc-arch=native \
+              --prefix=folder_to_install
 \endverbatim
- * More information about the installation and customization can be found at http://www.fftw.org/fftw3_doc/Installation-and-Customization.htm.
+ * More information about the installation and customization can be found at [here]
+ * (http://www.fftw.org/fftw3_doc/Installation-and-Customization.htm).
  * For recent CPUs based on Sandy Bridge, Ivy Bridge, Haswell and Broadwell with
- * strongly recommend to use the AVX support.
+ * strongly recommend to use the AVX and AVX2 support.
  * 3. Make the FFTW library by typing:
 \verbatim
-	make
+	make -j
 \endverbatim
  * 4. Install the FFTW library by typing:
 \verbatim
@@ -114,7 +115,7 @@
  * <b> 2.3 The Intel Compiler and MKL installation procedure </b>
  *
  *
- * 1. Download  the Intel Composer XE package for your platform (http://software.intel.com/en-us/intel-compilers).
+ * 1. Download  the Intel Composer XE package for [your platform]((http://software.intel.com/en-us/intel-compilers).
  *
  * 2. Run the installation script and follow the procedure by typing:
 \verbatim
@@ -125,54 +126,53 @@
  *
  * <b> 2.4 Compiling the C++ code on Linux</b>
  *
- * After the libraries and the compiler have been installed, you are ready to
- * compile the <tt>kspaceFirstOrder3D-OMP</tt> code.
+ * After the libraries and the compiler have been installed, you are ready to compile the
+ * <tt>kspaceFirstOrder3D-OMP</tt> code.
  *
  *
  * 1. Download the <tt>kspaceFirstOrder3D-OMP</tt> source codes.
  *
- * 2. Open the \c Makefile file.  The Makefile supports code compilation under
- * GNU compiler and FFTW, or Intel compiler with MKL. Uncomment the desired compiler
- * by removing character `<tt>#</tt>'.
+ * 2. Open the <tt>Makefile</tt> file.  The Makefile supports code compilation under GNU compiler and FFTW, or Intel
+ * compiler with MKL. Uncomment the desired compiler by removing character `<tt>#</tt>'.
 \verbatim
 	#COMPILER = GNU
 	#COMPILER = Intel
 \endverbatim
  *
- * 3. Select how to link the libraries. Static linking is preferred as it may be
- * a bit faster, however, on some systems (HPC clusters) it may be better to use
- * dynamic linking and use the system specific libraries at runtime.
+ * 3. Select how to link the libraries. Static linking is preferred as it may be a bit faster, however, on some systems (
+ * HPC clusters) it may be better to use dynamic linking and use the system specific libraries at runtime.
 \verbatim
 	#LINKING = STATIC
 	#LINKING = DYNAMIC
 \endverbatim
  *
  * 4. Select the instruction set and the CPU architecture.
- * For users who will only use the binary on the same machine as compiled, the
- * best choice is <tt>CPU_ARCH=native</tt>.
- * If you are about to run the same binary on different machines or you want to
- * cross-compile the code, you are free to use any of the possible choices,
- * where SSE 3 is the most general but slowest and AVX2 is the most recent
+ * For users who will only use the binary on the same machine as compiled, the best choice is <tt>CPU_ARCH=native</tt>.
+ * If you are about to run the same binary on different machines or you want to cross-compile the code, you are free to
+ * use any of the possible choices, where SSE 3 is the most general but slowest and AVX2 is the most recent
  * instruction set while believed to be the fastest one.
 \verbatim
-  CPU_ARCH = native
+  #CPU_ARCH = native
   #CPU_ARCH = SSE3
   #CPU_ARCH = SSE4
   #CPU_ARCH = AVX
   #CPU_ARCH = AVX2
  \endverbatim
  *
- * 5. Set installation paths of the libraries (an example is shown bellow).
+ * 5. Set installation paths of the libraries (an example is shown bellow). Zlib and SZIP may be required if the
+ * compression is switched on.
 \verbatim
-  FFT_DIR=/usr/local
-  MKL_DIR=/opt/intel/composer_xe_2013/mkl
-  HDF5_DIR=/usr/local/hdf5-serial
+  MKL_DIR=
+  FFT_DIR=
+  HDF5_DIR=
+  ZLIB_DIR=
+  SZIP_DIR=
 \endverbatim
  *
  *
  * 6. Compile the source code by typing:
 \verbatim
-  make
+  make -j
 \endverbatim
    If you want to clean the distribution, type:
 \verbatim
@@ -180,7 +180,7 @@
 \endverbatim
  *
  *
- *
+ * @section   Parameters 3 Command Line Parameters
  *
  * The C++ code requires two mandatory parameters and accepts a few optional parameters and  flags. Ill parameters,
  * bad simulation files, and runtime errors such as out-of-memory problems, lead to an exception followed by an error
@@ -190,7 +190,8 @@
  * path conventions for particular operating system. If any of the files is not specified, cannot be found or created,
  * an error message is shown and the code terminates.
  *
- * The <tt>-t</tt> parameter sets the number of threads used, which defaults the system maximum. If possible enable
+ * The <tt>-t</tt> parameter sets the number of threads used, which defaults the system maximum. If the system support
+ * hyperthreading, it is recommended to use only a half of the threads to prevent cache overloading. If possible enable
  * tread binding and placement using export OMP_PROC_BIND=true.
  *
  *
@@ -264,7 +265,7 @@
  *
 \verbatim
 ┌───────────────────────────────────────────────────────────────┐
-│                  kspaceFirstOrder3D-OMP v1.1                  │
+│                  kspaceFirstOrder3D-OMP v1.2                  │
 ├───────────────────────────────────────────────────────────────┤
 │                             Usage                             │
 ├───────────────────────────────────────────────────────────────┤
@@ -753,22 +754,20 @@
 \endverbatim
  *
  *
- * @section License
- * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
+ * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
- * k-Wave is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * This file is part of the k-Wave. k-Wave is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with k-Wave. If not, see http://www.gnu.org/licenses/.
+ * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
+ * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
 

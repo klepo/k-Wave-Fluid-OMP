@@ -1,0 +1,13 @@
+<map id="Parameters::getDtRho0SgzScalar" name="Parameters::getDtRho0SgzScalar">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#aa427b58e8cf72ade7d701d57ffcb6824" title="Compute velocity for the initial pressure problem, homogeneous medium, uniform grid. " alt="" coords="241,34,469,86"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#adbd6b55638a2510205e3d24a3ae1ec15" title="Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid..." alt="" coords="241,110,469,162"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#a249d7ec72db890c7e60552f92a11acdc" title="Compute acoustic velocity for homogeneous medium and a uniform grid. " alt="" coords="234,249,477,287"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#ac4f146845d079a4787c60fccf3d3626f" title="Compute acoustic velocity for homogenous medium and nonuniform grid. " alt="" coords="224,186,487,225"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#acf1113852e24fd58cbf92679722cbdd8" title="Calculate initial pressure source. " alt="" coords="535,50,705,89"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="972,129,1189,167"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="753,71,924,110"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1456,101,1627,139"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1675,107,1724,133"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1237,129,1408,167"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#aa0dc0784182ae930255b125611be6335" title="Compute new values of acoustic velocity. " alt="" coords="535,179,705,218"/>
+</map>

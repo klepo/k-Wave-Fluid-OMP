@@ -1,0 +1,12 @@
+<map id="IndexMatrix::getTopLeftCorner" name="IndexMatrix::getTopLeftCorner">
+<area shape="rect" id="node2" href="$class_index_matrix.html#af3d9b16a8e9ce65d6446bce2d46b797d" title="Get total number of elements in all cuboids to be able to allocate output file. " alt="" coords="240,47,399,85"/>
+<area shape="rect" id="node3" href="$class_index_matrix.html#a161000b87040432ad229a1984c41db56" title="operator [], constant version. " alt="" coords="447,8,589,33"/>
+<area shape="rect" id="node4" href="$class_cuboid_output_stream.html#a410e03e7c368a94be0aa848826ea65d7" title="Create a HDF5 stream and allocate data for it. " alt="" coords="449,155,587,193"/>
+<area shape="rect" id="node5" href="$class_cuboid_output_stream.html#a6e935536568301879f35de57c8d7f595" title="Reopen the output stream after restart and reload data. " alt="" coords="449,69,587,108"/>
+<area shape="rect" id="node6" href="$class_cuboid_output_stream.html#a85871e9da9dce716a47056d9b684aea5" title="Sample data into buffer and apply reduction, or flush to disk &#45; based on a sensor mask..." alt="" coords="251,212,388,251"/>
+<area shape="rect" id="node7" href="$class_cuboid_output_stream.html#a4ec419267dd78848670a99add453cbdd" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="247,275,391,313"/>
+<area shape="rect" id="node8" href="$class_cuboid_output_stream.html#a0a7c2a0bc79b6b9533b266655c3be32f" title="Sample aggregated values. " alt="" coords="251,337,388,376"/>
+<area shape="rect" id="node9" href="$class_cuboid_output_stream.html#a2390c891ab81e70d9656cbd6f1787269" title="Flush the buffer to the file. " alt="" coords="251,400,388,439"/>
+<area shape="rect" id="node10" href="$class_cuboid_output_stream.html#a810ef1350a6056415ad07fd201e11877" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="449,431,587,469"/>
+<area shape="rect" id="node11" href="$class_cuboid_output_stream.html#a67b7139e6de7d449a266ac193be74ef9" title="Checkpoint the stream and close. " alt="" coords="449,368,587,407"/>
+</map>

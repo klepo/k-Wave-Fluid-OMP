@@ -1,14 +1,15 @@
-<map id="Utils/ErrorMessages.h" name="Utils/ErrorMessages.h">
-<area shape="rect" id="node2" href="$_h_d_f5___file_8cpp.html" title="The implementation file containing the HDF5 related classes. " alt="" coords="5,87,144,113"/>
-<area shape="rect" id="node3" href="$_k_space_first_order3_d_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="169,81,337,119"/>
-<area shape="rect" id="node4" href="$_base_float_matrix_8cpp.html" title="The implementation file containing the base class for single precisions floating point numbers (float..." alt="" coords="363,87,576,113"/>
-<area shape="rect" id="node5" href="$_base_index_matrix_8cpp.html" title="The implementation file containing the base class for index matrices (based on the size_t datatype)..." alt="" coords="600,87,816,113"/>
-<area shape="rect" id="node6" href="$_complex_matrix_8cpp.html" title="The implementation file with the class for complex matrices. " alt="" coords="841,87,1047,113"/>
-<area shape="rect" id="node7" href="$_f_f_t_w_complex_matrix_8cpp.html" title="The implementation file containing the class that implements 3D FFT using the FFTW interface..." alt="" coords="1071,81,1253,119"/>
-<area shape="rect" id="node8" href="$_index_matrix_8cpp.html" title="The implementation file containing the class for 64b integer matrices. " alt="" coords="1278,87,1465,113"/>
-<area shape="rect" id="node9" href="$_matrix_container_8cpp.html" title="The implementation file containing the matrix container. " alt="" coords="1490,87,1701,113"/>
-<area shape="rect" id="node10" href="$_output_h_d_f5_stream_8cpp.html" title="The implementation file of classes responsible for storing output quantities into the output HDF5 fil..." alt="" coords="1727,81,1897,119"/>
-<area shape="rect" id="node11" href="$_real_matrix_8cpp.html" title="The implementation file containing the class for real matrices. " alt="" coords="1921,87,2105,113"/>
-<area shape="rect" id="node12" href="$_command_line_parameters_8cpp.html" title="The implementation file containing the command line parameters. " alt="" coords="2130,87,2384,113"/>
-<area shape="rect" id="node13" href="$_parameters_8cpp.html" title="The implementation file containing parameters of the simulation. " alt="" coords="2409,87,2583,113"/>
+<map id="Logger/ErrorMessages.h" name="Logger/ErrorMessages.h">
+<area shape="rect" id="node2" href="$_logger_8h.html" title="The header file containing a class responsible for printing out info and error messages (stdout..." alt="" coords="945,79,1058,104"/>
+<area shape="rect" id="node3" href="$main_8cpp.html" title="The main file of kspaceFirstOrder3D&#45;OMP. " alt="" coords="5,159,77,184"/>
+<area shape="rect" id="node4" href="$_matrix_container_8cpp.html" title="The implementation file containing the matrix container. " alt="" coords="101,159,296,184"/>
+<area shape="rect" id="node5" href="$_hdf5_file_8cpp.html" title="The implementation file containing the HDF5 related classes. " alt="" coords="320,159,440,184"/>
+<area shape="rect" id="node6" href="$_hdf5_file_header_8cpp.html" title="The implementation of the class responsible for working with file headers. " alt="" coords="465,159,626,184"/>
+<area shape="rect" id="node7" href="$_k_space_first_order3_d_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="650,152,819,191"/>
+<area shape="rect" id="node8" href="$_logger_8cpp.html" title="The implementation file containing a class responsible for printing out info and error messages (stdo..." alt="" coords="843,159,970,184"/>
+<area shape="rect" id="node9" href="$_complex_matrix_8cpp.html" title="The implementation file with the class for complex matrices. " alt="" coords="994,159,1201,184"/>
+<area shape="rect" id="node10" href="$_fftw_complex_matrix_8cpp.html" title="The implementation file containing the class that implements 3D FFT using the FFTW interface..." alt="" coords="1225,152,1399,191"/>
+<area shape="rect" id="node11" href="$_index_matrix_8cpp.html" title="The implementation file containing the class for 64b integer matrices. " alt="" coords="1423,159,1611,184"/>
+<area shape="rect" id="node12" href="$_real_matrix_8cpp.html" title="The implementation file containing the class for real matrices. " alt="" coords="1636,159,1820,184"/>
+<area shape="rect" id="node13" href="$_command_line_parameters_8cpp.html" title="The implementation file containing the command line parameters. " alt="" coords="1845,159,2099,184"/>
+<area shape="rect" id="node14" href="$_parameters_8cpp.html" title="The implementation file containing parameters of the simulation. " alt="" coords="2123,159,2298,184"/>
 </map>

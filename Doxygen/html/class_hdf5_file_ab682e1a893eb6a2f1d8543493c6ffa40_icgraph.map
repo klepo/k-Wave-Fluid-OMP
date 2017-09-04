@@ -1,0 +1,20 @@
+<map id="Hdf5File::WriteHyperSlab" name="Hdf5File::WriteHyperSlab">
+<area shape="rect" id="node2" href="$class_t_complex_matrix.html#af069964dbb3366a7c39de17bb7ecf81a" title="Write data into the HDF5_File. " alt="" coords="235,68,406,107"/>
+<area shape="rect" id="node3" href="$class_t_index_matrix.html#a6b04b9b5a4247d10c60d5f1503accb27" title="Write data into the HDF5 file. " alt="" coords="237,312,404,351"/>
+<area shape="rect" id="node8" href="$class_t_index_output_h_d_f5_stream.html#a5509168caed8159bf4fdc6e6b2b10e73" title="Flush the buffer to the file. " alt="" coords="237,131,404,169"/>
+<area shape="rect" id="node12" href="$class_t_cuboid_output_h_d_f5_stream.html#a384417be107b8ab18bce8836de1f2364" title="Flush the buffer to the file. " alt="" coords="233,249,409,288"/>
+<area shape="rect" id="node15" href="$class_t_whole_domain_output_h_d_f5_stream.html#a00039c4003bdda0c00769a99b125a21a" title="Flush the buffer to the file. " alt="" coords="213,480,428,519"/>
+<area shape="rect" id="node18" href="$class_t_real_matrix.html#a533a814b9e1d59f974778391f914f421" title="Write data into the HDF5 file. " alt="" coords="239,375,402,413"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="495,368,672,407"/>
+<area shape="rect" id="node7" href="$class_t_index_matrix.html#ac3f2dd4b2f36d6f17bb4f00650d96729" title="Destructor. " alt="" coords="496,319,671,344"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="739,368,916,407"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="964,375,1013,400"/>
+<area shape="rect" id="node9" href="$class_t_index_output_h_d_f5_stream.html#ab9e976c155a113d0c3872123d1b74bec" title="Sample data into buffer, apply reduction or flush to disk &#45; based on a sensor mask. " alt="" coords="500,68,667,107"/>
+<area shape="rect" id="node10" href="$class_t_index_output_h_d_f5_stream.html#a7342efe72c0e6fcaeb9134904c5af590" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="500,131,667,169"/>
+<area shape="rect" id="node11" href="$class_t_index_output_h_d_f5_stream.html#a81e82037623c84682b0bf9232094b9de" title="Checkpoint the stream. " alt="" coords="500,5,667,44"/>
+<area shape="rect" id="node13" href="$class_t_cuboid_output_h_d_f5_stream.html#ac2c704c5a81c154a5d8ead0d9f93bc00" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="495,193,671,232"/>
+<area shape="rect" id="node14" href="$class_t_cuboid_output_h_d_f5_stream.html#ac7f04644dc9309dbbb97693cc267b1dc" title="Checkpoint the stream and close. " alt="" coords="495,256,671,295"/>
+<area shape="rect" id="node16" href="$class_t_whole_domain_output_h_d_f5_stream.html#a567b784ea3474013c73827214daae779" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="476,480,691,519"/>
+<area shape="rect" id="node17" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0d57ac1b9475d2204cf60ce9b85887f0" title="Checkpoint the stream and close. " alt="" coords="476,543,691,581"/>
+<area shape="rect" id="node19" href="$class_t_real_matrix.html#a173777d36f7e5fee41a70ee5cc9c5d03" title="Destructor. " alt="" coords="500,431,667,456"/>
+</map>

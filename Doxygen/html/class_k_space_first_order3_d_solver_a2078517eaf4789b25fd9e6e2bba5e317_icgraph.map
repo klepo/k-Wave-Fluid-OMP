@@ -1,0 +1,9 @@
+<map id="KSpaceFirstOrder3DSolver::getUxShifted" name="KSpaceFirstOrder3DSolver::getUxShifted">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#aaf86e5341ff67ec4d8e13d2418121e61" title="compute shifted velocity for –u_non_staggered flag. " alt="" coords="224,85,395,124"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#aabbbec65ef6379f439f0e0a1d8a4ab8b" title="Store sensor data. " alt="" coords="443,56,613,95"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="880,63,1097,101"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="661,5,832,44"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1364,35,1535,73"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1583,41,1632,67"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1145,63,1316,101"/>
+</map>

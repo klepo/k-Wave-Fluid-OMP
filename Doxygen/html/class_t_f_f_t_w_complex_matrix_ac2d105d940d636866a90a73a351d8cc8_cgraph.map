@@ -1,0 +1,5 @@
+<map id="TFFTWComplexMatrix::TFFTWComplexMatrix" name="TFFTWComplexMatrix::TFFTWComplexMatrix">
+<area shape="rect" id="node2" href="$class_t_complex_matrix.html#a3c62e2d70e9e4dc4ce377d7e03e961b8" title="Initialize dimension sizes and related structures. " alt="" coords="203,12,401,37"/>
+<area shape="rect" id="node4" href="$class_t_f_f_t_w_complex_matrix.html#a855b45e70a46c8bb49feae7565690449" title="Allocate memory for the FFTW matrix. " alt="" coords="231,61,373,100"/>
+<area shape="rect" id="node3" href="$struct_dimension_sizes.html#acce9518241142b8a5e731db50887b1e6" title="Default constructor. " alt="" coords="449,5,625,44"/>
+</map>

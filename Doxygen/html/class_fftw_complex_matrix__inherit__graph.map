@@ -1,0 +1,5 @@
+<map id="FftwComplexMatrix" name="FftwComplexMatrix">
+<area shape="rect" id="node2" href="$class_complex_matrix.html" title="The class for complex matrices. " alt="" coords="17,152,121,177"/>
+<area shape="rect" id="node3" href="$class_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="13,79,124,104"/>
+<area shape="rect" id="node4" href="$class_base_matrix.html" title="Abstract base class. The common ancestor defining the common interface and allowing derived classes t..." alt="" coords="27,5,110,31"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="Parameters::getNonLinearFlag" name="Parameters::getNonLinearFlag">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="251,5,428,44"/>
+<area shape="rect" id="node5" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="244,68,435,107"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="483,5,660,44"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="708,44,757,69"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="483,68,660,107"/>
+</map>

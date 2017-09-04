@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::writeOutputDataInfo" name="KSpaceFirstOrder3DSolver::writeOutputDataInfo">
+<area shape="rect" id="node2" href="$class_parameters.html#a43a65353c4e6c731efc8d577be0a5915" title="Get output file handle. " alt="" coords="251,331,415,356"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#acb2a105dfb942edf47c9dfaa9f9736ae" title="Write the scalar value under a specified group. " alt="" coords="750,27,917,52"/>
+<area shape="rect" id="node9" href="$class_hdf5_file.html#a757c1108f5f459f03d10433d07ba3a81" title="Get handle to the root group of the file. " alt="" coords="511,483,662,508"/>
+<area shape="rect" id="node23" href="$class_parameters.html#a74a45ad55bfb91e8e39153a01d0dd9d8" title="Get actual simulation time step. " alt="" coords="250,1503,415,1528"/>
+<area shape="rect" id="node24" href="$class_parameters.html#a8efc66975054f85805d8c7b68b366844" title="Save scalar values into the output HDF5 file. " alt="" coords="247,532,419,571"/>
+<area shape="rect" id="node26" href="$class_parameters.html#a613f9c265cb287a21a14086c057d0569" title="Get file header handle. " alt="" coords="248,1552,417,1577"/>
+<area shape="rect" id="node27" href="$class_hdf5_file_header.html#a33e7191551cc594b46f80c387684b236" title="Set code name. " alt="" coords="235,987,430,1012"/>
+<area shape="rect" id="node28" href="$class_hdf5_file_header.html#a91f4a73415ccfd1b6b43905de1dbf844" title="Set creation time. " alt="" coords="504,965,669,1004"/>
+<area shape="rect" id="node29" href="$class_k_space_first_order3_d_solver.html#ae4a673b6785929dfb38e9d8c1212916d" title="Get code name &#45; release code version. " alt="" coords="247,1601,418,1640"/>
+<area shape="rect" id="node30" href="$class_hdf5_file_header.html#a71208f89095a291896a10bed5f8cf5a0" title="Set major file version. " alt="" coords="251,1664,414,1703"/>
+<area shape="rect" id="node32" href="$class_hdf5_file_header.html#ad3d7308ddc154ff4343d3f04e5d6c231" title="Set minor file version. " alt="" coords="251,1727,414,1765"/>
+<area shape="rect" id="node35" href="$class_hdf5_file_header.html#a3d5fc8f47afbd17b7f608400d7a62cd4" title="Set File type. " alt="" coords="243,1789,422,1815"/>
+<area shape="rect" id="node36" href="$class_hdf5_file_header.html#af31a45a12003a8be58fe8401b8c3b23c" title="Set host name. " alt="" coords="238,1839,427,1864"/>
+<area shape="rect" id="node37" href="$class_hdf5_file_header.html#ad01b653395568c89a1c326aac73f761b" title="Set memory consumption. " alt="" coords="499,1028,674,1067"/>
+<area shape="rect" id="node39" href="$class_k_space_first_order3_d_solver.html#aff3a7eede176038992e9d3acc16b8335" title="Get memory usage in MB on the host side. " alt="" coords="247,1888,418,1927"/>
+<area shape="rect" id="node40" href="$class_time_measure.html#afd34544fb28963c2906aa6ba0ca86ca8" title="Take stop timestamp. " alt="" coords="269,1951,396,1976"/>
+<area shape="rect" id="node41" href="$class_hdf5_file_header.html#a84996539dfcecd5a69b4dd8f24ed7f72" title="Set execution times in file header. " alt="" coords="1237,1089,1422,1128"/>
+<area shape="rect" id="node42" href="$class_k_space_first_order3_d_solver.html#a0ef20b8a7c023a3a622b278e9c928f86" title="Get total simulation time accumulated over all legs. " alt="" coords="247,1252,418,1291"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#a70c658cf1b2a809b2fe6567b86f172b2" title="Get simulation time (time loop) accumulated over all legs. " alt="" coords="239,1315,426,1353"/>
+<area shape="rect" id="node45" href="$class_k_space_first_order3_d_solver.html#a52c204ee20d6e09f502ca0f4f02296a2" title="Get pre&#45;processing time accumulated over all legs. " alt="" coords="227,1377,439,1416"/>
+<area shape="rect" id="node46" href="$class_k_space_first_order3_d_solver.html#a56903ad061f0b1f59eae53f31aaadbed" title="Get simulation time (time loop) accumulated over all legs. " alt="" coords="237,1440,428,1479"/>
+<area shape="rect" id="node47" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="224,1189,441,1228"/>
+<area shape="rect" id="node49" href="$class_hdf5_file_header.html#af911ba4c7586ee7593f929ddfee61ccb" title="Set number of cores. " alt="" coords="499,1143,674,1181"/>
+<area shape="rect" id="node50" href="$class_hdf5_file_header.html#aa6f0ce2c5863f67a70ef5bb2487a7227" title="Write header into the output file. " alt="" coords="241,595,424,633"/>
+<area shape="rect" id="node4" href="$class_hdf5_file.html#ab09e1d1114830bccc80e7fee04df2004" title="Open a dataset at a specified place in the file tree. " alt="" coords="1012,77,1156,103"/>
+<area shape="rect" id="node5" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="1733,652,1884,677"/>
+<area shape="rect" id="node6" href="$class_hdf5_file.html#a9e1f04c286dba6a6afe9821a402e7243" title="Write matrix data type into the dataset at a specified place in the file tree. " alt="" coords="991,128,1177,153"/>
+<area shape="rect" id="node8" href="$class_hdf5_file.html#a2719b646df65c46962bc101954d23371" title="Write matrix data type into the dataset at a specified place in the file tree. " alt="" coords="983,179,1185,204"/>
+<area shape="rect" id="node7" href="$class_hdf5_file.html#a0bf4466acb32565bcc8935a228544cb6" title="Write string attribute into the dataset under the root group. " alt="" coords="1241,229,1418,255"/>
+<area shape="rect" id="node10" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="1504,331,1655,356"/>
+<area shape="rect" id="node11" href="$class_hdf5_file.html#a286eb597f1da666cc3cee6d19259a4e4" title="Close dataset. " alt="" coords="761,937,906,963"/>
+<area shape="rect" id="node12" href="$class_hdf5_file.html#a6967bff33507f44a57e1a397acf3bbcb" title="Write a hyperslab into the dataset. " alt="" coords="1250,381,1409,407"/>
+<area shape="rect" id="node13" href="$class_hdf5_file.html#a3210d2273ea3e90320673eff70e91caf" title="Write a cuboid selected within the matrixData into a hyperslab. " alt="" coords="1473,441,1685,467"/>
+<area shape="rect" id="node14" href="$class_hdf5_file.html#a667746624294c81046bc04ee3971d423" title="Write sensor data selected by the sensor mask &#45; Occasionally very slow, do not use! ..." alt="" coords="1238,495,1421,533"/>
+<area shape="rect" id="node15" href="$class_hdf5_file.html#a7b1d06060632f114a22ad4bde6860862" title="Read the scalar value under a specified group. " alt="" coords="750,584,917,609"/>
+<area shape="rect" id="node16" href="$class_hdf5_file.html#a112d8041f8dedc169ae70fe4a704bf0c" title="Read data from the dataset at a specified place in the file tree. " alt="" coords="987,577,1181,603"/>
+<area shape="rect" id="node17" href="$class_hdf5_file.html#af561b101cb41c96d67266be823b123e7" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="1233,621,1425,660"/>
+<area shape="rect" id="node18" href="$class_hdf5_file.html#a4e511c8bd3d6d48f7ca895bf6bd6069d" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="1491,673,1668,712"/>
+<area shape="rect" id="node19" href="$class_hdf5_file.html#a97212fd272ab3452ee67c6e15ee5830e" title="Get dataset element count at a specified place in the file tree. " alt="" coords="1501,736,1658,761"/>
+<area shape="rect" id="node20" href="$class_hdf5_file.html#a0d809dcf87519a67c03fd7566b0f47a1" title="Read matrix data type from the dataset at a specified place in the file tree. " alt="" coords="741,787,926,812"/>
+<area shape="rect" id="node21" href="$class_hdf5_file.html#afb0e924858798ceafcde23a48a0ba182" title="Read string attribute from the dataset under the root group. " alt="" coords="996,837,1172,863"/>
+<area shape="rect" id="node22" href="$class_hdf5_file.html#a191248f03bffe6c3db7667d702250978" title="Read matrix dataset domain type at a specified place in the file tree. " alt="" coords="732,888,935,913"/>
+<area shape="rect" id="node25" href="$class_parameters.html#aeaf0d1b93e9528d9ed3c554832708bb3" title="Is –copy_mask set set? " alt="" coords="499,532,675,571"/>
+<area shape="rect" id="node31" href="$class_hdf5_file_header.html#a70cb1884a6421cf942b1bdd5d48602f9" title="Get string representing of current Major version of the file. " alt="" coords="495,1664,678,1703"/>
+<area shape="rect" id="node33" href="$class_hdf5_file_header.html#a268a9113bbce57d134fe0c2ec40cfc3f" title="Get string representing of current Minor version of the file. " alt="" coords="495,1727,678,1765"/>
+<area shape="rect" id="node34" href="$class_hdf5_file_header.html#a414df20c77f4663092ebff0f2b8eb74c" title="Get file version as an enum. " alt="" coords="489,1789,684,1815"/>
+<area shape="rect" id="node38" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="756,1204,911,1229"/>
+<area shape="rect" id="node43" href="$class_time_measure.html#a54fe49fb9e472bed349eff9eca110339" title="Get cumulated elapsed time over all simulation legs. " alt="" coords="491,1315,683,1353"/>
+<area shape="rect" id="node48" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="501,1205,672,1244"/>
+</map>

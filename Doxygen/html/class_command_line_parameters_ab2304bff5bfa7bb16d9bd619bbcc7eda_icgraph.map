@@ -1,0 +1,13 @@
+<map id="CommandLineParameters::getStoreVelocityNonStaggeredRawFlag" name="CommandLineParameters::getStoreVelocityNonStaggeredRawFlag">
+<area shape="rect" id="node2" href="$class_parameters.html#a21492e5fc008b7af263befc350231e8f" title="Is –u_non_staggered_raw set? " alt="" coords="251,100,431,139"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a153d0bb845efc85199f1f402f1a2643e" title="Store sensor data. " alt="" coords="485,5,663,44"/>
+<area shape="rect" id="node7" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="479,68,669,107"/>
+<area shape="rect" id="node9" href="$class_t_output_stream_container.html#aaf3a05b2c2c0f56dfcfba5181a748064" title="Create all streams in container (no file manipulation). " alt="" coords="489,131,659,169"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a64ac186b60226dd447580b0a15b98aa1" title="Read scalar values from the input HDF5 file. " alt="" coords="717,179,903,217"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="721,11,899,49"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="958,16,1135,55"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1191,111,1240,136"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="721,79,899,117"/>
+<area shape="rect" id="node11" href="$class_parameters.html#ab5a94d4c887319ee776bc7feb40fcdd1" title="Parse command line and read scalar values form the input file. " alt="" coords="993,136,1100,161"/>
+<area shape="rect" id="node12" href="$class_parameters.html#ab22c04bf1f6ada208355f0437cd5f34f" title="Shall the code print version and exit? " alt="" coords="951,185,1143,211"/>
+</map>

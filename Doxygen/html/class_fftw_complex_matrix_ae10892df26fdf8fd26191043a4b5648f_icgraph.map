@@ -1,0 +1,11 @@
+<map id="FftwComplexMatrix::getWisdomFileName" name="FftwComplexMatrix::getWisdomFileName">
+<area shape="rect" id="node2" href="$class_fftw_complex_matrix.html#afab7eff93f9b0bee1cfdab1fe5c7193e" title="Export wisdom to the file. " alt="" coords="191,5,323,44"/>
+<area shape="rect" id="node8" href="$class_fftw_complex_matrix.html#aa55883b5ce23a549726926214564ba79" title="Import wisdom from the file. " alt="" coords="191,68,323,107"/>
+<area shape="rect" id="node10" href="$class_fftw_complex_matrix.html#a328405dae7c02b4cbe94c0025f3260c9" title="Destroy wisdom in the file (delete it). " alt="" coords="189,131,325,169"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="373,5,544,44"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1076,36,1247,75"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="592,36,809,75"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1295,43,1344,68"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="857,36,1028,75"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="373,68,544,107"/>
+</map>

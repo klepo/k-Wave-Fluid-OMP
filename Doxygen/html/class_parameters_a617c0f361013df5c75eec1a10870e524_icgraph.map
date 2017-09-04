@@ -1,0 +1,10 @@
+<map id="Parameters::getAbsorbingFlag" name="Parameters::getAbsorbingFlag">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="477,5,655,44"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a0d967415e111376e1a2e5eccbe6c0f2d" title="Calculate new p, non&#45;linear case. " alt="" coords="241,59,423,97"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#abdeb70ec2795fec7c2cdf24f61ff962a" title="Calculate new p linear&#45;case, absorbing. " alt="" coords="243,121,421,160"/>
+<area shape="rect" id="node8" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="471,153,661,192"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="709,81,887,120"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="935,123,984,148"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="477,81,655,120"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="709,151,887,189"/>
+</map>

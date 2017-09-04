@@ -1,0 +1,15 @@
+<map id="TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu" name="TKSpaceFirstOrder3DSolver::Calculate_SumRho_SumRhoDu">
+<area shape="rect" id="node2" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="265,5,452,44"/>
+<area shape="rect" id="node3" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="271,68,446,93"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a41731348ab249cb884acf968ec4fdf28" title="Get the rhox matrix from the container. " alt="" coords="270,117,447,156"/>
+<area shape="rect" id="node6" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="279,180,438,205"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a4dbc25cc2c4d8ac315707e0c47e102d4" title="Get the rhoy matrix from the container. " alt="" coords="270,229,447,268"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a4b78a5a9770021d3c1f7897d34d00c26" title="Get the rhoz matrix from the container. " alt="" coords="270,292,447,331"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#aeed174a21a92e8737c261f3303010ddc" title="Get the duxdx matrix from the container. " alt="" coords="270,355,447,393"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a5b52f1367908e652240e1d3ffd04be2f" title="Get the duydy matrix from the container. " alt="" coords="270,417,447,456"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#ab142bb9e5ee1be710a99f6efe9d52af7" title="Get the duzdz matrix from the container. " alt="" coords="270,480,447,519"/>
+<area shape="rect" id="node12" href="$class_parameters.html#a8bb2622fdf1c178133a430c1813b2272" title="Get value of homogeneous medium density. " alt="" coords="272,543,445,568"/>
+<area shape="rect" id="node13" href="$class_parameters.html#ad76a0fb737c095702e1bb16431c5f4fc" title="Is density in the medium homogeneous (scalar value)? " alt="" coords="260,592,457,617"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#a0804cfca32fe2971509fc1243627c3c4" title="Get the rho0 matrix from the container. " alt="" coords="270,641,447,680"/>
+<area shape="rect" id="node4" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="505,68,648,93"/>
+</map>

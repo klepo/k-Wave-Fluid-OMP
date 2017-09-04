@@ -1,0 +1,24 @@
+<map id="TComplexMatrix::WriteDataToHDF5File" name="TComplexMatrix::WriteDataToHDF5File">
+<area shape="rect" id="node2" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="479,5,629,31"/>
+<area shape="rect" id="node4" href="$class_hdf5_file.html#a757c1108f5f459f03d10433d07ba3a81" title="Get handle to the root group of the file. " alt="" coords="237,469,387,495"/>
+<area shape="rect" id="node6" href="$class_hdf5_file.html#a286eb597f1da666cc3cee6d19259a4e4" title="Close dataset. " alt="" coords="481,823,627,848"/>
+<area shape="rect" id="node7" href="$class_hdf5_file.html#a6967bff33507f44a57e1a397acf3bbcb" title="Write a hyperslab into the dataset. " alt="" coords="475,872,633,897"/>
+<area shape="rect" id="node11" href="$class_hdf5_file.html#a9e1f04c286dba6a6afe9821a402e7243" title="Write matrix data type into the dataset at a specified place in the file tree. " alt="" coords="716,672,903,697"/>
+<area shape="rect" id="node13" href="$class_hdf5_file.html#a2719b646df65c46962bc101954d23371" title="Write matrix data type into the dataset at a specified place in the file tree. " alt="" coords="708,721,911,747"/>
+<area shape="rect" id="node23" href="$struct_dimension_sizes.html#acce9518241142b8a5e731db50887b1e6" title="Default constructor. " alt="" coords="224,1024,400,1063"/>
+<area shape="rect" id="node3" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="1216,343,1359,368"/>
+<area shape="rect" id="node5" href="$class_hdf5_file.html#ab09e1d1114830bccc80e7fee04df2004" title="Open a dataset at a specified place in the file tree. " alt="" coords="737,596,881,621"/>
+<area shape="rect" id="node8" href="$class_hdf5_file.html#a3210d2273ea3e90320673eff70e91caf" title="Write a cuboid selected within the matrixData into a hyperslab. " alt="" coords="448,773,660,799"/>
+<area shape="rect" id="node9" href="$class_hdf5_file.html#a667746624294c81046bc04ee3971d423" title="Write sensor data selected by the sensor mask &#45; Occasionally very slow, do not use! ..." alt="" coords="463,104,645,143"/>
+<area shape="rect" id="node10" href="$class_hdf5_file.html#acb2a105dfb942edf47c9dfaa9f9736ae" title="Write the scalar value under a specified group. " alt="" coords="471,672,637,697"/>
+<area shape="rect" id="node12" href="$class_hdf5_file.html#a0bf4466acb32565bcc8935a228544cb6" title="Write string attribute into the dataset under the root group. " alt="" coords="966,672,1143,697"/>
+<area shape="rect" id="node14" href="$class_hdf5_file.html#a7b1d06060632f114a22ad4bde6860862" title="Read the scalar value under a specified group. " alt="" coords="471,368,637,393"/>
+<area shape="rect" id="node15" href="$class_hdf5_file.html#a112d8041f8dedc169ae70fe4a704bf0c" title="Read data from the dataset at a specified place in the file tree. " alt="" coords="712,363,907,388"/>
+<area shape="rect" id="node16" href="$class_hdf5_file.html#af561b101cb41c96d67266be823b123e7" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="959,405,1151,444"/>
+<area shape="rect" id="node17" href="$class_hdf5_file.html#a4e511c8bd3d6d48f7ca895bf6bd6069d" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="1199,420,1376,459"/>
+<area shape="rect" id="node19" href="$class_hdf5_file.html#a97212fd272ab3452ee67c6e15ee5830e" title="Get dataset element count at a specified place in the file tree. " alt="" coords="475,167,633,192"/>
+<area shape="rect" id="node20" href="$class_hdf5_file.html#a0d809dcf87519a67c03fd7566b0f47a1" title="Read matrix data type from the dataset at a specified place in the file tree. " alt="" coords="461,55,647,80"/>
+<area shape="rect" id="node21" href="$class_hdf5_file.html#afb0e924858798ceafcde23a48a0ba182" title="Read string attribute from the dataset under the root group. " alt="" coords="721,216,897,241"/>
+<area shape="rect" id="node22" href="$class_hdf5_file.html#a191248f03bffe6c3db7667d702250978" title="Read matrix dataset domain type at a specified place in the file tree. " alt="" coords="453,216,655,241"/>
+<area shape="rect" id="node18" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="967,356,1142,381"/>
+</map>

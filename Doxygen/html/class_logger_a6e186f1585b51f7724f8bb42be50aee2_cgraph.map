@@ -1,0 +1,8 @@
+<map id="Logger::log" name="Logger::log">
+<area shape="rect" id="node2" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="147,5,298,31"/>
+<area shape="rect" id="node4" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="176,55,269,80"/>
+<area shape="rect" id="node5" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="137,104,308,129"/>
+<area shape="rect" id="node6" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="176,153,269,179"/>
+<area shape="rect" id="node7" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="145,203,300,228"/>
+<area shape="rect" id="node3" href="$class_logger.html#a12c65c342201179b9b3fc9ded2555d4c" title="Extract a word from a string stream based on delimiters. " alt="" coords="356,104,469,129"/>
+</map>

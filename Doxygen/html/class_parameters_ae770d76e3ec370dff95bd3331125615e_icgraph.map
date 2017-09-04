@@ -1,0 +1,17 @@
+<map id="Parameters::getC0ScalarFlag" name="Parameters::getC0ScalarFlag">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a259167541c80e5a9bf29ebc24a329e46" title="Generate absorb_tau, absorb_eta for heterogenous media. " alt="" coords="243,5,436,57"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#aa5597bf6aeed1124ef9f16ae3971a69b" title="Calculate p0_source. " alt="" coords="497,157,675,196"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a48f3f37994e1f75f12926a9d1cd62576" title="Calculate c^2. " alt="" coords="251,81,428,120"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a6aa2e4466afd76dc32c9bcb2def41928" title="Sum sub&#45;terms to calculate new pressure, non&#45;linear case. " alt="" coords="251,196,428,235"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#ac5311980f3f2ece68a910d865a8567cc" title="Sum sub&#45;terms to calculate new pressure, linear case. " alt="" coords="251,321,428,360"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a8c12f0598297c648fb756b0ce716cdb3" title="Sum sub&#45;terms for new p, linear lossless case. " alt="" coords="236,259,443,297"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#aecc0858f386df7c2aa89e6aed75db33a" title="Sum sub&#45;terms for new p, linear lossless case. " alt="" coords="246,384,433,423"/>
+<area shape="rect" id="node15" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="491,412,681,451"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="497,81,675,120"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="955,245,1132,284"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1180,293,1229,319"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="729,245,907,284"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a0d967415e111376e1a2e5eccbe6c0f2d" title="Calculate new p, non&#45;linear case. " alt="" coords="495,245,677,284"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#abdeb70ec2795fec7c2cdf24f61ff962a" title="Calculate new p linear&#45;case, absorbing. " alt="" coords="497,321,675,360"/>
+<area shape="rect" id="node16" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="729,353,907,392"/>
+</map>

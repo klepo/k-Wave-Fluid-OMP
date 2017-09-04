@@ -1,0 +1,8 @@
+<map id="IndexMatrix::operator[]" name="IndexMatrix::operator[]">
+<area shape="rect" id="node2" href="$class_index_matrix.html#af65d299d73ae371d78fb00eb3407a9d8" title="Get the top left corner of the index&#45;th cuboid. " alt="" coords="432,22,619,47"/>
+<area shape="rect" id="node3" href="$class_index_matrix.html#a34bb5937787b89ea649503690d0c1835" title="Get the top bottom right of the index&#45;th cuboid. " alt="" coords="438,134,613,172"/>
+<area shape="rect" id="node4" href="$class_index_matrix.html#aad66a5391417bc2204f70ac08147cb25" title="Recompute indices MATALAB&#45;&gt;C++. " alt="" coords="196,106,384,144"/>
+<area shape="rect" id="node5" href="$class_index_matrix.html#aad2074917b52ab8285d57d2def613a84" title="Recompute indices C++ &#45;&gt; MATLAB. " alt="" coords="196,168,384,207"/>
+<area shape="rect" id="node6" href="$class_index_matrix.html#af3d9b16a8e9ce65d6446bce2d46b797d" title="Get total number of elements in all cuboids to be able to allocate output file. " alt="" coords="211,43,369,82"/>
+<area shape="rect" id="node7" href="$class_index_matrix.html#ab56b58682626147586e9a6cf0b50f71c" title="Init dimension. " alt="" coords="204,283,376,308"/>
+</map>

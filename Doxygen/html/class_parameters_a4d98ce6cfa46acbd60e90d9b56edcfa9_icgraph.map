@@ -1,0 +1,11 @@
+<map id="Parameters::getNonUniformGridFlag" name="Parameters::getNonUniformGridFlag">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="460,8,637,47"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#aa5597bf6aeed1124ef9f16ae3971a69b" title="Calculate p0_source. " alt="" coords="228,36,405,75"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a5f470d96be02edd35667a9d6dbc7e0d1" title="Compute new values of for duxdx, duydy, dzdz. " alt="" coords="228,99,405,138"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a196ebd95f9c91f815c3c15d3e4736416" title="compute new values of for ux_sgx, uy_sgy, uz_sgz. " alt="" coords="228,162,405,200"/>
+<area shape="rect" id="node9" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="453,204,644,243"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="692,99,869,138"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="917,151,967,176"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="460,99,637,138"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="692,190,869,228"/>
+</map>

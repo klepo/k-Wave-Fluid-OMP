@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['tmatrixrecordcontainer',['TMatrixRecordContainer',['../class_t_matrix_container.html#ae80718ab5f00262305bff3b93dc3b8d2',1,'TMatrixContainer']]],
-  ['toutputstreammap',['TOutputStreamMap',['../class_t_output_stream_container.html#afc62764aaf2b57f16e8b7ab7c9ac4203',1,'TOutputStreamContainer']]]
+  ['errormessage',['ErrorMessage',['../_error_messages_linux_8h.html#a18c9da02b74928ad5561b809ddb0d794',1,'ErrorMessage():&#160;ErrorMessagesLinux.h'],['../_error_messages_windows_8h.html#a18c9da02b74928ad5561b809ddb0d794',1,'ErrorMessage():&#160;ErrorMessagesWindows.h']]]
 ];

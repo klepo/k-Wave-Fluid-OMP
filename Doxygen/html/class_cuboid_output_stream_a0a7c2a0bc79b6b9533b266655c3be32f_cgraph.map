@@ -1,0 +1,7 @@
+<map id="CuboidOutputStream::sampleAggregated" name="CuboidOutputStream::sampleAggregated">
+<area shape="rect" id="node2" href="$class_base_float_matrix.html#a5b92b9a9d60bfd4e980cf8b4d9bd2159" title="Get dimension sizes of the matrix. " alt="" coords="192,5,384,44"/>
+<area shape="rect" id="node3" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="209,68,367,93"/>
+<area shape="rect" id="node4" href="$class_base_index_matrix.html#a47b5272f339c17f8374d75db3051fa51" title="Get dimension sizes of the matrix. " alt="" coords="191,117,385,156"/>
+<area shape="rect" id="node5" href="$class_index_matrix.html#af65d299d73ae371d78fb00eb3407a9d8" title="Get the top left corner of the index&#45;th cuboid. " alt="" coords="195,180,381,205"/>
+<area shape="rect" id="node6" href="$class_index_matrix.html#a34bb5937787b89ea649503690d0c1835" title="Get the top bottom right of the index&#45;th cuboid. " alt="" coords="201,229,375,268"/>
+</map>

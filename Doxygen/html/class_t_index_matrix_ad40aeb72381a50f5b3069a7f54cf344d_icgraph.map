@@ -1,0 +1,10 @@
+<map id="TIndexMatrix::GetBottomRightCorner" name="TIndexMatrix::GetBottomRightCorner">
+<area shape="rect" id="node2" href="$class_t_index_matrix.html#ae56c0f5000fd88634983b069edf4069e" title="Get the total number of elements to be sampled within all cuboids. " alt="" coords="237,95,425,133"/>
+<area shape="rect" id="node3" href="$class_t_cuboid_output_h_d_f5_stream.html#aa06e50911303e33944f8bb6af2dc9a2f" title="Create a HDF5 stream and allocate data for it. " alt="" coords="473,32,649,71"/>
+<area shape="rect" id="node4" href="$class_t_cuboid_output_h_d_f5_stream.html#ac6c36acdb69dbd048eb8101e7c7d6aa8" title="Reopen the output stream after restart and reload data. " alt="" coords="473,136,649,175"/>
+<area shape="rect" id="node5" href="$class_t_cuboid_output_h_d_f5_stream.html#a1362996944abc0d65bb4e13c09a53df0" title="Sample data into buffer and apply reduction, or flush to disk &#45; based on a sensor mask..." alt="" coords="243,157,419,196"/>
+<area shape="rect" id="node6" href="$class_t_cuboid_output_h_d_f5_stream.html#ad32c05893dfc36984c58a2ab511f5f95" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="243,32,419,71"/>
+<area shape="rect" id="node7" href="$class_t_cuboid_output_h_d_f5_stream.html#a384417be107b8ab18bce8836de1f2364" title="Flush the buffer to the file. " alt="" coords="243,272,419,311"/>
+<area shape="rect" id="node8" href="$class_t_cuboid_output_h_d_f5_stream.html#ac2c704c5a81c154a5d8ead0d9f93bc00" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="473,240,649,279"/>
+<area shape="rect" id="node9" href="$class_t_cuboid_output_h_d_f5_stream.html#ac7f04644dc9309dbbb97693cc267b1dc" title="Checkpoint the stream and close. " alt="" coords="473,303,649,341"/>
+</map>

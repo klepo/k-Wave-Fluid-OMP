@@ -1,0 +1,6 @@
+<map id="KSpaceFirstOrder3DSolver::computeAbsorbtionTermSSE2" name="KSpaceFirstOrder3DSolver::computeAbsorbtionTermSSE2">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#ac8eb6d205dd5a0bd598a488edf868c7d" title="Get absorbing coefficient Nabla1. " alt="" coords="247,5,417,44"/>
+<area shape="rect" id="node3" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="253,68,411,93"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#a4e6243ae166d16c468c9df4f91a18534" title="Get absorbing coefficient Nabla2. " alt="" coords="247,117,417,156"/>
+<area shape="rect" id="node5" href="$class_base_float_matrix.html#ab366ea335c68ec06f38c31c9d8d3b6bd" title="Size of the matrix. " alt="" coords="263,180,401,205"/>
+</map>

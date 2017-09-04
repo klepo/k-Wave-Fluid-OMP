@@ -1,23 +1,10 @@
 var searchData=
 [
-  ['absorb_5feta_5fname',['absorb_eta_Name',['../_matrix_names_8h.html#a1b60b93c90e66e0b01bcbff276c5065c',1,'MatrixNames.h']]],
-  ['absorb_5feta_5fscalar',['absorb_eta_scalar',['../class_t_parameters.html#ab07acf645768fe7bffb4545861cb6a11',1,'TParameters']]],
-  ['absorb_5fnabla1_5fr_5fname',['absorb_nabla1_r_Name',['../_matrix_names_8h.html#a41a5c34d1e3819792fbe84cf2048d780',1,'MatrixNames.h']]],
-  ['absorb_5fnabla2_5fr_5fname',['absorb_nabla2_r_Name',['../_matrix_names_8h.html#ad9fd2317d74063b332fce23653ab6b9d',1,'MatrixNames.h']]],
-  ['absorb_5ftau_5fname',['absorb_tau_Name',['../_matrix_names_8h.html#ad0013a04a5d3e33cab22ad4a091f0326',1,'MatrixNames.h']]],
-  ['absorb_5ftau_5fscalar',['absorb_tau_scalar',['../class_t_parameters.html#ae13ba39496d5438ac909c9b05a107ca8',1,'TParameters']]],
-  ['absorbing_5fflag',['absorbing_flag',['../class_t_parameters.html#a7db2081bdf778104dc4ef9851ec43363',1,'TParameters']]],
-  ['absorbing_5fflag_5fname',['absorbing_flag_Name',['../_matrix_names_8h.html#ab4a7419b77f710036fd985a5e7f1c9fa',1,'MatrixNames.h']]],
-  ['actpercent',['ActPercent',['../class_t_k_space_first_order3_d_solver.html#aaa6ddcc9b020e8e2283ef58c37c3241d',1,'TKSpaceFirstOrder3DSolver']]],
-  ['add_5fp_5fsource',['Add_p_source',['../class_t_k_space_first_order3_d_solver.html#aae73106cb84a3c63ad269099c97bb616',1,'TKSpaceFirstOrder3DSolver']]],
-  ['add_5fu_5fsource',['Add_u_source',['../class_t_k_space_first_order3_d_solver.html#a9d3512ebd2bd906c2d6b12e4e2188aa9',1,'TKSpaceFirstOrder3DSolver::Add_u_source()'],['../class_tuxyz__sgxyz_matrix.html#a01e34753ca2d070b8017a70c8d308a51',1,'Tuxyz_sgxyzMatrix::Add_u_source()']]],
-  ['addmatricesintocontainer',['AddMatricesIntoContainer',['../class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0',1,'TMatrixContainer']]],
-  ['addstreamsintocontainer',['AddStreamsIntoContainer',['../class_t_output_stream_container.html#aaf3a05b2c2c0f56dfcfba5181a748064',1,'TOutputStreamContainer']]],
-  ['addtransducersource',['AddTransducerSource',['../class_tuxyz__sgxyz_matrix.html#a94cc24af170bab4e60a7211d00c5b5d9',1,'Tuxyz_sgxyzMatrix']]],
-  ['allocatememory',['AllocateMemory',['../class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e',1,'TKSpaceFirstOrder3DSolver::AllocateMemory()'],['../class_t_base_float_matrix.html#ace873006962b353a092d966587f5762c',1,'TBaseFloatMatrix::AllocateMemory()'],['../class_t_base_index_matrix.html#a05f612c0d3cf579cd0375a9dc84acf4e',1,'TBaseIndexMatrix::AllocateMemory()'],['../class_t_f_f_t_w_complex_matrix.html#a855b45e70a46c8bb49feae7565690449',1,'TFFTWComplexMatrix::AllocateMemory()'],['../class_t_base_output_h_d_f5_stream.html#a56be65e5b731702170511a07ae696b87',1,'TBaseOutputHDF5Stream::AllocateMemory()']]],
-  ['alpha_5fcoeff_5fname',['alpha_coeff_Name',['../_matrix_names_8h.html#aad48d21c21e8a569740d39807217927a',1,'MatrixNames.h']]],
-  ['alpha_5fcoeff_5fscalar',['alpha_coeff_scalar',['../class_t_parameters.html#acb823744294e38c2b0f8a5d4f6eab0c6',1,'TParameters']]],
-  ['alpha_5fcoeff_5fscalar_5fflag',['alpha_coeff_scalar_flag',['../class_t_parameters.html#a8ae28aa331ae36de5bf5f1717117a58e',1,'TParameters']]],
-  ['alpha_5fpower',['alpha_power',['../class_t_parameters.html#a730e7ea60c34132b69fa11bcd8ba1f91',1,'TParameters']]],
-  ['alpha_5fpower_5fname',['alpha_power_Name',['../_matrix_names_8h.html#ae4231a737aaf254700dbbf11be2d6ad0',1,'MatrixNames.h']]]
+  ['addinitialpressuresource',['addInitialPressureSource',['../class_k_space_first_order3_d_solver.html#acf1113852e24fd58cbf92679722cbdd8',1,'KSpaceFirstOrder3DSolver']]],
+  ['addmatrices',['addMatrices',['../class_matrix_container.html#ac07e369441915288927f5c8c7705e44d',1,'MatrixContainer']]],
+  ['addpressuresource',['addPressureSource',['../class_k_space_first_order3_d_solver.html#af9a8fced68bc8ce387ced2361bf49369',1,'KSpaceFirstOrder3DSolver']]],
+  ['addstreams',['addStreams',['../class_output_stream_container.html#a97bd5bc7cd18225fc5a9e79ddd4d4418',1,'OutputStreamContainer']]],
+  ['addtransducersource',['addTransducerSource',['../class_k_space_first_order3_d_solver.html#ad21e8abd8477fc783f1ec997e559d8b8',1,'KSpaceFirstOrder3DSolver']]],
+  ['addvelocitysource',['addVelocitySource',['../class_k_space_first_order3_d_solver.html#a80d4787d6c6f94005bc2821bfcb2cefc',1,'KSpaceFirstOrder3DSolver']]],
+  ['allocatememory',['allocateMemory',['../class_k_space_first_order3_d_solver.html#a7eaf336838afbecdfd7cec33de1831e4',1,'KSpaceFirstOrder3DSolver::allocateMemory()'],['../class_base_float_matrix.html#a45030eb00edf4f50984b71e7e2f06e17',1,'BaseFloatMatrix::allocateMemory()'],['../class_base_index_matrix.html#ad6af7cda3f63b7f2928b46f269a675f2',1,'BaseIndexMatrix::allocateMemory()'],['../class_fftw_complex_matrix.html#a096548c1fafea9d51939ead596418686',1,'FftwComplexMatrix::allocateMemory()'],['../class_base_output_stream.html#afdf6a28f47a5ed79658cdda3b938f111',1,'BaseOutputStream::allocateMemory()']]]
 ];

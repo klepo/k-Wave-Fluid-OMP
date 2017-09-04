@@ -1,0 +1,24 @@
+<map id="KSpaceFirstOrder3DSolver::get1DIndex" name="KSpaceFirstOrder3DSolver::get1DIndex">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a8b3dbe0230bc67e81f7f2bfe8d8c9274" title="Compute new values of acoustic velocity gradients. " alt="" coords="537,5,707,44"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="976,475,1193,513"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#a45d1d6593a66a61ea2bb52329f27be20" title="Compute new values of acoustic density for nonlinear case. " alt="" coords="537,68,707,107"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#acaf1d7efb66e7b6a27bef4c132018c7b" title="Compute new values of acoustic density for linear case. " alt="" coords="537,131,707,169"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#a0a29138b89fc937a7c2e2ac4b3710ae9" title="Generate kappa matrix for lossless media. " alt="" coords="537,867,707,905"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#ad7fa716dd895810e2e2335dbdedd4161" title="Generate kappa matrix, absorbNabla1, absorbNabla2 for absorbing medium. " alt="" coords="535,929,709,968"/>
+<area shape="rect" id="node13" href="$class_k_space_first_order3_d_solver.html#a08ff917c206cec495baf6b3251ae2602" title="Generate absorbTau, absorbEta for heterogenous medium. " alt="" coords="537,741,707,780"/>
+<area shape="rect" id="node14" href="$class_k_space_first_order3_d_solver.html#a39ae9774e38f6b2bd324c202903f5f91" title="Calculate dt ./ rho0 for nonuniform grids. " alt="" coords="537,804,707,843"/>
+<area shape="rect" id="node15" href="$class_k_space_first_order3_d_solver.html#adbd6b55638a2510205e3d24a3ae1ec15" title="Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid..." alt="" coords="241,239,469,291"/>
+<area shape="rect" id="node17" href="$class_k_space_first_order3_d_solver.html#adf8eca790c03ecd69b256990a6b3fe43" title="Compute acoustic velocity for heterogeneous medium and a uniform grid. " alt="" coords="254,408,457,447"/>
+<area shape="rect" id="node19" href="$class_k_space_first_order3_d_solver.html#a249d7ec72db890c7e60552f92a11acdc" title="Compute acoustic velocity for homogeneous medium and a uniform grid. " alt="" coords="234,471,477,509"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#ac4f146845d079a4787c60fccf3d3626f" title="Compute acoustic velocity for homogenous medium and nonuniform grid. " alt="" coords="224,533,487,572"/>
+<area shape="rect" id="node21" href="$class_k_space_first_order3_d_solver.html#a81ded7054aab8638d6dd7f6de5ef1375" title="Compute part of the new velocity term &#45; gradient of pressure. " alt="" coords="270,335,441,373"/>
+<area shape="rect" id="node22" href="$class_k_space_first_order3_d_solver.html#aaf86e5341ff67ec4d8e13d2418121e61" title="compute shifted velocity for –u_non_staggered flag. " alt="" coords="270,596,441,635"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="757,157,928,196"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1460,475,1631,513"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1679,481,1728,507"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1241,475,1412,513"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#a26160d00758622e3f5bfd2d9aedf1bcc" title="Compute pre&#45;processing phase. " alt="" coords="757,843,928,881"/>
+<area shape="rect" id="node16" href="$class_k_space_first_order3_d_solver.html#acf1113852e24fd58cbf92679722cbdd8" title="Calculate initial pressure source. " alt="" coords="537,245,707,284"/>
+<area shape="rect" id="node18" href="$class_k_space_first_order3_d_solver.html#aa0dc0784182ae930255b125611be6335" title="Compute new values of acoustic velocity. " alt="" coords="537,360,707,399"/>
+<area shape="rect" id="node23" href="$class_k_space_first_order3_d_solver.html#aabbbec65ef6379f439f0e0a1d8a4ab8b" title="Store sensor data. " alt="" coords="537,475,707,513"/>
+</map>

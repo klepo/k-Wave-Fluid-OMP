@@ -1,0 +1,6 @@
+<map id="BaseFloatMatrix::capacity" name="BaseFloatMatrix::capacity">
+<area shape="rect" id="node2" href="$class_base_float_matrix.html#afdeb76c65fe85198e8a36620985a61ff" title="Copy data from other matrix with the same size. " alt="" coords="233,5,401,31"/>
+<area shape="rect" id="node4" href="$class_base_float_matrix.html#a413c6795908db07a503128b79aa99cbc" title="Zero all elements of the matrix (NUMA first touch). " alt="" coords="231,55,404,80"/>
+<area shape="rect" id="node5" href="$class_base_float_matrix.html#a0a782837615699922e72b0795ba82dc9" title="Calculate matrix = scalar / matrix. " alt="" coords="215,104,420,129"/>
+<area shape="rect" id="node3" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="468,5,627,31"/>
+</map>

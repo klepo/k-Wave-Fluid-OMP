@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            30 August    2017, 18:16 (revised)
+ *            04 September 2017, 10:47 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -153,7 +153,7 @@ OutputMessage kOutFmtGitHashLeft
 
 ///Output message
 OutputMessage kOutFmtKWaveVersion
-  = "kspaceFirstOrder3D-OMP v1.1";
+  = "kspaceFirstOrder3D-OMP v1.2";
 
 ///Output message
 OutputMessage kOutFmtFftPlans
