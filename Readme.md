@@ -97,6 +97,7 @@ or Intel Compiler and Intel MKL.
 
 
 ### The FFTW library installation procedure
+
  1. Download the FFTW library package for your platform, 
     http://www.fftw.org/download.html).
 
@@ -119,14 +120,14 @@ or Intel Compiler and Intel MKL.
                 --with-gcc-arch=native --prefix=folder_to_install
     ```
    
-   More information about the installation and customization can be found at 
-   http://www.fftw.org/fftw3_doc/Installation-and-Customization.htm. 
-   For recent CPUs based on Sandy Bridge, Ivy Bridge, Haswell and Broadwell with
-   strongly recommend to use the AVX and AVX2 support.
+    More information about the installation and customization can be found at 
+    http://www.fftw.org/fftw3_doc/Installation-and-Customization.htm. 
+    For recent CPUs based on Sandy Bridge, Ivy Bridge, Haswell and Broadwell with
+    strongly recommend to use the AVX and AVX2 support.
 
  3. Make the FFTW library by typing:
     ```bash
-	make -j
+    make -j
     ```
  4. Install the FFTW library by typing:
     ```bash
