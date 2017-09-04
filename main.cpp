@@ -35,8 +35,8 @@
  * The source codes of <tt>kpsaceFirstOrder3D-OMP</tt> are written using the C++-11 standard and the OpenMP 4.0 library.
  * There are variety of different C++ compilers that can be used to compile the source codes. We recommend using either
  * the GNU C++ compiler (gcc/g++) version 5.0 and higher, or the Intel C++ compiler version 2015 and higher. Please note
- * that Visual Studio compilers do not support OpenMP 4.0 standard and cannot be used thus. Be also careful about Intel
- * compilers 2017, since its MKL library produces incorrect results when AVX2 is enabled.
+ * that Visual Studio compilers do not support OpenMP 4.0 standard and cannot be used thus. Be also aware of Intel
+ * compilers 2017 and their MKL bug producing incorrect results when AVX2 is enabled.
  *
  * The codes  can be compiled on 64-bit Linux and Windows.  32-bit systems are not supported!
  *
@@ -52,9 +52,9 @@
  *
  * The code also relies on several libraries that are to be installed before compiling:
  *
- * \li HDF5 library - Mandatory I/O library, version 1.8.x.
- * \li FFTW library - Optional library for FFT, version 3.3.x, [http://www.fftw.org/](http://www.fftw.org/).
- * \li MKL library  - Optional library for FFT, version 2015 or higher
+ * \li HDF5 library - Mandatory I/O library, [version 1.8.x](https://support.hdfgroup.org/HDF5/release/obtain518.html).
+ * \li FFTW library - Optional library for FFT, [version 3.3.x](http://www.fftw.org/).
+ * \li MKL library  - Optional library for FFT, [version 2015 or higher]
  * (http://software.intel.com/en-us/intel-composer-xe/).
  *
  *
@@ -97,7 +97,7 @@
  *    AVX on Intel Sandy Bridge and newer, AVX2 on Intel Haswell and newer.
 \verbatim
   ./configure --enable-single --enable-avx --enable-openmp  --enable-shared --with-gcc-arch=native \
-             --prefix=folder_to_install
+              --prefix=folder_to_install
 \endverbatim
  * More information about the installation and customization can be found at [here]
  * (http://www.fftw.org/fftw3_doc/Installation-and-Customization.htm).
@@ -152,7 +152,7 @@
  * use any of the possible choices, where SSE 3 is the most general but slowest and AVX2 is the most recent
  * instruction set while believed to be the fastest one.
 \verbatim
-  CPU_ARCH = native
+  #CPU_ARCH = native
   #CPU_ARCH = SSE3
   #CPU_ARCH = SSE4
   #CPU_ARCH = AVX
@@ -167,7 +167,6 @@
   HDF5_DIR=
   ZLIB_DIR=
   SZIP_DIR=
- *
 \endverbatim
  *
  *
