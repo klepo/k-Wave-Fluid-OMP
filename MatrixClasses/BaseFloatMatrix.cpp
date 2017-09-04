@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      11 July      2011, 12:13 (created) \n
- *            04 September 2017, 11:02 (revised)
+ *            04 September 2017, 15:03 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -38,7 +38,6 @@
 #include <MatrixClasses/BaseFloatMatrix.h>
 
 #include <Utils/DimensionSizes.h>
-#include <Utils/ErrorMessages.h>
 
 using std::string;
 

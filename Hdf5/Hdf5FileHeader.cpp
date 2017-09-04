@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            04 September 2017, 10:58 (revised)
+ *            04 September 2017, 15:03 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
@@ -47,7 +47,6 @@
 #include <Hdf5/Hdf5FileHeader.h>
 
 #include <Parameters/Parameters.h>
-#include <Utils/ErrorMessages.h>
 #include <Logger/Logger.h>
 
 using std::string;
@@ -182,7 +181,7 @@ void Hdf5FileHeader::readHeaderFromOutputFile(Hdf5File& outputFile)
   }
   else
   {
-    throw ios::failure(kErrFmtBadOutputFIleType);
+    throw ios::failure(kErrFmtBadOutputFileType);
   }
 }// end of readHeaderFromOutputFile
 //----------------------------------------------------------------------------------------------------------------------
