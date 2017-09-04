@@ -1,0 +1,5 @@
+<map id="IndexMatrix::getSizeOfAllCuboids" name="IndexMatrix::getSizeOfAllCuboids">
+<area shape="rect" id="node2" href="$class_index_matrix.html#a126c5c9476c502aa08a6880b3d1ab5f6" title="operator [], constant version. " alt="" coords="229,5,371,31"/>
+<area shape="rect" id="node3" href="$class_t_cuboid_output_h_d_f5_stream.html#aa06e50911303e33944f8bb6af2dc9a2f" title="Create a HDF5 stream and allocate data for it. " alt="" coords="212,55,388,93"/>
+<area shape="rect" id="node4" href="$class_t_cuboid_output_h_d_f5_stream.html#ac6c36acdb69dbd048eb8101e7c7d6aa8" title="Reopen the output stream after restart and reload data. " alt="" coords="212,117,388,156"/>
+</map>

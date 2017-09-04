@@ -1,0 +1,16 @@
+<map id="BaseFloatMatrix::size" name="BaseFloatMatrix::size">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#aa5597bf6aeed1124ef9f16ae3971a69b" title="Calculate p0_source. " alt="" coords="463,68,641,107"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a48f3f37994e1f75f12926a9d1cd62576" title="Calculate c^2. " alt="" coords="463,5,641,44"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a5f470d96be02edd35667a9d6dbc7e0d1" title="Compute new values of for duxdx, duydy, dzdz. " alt="" coords="463,131,641,169"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a982020d1dda2f6ea810d9b785e6a801b" title="Calculate three temporary sums in the new pressure formula, non&#45;linear absorbing case, SSE2 version. " alt="" coords="214,313,391,365"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a97c523f130bfd05439ea96c068437782" title="Compute absorbing term with abosrb_nabla1 and absorb_nabla2, SSE2 version. " alt="" coords="192,188,413,227"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a6aa2e4466afd76dc32c9bcb2def41928" title="Sum sub&#45;terms to calculate new pressure, non&#45;linear case. " alt="" coords="214,251,391,289"/>
+<area shape="rect" id="node14" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0e177c166b45ef1501633de357defc54" title="Create a HDF5 stream and allocate data for it. " alt="" coords="195,389,410,428"/>
+<area shape="rect" id="node15" href="$class_t_whole_domain_output_h_d_f5_stream.html#a507830a4ec48323a9ef621a0bec49d6f" title="Reopen the output stream after restart and reload data. " alt="" coords="195,452,410,491"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="691,131,868,169"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="916,84,1093,123"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1141,91,1191,116"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="691,37,868,76"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a0d967415e111376e1a2e5eccbe6c0f2d" title="Calculate new p, non&#45;linear case. " alt="" coords="461,256,643,295"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#abdeb70ec2795fec7c2cdf24f61ff962a" title="Calculate new p linear&#45;case, absorbing. " alt="" coords="463,193,641,232"/>
+</map>

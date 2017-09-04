@@ -1,0 +1,51 @@
+<map id="Parameters::init" name="Parameters::init">
+<area shape="rect" id="node2" href="$class_command_line_parameters.html#aee5810a913506149904ac8986661de85" title="Parse commandline parameters. " alt="" coords="421,271,587,309"/>
+<area shape="rect" id="node4" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="941,163,1025,188"/>
+<area shape="rect" id="node5" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="1137,691,1287,716"/>
+<area shape="rect" id="node12" href="$class_parameters.html#a1a4bfa994e2e356d1601c02f14a0d7b7" title="Get git hash of the code. " alt="" coords="183,796,335,821"/>
+<area shape="rect" id="node13" href="$class_command_line_parameters.html#a13dc2ef2ee2174b74d3b7c71aa37e361" title="Is –version set? " alt="" coords="176,845,343,884"/>
+<area shape="rect" id="node14" href="$class_parameters.html#a64ac186b60226dd447580b0a15b98aa1" title="Read scalar values from the input HDF5 file. " alt="" coords="167,733,352,772"/>
+<area shape="rect" id="node46" href="$class_command_line_parameters.html#ad95c413195e04041a4b478a1087b1035" title="Is –benchmark set? " alt="" coords="176,908,343,947"/>
+<area shape="rect" id="node47" href="$class_command_line_parameters.html#a728b6b1dbed45589e47ec4bca9f7eb42" title="Get benchmark time step count. " alt="" coords="160,971,359,1009"/>
+<area shape="rect" id="node48" href="$class_command_line_parameters.html#a560478f7605c5fb40edcfc79c9358751" title="Get start time index when sensor data collection begins. " alt="" coords="170,213,349,252"/>
+<area shape="rect" id="node3" href="$class_command_line_parameters.html#a22173760e90ea28bbbc987b3148dee87" title="Print usage of the code. " alt="" coords="661,171,827,209"/>
+<area shape="rect" id="node8" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="1127,269,1297,295"/>
+<area shape="rect" id="node10" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="1135,77,1289,103"/>
+<area shape="rect" id="node11" href="$class_logger.html#a41e108f83fa9caf16a11ef9f84a3daed" title="Set the log level. " alt="" coords="687,233,801,259"/>
+<area shape="rect" id="node7" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="1165,205,1259,231"/>
+<area shape="rect" id="node9" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="1165,156,1259,181"/>
+<area shape="rect" id="node6" href="$class_logger.html#a12c65c342201179b9b3fc9ded2555d4c" title="Extract a word from a string stream based on delimiters. " alt="" coords="1345,372,1459,397"/>
+<area shape="rect" id="node15" href="$class_hdf5_file.html#aa360ceb797433a9e761b6edefe6376ee" title="Is the file opened? " alt="" coords="687,1205,801,1231"/>
+<area shape="rect" id="node21" href="$class_hdf5_file.html#a7ff9c11dcb7b1e171d7e6e7a498b0545" title="Open the HDF5 file. " alt="" coords="453,1155,555,1180"/>
+<area shape="rect" id="node22" href="$class_command_line_parameters.html#a1da7a0ceb7d6bbdb79cf826db9c09a58" title="Get input file name. " alt="" coords="661,1328,827,1367"/>
+<area shape="rect" id="node23" href="$class_hdf5_file_header.html#a4e9c4bce3720deba2912d68262d554cb" title="Read header from the input file. " alt="" coords="413,557,595,596"/>
+<area shape="rect" id="node24" href="$class_hdf5_file.html#a757c1108f5f459f03d10433d07ba3a81" title="Get handle to the root group of the file. " alt="" coords="669,487,819,512"/>
+<area shape="rect" id="node28" href="$class_hdf5_file.html#a7b1d06060632f114a22ad4bde6860862" title="Read the scalar value under a specified group. " alt="" coords="899,887,1066,912"/>
+<area shape="rect" id="node29" href="$class_hdf5_file.html#af561b101cb41c96d67266be823b123e7" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="887,405,1079,444"/>
+<area shape="rect" id="node30" href="$class_hdf5_file.html#a97212fd272ab3452ee67c6e15ee5830e" title="Get dataset element count at a specified place in the file tree. " alt="" coords="904,468,1061,493"/>
+<area shape="rect" id="node32" href="$class_hdf5_file_header.html#ab9fa468c2d068375960784535174679e" title="Get File type. " alt="" coords="655,588,833,613"/>
+<area shape="rect" id="node33" href="$class_parameters.html#a2449b24e1a158014a4999949efebd15c" title="Get input file name. " alt="" coords="410,1307,598,1332"/>
+<area shape="rect" id="node34" href="$class_hdf5_file_header.html#aa38e806502a6fd5c5665f8aa11efaeef" title="Check major file version. " alt="" coords="415,1092,593,1131"/>
+<area shape="rect" id="node35" href="$class_hdf5_file_header.html#a70cb1884a6421cf942b1bdd5d48602f9" title="Get string representing of current Major version of the file. " alt="" coords="653,1091,835,1129"/>
+<area shape="rect" id="node36" href="$class_hdf5_file_header.html#af3ef655a2ba46ddbdbd4e577b942876d" title="Check minor file version. " alt="" coords="415,796,593,835"/>
+<area shape="rect" id="node37" href="$class_hdf5_file_header.html#a268a9113bbce57d134fe0c2ec40cfc3f" title="Get string representing of current Minor version of the file. " alt="" coords="653,1028,835,1067"/>
+<area shape="rect" id="node44" href="$class_hdf5_file_header.html#a414df20c77f4663092ebff0f2b8eb74c" title="Get file version as an enum. " alt="" coords="407,684,601,709"/>
+<area shape="rect" id="node45" href="$class_parameters.html#af33d8630ce8a083055aa590eb1651ab4" title="Is –u_non_staggered_raw set? " alt="" coords="414,733,594,772"/>
+<area shape="rect" id="node16" href="$class_hdf5_file.html#a80728801e0d787e8a6dcdfd18303a316" title="Can I access the file. " alt="" coords="916,1057,1049,1083"/>
+<area shape="rect" id="node17" href="$class_hdf5_file.html#a2f2ba2b43b8fb3b12db9ea327b369248" title="Close the HDF5 file. " alt="" coords="931,1156,1034,1181"/>
+<area shape="rect" id="node18" href="$class_hdf5_file.html#a2a39ee5ea25970a7dd078ce682520afe" title="Create a HDF5 group at a specified place in the file tree. " alt="" coords="911,1205,1054,1231"/>
+<area shape="rect" id="node19" href="$class_hdf5_file.html#a13401c9566e35b327af16bf230af7d6e" title="Open a HDF5 group at a specified place in the file tree. " alt="" coords="915,1107,1051,1132"/>
+<area shape="rect" id="node20" href="$class_hdf5_file.html#ae0a7de41350b21ea6db96b1306dbc8ce" title="Close a group. " alt="" coords="914,1008,1051,1033"/>
+<area shape="rect" id="node31" href="$class_hdf5_file.html#afb0e924858798ceafcde23a48a0ba182" title="Read string attribute from the dataset under the root group. " alt="" coords="895,665,1071,691"/>
+<area shape="rect" id="node25" href="$class_hdf5_file.html#ab09e1d1114830bccc80e7fee04df2004" title="Open a dataset at a specified place in the file tree. " alt="" coords="911,616,1055,641"/>
+<area shape="rect" id="node26" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="907,517,1058,543"/>
+<area shape="rect" id="node27" href="$class_hdf5_file.html#a286eb597f1da666cc3cee6d19259a4e4" title="Close dataset. " alt="" coords="910,567,1055,592"/>
+<area shape="rect" id="node38" href="$class_hdf5_file_header.html#a3d5fc8f47afbd17b7f608400d7a62cd4" title="Set File type. " alt="" coords="655,637,833,663"/>
+<area shape="rect" id="node39" href="$class_hdf5_file_header.html#af31a45a12003a8be58fe8401b8c3b23c" title="Set host name. " alt="" coords="649,687,839,712"/>
+<area shape="rect" id="node40" href="$class_hdf5_file_header.html#ad01b653395568c89a1c326aac73f761b" title="Set memory consumption. " alt="" coords="895,768,1070,807"/>
+<area shape="rect" id="node41" href="$class_hdf5_file_header.html#a84996539dfcecd5a69b4dd8f24ed7f72" title="Set execution times in file header. " alt="" coords="651,913,837,952"/>
+<area shape="rect" id="node42" href="$class_hdf5_file_header.html#af1b273a3afaeb04fcbfbf360bb1f3c06" title="Get execution times stored in the output file header. " alt="" coords="651,736,837,775"/>
+<area shape="rect" id="node43" href="$class_hdf5_file_header.html#af911ba4c7586ee7593f929ddfee61ccb" title="Set number of cores. " alt="" coords="657,799,831,837"/>
+<area shape="rect" id="node49" href="$class_command_line_parameters.html#a9bd65d0cfa42fffefdc9c69932bb987c" title="Print setup commandline parameters. " alt="" coords="658,5,830,44"/>
+<area shape="rect" id="node50" href="$class_command_line_parameters.html#a6feba967b7930dbe2f3091177edb31e2" title="Default constructor &#45; only friend class can create an instance. " alt="" coords="418,156,590,195"/>
+</map>

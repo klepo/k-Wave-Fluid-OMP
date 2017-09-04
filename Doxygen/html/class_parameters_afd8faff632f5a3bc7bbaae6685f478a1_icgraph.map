@@ -1,0 +1,7 @@
+<map id="Parameters::getDx" name="Parameters::getDx">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a5d71b23c9eb8bc6a68e4d07a4a727ce7" title="Generate kappa matrix for non&#45;absorbing media. " alt="" coords="176,5,353,44"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#acf40f82dab3d9d6d5b285d9d612ef602" title="Generate kappa matrix, absorb_nabla1, absorb_nabla2 for absorbing media. " alt="" coords="176,68,353,120"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="401,40,579,79"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="627,40,804,79"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="852,47,901,72"/>
+</map>

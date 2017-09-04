@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['realmatrix_2ecpp',['RealMatrix.cpp',['../_real_matrix_8cpp.html',1,'']]],
-  ['realmatrix_2eh',['RealMatrix.h',['../_real_matrix_8h.html',1,'']]]
+  ['parameters_2ecpp',['Parameters.cpp',['../_parameters_8cpp.html',1,'']]],
+  ['parameters_2eh',['Parameters.h',['../_parameters_8h.html',1,'']]]
 ];

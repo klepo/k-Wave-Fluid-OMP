@@ -1,0 +1,9 @@
+<map id="Parameters::getSensorMaskType" name="Parameters::getSensorMaskType">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="263,5,440,44"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="263,68,440,107"/>
+<area shape="rect" id="node6" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="256,131,447,169"/>
+<area shape="rect" id="node8" href="$class_t_output_stream_container.html#a541a9126a45c069c71a528ad2ff490f5" title="Create a new output stream. " alt="" coords="269,193,434,232"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="495,68,672,107"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="720,107,769,132"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="495,131,672,169"/>
+</map>

@@ -1,0 +1,23 @@
+<map id="Hdf5File::WriteStringAttribute" name="Hdf5File::WriteStringAttribute">
+<area shape="rect" id="node2" href="$class_hdf5_file.html#a7fe2d497eb38cc14a67aea5f62758780" title="Write matrix data type into the dataset under a specified group. " alt="" coords="241,243,429,268"/>
+<area shape="rect" id="node20" href="$class_hdf5_file.html#a6ee23f35604c71be63c8c016f67f71b7" title="Write matrix domain type into the dataset under the root group. " alt="" coords="232,299,437,324"/>
+<area shape="rect" id="node21" href="$class_hdf5_file_header.html#aa6f0ce2c5863f67a70ef5bb2487a7227" title="Write header into the output file. " alt="" coords="243,149,426,188"/>
+<area shape="rect" id="node22" href="$class_hdf5_file_header.html#a97dc738bc381a402b5bf6ab33f7b718a" title="Write header to the output file (only a subset of all possible fields are written). " alt="" coords="243,27,426,65"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#ab2d358cd2985bd1d060641011ad8eb03" title="Write the scalar value under a specified group &#45; float value. " alt="" coords="508,120,677,145"/>
+<area shape="rect" id="node10" href="$class_t_complex_matrix.html#af069964dbb3366a7c39de17bb7ecf81a" title="Write data into the HDF5_File. " alt="" coords="507,357,678,396"/>
+<area shape="rect" id="node11" href="$class_t_index_matrix.html#a6b04b9b5a4247d10c60d5f1503accb27" title="Write data into the HDF5 file. " alt="" coords="509,295,676,333"/>
+<area shape="rect" id="node14" href="$class_t_index_output_h_d_f5_stream.html#afc865b5d2d44387a096b085a392a10a1" title="Create a HDF5 stream and allocate data for it. " alt="" coords="509,420,676,459"/>
+<area shape="rect" id="node15" href="$class_t_cuboid_output_h_d_f5_stream.html#ad32c05893dfc36984c58a2ab511f5f95" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="505,483,681,521"/>
+<area shape="rect" id="node17" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0e177c166b45ef1501633de357defc54" title="Create a HDF5 stream and allocate data for it. " alt="" coords="485,232,700,271"/>
+<area shape="rect" id="node18" href="$class_t_real_matrix.html#a533a814b9e1d59f974778391f914f421" title="Write data into the HDF5 file. " alt="" coords="511,169,674,208"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="748,5,925,44"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="973,113,1151,152"/>
+<area shape="rect" id="node8" href="$class_t_parameters.html#a758ac1f6a3f7507f83b7aa4486cd3d1f" title="Save scalar values into the output HDF5 file. " alt="" coords="753,171,920,209"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="1199,113,1376,152"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1424,120,1473,145"/>
+<area shape="rect" id="node9" href="$class_t_parameters.html#a575333cd5182c9e53e8e05aa325cdf6d" title="Destructor. " alt="" coords="975,177,1149,203"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="748,283,925,321"/>
+<area shape="rect" id="node13" href="$class_t_index_matrix.html#ac3f2dd4b2f36d6f17bb4f00650d96729" title="Destructor. " alt="" coords="749,345,924,371"/>
+<area shape="rect" id="node16" href="$class_t_cuboid_output_h_d_f5_stream.html#aa06e50911303e33944f8bb6af2dc9a2f" title="Create a HDF5 stream and allocate data for it. " alt="" coords="749,483,925,521"/>
+<area shape="rect" id="node19" href="$class_t_real_matrix.html#a173777d36f7e5fee41a70ee5cc9c5d03" title="Destructor. " alt="" coords="753,233,920,259"/>
+</map>

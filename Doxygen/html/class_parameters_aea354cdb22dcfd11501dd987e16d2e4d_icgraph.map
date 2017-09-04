@@ -1,0 +1,10 @@
+<map id="Parameters::isCheckpointEnabled" name="Parameters::isCheckpointEnabled">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a158019a08bff430f0d5af5a223e4875d" title="Load simulation data. " alt="" coords="677,5,847,44"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1137,120,1308,159"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="435,120,605,159"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#af17425f26554e70c6260ef204b628903" title="Is time to checkpoint (save actual state on disk). " alt="" coords="216,177,387,216"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1356,72,1405,97"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="653,177,871,216"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="919,177,1089,216"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="435,235,605,273"/>
+</map>

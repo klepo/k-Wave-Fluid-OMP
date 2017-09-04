@@ -1,0 +1,10 @@
+<map id="OutputStreams/BaseOutputStream.h" name="OutputStreams/BaseOutputStream.h">
+<area shape="rect" id="node2" href="$_real_matrix_8h.html" title="The header file containing the class for real matrices. " alt="" coords="273,92,443,117"/>
+<area shape="rect" id="node7" href="$_hdf5_file_8h.html" title="The header file containing the HDF5 related classes. " alt="" coords="518,312,625,337"/>
+<area shape="rect" id="node13" href="$_index_matrix_8h.html" title="The header file containing the class for 64b integer matrices. " alt="" coords="35,92,209,117"/>
+<area shape="rect" id="node3" href="$_base_float_matrix_8h.html" title="The header file containing the base class for single precisions floating point numbers (floats)..." alt="" coords="298,165,498,191"/>
+<area shape="rect" id="node5" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes. " alt="" coords="173,385,321,411"/>
+<area shape="rect" id="node4" href="$_base_matrix_8h.html" title="The header file of the common ancestor of all matrix classes. A pure abstract class. " alt="" coords="278,239,451,264"/>
+<area shape="rect" id="node12" href="$_matrix_names_8h.html" title="The header file storing names of all variables. " alt="" coords="506,385,637,411"/>
+<area shape="rect" id="node14" href="$_base_index_matrix_8h.html" title="The header file containing the base class for index matrices (based on the size_t datatype)..." alt="" coords="21,165,223,191"/>
+</map>

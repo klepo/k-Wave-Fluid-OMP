@@ -1,0 +1,45 @@
+<map id="KSpaceFirstOrder3DSolver::checkOutputFile" name="KSpaceFirstOrder3DSolver::checkOutputFile">
+<area shape="rect" id="node2" href="$class_parameters.html#a613f9c265cb287a21a14086c057d0569" title="Get file header handle. " alt="" coords="238,5,407,31"/>
+<area shape="rect" id="node3" href="$class_parameters.html#a43a65353c4e6c731efc8d577be0a5915" title="Get output file handle. " alt="" coords="241,55,405,80"/>
+<area shape="rect" id="node4" href="$class_hdf5_file_header.html#ab9fa468c2d068375960784535174679e" title="Get File type. " alt="" coords="481,279,660,304"/>
+<area shape="rect" id="node5" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="1471,1111,1621,1136"/>
+<area shape="rect" id="node7" href="$class_parameters.html#a52a22d3112f04597eee700e0e21e3221" title="Get output file name. " alt="" coords="224,104,421,129"/>
+<area shape="rect" id="node9" href="$class_hdf5_file_header.html#aa38e806502a6fd5c5665f8aa11efaeef" title="Check major file version. " alt="" coords="233,153,412,192"/>
+<area shape="rect" id="node10" href="$class_hdf5_file_header.html#a70cb1884a6421cf942b1bdd5d48602f9" title="Get string representing of current Major version of the file. " alt="" coords="479,153,662,192"/>
+<area shape="rect" id="node11" href="$class_parameters.html#ad184f273d660ef760a55d25ca0c32284" title="Get checkpoint file name. " alt="" coords="237,268,408,307"/>
+<area shape="rect" id="node13" href="$class_hdf5_file_header.html#af3ef655a2ba46ddbdbd4e577b942876d" title="Check minor file version. " alt="" coords="233,433,412,472"/>
+<area shape="rect" id="node14" href="$class_hdf5_file_header.html#a268a9113bbce57d134fe0c2ec40cfc3f" title="Get string representing of current Minor version of the file. " alt="" coords="479,328,662,367"/>
+<area shape="rect" id="node23" href="$class_hdf5_file.html#a7b1d06060632f114a22ad4bde6860862" title="Read the scalar value under a specified group. " alt="" coords="487,1643,654,1668"/>
+<area shape="rect" id="node29" href="$class_hdf5_file.html#a757c1108f5f459f03d10433d07ba3a81" title="Get handle to the root group of the file. " alt="" coords="247,1161,398,1187"/>
+<area shape="rect" id="node44" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="229,1263,416,1301"/>
+<area shape="rect" id="node6" href="$class_logger.html#a12c65c342201179b9b3fc9ded2555d4c" title="Extract a word from a string stream based on delimiters. " alt="" coords="1669,1111,1783,1136"/>
+<area shape="rect" id="node8" href="$class_command_line_parameters.html#add26957b2c016fae8addb2ef09a06bf3" title="Get output file name. " alt="" coords="487,91,654,129"/>
+<area shape="rect" id="node12" href="$class_command_line_parameters.html#a51dcf8623f9a79289d4a8859a5c5f41d" title="Get Checkpoint file name. " alt="" coords="487,216,654,255"/>
+<area shape="rect" id="node15" href="$class_hdf5_file_header.html#a3d5fc8f47afbd17b7f608400d7a62cd4" title="Set File type. " alt="" coords="481,391,660,416"/>
+<area shape="rect" id="node16" href="$class_hdf5_file_header.html#af31a45a12003a8be58fe8401b8c3b23c" title="Set host name. " alt="" coords="476,440,665,465"/>
+<area shape="rect" id="node17" href="$class_hdf5_file_header.html#ad01b653395568c89a1c326aac73f761b" title="Set memory consumption. " alt="" coords="483,604,658,643"/>
+<area shape="rect" id="node20" href="$class_hdf5_file_header.html#a84996539dfcecd5a69b4dd8f24ed7f72" title="Set execution times in file header. " alt="" coords="1224,500,1409,539"/>
+<area shape="rect" id="node21" href="$class_hdf5_file_header.html#af1b273a3afaeb04fcbfbf360bb1f3c06" title="Get execution times stored in the output file header. " alt="" coords="477,541,664,580"/>
+<area shape="rect" id="node22" href="$class_hdf5_file_header.html#af911ba4c7586ee7593f929ddfee61ccb" title="Set number of cores. " alt="" coords="483,667,658,705"/>
+<area shape="rect" id="node18" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="744,629,899,655"/>
+<area shape="rect" id="node19" href="$class_parameters.html#af4d94ee360ac0157d9065f78797fe9a1" title="Constructor not allowed for public. " alt="" coords="989,629,1144,655"/>
+<area shape="rect" id="node24" href="$class_hdf5_file.html#a112d8041f8dedc169ae70fe4a704bf0c" title="Read data from the dataset at a specified place in the file tree. " alt="" coords="724,1541,919,1567"/>
+<area shape="rect" id="node25" href="$class_hdf5_file.html#af561b101cb41c96d67266be823b123e7" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="971,1389,1163,1428"/>
+<area shape="rect" id="node27" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="979,1555,1154,1580"/>
+<area shape="rect" id="node26" href="$class_hdf5_file.html#a4e511c8bd3d6d48f7ca895bf6bd6069d" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="1228,1339,1405,1377"/>
+<area shape="rect" id="node28" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="1245,1555,1388,1580"/>
+<area shape="rect" id="node30" href="$class_hdf5_file.html#ab09e1d1114830bccc80e7fee04df2004" title="Open a dataset at a specified place in the file tree. " alt="" coords="749,1085,893,1111"/>
+<area shape="rect" id="node31" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="991,1604,1142,1629"/>
+<area shape="rect" id="node32" href="$class_hdf5_file.html#a286eb597f1da666cc3cee6d19259a4e4" title="Close dataset. " alt="" coords="498,1491,643,1516"/>
+<area shape="rect" id="node33" href="$class_hdf5_file.html#a6967bff33507f44a57e1a397acf3bbcb" title="Write a hyperslab into the dataset. " alt="" coords="1237,1453,1396,1479"/>
+<area shape="rect" id="node34" href="$class_hdf5_file.html#a3210d2273ea3e90320673eff70e91caf" title="Write a cuboid selected within the matrixData into a hyperslab. " alt="" coords="1211,784,1423,809"/>
+<area shape="rect" id="node35" href="$class_hdf5_file.html#a667746624294c81046bc04ee3971d423" title="Write sensor data selected by the sensor mask &#45; Occasionally very slow, do not use! ..." alt="" coords="975,864,1158,903"/>
+<area shape="rect" id="node36" href="$class_hdf5_file.html#acb2a105dfb942edf47c9dfaa9f9736ae" title="Write the scalar value under a specified group. " alt="" coords="487,1035,654,1060"/>
+<area shape="rect" id="node37" href="$class_hdf5_file.html#a9e1f04c286dba6a6afe9821a402e7243" title="Write matrix data type into the dataset at a specified place in the file tree. " alt="" coords="728,984,915,1009"/>
+<area shape="rect" id="node38" href="$class_hdf5_file.html#a0bf4466acb32565bcc8935a228544cb6" title="Write string attribute into the dataset under the root group. " alt="" coords="978,959,1155,984"/>
+<area shape="rect" id="node39" href="$class_hdf5_file.html#a2719b646df65c46962bc101954d23371" title="Write matrix data type into the dataset at a specified place in the file tree. " alt="" coords="720,935,923,960"/>
+<area shape="rect" id="node40" href="$class_hdf5_file.html#a97212fd272ab3452ee67c6e15ee5830e" title="Get dataset element count at a specified place in the file tree. " alt="" coords="1238,1136,1395,1161"/>
+<area shape="rect" id="node41" href="$class_hdf5_file.html#a0d809dcf87519a67c03fd7566b0f47a1" title="Read matrix data type from the dataset at a specified place in the file tree. " alt="" coords="478,1288,663,1313"/>
+<area shape="rect" id="node42" href="$class_hdf5_file.html#afb0e924858798ceafcde23a48a0ba182" title="Read string attribute from the dataset under the root group. " alt="" coords="733,1237,909,1263"/>
+<area shape="rect" id="node43" href="$class_hdf5_file.html#a191248f03bffe6c3db7667d702250978" title="Read matrix dataset domain type at a specified place in the file tree. " alt="" coords="469,1187,672,1212"/>
+</map>

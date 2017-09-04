@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::InitializeFftwPlans" name="KSpaceFirstOrder3DSolver::InitializeFftwPlans">
+<area shape="rect" id="node2" href="$class_parameters.html#a12e7e0e755e20296697b5b5ed98f01ab" title="Get number of CPU threads to use. " alt="" coords="224,13,433,39"/>
+<area shape="rect" id="node4" href="$class_parameters.html#aea354cdb22dcfd11501dd987e16d2e4d" title="Is checkpoint enabled? " alt="" coords="247,65,410,104"/>
+<area shape="rect" id="node6" href="$class_hdf5_file.html#a80728801e0d787e8a6dcdfd18303a316" title="Can I access the file. " alt="" coords="262,128,395,153"/>
+<area shape="rect" id="node7" href="$class_parameters.html#ad184f273d660ef760a55d25ca0c32284" title="Get checkpoint file name. " alt="" coords="733,172,904,211"/>
+<area shape="rect" id="node9" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="287,657,371,683"/>
+<area shape="rect" id="node14" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="531,857,624,883"/>
+<area shape="rect" id="node16" href="$class_fftw_complex_matrix.html#aa55883b5ce23a549726926214564ba79" title="Import wisdom from the file. " alt="" coords="263,229,395,268"/>
+<area shape="rect" id="node18" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="995,269,1150,295"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#afc38ac60f042b7657fba197347ea947a" title="Get temporary matrix for 1D fft in x. " alt="" coords="243,344,414,383"/>
+<area shape="rect" id="node37" href="$class_fftw_complex_matrix.html#ac6a7665580966f17abcbcac113e5a356" title="Create FFTW plan for 3D Real&#45;to&#45;Complex. " alt="" coords="261,759,396,797"/>
+<area shape="rect" id="node40" href="$class_k_space_first_order3_d_solver.html#afdc5cc9f0b66c5943bcf7ce61f122e46" title="Get pressure matrix. " alt="" coords="243,407,414,445"/>
+<area shape="rect" id="node41" href="$class_k_space_first_order3_d_solver.html#acecc8b7f8f60a3f05cd710a39ac05693" title="Get temporary matrix for 1D fft in y. " alt="" coords="243,469,414,508"/>
+<area shape="rect" id="node42" href="$class_k_space_first_order3_d_solver.html#afd158a7b7474ee05c09e403ff73d88ac" title="Get temporary matrix for 1D fft in z. " alt="" coords="243,532,414,571"/>
+<area shape="rect" id="node43" href="$class_fftw_complex_matrix.html#af4538aa207c3fc72dc2ae45bfd8c2845" title="Create FFTW plan for 3D Complex&#45;to&#45;Real. " alt="" coords="261,821,396,860"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#a5c9565fbff818268a546df153368af80" title="Get temporary matrix for fft shift. " alt="" coords="243,595,414,633"/>
+<area shape="rect" id="node45" href="$class_fftw_complex_matrix.html#af1e46eea72ec8f5cfa5531ebe49653c4" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the x dimension. " alt="" coords="257,884,400,923"/>
+<area shape="rect" id="node46" href="$class_fftw_complex_matrix.html#a8da50b0d086ed943487c58c9b4ec53b3" title="Create FFTW plan for Complex&#45;to&#45;Real in the x dimension. " alt="" coords="257,947,400,985"/>
+<area shape="rect" id="node47" href="$class_fftw_complex_matrix.html#a456bdccc725f39fcac2c4cc979d32117" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the y dimension. " alt="" coords="257,1009,400,1048"/>
+<area shape="rect" id="node48" href="$class_fftw_complex_matrix.html#af54d1233c2e4bec4c70e6b155e71373e" title="Create FFTW plan for Complex&#45;to&#45;Real in the y dimension. " alt="" coords="257,1072,400,1111"/>
+<area shape="rect" id="node49" href="$class_fftw_complex_matrix.html#a809a3d57663932ffe18a578a345792f1" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the z dimension. " alt="" coords="257,1135,400,1173"/>
+<area shape="rect" id="node50" href="$class_fftw_complex_matrix.html#a832882fbfc4e308ee4bd5dde004d4b3b" title="Create FFTW plan for Complex&#45;to&#45;Real in the z dimension. " alt="" coords="257,1197,400,1236"/>
+<area shape="rect" id="node3" href="$class_command_line_parameters.html#a1ee82458798c1fade130d7aa9a720c74" title="Get number of threads. " alt="" coords="494,5,661,44"/>
+<area shape="rect" id="node5" href="$class_command_line_parameters.html#a6d5dd5cf7c7e9068925b5cd5149e16a1" title="Is checkpoint enabled? " alt="" coords="494,68,661,107"/>
+<area shape="rect" id="node8" href="$class_command_line_parameters.html#a51dcf8623f9a79289d4a8859a5c5f41d" title="Get Checkpoint file name. " alt="" coords="989,172,1156,211"/>
+<area shape="rect" id="node10" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="997,803,1148,828"/>
+<area shape="rect" id="node12" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="531,759,624,784"/>
+<area shape="rect" id="node13" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="492,808,663,833"/>
+<area shape="rect" id="node15" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="741,789,896,815"/>
+<area shape="rect" id="node11" href="$class_logger.html#a12c65c342201179b9b3fc9ded2555d4c" title="Extract a word from a string stream based on delimiters. " alt="" coords="1250,828,1363,853"/>
+<area shape="rect" id="node17" href="$class_fftw_complex_matrix.html#ae10892df26fdf8fd26191043a4b5648f" title="FftwComplexMatrix::\lgetWisdomFileName" alt="" coords="509,229,645,268"/>
+<area shape="rect" id="node19" href="$class_parameters.html#af4d94ee360ac0157d9065f78797fe9a1" title="Constructor not allowed for public. " alt="" coords="1229,269,1384,295"/>
+<area shape="rect" id="node21" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="495,476,660,501"/>
+<area shape="rect" id="node22" href="$class_matrix_container.html#a9973c09a2bb15fa6c1d38f83e1b7edb7" title="Create all matrix objects in the container. " alt="" coords="721,575,916,600"/>
+<area shape="rect" id="node23" href="$class_matrix_container.html#ac07e369441915288927f5c8c7705e44d" title="Populate the container based on the simulation type. " alt="" coords="727,525,910,551"/>
+<area shape="rect" id="node33" href="$class_matrix_container.html#a603541865d8f1d3ffda39288d1514bf8" title="Destroy and free all matrices. " alt="" coords="727,624,910,649"/>
+<area shape="rect" id="node34" href="$class_matrix_container.html#ac0cb21a1d1d3b0713df28eda11acf46b" title="Load all marked matrices from the input HDF5 file. " alt="" coords="736,337,901,376"/>
+<area shape="rect" id="node35" href="$class_matrix_container.html#adc34543e615aea2e6f85c80d9503a8db" title="Load selected matrices from the checkpoint HDF5 file. " alt="" coords="736,400,901,439"/>
+<area shape="rect" id="node36" href="$class_matrix_container.html#af6fe7b98ad2c834ed3097e9c22e1ab3e" title="Store selected matrices into the checkpoint file. " alt="" coords="735,463,903,501"/>
+<area shape="rect" id="node24" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="979,319,1166,357"/>
+<area shape="rect" id="node25" href="$class_parameters.html#a92fd1aff7e90f3553e524f7eeb6b24bc" title="Get reduced dimension sizes of the simulation (complex classes). " alt="" coords="964,381,1181,420"/>
+<area shape="rect" id="node26" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="981,444,1164,469"/>
+<area shape="rect" id="node27" href="$class_parameters.html#ad76a0fb737c095702e1bb16431c5f4fc" title="Is density in the medium homogeneous (scalar value)? " alt="" coords="974,493,1171,519"/>
+<area shape="rect" id="node28" href="$class_parameters.html#a792445d4cbd4bfef4f78702b1148fcfe" title="Is the wave propagation nonlinear? " alt="" coords="977,543,1168,568"/>
+<area shape="rect" id="node29" href="$class_parameters.html#ad3be941594589f9061487544fe13c381" title="Is nonlinear coefficient homogeneous in the medium (scalar value)? " alt="" coords="973,592,1172,617"/>
+<area shape="rect" id="node30" href="$class_parameters.html#a3983946bb7b535f5165cf699f2584c90" title="Is the simulation absrobing or lossless? " alt="" coords="979,641,1167,667"/>
+<area shape="rect" id="node31" href="$class_parameters.html#abc0a2f4dea841c3a3e3502549daeba4f" title="Is alpha absorption coefficient homogeneous (scalar value)? " alt="" coords="988,691,1157,729"/>
+<area shape="rect" id="node32" href="$class_parameters.html#a7c36e5176ad893dce7f8d07e607b88bb" title="Get sensor mask type (linear or corners). " alt="" coords="971,753,1174,779"/>
+<area shape="rect" id="node38" href="$class_base_float_matrix.html#a5b92b9a9d60bfd4e980cf8b4d9bd2159" title="Get dimension sizes of the matrix. " alt="" coords="481,949,673,988"/>
+<area shape="rect" id="node39" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="498,1015,657,1040"/>
+</map>

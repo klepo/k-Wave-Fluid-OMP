@@ -1,0 +1,4 @@
+<map id="RealMatrix" name="RealMatrix">
+<area shape="rect" id="node2" href="$class_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="5,79,116,104"/>
+<area shape="rect" id="node3" href="$class_base_matrix.html" title="Abstract base class. The common ancestor defining the common interface and allowing derived classes t..." alt="" coords="19,5,102,31"/>
+</map>

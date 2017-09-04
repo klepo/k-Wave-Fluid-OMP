@@ -1,0 +1,5 @@
+<map id="IndexOutputStream::flushBufferToFile" name="IndexOutputStream::flushBufferToFile">
+<area shape="rect" id="node2" href="$class_index_output_stream.html#a5bac92b4674c6d93c1dc14af9a89156c" title="Sample data into buffer, apply reduction or flush to disk &#45; based on a sensor mask. " alt="" coords="187,5,320,44"/>
+<area shape="rect" id="node3" href="$class_index_output_stream.html#a912a25d0f9f7fded943d9bfa1534b519" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="187,68,320,107"/>
+<area shape="rect" id="node4" href="$class_index_output_stream.html#a2f8e695d37bcc2f54df9e60c06418fc2" title="Checkpoint the stream. " alt="" coords="187,131,320,169"/>
+</map>

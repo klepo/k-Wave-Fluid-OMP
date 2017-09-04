@@ -1,0 +1,18 @@
+<map id="KSpaceFirstOrder3DSolver::sumPressureTermsNonlinearLossless" name="KSpaceFirstOrder3DSolver::sumPressureTermsNonlinearLossless">
+<area shape="rect" id="node2" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="295,5,482,44"/>
+<area shape="rect" id="node3" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="301,68,476,93"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#afdc5cc9f0b66c5943bcf7ce61f122e46" title="Get pressure matrix. " alt="" coords="303,117,474,156"/>
+<area shape="rect" id="node6" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="309,180,468,205"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a9c6ec227e0d799245857992548efb01a" title="Get density matrix in x direction. " alt="" coords="303,229,474,268"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#ae29d6a3518343dc0da0fb0cf9a3d2454" title="Get density matrix in y direction. " alt="" coords="303,292,474,331"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#a088717c923775762ac9ad3cc708806e3" title="Get density matrix in z direction. " alt="" coords="303,355,474,393"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="297,417,480,443"/>
+<area shape="rect" id="node11" href="$class_parameters.html#a6ab9c9208100f13a6f5c2d5c9a13ba69" title="Get scalar value of sound speed squared. " alt="" coords="309,467,468,492"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#ab8c225afe7e85466e7e122d54eb83740" title="Get the c^2 matrix from the container. " alt="" coords="303,516,474,555"/>
+<area shape="rect" id="node13" href="$class_parameters.html#ad3be941594589f9061487544fe13c381" title="Is nonlinear coefficient homogeneous in the medium (scalar value)? " alt="" coords="289,579,488,604"/>
+<area shape="rect" id="node14" href="$class_k_space_first_order3_d_solver.html#a3b1892fe075028a3c1a12b608684a03b" title="Get B on A (nonlinear coefficient). " alt="" coords="303,628,474,667"/>
+<area shape="rect" id="node15" href="$class_parameters.html#ad76a0fb737c095702e1bb16431c5f4fc" title="Is density in the medium homogeneous (scalar value)? " alt="" coords="290,691,487,716"/>
+<area shape="rect" id="node16" href="$class_parameters.html#a4fa21993c841b8461e7372407a63a0a4" title="Get value of homogeneous medium density. " alt="" coords="302,740,475,765"/>
+<area shape="rect" id="node17" href="$class_k_space_first_order3_d_solver.html#ac455df90d5e7a76ce1beeea3aabb7986" title="Get ambient density matrix. " alt="" coords="303,789,474,828"/>
+<area shape="rect" id="node4" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="536,68,679,93"/>
+</map>

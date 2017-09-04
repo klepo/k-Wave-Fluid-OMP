@@ -1,0 +1,16 @@
+<map id="KSpaceFirstOrder3DSolver::printStatistics" name="KSpaceFirstOrder3DSolver::printStatistics">
+<area shape="rect" id="node2" href="$class_parameters.html#a1c5c9756337976b8bf0fad6e2d151626" title="Get total number of time steps. " alt="" coords="260,5,380,31"/>
+<area shape="rect" id="node3" href="$class_parameters.html#a74a45ad55bfb91e8e39153a01d0dd9d8" title="Get actual simulation time step. " alt="" coords="237,55,403,80"/>
+<area shape="rect" id="node4" href="$class_parameters.html#a8c0782bc3c58707a87f52f69b2376eb2" title="Get progress print interval. " alt="" coords="229,104,411,143"/>
+<area shape="rect" id="node6" href="$class_time_measure.html#afd34544fb28963c2906aa6ba0ca86ca8" title="Take stop timestamp. " alt="" coords="257,167,383,192"/>
+<area shape="rect" id="node7" href="$class_time_measure.html#a995e00f7ecd4ac3b2dc16807fc5d40bc" title="Get elapsed time. " alt="" coords="224,216,416,241"/>
+<area shape="rect" id="node8" href="$class_time_measure.html#a3f0bbe78d1f4105d1809d0f516416e96" title="Get time spent in previous legs. " alt="" coords="224,265,416,304"/>
+<area shape="rect" id="node9" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="278,328,362,353"/>
+<area shape="rect" id="node14" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="503,415,596,440"/>
+<area shape="rect" id="node5" href="$class_command_line_parameters.html#a95d7c2cda276137a592dec3cf957e1ac" title="Get progress print interval. " alt="" coords="466,104,633,143"/>
+<area shape="rect" id="node10" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="474,217,625,243"/>
+<area shape="rect" id="node12" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="503,267,596,292"/>
+<area shape="rect" id="node13" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="464,316,635,341"/>
+<area shape="rect" id="node15" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="472,365,627,391"/>
+<area shape="rect" id="node11" href="$class_logger.html#a12c65c342201179b9b3fc9ded2555d4c" title="Extract a word from a string stream based on delimiters. " alt="" coords="683,292,796,317"/>
+</map>

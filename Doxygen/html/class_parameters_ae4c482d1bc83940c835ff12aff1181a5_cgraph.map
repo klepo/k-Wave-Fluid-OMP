@@ -1,0 +1,16 @@
+<map id="Parameters::printSimulatoinSetup" name="Parameters::printSimulatoinSetup">
+<area shape="rect" id="node2" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="525,143,609,168"/>
+<area shape="rect" id="node3" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="709,44,859,69"/>
+<area shape="rect" id="node9" href="$class_parameters.html#a12e7e0e755e20296697b5b5ed98f01ab" title="Get number of CPU threads to use. " alt="" coords="227,57,436,83"/>
+<area shape="rect" id="node11" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="238,159,425,197"/>
+<area shape="rect" id="node12" href="$class_parameters.html#a1c5c9756337976b8bf0fad6e2d151626" title="Get total number of time steps. " alt="" coords="271,221,391,247"/>
+<area shape="rect" id="node13" href="$class_command_line_parameters.html#a9bd65d0cfa42fffefdc9c69932bb987c" title="Print setup commandline parameters. " alt="" coords="245,271,417,309"/>
+<area shape="rect" id="node15" href="$class_parameters.html#a7c36e5176ad893dce7f8d07e607b88bb" title="Get sensor mask type (linear or corners). " alt="" coords="230,333,433,359"/>
+<area shape="rect" id="node5" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="737,192,831,217"/>
+<area shape="rect" id="node6" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="699,93,869,119"/>
+<area shape="rect" id="node7" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="737,143,831,168"/>
+<area shape="rect" id="node8" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="707,241,861,267"/>
+<area shape="rect" id="node4" href="$class_logger.html#a12c65c342201179b9b3fc9ded2555d4c" title="Extract a word from a string stream based on delimiters. " alt="" coords="917,143,1031,168"/>
+<area shape="rect" id="node10" href="$class_command_line_parameters.html#a1ee82458798c1fade130d7aa9a720c74" title="Get number of threads. " alt="" coords="484,57,651,96"/>
+<area shape="rect" id="node14" href="$class_command_line_parameters.html#a6d5dd5cf7c7e9068925b5cd5149e16a1" title="Is checkpoint enabled? " alt="" coords="484,213,651,252"/>
+</map>

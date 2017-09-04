@@ -1,0 +1,13 @@
+<map id="KSpaceFirstOrder3DSolver::getTemp3Real3D" name="KSpaceFirstOrder3DSolver::getTemp3Real3D">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#aa0dc0784182ae930255b125611be6335" title="Compute new values of acoustic velocity. " alt="" coords="539,198,709,236"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#a3da4f6de88973806bb7c3ce94a291748" title="Compute acoustic pressure for nonlinear case. " alt="" coords="535,20,713,59"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#a71218eb45a28022ff65abf9031bd3516" title="Compute acoustic pressure for linear case. " alt="" coords="539,83,709,122"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#adf8eca790c03ecd69b256990a6b3fe43" title="Compute acoustic velocity for heterogeneous medium and a uniform grid. " alt="" coords="254,140,457,179"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#a249d7ec72db890c7e60552f92a11acdc" title="Compute acoustic velocity for homogeneous medium and a uniform grid. " alt="" coords="234,255,477,294"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#ac4f146845d079a4787c60fccf3d3626f" title="Compute acoustic velocity for homogenous medium and nonuniform grid. " alt="" coords="224,318,487,356"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="761,35,932,74"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="980,131,1197,170"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1464,90,1635,128"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1683,96,1732,122"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1245,131,1416,170"/>
+</map>

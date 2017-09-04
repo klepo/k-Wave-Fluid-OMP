@@ -1,4 +1,5 @@
 <map id="MatrixClasses/BaseMatrix.h" name="MatrixClasses/BaseMatrix.h">
-<area shape="rect" id="node2" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes. " alt="" coords="5,155,152,181"/>
-<area shape="rect" id="node5" href="$_h_d_f5___file_8h.html" title="The header file containing the HDF5 related classes. " alt="" coords="185,81,311,106"/>
+<area shape="rect" id="node2" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes. " alt="" coords="5,152,153,177"/>
+<area shape="rect" id="node4" href="$_hdf5_file_8h.html" title="The header file containing the HDF5 related classes. " alt="" coords="241,79,347,104"/>
+<area shape="rect" id="node9" href="$_matrix_names_8h.html" title="The header file storing names of all variables. " alt="" coords="502,152,633,177"/>
 </map>

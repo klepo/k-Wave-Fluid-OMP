@@ -1,0 +1,7 @@
+<map id="CommandLineParameters::getCheckpointInterval" name="CommandLineParameters::getCheckpointInterval">
+<area shape="rect" id="node2" href="$class_parameters.html#a68c5188cd0ab31bedd724cce46d4879a" title="Get checkpoint interval. " alt="" coords="220,5,391,44"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#ae6473ea5f05f0afe7f381fc0f88eadd0" title="Is time to checkpoint (save actual state on disk)? " alt="" coords="439,5,616,44"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="664,5,841,44"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="889,5,1067,44"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1115,12,1164,37"/>
+</map>

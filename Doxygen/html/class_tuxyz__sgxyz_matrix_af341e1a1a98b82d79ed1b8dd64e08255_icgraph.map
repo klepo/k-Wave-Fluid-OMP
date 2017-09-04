@@ -1,0 +1,7 @@
+<map id="Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize" name="Tuxyz_sgxyzMatrix::Compute_ux_sgx_normalize">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a196ebd95f9c91f815c3c15d3e4736416" title="compute new values of for ux_sgx, uy_sgy, uz_sgz. " alt="" coords="232,5,409,44"/>
+<area shape="rect" id="node6" href="$class_tuxyz__sgxyz_matrix.html#a7d55f7be3c976fe627c09221d22ad89a" title="Constructor. " alt="" coords="255,68,386,107"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="457,5,635,44"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="683,5,860,44"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="908,12,957,37"/>
+</map>

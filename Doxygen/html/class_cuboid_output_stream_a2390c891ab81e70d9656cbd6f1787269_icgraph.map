@@ -1,0 +1,4 @@
+<map id="CuboidOutputStream::flushBufferToFile" name="CuboidOutputStream::flushBufferToFile">
+<area shape="rect" id="node2" href="$class_cuboid_output_stream.html#a810ef1350a6056415ad07fd201e11877" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="191,5,328,44"/>
+<area shape="rect" id="node3" href="$class_cuboid_output_stream.html#a67b7139e6de7d449a266ac193be74ef9" title="Checkpoint the stream and close. " alt="" coords="191,68,328,107"/>
+</map>

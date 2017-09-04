@@ -1,0 +1,10 @@
+<map id="Containers/MatrixRecord.h" name="Containers/MatrixRecord.h">
+<area shape="rect" id="node2" href="$_matrix_container_8h.html" title="The header file containing the matrix container. " alt="" coords="196,79,379,104"/>
+<area shape="rect" id="node9" href="$_matrix_record_8cpp.html" title="The implementation file containing metadata about matrices stored in the matrix container. " alt="" coords="403,79,585,104"/>
+<area shape="rect" id="node3" href="$_k_space_first_order3_d_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="5,225,175,264"/>
+<area shape="rect" id="node5" href="$_k_space_first_order3_d_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="140,312,309,351"/>
+<area shape="rect" id="node6" href="$_output_stream_container_8h.html" title="The header file defining the output stream container. " alt="" coords="250,152,474,177"/>
+<area shape="rect" id="node8" href="$_matrix_container_8cpp.html" title="The implementation file containing the matrix container. " alt="" coords="498,152,693,177"/>
+<area shape="rect" id="node4" href="$main_8cpp.html" title="The main file of kspaceFirstOrder3D&#45;OMP. " alt="" coords="43,319,115,344"/>
+<area shape="rect" id="node7" href="$_output_stream_container_8cpp.html" title="The implementation file for the output stream container. " alt="" coords="301,232,538,257"/>
+</map>

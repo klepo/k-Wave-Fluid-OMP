@@ -1,0 +1,14 @@
+<map id="Parameters::getNt" name="Parameters::getNt">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a446f100b97c0cf3f7c02e29105c79ce1" title="Print parameters of the simulation. " alt="" coords="661,5,848,44"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="417,67,595,105"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a4e0cfb97e23f5df12385ee1966691aa8" title="Print progress statistics. " alt="" coords="173,124,351,163"/>
+<area shape="rect" id="node7" href="$class_t_base_output_h_d_f5_stream.html#aaabc990b91747ff2c380c77bc656ac57" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="180,187,344,225"/>
+<area shape="rect" id="node11" href="$class_t_index_output_h_d_f5_stream.html#afc865b5d2d44387a096b085a392a10a1" title="Create a HDF5 stream and allocate data for it. " alt="" coords="179,249,345,288"/>
+<area shape="rect" id="node12" href="$class_t_cuboid_output_h_d_f5_stream.html#ad32c05893dfc36984c58a2ab511f5f95" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="174,315,350,353"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="896,44,945,69"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="666,68,843,107"/>
+<area shape="rect" id="node8" href="$class_t_index_output_h_d_f5_stream.html#a7342efe72c0e6fcaeb9134904c5af590" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="423,129,589,168"/>
+<area shape="rect" id="node9" href="$class_t_cuboid_output_h_d_f5_stream.html#ac2c704c5a81c154a5d8ead0d9f93bc00" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="418,192,594,231"/>
+<area shape="rect" id="node10" href="$class_t_whole_domain_output_h_d_f5_stream.html#a567b784ea3474013c73827214daae779" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="399,255,613,293"/>
+<area shape="rect" id="node13" href="$class_t_cuboid_output_h_d_f5_stream.html#aa06e50911303e33944f8bb6af2dc9a2f" title="Create a HDF5 stream and allocate data for it. " alt="" coords="418,317,594,356"/>
+</map>

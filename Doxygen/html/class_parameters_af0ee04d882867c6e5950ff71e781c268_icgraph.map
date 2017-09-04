@@ -1,0 +1,11 @@
+<map id="Parameters::getDt" name="Parameters::getDt">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="401,111,579,149"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a5d71b23c9eb8bc6a68e4d07a4a727ce7" title="Generate kappa matrix for non&#45;absorbing media. " alt="" coords="175,41,352,80"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#acf40f82dab3d9d6d5b285d9d612ef602" title="Generate kappa matrix, absorb_nabla1, absorb_nabla2 for absorbing media. " alt="" coords="175,104,352,156"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#af6e45192a13b6b9c586820c3945a76d1" title="Calculate dt ./ rho0 for non&#45;uniform grids. " alt="" coords="175,180,352,232"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#ada7ca1729bb1ebfcca2929307c37a21d" title="Compute new values of rhox, rhoy, rhoz for non&#45;linear case. " alt="" coords="173,256,353,295"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a7d72cd92743592e21d3fd3cb9d5bd7a1" title="Compute new values of rhox, rhoy, rhoz for linear case. " alt="" coords="175,319,352,357"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="627,184,804,223"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="852,191,901,216"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="401,256,579,295"/>
+</map>

@@ -1,0 +1,29 @@
+<map id="BaseFloatMatrix::getDimensionSizes" name="BaseFloatMatrix::getDimensionSizes">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#af6e45192a13b6b9c586820c3945a76d1" title="Calculate dt ./ rho0 for non&#45;uniform grids. " alt="" coords="264,5,441,57"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a04b287d499cb340b5a25f14790d306b0" title="Compute part of the new velocity &#45; gradient of p. " alt="" coords="264,107,441,145"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#a5f470d96be02edd35667a9d6dbc7e0d1" title="Compute new values of for duxdx, duydy, dzdz. " alt="" coords="527,169,704,208"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#ada7ca1729bb1ebfcca2929307c37a21d" title="Compute new values of rhox, rhoy, rhoz for non&#45;linear case. " alt="" coords="525,232,705,271"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#a7d72cd92743592e21d3fd3cb9d5bd7a1" title="Compute new values of rhox, rhoy, rhoz for linear case. " alt="" coords="527,295,704,333"/>
+<area shape="rect" id="node13" href="$class_fftw_complex_matrix.html#ac6a7665580966f17abcbcac113e5a356" title="Create FFTW plan for 3D Real&#45;to&#45;Complex. " alt="" coords="285,325,420,364"/>
+<area shape="rect" id="node15" href="$class_fftw_complex_matrix.html#af4538aa207c3fc72dc2ae45bfd8c2845" title="Create FFTW plan for 3D Complex&#45;to&#45;Real. " alt="" coords="285,388,420,427"/>
+<area shape="rect" id="node16" href="$class_fftw_complex_matrix.html#af1e46eea72ec8f5cfa5531ebe49653c4" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the x dimension. " alt="" coords="281,451,424,489"/>
+<area shape="rect" id="node17" href="$class_fftw_complex_matrix.html#a456bdccc725f39fcac2c4cc979d32117" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the y dimension. " alt="" coords="281,513,424,552"/>
+<area shape="rect" id="node18" href="$class_fftw_complex_matrix.html#a809a3d57663932ffe18a578a345792f1" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the z dimension. " alt="" coords="281,576,424,615"/>
+<area shape="rect" id="node19" href="$class_fftw_complex_matrix.html#a8da50b0d086ed943487c58c9b4ec53b3" title="Create FFTW plan for Complex&#45;to&#45;Real in the x dimension. " alt="" coords="281,639,424,677"/>
+<area shape="rect" id="node20" href="$class_fftw_complex_matrix.html#af54d1233c2e4bec4c70e6b155e71373e" title="Create FFTW plan for Complex&#45;to&#45;Real in the y dimension. " alt="" coords="281,701,424,740"/>
+<area shape="rect" id="node21" href="$class_fftw_complex_matrix.html#a832882fbfc4e308ee4bd5dde004d4b3b" title="Create FFTW plan for Complex&#45;to&#45;Real in the z dimension. " alt="" coords="281,764,424,803"/>
+<area shape="rect" id="node22" href="$class_t_cuboid_output_h_d_f5_stream.html#a1362996944abc0d65bb4e13c09a53df0" title="Sample data into buffer and apply reduction, or flush to disk &#45; based on a sensor mask..." alt="" coords="265,827,441,865"/>
+<area shape="rect" id="node23" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0e177c166b45ef1501633de357defc54" title="Create a HDF5 stream and allocate data for it. " alt="" coords="245,889,460,928"/>
+<area shape="rect" id="node24" href="$class_t_whole_domain_output_h_d_f5_stream.html#a507830a4ec48323a9ef621a0bec49d6f" title="Reopen the output stream after restart and reload data. " alt="" coords="245,952,460,991"/>
+<area shape="rect" id="node25" href="$class_t_whole_domain_output_h_d_f5_stream.html#a5fabbc0d46644947ecdf97e4ffdd2e07" title="Sample data into buffer and apply reduction, or flush to disk (no sensor mask here). " alt="" coords="245,1015,460,1053"/>
+<area shape="rect" id="node26" href="$class_t_whole_domain_output_h_d_f5_stream.html#a00039c4003bdda0c00769a99b125a21a" title="Flush the buffer to the file. " alt="" coords="245,1077,460,1116"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="771,47,948,85"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="996,169,1173,208"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1221,176,1271,201"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#aa5597bf6aeed1124ef9f16ae3971a69b" title="Calculate p0_source. " alt="" coords="527,44,704,83"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a196ebd95f9c91f815c3c15d3e4736416" title="compute new values of for ux_sgx, uy_sgy, uz_sgz. " alt="" coords="527,107,704,145"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="771,169,948,208"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#ab11cbf74a1e06cfd258270cef3daa12f" title="Initialize FFT plans. " alt="" coords="527,513,704,552"/>
+<area shape="rect" id="node27" href="$class_t_whole_domain_output_h_d_f5_stream.html#a567b784ea3474013c73827214daae779" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="508,1045,723,1084"/>
+<area shape="rect" id="node28" href="$class_t_whole_domain_output_h_d_f5_stream.html#a0d57ac1b9475d2204cf60ce9b85887f0" title="Checkpoint the stream and close. " alt="" coords="508,1108,723,1147"/>
+</map>

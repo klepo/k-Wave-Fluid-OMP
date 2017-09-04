@@ -1,0 +1,13 @@
+<map id="KSpaceFirstOrder3DSolver::getDuzdz" name="KSpaceFirstOrder3DSolver::getDuzdz">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a8b3dbe0230bc67e81f7f2bfe8d8c9274" title="Compute new values of acoustic velocity gradients. " alt="" coords="465,5,636,44"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#a45d1d6593a66a61ea2bb52329f27be20" title="Compute new values of acoustic density for nonlinear case. " alt="" coords="465,68,636,107"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#acaf1d7efb66e7b6a27bef4c132018c7b" title="Compute new values of acoustic density for linear case. " alt="" coords="465,131,636,169"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#a139b515162d60ab627152cc7ca8c46d3" title="Calculate three temporary sums in the new pressure formula before taking the FFT, nonlinear absorbing..." alt="" coords="684,308,896,347"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#a69c10a9d97dc25466cbbb701ca4b84a9" title="Calculate two temporary sums in the new pressure formula before taking the FFT, linear absorbing case..." alt="" coords="224,193,417,232"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="705,92,875,131"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="944,149,1161,188"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1428,121,1599,160"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1647,128,1696,153"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1209,149,1380,188"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#a71218eb45a28022ff65abf9031bd3516" title="Compute acoustic pressure for linear case. " alt="" coords="465,193,636,232"/>
+</map>

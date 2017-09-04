@@ -1,0 +1,4 @@
+<map id="WholeDomainOutputStream::flushBufferToFile" name="WholeDomainOutputStream::flushBufferToFile">
+<area shape="rect" id="node2" href="$class_whole_domain_output_stream.html#a3b1fb37b8b36fcb7760e4670dc8cc7a3" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="228,5,403,44"/>
+<area shape="rect" id="node3" href="$class_whole_domain_output_stream.html#ab32f9aab4c0d216a1fefd55f4378c71c" title="Checkpoint the stream and close. " alt="" coords="228,68,403,107"/>
+</map>

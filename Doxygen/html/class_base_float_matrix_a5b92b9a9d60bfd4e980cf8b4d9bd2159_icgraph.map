@@ -1,0 +1,23 @@
+<map id="BaseFloatMatrix::getDimensionSizes" name="BaseFloatMatrix::getDimensionSizes">
+<area shape="rect" id="node2" href="$class_fftw_complex_matrix.html#ac6a7665580966f17abcbcac113e5a356" title="Create FFTW plan for 3D Real&#45;to&#45;Complex. " alt="" coords="265,5,400,44"/>
+<area shape="rect" id="node8" href="$class_fftw_complex_matrix.html#af4538aa207c3fc72dc2ae45bfd8c2845" title="Create FFTW plan for 3D Complex&#45;to&#45;Real. " alt="" coords="265,68,400,107"/>
+<area shape="rect" id="node9" href="$class_fftw_complex_matrix.html#af1e46eea72ec8f5cfa5531ebe49653c4" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the x dimension. " alt="" coords="261,131,404,169"/>
+<area shape="rect" id="node10" href="$class_fftw_complex_matrix.html#a456bdccc725f39fcac2c4cc979d32117" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the y dimension. " alt="" coords="261,193,404,232"/>
+<area shape="rect" id="node11" href="$class_fftw_complex_matrix.html#a809a3d57663932ffe18a578a345792f1" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the z dimension. " alt="" coords="261,256,404,295"/>
+<area shape="rect" id="node12" href="$class_fftw_complex_matrix.html#a8da50b0d086ed943487c58c9b4ec53b3" title="Create FFTW plan for Complex&#45;to&#45;Real in the x dimension. " alt="" coords="261,319,404,357"/>
+<area shape="rect" id="node13" href="$class_fftw_complex_matrix.html#af54d1233c2e4bec4c70e6b155e71373e" title="Create FFTW plan for Complex&#45;to&#45;Real in the y dimension. " alt="" coords="261,381,404,420"/>
+<area shape="rect" id="node14" href="$class_fftw_complex_matrix.html#a832882fbfc4e308ee4bd5dde004d4b3b" title="Create FFTW plan for Complex&#45;to&#45;Real in the z dimension. " alt="" coords="261,444,404,483"/>
+<area shape="rect" id="node15" href="$class_cuboid_output_stream.html#a85871e9da9dce716a47056d9b684aea5" title="Sample data into buffer and apply reduction, or flush to disk &#45; based on a sensor mask..." alt="" coords="264,507,401,545"/>
+<area shape="rect" id="node16" href="$class_cuboid_output_stream.html#a0a7c2a0bc79b6b9533b266655c3be32f" title="Sample aggregated values. " alt="" coords="264,569,401,608"/>
+<area shape="rect" id="node17" href="$class_whole_domain_output_stream.html#aae7404cff551602af2150cc6c7b180d9" title="Create a HDF5 stream and allocate data for it. " alt="" coords="245,632,420,671"/>
+<area shape="rect" id="node18" href="$class_whole_domain_output_stream.html#a4c19b17b2e3714d7e7481397a924892f" title="Reopen the output stream after restart and reload data. " alt="" coords="245,695,420,733"/>
+<area shape="rect" id="node19" href="$class_whole_domain_output_stream.html#a5d7558d73cb29df351b1fdd1b693a346" title="Sample data into buffer and apply reduction, or flush to disk (no sensor mask here). " alt="" coords="245,757,420,796"/>
+<area shape="rect" id="node20" href="$class_whole_domain_output_stream.html#a7c6ed8ee3ca02cb1791d8a6af616ceae" title="Flush the buffer to the file. " alt="" coords="245,820,420,859"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="470,225,641,264"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1175,225,1345,264"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="691,253,908,292"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1393,232,1443,257"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="956,253,1127,292"/>
+<area shape="rect" id="node21" href="$class_whole_domain_output_stream.html#a3b1fb37b8b36fcb7760e4670dc8cc7a3" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="468,788,643,827"/>
+<area shape="rect" id="node22" href="$class_whole_domain_output_stream.html#ab32f9aab4c0d216a1fefd55f4378c71c" title="Checkpoint the stream and close. " alt="" coords="468,851,643,889"/>
+</map>

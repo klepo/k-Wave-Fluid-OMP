@@ -1,0 +1,9 @@
+<map id="KSpaceFirstOrder3DSolver::computeAbsorbtionTerm" name="KSpaceFirstOrder3DSolver::computeAbsorbtionTerm">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a3da4f6de88973806bb7c3ce94a291748" title="Compute acoustic pressure for nonlinear case. " alt="" coords="224,17,403,55"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="669,86,887,125"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#a71218eb45a28022ff65abf9031bd3516" title="Compute acoustic pressure for linear case. " alt="" coords="228,79,399,118"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="451,29,621,67"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1153,58,1324,97"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1372,65,1421,90"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="935,86,1105,125"/>
+</map>

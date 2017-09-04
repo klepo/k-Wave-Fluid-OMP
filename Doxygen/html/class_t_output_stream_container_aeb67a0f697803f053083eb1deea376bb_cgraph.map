@@ -1,0 +1,7 @@
+<map id="TOutputStreamContainer::CreateNewOutputStream" name="TOutputStreamContainer::CreateNewOutputStream">
+<area shape="rect" id="node2" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="243,5,397,31"/>
+<area shape="rect" id="node4" href="$class_parameters.html#a7c36e5176ad893dce7f8d07e607b88bb" title="Get sensor mask type (linear or corners). " alt="" coords="219,55,421,80"/>
+<area shape="rect" id="node5" href="$class_parameters.html#a43a65353c4e6c731efc8d577be0a5915" title="Get output file handle. " alt="" coords="238,104,402,129"/>
+<area shape="rect" id="node6" href="$class_t_matrix_container.html#a5a5275e27478117139defb904088f24b" title="Get the matrix with a specific type from the container. " alt="" coords="233,153,407,179"/>
+<area shape="rect" id="node3" href="$class_parameters.html#af4d94ee360ac0157d9065f78797fe9a1" title="Constructor not allowed for public. " alt="" coords="469,5,624,31"/>
+</map>

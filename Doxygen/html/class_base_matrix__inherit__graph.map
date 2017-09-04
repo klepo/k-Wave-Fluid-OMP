@@ -1,0 +1,8 @@
+<map id="BaseMatrix" name="BaseMatrix">
+<area shape="rect" id="node2" href="$class_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="116,79,227,104"/>
+<area shape="rect" id="node6" href="$class_base_index_matrix.html" title="Abstract base class for index based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="251,79,364,104"/>
+<area shape="rect" id="node3" href="$class_complex_matrix.html" title="The class for complex matrices. " alt="" coords="17,152,121,177"/>
+<area shape="rect" id="node5" href="$class_real_matrix.html" title="The class for real matrices. " alt="" coords="145,152,227,177"/>
+<area shape="rect" id="node4" href="$class_fftw_complex_matrix.html" title="Class implementing 3D and 1D Real&#45;To&#45;Complex and Complex&#45;To&#45;Real transforms using FFTW interface..." alt="" coords="5,225,132,251"/>
+<area shape="rect" id="node7" href="$class_index_matrix.html" title="The class for 64b unsigned integers (indices). It is used for linear and cuboid corners masks to get ..." alt="" coords="265,152,350,177"/>
+</map>

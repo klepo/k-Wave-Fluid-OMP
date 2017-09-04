@@ -1,0 +1,10 @@
+<map id="KSpaceFirstOrder3DSolver::getAbsorbTau" name="KSpaceFirstOrder3DSolver::getAbsorbTau">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a08ff917c206cec495baf6b3251ae2602" title="Generate absorbTau, absorbEta for heterogenous medium. " alt="" coords="224,63,395,101"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#a4dac87ae9f35e81fe0d9dbdb582b908f" title="Sum sub&#45;terms to calculate new pressure, after FFTs, nonlinear case. " alt="" coords="443,120,631,159"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#a6842b34d355ca6e2e3ca96dcfd18d890" title="Sum sub&#45;terms to calculate new pressure, after FFTs, linear case. " alt="" coords="224,177,395,216"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#a26160d00758622e3f5bfd2d9aedf1bcc" title="Compute pre&#45;processing phase. " alt="" coords="451,5,622,44"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="679,63,896,101"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1163,35,1333,73"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1381,41,1431,67"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="944,63,1115,101"/>
+</map>

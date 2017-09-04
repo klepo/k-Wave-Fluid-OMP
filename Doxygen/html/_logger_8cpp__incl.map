@@ -1,0 +1,5 @@
+<map id="Logger/Logger.cpp" name="Logger/Logger.cpp">
+<area shape="rect" id="node4" href="$_logger_8h.html" title="The header file containing a class responsible for printing out info and error messages (stdout..." alt="" coords="171,79,284,104"/>
+<area shape="rect" id="node7" href="$_output_messages_8h.html" title="The header file including output messages based on the operating system. " alt="" coords="215,152,381,177"/>
+<area shape="rect" id="node8" href="$_error_messages_8h.html" title="The header file containing routines for error messages and error messages common for both linux and w..." alt="" coords="406,152,563,177"/>
+</map>

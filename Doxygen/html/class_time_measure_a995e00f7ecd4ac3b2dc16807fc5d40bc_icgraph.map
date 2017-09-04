@@ -1,0 +1,14 @@
+<map id="TimeMeasure::getElapsedTime" name="TimeMeasure::getElapsedTime">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1167,106,1337,145"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#a851722e7b3f82958a4d84cc787496f93" title="Print progress statistics. " alt="" coords="245,11,416,50"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#af17425f26554e70c6260ef204b628903" title="Is time to checkpoint (save actual state on disk). " alt="" coords="245,74,416,113"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#a227cf6aec222c1a7a427e7bd32f00cb7" title="Get total simulation time. " alt="" coords="464,189,635,227"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#a15f7e13ab9fdf8ed7ee844d26db0c6f0" title="Get pre&#45;processing time. " alt="" coords="245,301,416,339"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#acbf2a462ba329968b9fa9eb12067068b" title="Get data load time. " alt="" coords="706,246,877,285"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#af652b54fe50a39cc943640765747240f" title="Get simulation time (time loop). " alt="" coords="245,363,416,402"/>
+<area shape="rect" id="node13" href="$class_k_space_first_order3_d_solver.html#ae36fc2b5acfba35746743ea72b1d0989" title="Get post&#45;processing time. " alt="" coords="245,426,416,465"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1385,195,1435,221"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="464,23,635,62"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="683,23,900,62"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="948,23,1119,62"/>
+</map>

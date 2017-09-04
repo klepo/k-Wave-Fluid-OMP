@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['operator_2d',['operator-',['../struct_t_dimension_sizes.html#a4a0eeb4404460098aad4402767f276d3',1,'TDimensionSizes']]]
+  ['operator_2d',['operator-',['../struct_dimension_sizes.html#ac84a427b6b78cf83f511600481b165dc',1,'DimensionSizes']]]
 ];

@@ -1,0 +1,17 @@
+<map id="KSpaceFirstOrder3DSolver" name="KSpaceFirstOrder3DSolver">
+<area shape="rect" id="node2" href="$class_time_measure.html" title="Class measuring elapsed time. " alt="" coords="1603,302,1700,327"/>
+<area shape="rect" id="node3" href="$class_parameters.html" title="Class storing all parameters of the simulation. " alt="" coords="1290,261,1375,286"/>
+<area shape="rect" id="node4" href="$class_hdf5_file.html" title="Class wrapping the HDF5 routines. " alt="" coords="633,275,701,301"/>
+<area shape="rect" id="node17" href="$class_base_output_stream.html" title="Abstract base class for output data streams (sampled data). " alt="" coords="983,339,1108,365"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="291,227,366,253"/>
+<area shape="rect" id="node7" href="$class_hdf5_file_header.html" title="Class for HDF5 file header. " alt="" coords="991,121,1100,146"/>
+<area shape="rect" id="node10" href="$class_command_line_parameters.html" title="The class to parse and store command line parameters. " alt="" coords="776,175,943,201"/>
+<area shape="rect" id="node13" href="$struct_matrix_record.html" title="A structure storing details about the matrix. " alt="" coords="619,402,714,427"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="5,221,123,259"/>
+<area shape="rect" id="node9" href="$struct_dimension_sizes.html" title="Structure with 4D dimension sizes (3 in space and 1 in time). " alt="" coords="9,491,119,517"/>
+<area shape="rect" id="node19" href="$class_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="273,491,384,517"/>
+<area shape="rect" id="node11" href="$class_matrix_container.html" title="Class implementing the matrix container. " alt="" coords="1443,469,1552,494"/>
+<area shape="rect" id="node14" href="$class_base_matrix.html" title="Abstract base class. The common ancestor defining the common interface and allowing derived classes t..." alt="" coords="23,385,105,410"/>
+<area shape="rect" id="node15" href="$class_output_stream_container.html" title="A container for output streams. " alt="" coords="1576,414,1727,439"/>
+<area shape="rect" id="node18" href="$class_real_matrix.html" title="The class for real matrices. " alt="" coords="626,454,707,479"/>
+</map>

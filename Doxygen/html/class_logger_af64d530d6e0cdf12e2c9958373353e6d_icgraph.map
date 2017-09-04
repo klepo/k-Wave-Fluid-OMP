@@ -1,0 +1,51 @@
+<map id="Logger::formatMessage" name="Logger::formatMessage">
+<area shape="rect" id="node2" href="$class_matrix_container.html#a9973c09a2bb15fa6c1d38f83e1b7edb7" title="Create all matrix objects in the container. " alt="" coords="948,50,1143,75"/>
+<area shape="rect" id="node5" href="$class_hdf5_file.html#a221729661d8548219175b4cece2f064c" title="Create the HDF5 file. " alt="" coords="991,546,1099,571"/>
+<area shape="rect" id="node9" href="$class_hdf5_file.html#a7ff9c11dcb7b1e171d7e6e7a498b0545" title="Open the HDF5 file. " alt="" coords="994,698,1097,723"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a64ac186b60226dd447580b0a15b98aa1" title="Read scalar values from the input HDF5 file. " alt="" coords="1191,1331,1376,1370"/>
+<area shape="rect" id="node11" href="$class_parameters.html#ab5a94d4c887319ee776bc7feb40fcdd1" title="Parse command line and read scalar values form the input file. " alt="" coords="1456,1338,1563,1363"/>
+<area shape="rect" id="node12" href="$class_hdf5_file.html#a2f2ba2b43b8fb3b12db9ea327b369248" title="Close the HDF5 file. " alt="" coords="492,419,595,444"/>
+<area shape="rect" id="node15" href="$class_hdf5_file.html#a2a39ee5ea25970a7dd078ce682520afe" title="Create a HDF5 group at a specified place in the file tree. " alt="" coords="472,571,615,596"/>
+<area shape="rect" id="node17" href="$class_hdf5_file.html#a13401c9566e35b327af16bf230af7d6e" title="Open a HDF5 group at a specified place in the file tree. " alt="" coords="475,1015,611,1040"/>
+<area shape="rect" id="node19" href="$class_hdf5_file.html#ab09e1d1114830bccc80e7fee04df2004" title="Open a dataset at a specified place in the file tree. " alt="" coords="471,1399,615,1424"/>
+<area shape="rect" id="node20" href="$class_hdf5_file.html#acb2a105dfb942edf47c9dfaa9f9736ae" title="Write the scalar value under a specified group. " alt="" coords="715,914,882,939"/>
+<area shape="rect" id="node22" href="$class_k_space_first_order3_d_solver.html#a39aa8d400c984454df2d70ca79085250" title="Check the output file has the correct format and version. " alt="" coords="1198,879,1369,918"/>
+<area shape="rect" id="node23" href="$class_k_space_first_order3_d_solver.html#a184df4f95ecd81be7c6a90e5e3dc186d" title="Check the file type and the version of the checkpoint file. " alt="" coords="1198,720,1369,759"/>
+<area shape="rect" id="node24" href="$class_complex_matrix.html#a0e52f43c59b9634847bf1221b0f8aed2" title="Read matrix from HDF5 file. " alt="" coords="1203,1876,1364,1902"/>
+<area shape="rect" id="node26" href="$class_index_matrix.html#affa0a0a83dac1aad8ef7db8b733232a1" title="Read matrix from HDF5 file. " alt="" coords="1212,2130,1355,2155"/>
+<area shape="rect" id="node28" href="$class_real_matrix.html#a9b875981400e72e14f9c15859042cbec" title="Read matrix from HDF5 file. " alt="" coords="1214,2180,1353,2206"/>
+<area shape="rect" id="node32" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="723,964,874,990"/>
+<area shape="rect" id="node34" href="$class_hdf5_file.html#a6967bff33507f44a57e1a397acf3bbcb" title="Write a hyperslab into the dataset. " alt="" coords="719,1015,878,1040"/>
+<area shape="rect" id="node35" href="$class_hdf5_file.html#a3210d2273ea3e90320673eff70e91caf" title="Write a cuboid selected within the matrixData into a hyperslab. " alt="" coords="437,1116,649,1142"/>
+<area shape="rect" id="node36" href="$class_hdf5_file.html#a667746624294c81046bc04ee3971d423" title="Write sensor data selected by the sensor mask &#45; Occasionally very slow, do not use! ..." alt="" coords="205,1167,388,1206"/>
+<area shape="rect" id="node37" href="$class_hdf5_file.html#a112d8041f8dedc169ae70fe4a704bf0c" title="Read data from the dataset at a specified place in the file tree. " alt="" coords="701,1775,896,1800"/>
+<area shape="rect" id="node38" href="$class_hdf5_file.html#af561b101cb41c96d67266be823b123e7" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="447,1464,639,1503"/>
+<area shape="rect" id="node39" href="$class_hdf5_file.html#a4e511c8bd3d6d48f7ca895bf6bd6069d" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="208,1382,385,1420"/>
+<area shape="rect" id="node40" href="$class_hdf5_file.html#a97212fd272ab3452ee67c6e15ee5830e" title="Get dataset element count at a specified place in the file tree. " alt="" coords="720,1319,877,1344"/>
+<area shape="rect" id="node41" href="$class_hdf5_file.html#a0d809dcf87519a67c03fd7566b0f47a1" title="Read matrix data type from the dataset at a specified place in the file tree. " alt="" coords="706,2072,891,2098"/>
+<area shape="rect" id="node42" href="$class_hdf5_file.html#a191248f03bffe6c3db7667d702250978" title="Read matrix dataset domain type at a specified place in the file tree. " alt="" coords="697,2016,900,2042"/>
+<area shape="rect" id="node43" href="$class_hdf5_file.html#a0bf4466acb32565bcc8935a228544cb6" title="Write string attribute into the dataset under the root group. " alt="" coords="208,1230,385,1255"/>
+<area shape="rect" id="node44" href="$class_hdf5_file.html#afb0e924858798ceafcde23a48a0ba182" title="Read string attribute from the dataset under the root group. " alt="" coords="455,1996,631,2022"/>
+<area shape="rect" id="node45" href="$class_hdf5_file_header.html#a91f4a73415ccfd1b6b43905de1dbf844" title="Set creation time. " alt="" coords="214,336,379,375"/>
+<area shape="rect" id="node46" href="$class_hdf5_file_header.html#ad01b653395568c89a1c326aac73f761b" title="Set memory consumption. " alt="" coords="209,2484,384,2523"/>
+<area shape="rect" id="node47" href="$class_hdf5_file_header.html#a84996539dfcecd5a69b4dd8f24ed7f72" title="Set execution times in file header. " alt="" coords="204,2547,389,2586"/>
+<area shape="rect" id="node48" href="$class_hdf5_file_header.html#af911ba4c7586ee7593f929ddfee61ccb" title="Set number of cores. " alt="" coords="209,2610,384,2648"/>
+<area shape="rect" id="node49" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="1003,191,1087,216"/>
+<area shape="rect" id="node50" href="$class_parameters.html#ae4c482d1bc83940c835ff12aff1181a5" title="Print the simulation setup (all parameters). " alt="" coords="1197,351,1370,390"/>
+<area shape="rect" id="node3" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="1201,34,1366,59"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#a7eaf336838afbecdfd7cec33de1831e4" title="Memory allocation. " alt="" coords="1198,135,1369,174"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#a158019a08bff430f0d5af5a223e4875d" title="Load simulation data. " alt="" coords="1424,663,1595,702"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="1198,480,1369,519"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1424,192,1595,231"/>
+<area shape="rect" id="node13" href="$class_hdf5_file.html#ac94747e6778e12ccb0dc31deaa6f0ecb" title="Destructor. " alt="" coords="982,444,1109,470"/>
+<area shape="rect" id="node14" href="$class_hdf5_file.html#aa360ceb797433a9e761b6edefe6376ee" title="Is the file opened? " alt="" coords="742,571,855,596"/>
+<area shape="rect" id="node16" href="$class_cuboid_output_stream.html#a410e03e7c368a94be0aa848826ea65d7" title="Create a HDF5 stream and allocate data for it. " alt="" coords="1215,816,1352,855"/>
+<area shape="rect" id="node18" href="$class_cuboid_output_stream.html#a6e935536568301879f35de57c8d7f595" title="Reopen the output stream after restart and reload data. " alt="" coords="1215,1410,1352,1448"/>
+<area shape="rect" id="node21" href="$class_hdf5_file.html#a757c1108f5f459f03d10433d07ba3a81" title="Get handle to the root group of the file. " alt="" coords="970,1319,1121,1344"/>
+<area shape="rect" id="node30" href="$class_index_output_stream.html#ac2c7cb482d0692da82a1ecbe774152aa" title="Reopen the output stream after restart and reload data. " alt="" coords="1217,1566,1350,1604"/>
+<area shape="rect" id="node31" href="$class_whole_domain_output_stream.html#a4c19b17b2e3714d7e7481397a924892f" title="Reopen the output stream after restart and reload data. " alt="" coords="1196,1718,1371,1756"/>
+<area shape="rect" id="node25" href="$class_complex_matrix.html#a00f98f57af23b00246f3da87ecf2fce9" title="Write data into HDF5 file. " alt="" coords="1202,1218,1365,1243"/>
+<area shape="rect" id="node27" href="$class_index_matrix.html#a61a89e4c5845adf5ede8d63f980d1e6c" title="Write data into HDF5 file. " alt="" coords="1212,1167,1355,1192"/>
+<area shape="rect" id="node29" href="$class_real_matrix.html#abee43b845583fbd6f0ece07ef8f5c869" title="Write data into HDF5 file. " alt="" coords="1214,1116,1353,1142"/>
+<area shape="rect" id="node33" href="$class_cuboid_output_stream.html#a4ec419267dd78848670a99add453cbdd" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="973,850,1117,888"/>
+</map>

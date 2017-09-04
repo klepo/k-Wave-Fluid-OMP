@@ -1,7 +1,13 @@
 var searchData=
 [
-  ['loaddata',['LoadData',['../struct_t_matrix_record.html#ad62f4bbc8892d3ffc46bbc89c35b9100',1,'TMatrixRecord']]],
-  ['loaddatafromcheckpointhdf5file',['LoadDataFromCheckpointHDF5File',['../class_t_matrix_container.html#acaacad1846e94feabeb42ded610b625e',1,'TMatrixContainer']]],
-  ['loaddatafrominputhdf5file',['LoadDataFromInputHDF5File',['../class_t_matrix_container.html#ace4c0b6c7a303f8eedc94e9a4794361e',1,'TMatrixContainer']]],
-  ['loadinputdata',['LoadInputData',['../class_t_k_space_first_order3_d_solver.html#a3669de8b5aa4c8847a11039357b9b281',1,'TKSpaceFirstOrder3DSolver']]]
+  ['loaddata',['loadData',['../struct_matrix_record.html#ac42297131603ae070bd51dc1fdd3fc30',1,'MatrixRecord']]],
+  ['loaddatafromcheckpointfile',['loadDataFromCheckpointFile',['../class_matrix_container.html#adc34543e615aea2e6f85c80d9503a8db',1,'MatrixContainer']]],
+  ['loaddatafrominputfile',['loadDataFromInputFile',['../class_matrix_container.html#ac0cb21a1d1d3b0713df28eda11acf46b',1,'MatrixContainer']]],
+  ['loadelapsedtimefromoutputfile',['loadElapsedTimeFromOutputFile',['../class_k_space_first_order3_d_solver.html#ae9dad87cd7eba989051efbdd247511bf',1,'KSpaceFirstOrder3DSolver']]],
+  ['loadinputdata',['loadInputData',['../class_k_space_first_order3_d_solver.html#a158019a08bff430f0d5af5a223e4875d',1,'KSpaceFirstOrder3DSolver']]],
+  ['log',['log',['../class_logger.html#a6e186f1585b51f7724f8bb42be50aee2',1,'Logger::log(const LogLevel queryLevel, const std::string &amp;format, Args ... args)'],['../class_logger.html#a1f43b721e5067f707bb6d9d25832f2d3',1,'Logger::log(const LogLevel queryLevel, const std::string &amp;message)']]],
+  ['logger',['Logger',['../class_logger.html',1,'Logger'],['../class_logger.html#aefffc02e0c6c0ab09ec1f77fe35f6439',1,'Logger::Logger()=delete'],['../class_logger.html#add0f34d4c753c86af8074840a72366b3',1,'Logger::Logger(const Logger &amp;)=delete']]],
+  ['logger_2ecpp',['Logger.cpp',['../_logger_8cpp.html',1,'']]],
+  ['logger_2eh',['Logger.h',['../_logger_8h.html',1,'']]],
+  ['loglevel',['LogLevel',['../class_logger.html#ac744681e23720966b5f430ec2060da36',1,'Logger']]]
 ];

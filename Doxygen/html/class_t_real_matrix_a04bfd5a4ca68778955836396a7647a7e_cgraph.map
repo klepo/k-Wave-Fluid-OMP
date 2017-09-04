@@ -1,0 +1,11 @@
+<map id="TRealMatrix::ReadDataFromHDF5File" name="TRealMatrix::ReadDataFromHDF5File">
+<area shape="rect" id="node2" href="$class_hdf5_file.html#a75ed636dc7cb914291d16e9923904a79" title="Read matrix data type from the dataset. " alt="" coords="240,5,431,31"/>
+<area shape="rect" id="node4" href="$class_hdf5_file.html#a2218a0a1f96000dc9b8101f513ce36a2" title="Get handle to the root group. " alt="" coords="259,55,412,80"/>
+<area shape="rect" id="node5" href="$class_hdf5_file.html#a939bae6059963610a99515d4a524d2b7" title="Read matrix domain type from the dataset under a specified group. " alt="" coords="232,104,439,129"/>
+<area shape="rect" id="node6" href="$class_hdf5_file.html#a4ff671d8d5e76021dde20aa8cdd23466" title="Read data from the dataset under a specified group &#45; float dataset. " alt="" coords="236,153,435,179"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#a51673e94077b0be73033670a71063ef0" title="Read string attribute from the dataset under the root group. " alt="" coords="493,52,675,77"/>
+<area shape="rect" id="node7" href="$class_hdf5_file.html#abdc220fd24db882662e5126e93d96e07" title="Get dimension sizes of the dataset under a specified group. " alt="" coords="487,119,681,157"/>
+<area shape="rect" id="node9" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="497,181,671,207"/>
+<area shape="rect" id="node8" href="$class_hdf5_file.html#a17f91488a9aaf91ea45b7570d75f015b" title="Get number of dimensions of the dataset under a specified group. " alt="" coords="729,119,908,157"/>
+<area shape="rect" id="node10" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="747,181,890,207"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="KSpaceFirstOrder3DSolver::getBOnA" name="KSpaceFirstOrder3DSolver::getBOnA">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a139b515162d60ab627152cc7ca8c46d3" title="Calculate three temporary sums in the new pressure formula before taking the FFT, nonlinear absorbing..." alt="" coords="236,5,448,44"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#af2284a5d7ec7da9bda91e5ec35d76164" title="Sum sub&#45;terms for new pressure, linear lossless case. " alt="" coords="224,68,460,107"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="508,37,725,76"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="773,37,944,76"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="992,37,1163,76"/>
+<area shape="rect" id="node6" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1211,44,1260,69"/>
+</map>

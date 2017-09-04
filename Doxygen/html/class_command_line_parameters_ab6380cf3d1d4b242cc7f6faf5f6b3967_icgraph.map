@@ -1,0 +1,9 @@
+<map id="CommandLineParameters::isCheckpointEnabled" name="CommandLineParameters::isCheckpointEnabled">
+<area shape="rect" id="node2" href="$class_parameters.html#aa51a324f2f589500d656dcb49dc29d61" title="Is checkpoint enabled? " alt="" coords="220,92,383,131"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a3669de8b5aa4c8847a11039357b9b281" title="Load simulation data from the input file. " alt="" coords="656,5,833,44"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="881,104,1059,143"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#ab11cbf74a1e06cfd258270cef3daa12f" title="Initialize FFT plans. " alt="" coords="431,120,608,159"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#ae6473ea5f05f0afe7f381fc0f88eadd0" title="Is time to checkpoint (save actual state on disk)? " alt="" coords="431,183,608,221"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1107,69,1156,95"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="656,177,833,216"/>
+</map>

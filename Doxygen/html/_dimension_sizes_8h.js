@@ -1,5 +1,5 @@
 var _dimension_sizes_8h =
 [
-    [ "TDimensionSizes", "struct_t_dimension_sizes.html", "struct_t_dimension_sizes" ],
-    [ "DATA_ALIGNMENT", "_dimension_sizes_8h.html#a71ab27a1ce012a5b0ee1cc96ef6bf114", null ]
+    [ "DimensionSizes", "struct_dimension_sizes.html", "struct_dimension_sizes" ],
+    [ "kDataAlignment", "_dimension_sizes_8h.html#a43135905d240d9225c98a1ab1cd0e146", null ]
 ];

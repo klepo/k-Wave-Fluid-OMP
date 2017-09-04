@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousUniform" name="KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousUniform">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#afc38ac60f042b7657fba197347ea947a" title="Get temporary matrix for 1D fft in x. " alt="" coords="283,373,454,412"/>
+<area shape="rect" id="node8" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="980,1567,1167,1605"/>
+<area shape="rect" id="node39" href="$class_fftw_complex_matrix.html#acf6f9256e5329b47e8baa67e53abe7c1" title="Compute forward out&#45;of&#45;place 3D Complex&#45;to&#45;Real FFT. " alt="" coords="303,739,435,777"/>
+<area shape="rect" id="node40" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="507,787,666,812"/>
+<area shape="rect" id="node41" href="$class_k_space_first_order3_d_solver.html#a77069932c43bcb4eeb1653d7c7467a48" title="Get velocity matrix on staggered grid in x direction. " alt="" coords="283,436,454,475"/>
+<area shape="rect" id="node42" href="$class_k_space_first_order3_d_solver.html#acecc8b7f8f60a3f05cd710a39ac05693" title="Get temporary matrix for 1D fft in y. " alt="" coords="283,499,454,537"/>
+<area shape="rect" id="node43" href="$class_k_space_first_order3_d_solver.html#afca4083335ce33b2ae4438cd4aca9491" title="Get velocity matrix on staggered grid in y direction. " alt="" coords="283,561,454,600"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#afd158a7b7474ee05c09e403ff73d88ac" title="Get temporary matrix for 1D fft in z. " alt="" coords="283,624,454,663"/>
+<area shape="rect" id="node45" href="$class_k_space_first_order3_d_solver.html#a875d422a158e241f6959af028944ab74" title="Get velocity matrix on staggered grid in z direction. " alt="" coords="283,311,454,349"/>
+<area shape="rect" id="node46" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="281,853,456,879"/>
+<area shape="rect" id="node48" href="$class_parameters.html#a6129b5530976a346022bafa6b225903a" title="Get value of dt / rho0Sgx. " alt="" coords="283,903,454,941"/>
+<area shape="rect" id="node49" href="$class_parameters.html#a18d1911afbc4e2d97342123a166f842b" title="Get value of dt / rho0Sgy. " alt="" coords="283,965,454,1004"/>
+<area shape="rect" id="node50" href="$class_parameters.html#a21480540fa713d4ca2473d1fab6a7e74" title="Get value of dt / rho0Sgz. " alt="" coords="283,1028,454,1067"/>
+<area shape="rect" id="node3" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="504,349,669,375"/>
+<area shape="rect" id="node4" href="$class_matrix_container.html#a9973c09a2bb15fa6c1d38f83e1b7edb7" title="Create all matrix objects in the container. " alt="" coords="717,55,912,80"/>
+<area shape="rect" id="node6" href="$class_matrix_container.html#ac07e369441915288927f5c8c7705e44d" title="Populate the container based on the simulation type. " alt="" coords="723,783,906,808"/>
+<area shape="rect" id="node32" href="$class_matrix_container.html#a603541865d8f1d3ffda39288d1514bf8" title="Destroy and free all matrices. " alt="" coords="723,5,906,31"/>
+<area shape="rect" id="node33" href="$class_matrix_container.html#ac0cb21a1d1d3b0713df28eda11acf46b" title="Load all marked matrices from the input HDF5 file. " alt="" coords="732,104,897,143"/>
+<area shape="rect" id="node35" href="$class_matrix_container.html#adc34543e615aea2e6f85c80d9503a8db" title="Load selected matrices from the checkpoint HDF5 file. " alt="" coords="732,167,897,205"/>
+<area shape="rect" id="node37" href="$class_matrix_container.html#af6fe7b98ad2c834ed3097e9c22e1ab3e" title="Store selected matrices into the checkpoint file. " alt="" coords="731,229,899,268"/>
+<area shape="rect" id="node5" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="998,25,1149,51"/>
+<area shape="rect" id="node7" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="996,173,1151,199"/>
+<area shape="rect" id="node9" href="$class_parameters.html#a92fd1aff7e90f3553e524f7eeb6b24bc" title="Get reduced dimension sizes of the simulation (complex classes). " alt="" coords="965,621,1182,660"/>
+<area shape="rect" id="node10" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="982,684,1165,709"/>
+<area shape="rect" id="node11" href="$class_parameters.html#ad76a0fb737c095702e1bb16431c5f4fc" title="Is density in the medium homogeneous (scalar value)? " alt="" coords="975,733,1172,759"/>
+<area shape="rect" id="node12" href="$class_parameters.html#a792445d4cbd4bfef4f78702b1148fcfe" title="Is the wave propagation nonlinear? " alt="" coords="978,783,1169,808"/>
+<area shape="rect" id="node13" href="$class_parameters.html#ad3be941594589f9061487544fe13c381" title="Is nonlinear coefficient homogeneous in the medium (scalar value)? " alt="" coords="974,832,1173,857"/>
+<area shape="rect" id="node14" href="$class_parameters.html#a3983946bb7b535f5165cf699f2584c90" title="Is the simulation absrobing or lossless? " alt="" coords="979,881,1167,907"/>
+<area shape="rect" id="node15" href="$class_parameters.html#abc0a2f4dea841c3a3e3502549daeba4f" title="Is alpha absorption coefficient homogeneous (scalar value)? " alt="" coords="989,931,1158,969"/>
+<area shape="rect" id="node16" href="$class_parameters.html#a7c36e5176ad893dce7f8d07e607b88bb" title="Get sensor mask type (linear or corners). " alt="" coords="972,993,1175,1019"/>
+<area shape="rect" id="node17" href="$class_parameters.html#a6ac960040cb45439ac471b1f0986920b" title="Get spatial size of the index sensor mask. " alt="" coords="985,1043,1161,1081"/>
+<area shape="rect" id="node18" href="$class_parameters.html#ad0b7e11921b7031063697c0fc1d0b60c" title="Get number of cuboids the sensor is composed of. " alt="" coords="985,1105,1161,1144"/>
+<area shape="rect" id="node19" href="$class_parameters.html#a2ba747370f0154ec72736e3490faed7d" title="Get initial pressure source flag (p0). " alt="" coords="980,1168,1167,1207"/>
+<area shape="rect" id="node20" href="$class_parameters.html#a595111584447c224639a673dd0ecea80" title="Get transducer source flag. " alt="" coords="988,1231,1159,1269"/>
+<area shape="rect" id="node21" href="$class_parameters.html#ac2c34618d26d71791ff76e671b1cf2c0" title="Get velocity in x source flag. " alt="" coords="962,1293,1185,1319"/>
+<area shape="rect" id="node22" href="$class_parameters.html#a3d98e8d2c9a011cc1405c1a9b5754abb" title="Get velocity in y source flag. " alt="" coords="962,1343,1185,1368"/>
+<area shape="rect" id="node23" href="$class_parameters.html#ae11cfc5fba879fdd4567d22e362f04ce" title="Get velocity in z source flag. " alt="" coords="963,1392,1184,1417"/>
+<area shape="rect" id="node24" href="$class_parameters.html#a3a1cb828ce3f65962bbfab8ff97e9fb2" title="Get spatial size of the velocity source. " alt="" coords="978,1441,1169,1480"/>
+<area shape="rect" id="node25" href="$class_parameters.html#a84263de37bcd4d1d7a7f66abca0c9010" title="Get spatial size of the transducer source. " alt="" coords="988,1504,1159,1543"/>
+<area shape="rect" id="node26" href="$class_parameters.html#a9a6cf68851b4df1313574835984523fe" title="Get pressure source flag. " alt="" coords="963,285,1183,311"/>
+<area shape="rect" id="node27" href="$class_parameters.html#aa64f70bc76f16b0cf2354914a1b7602e" title="Get number of time series in the pressure source. " alt="" coords="960,335,1187,360"/>
+<area shape="rect" id="node28" href="$class_parameters.html#a03bf0fb3fdaef038f4c64406ad3b7a1e" title="Get spatial size of the pressure source. " alt="" coords="975,384,1171,423"/>
+<area shape="rect" id="node29" href="$class_parameters.html#adc19724e0c86da74b31de2483b252369" title="Get number of time series in the velocity sources. " alt="" coords="963,447,1183,472"/>
+<area shape="rect" id="node30" href="$class_parameters.html#ad7855f2fca8bffe1042bef1e28a3d760" title="Enable non uniform grid? &#45; not implemented yet. " alt="" coords="986,496,1161,535"/>
+<area shape="rect" id="node31" href="$class_parameters.html#af33d8630ce8a083055aa590eb1651ab4" title="Is –u_non_staggered_raw set? " alt="" coords="983,559,1163,597"/>
+<area shape="rect" id="node34" href="$class_parameters.html#a4faef48c8cd2782203449522c9abc053" title="Get input file handle. " alt="" coords="996,75,1151,100"/>
+<area shape="rect" id="node36" href="$class_parameters.html#a0010e3144ebf47ea3c3b451f099fc5bf" title="Get checkpoint file handle. " alt="" coords="978,124,1169,149"/>
+<area shape="rect" id="node38" href="$class_parameters.html#a8482607b14614b17095214073d6f08d6" title="Get compression level. " alt="" coords="983,223,1164,261"/>
+<area shape="rect" id="node47" href="$struct_dimension_sizes.html#a5c6aaca27f32747a80b283f0f4eb4379" title="Does the object include spatial dimensions only? " alt="" coords="515,853,658,879"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="Hdf5File::IsOpened" name="Hdf5File::IsOpened">
+<area shape="rect" id="node2" href="$class_hdf5_file.html#abfdfe07886bcbe04062d866762e5d569" title="Create the file, overwrite if exist. " alt="" coords="188,56,299,81"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="355,5,532,44"/>
+<area shape="rect" id="node7" href="$class_hdf5_file.html#a42091b1963eea02a5c64914d565dc908" title="Open the file. " alt="" coords="191,105,295,131"/>
+<area shape="rect" id="node8" href="$class_t_parameters.html#adc13bf22ec12f6659996137f02476261" title="Read scalar values from the input HDF5 file. " alt="" coords="359,137,528,176"/>
+<area shape="rect" id="node10" href="$class_hdf5_file.html#ac94747e6778e12ccb0dc31deaa6f0ecb" title="Destructor. " alt="" coords="180,207,307,232"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a3669de8b5aa4c8847a11039357b9b281" title="Load simulation data from the input file. " alt="" coords="355,68,532,107"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="805,44,855,69"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="580,7,757,45"/>
+<area shape="rect" id="node9" href="$class_t_parameters.html#a575333cd5182c9e53e8e05aa325cdf6d" title="Destructor. " alt="" coords="581,144,756,169"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="KSpaceFirstOrder3DSolver::getSensorMaskCorners" name="KSpaceFirstOrder3DSolver::getSensorMaskCorners">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a26160d00758622e3f5bfd2d9aedf1bcc" title="Compute pre&#45;processing phase. " alt="" coords="224,5,395,44"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a16e2f82b3d79783bae2005857d473b8d" title="Post processing, and closing the output streams. " alt="" coords="224,68,395,107"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="927,36,1097,75"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="443,36,660,75"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1145,43,1195,68"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="708,36,879,75"/>
+</map>

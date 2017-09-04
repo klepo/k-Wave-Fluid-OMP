@@ -1,0 +1,4 @@
+<map id="KSpaceFirstOrder3DSolver::freeMemory" name="KSpaceFirstOrder3DSolver::freeMemory">
+<area shape="rect" id="node2" href="$class_matrix_container.html#a603541865d8f1d3ffda39288d1514bf8" title="Destroy and free all matrices. " alt="" coords="224,5,407,31"/>
+<area shape="rect" id="node3" href="$class_output_stream_container.html#a9c1b4288b64bea7cd02ab856b58bbcd4" title="Free all streams &#45; destroy them. " alt="" coords="240,55,391,93"/>
+</map>

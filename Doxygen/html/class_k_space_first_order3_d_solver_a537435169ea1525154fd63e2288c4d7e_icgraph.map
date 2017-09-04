@@ -1,0 +1,8 @@
+<map id="KSpaceFirstOrder3DSolver::printFullCodeNameAndLicense" name="KSpaceFirstOrder3DSolver::printFullCodeNameAndLicense">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#ae4a673b6785929dfb38e9d8c1212916d" title="Get code name &#45; release code version. " alt="" coords="253,59,424,97"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="956,33,1005,59"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="472,147,643,185"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="472,84,643,123"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="714,84,885,123"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="691,147,908,185"/>
+</map>

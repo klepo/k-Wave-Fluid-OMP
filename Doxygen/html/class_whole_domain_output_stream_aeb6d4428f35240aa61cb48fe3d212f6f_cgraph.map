@@ -1,0 +1,5 @@
+<map id="WholeDomainOutputStream::~WholeDomainOutputStream" name="WholeDomainOutputStream::~WholeDomainOutputStream">
+<area shape="rect" id="node2" href="$class_whole_domain_output_stream.html#a3756185cf71ec023090d2d9e236f673d" title="Close stream (apply post&#45;processing if necessary, flush data and close). " alt="" coords="252,5,427,44"/>
+<area shape="rect" id="node4" href="$class_base_output_stream.html#addb9cdc6c65b16fd9226687bf4285e37" title="Free memory. " alt="" coords="241,68,437,93"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#a286eb597f1da666cc3cee6d19259a4e4" title="Close dataset. " alt="" coords="485,12,631,37"/>
+</map>

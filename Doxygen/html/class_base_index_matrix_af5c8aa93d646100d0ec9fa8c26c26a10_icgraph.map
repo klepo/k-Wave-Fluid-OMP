@@ -1,0 +1,6 @@
+<map id="BaseIndexMatrix::zeroMatrix" name="BaseIndexMatrix::zeroMatrix">
+<area shape="rect" id="node2" href="$class_base_index_matrix.html#ad6af7cda3f63b7f2928b46f269a675f2" title="Aligned memory allocation (both on CPU and GPU). " alt="" coords="230,23,393,61"/>
+<area shape="rect" id="node5" href="$class_base_index_matrix.html#ae7c7836a2cdd9c6d2e553cca72b75ad9" title="The capacity of the matrix (this may differ from size due to padding, etc.). " alt="" coords="229,85,393,111"/>
+<area shape="rect" id="node3" href="$class_base_index_matrix.html#ab463ca6dfefe445419402a92493bc093" title="Get raw data out of the class (for direct kernel access), const version. " alt="" coords="441,5,604,31"/>
+<area shape="rect" id="node4" href="$class_index_matrix.html#a6de0a73ba7f5b80fece7e498dbf8f009" title="Constructor. " alt="" coords="445,55,600,80"/>
+</map>

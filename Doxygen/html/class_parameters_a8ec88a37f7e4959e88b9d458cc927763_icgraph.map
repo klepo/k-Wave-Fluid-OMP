@@ -1,0 +1,8 @@
+<map id="Parameters::getCopySensorMaskFlag" name="Parameters::getCopySensorMaskFlag">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="229,5,407,44"/>
+<area shape="rect" id="node5" href="$class_parameters.html#a8efc66975054f85805d8c7b68b366844" title="Save scalar values into the output HDF5 file. " alt="" coords="232,68,404,107"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="687,63,865,101"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="920,99,969,124"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="455,63,632,101"/>
+<area shape="rect" id="node7" href="$class_parameters.html#ab22c04bf1f6ada208355f0437cd5f34f" title="Shall the code print version and exit? " alt="" coords="680,127,872,152"/>
+</map>

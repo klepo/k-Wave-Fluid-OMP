@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['add_5fp_5fsource',['Add_p_source',['../class_t_k_space_first_order3_d_solver.html#aae73106cb84a3c63ad269099c97bb616',1,'TKSpaceFirstOrder3DSolver']]],
-  ['add_5fu_5fsource',['Add_u_source',['../class_t_k_space_first_order3_d_solver.html#a9d3512ebd2bd906c2d6b12e4e2188aa9',1,'TKSpaceFirstOrder3DSolver::Add_u_source()'],['../class_tuxyz__sgxyz_matrix.html#a01e34753ca2d070b8017a70c8d308a51',1,'Tuxyz_sgxyzMatrix::Add_u_source()']]],
-  ['addmatricesintocontainer',['AddMatricesIntoContainer',['../class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0',1,'TMatrixContainer']]],
-  ['addstreamsintocontainer',['AddStreamsIntoContainer',['../class_t_output_stream_container.html#aaf3a05b2c2c0f56dfcfba5181a748064',1,'TOutputStreamContainer']]],
-  ['addtransducersource',['AddTransducerSource',['../class_tuxyz__sgxyz_matrix.html#a94cc24af170bab4e60a7211d00c5b5d9',1,'Tuxyz_sgxyzMatrix']]],
-  ['allocatememory',['AllocateMemory',['../class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e',1,'TKSpaceFirstOrder3DSolver::AllocateMemory()'],['../class_t_base_float_matrix.html#ace873006962b353a092d966587f5762c',1,'TBaseFloatMatrix::AllocateMemory()'],['../class_t_base_index_matrix.html#a05f612c0d3cf579cd0375a9dc84acf4e',1,'TBaseIndexMatrix::AllocateMemory()'],['../class_t_f_f_t_w_complex_matrix.html#a855b45e70a46c8bb49feae7565690449',1,'TFFTWComplexMatrix::AllocateMemory()'],['../class_t_base_output_h_d_f5_stream.html#a56be65e5b731702170511a07ae696b87',1,'TBaseOutputHDF5Stream::AllocateMemory()']]]
+  ['addinitialpressuresource',['addInitialPressureSource',['../class_k_space_first_order3_d_solver.html#acf1113852e24fd58cbf92679722cbdd8',1,'KSpaceFirstOrder3DSolver']]],
+  ['addmatrices',['addMatrices',['../class_matrix_container.html#ac07e369441915288927f5c8c7705e44d',1,'MatrixContainer']]],
+  ['addpressuresource',['addPressureSource',['../class_k_space_first_order3_d_solver.html#af9a8fced68bc8ce387ced2361bf49369',1,'KSpaceFirstOrder3DSolver']]],
+  ['addstreams',['addStreams',['../class_output_stream_container.html#a97bd5bc7cd18225fc5a9e79ddd4d4418',1,'OutputStreamContainer']]],
+  ['addtransducersource',['addTransducerSource',['../class_k_space_first_order3_d_solver.html#ad21e8abd8477fc783f1ec997e559d8b8',1,'KSpaceFirstOrder3DSolver']]],
+  ['addvelocitysource',['addVelocitySource',['../class_k_space_first_order3_d_solver.html#a80d4787d6c6f94005bc2821bfcb2cefc',1,'KSpaceFirstOrder3DSolver']]],
+  ['allocatememory',['allocateMemory',['../class_k_space_first_order3_d_solver.html#a7eaf336838afbecdfd7cec33de1831e4',1,'KSpaceFirstOrder3DSolver::allocateMemory()'],['../class_base_float_matrix.html#a45030eb00edf4f50984b71e7e2f06e17',1,'BaseFloatMatrix::allocateMemory()'],['../class_base_index_matrix.html#ad6af7cda3f63b7f2928b46f269a675f2',1,'BaseIndexMatrix::allocateMemory()'],['../class_fftw_complex_matrix.html#a096548c1fafea9d51939ead596418686',1,'FftwComplexMatrix::allocateMemory()'],['../class_base_output_stream.html#afdf6a28f47a5ed79658cdda3b938f111',1,'BaseOutputStream::allocateMemory()']]]
 ];

@@ -1,0 +1,30 @@
+<map id="Parameters::getFullDimensionSizes" name="Parameters::getFullDimensionSizes">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a446f100b97c0cf3f7c02e29105c79ce1" title="Print parameters of the simulation. " alt="" coords="749,98,936,137"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a5d71b23c9eb8bc6a68e4d07a4a727ce7" title="Generate kappa matrix for non&#45;absorbing media. " alt="" coords="255,157,432,196"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#acf40f82dab3d9d6d5b285d9d612ef602" title="Generate kappa matrix, absorb_nabla1, absorb_nabla2 for absorbing media. " alt="" coords="255,220,432,272"/>
+<area shape="rect" id="node8" href="$class_t_k_space_first_order3_d_solver.html#a259167541c80e5a9bf29ebc24a329e46" title="Generate absorb_tau, absorb_eta for heterogenous media. " alt="" coords="247,81,440,133"/>
+<area shape="rect" id="node9" href="$class_t_k_space_first_order3_d_solver.html#a605a65536a407fd41eaafc4c94cc1e02" title="Calculate two temporary sums in the new pressure formula, linear absorbing case. " alt="" coords="240,901,447,940"/>
+<area shape="rect" id="node12" href="$class_t_k_space_first_order3_d_solver.html#ac5311980f3f2ece68a910d865a8567cc" title="Sum sub&#45;terms to calculate new pressure, linear case. " alt="" coords="255,776,432,814"/>
+<area shape="rect" id="node13" href="$class_t_k_space_first_order3_d_solver.html#a8c12f0598297c648fb756b0ce716cdb3" title="Sum sub&#45;terms for new p, linear lossless case. " alt="" coords="495,413,701,452"/>
+<area shape="rect" id="node15" href="$class_t_k_space_first_order3_d_solver.html#aecc0858f386df7c2aa89e6aed75db33a" title="Sum sub&#45;terms for new p, linear lossless case. " alt="" coords="250,838,437,877"/>
+<area shape="rect" id="node16" href="$class_t_k_space_first_order3_d_solver.html#a21665aa1ffc35c605f47a2d136a4cb97" title="Calculate ux_shifted, uy_shifted and uz_shifted. " alt="" coords="509,568,687,606"/>
+<area shape="rect" id="node18" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="991,853,1168,892"/>
+<area shape="rect" id="node19" href="$class_t_k_space_first_order3_d_solver.html#a68f38df42c3a290d1c50b339f69f0e84" title="Check the output file has the correct format and version. " alt="" coords="255,1016,432,1054"/>
+<area shape="rect" id="node21" href="$class_t_k_space_first_order3_d_solver.html#aebf7461323308eb62f861fd3c270c796" title="Check the checkpoint file has the correct format and version. " alt="" coords="255,1078,432,1117"/>
+<area shape="rect" id="node22" href="$class_fftw_complex_matrix.html#a0a1a09944585359fe46e64b56dd7d51e" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the x dimension. " alt="" coords="277,713,409,752"/>
+<area shape="rect" id="node23" href="$class_fftw_complex_matrix.html#accb5eeb163bf4178cfc4d525f185f5ff" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the y dimension. " alt="" coords="277,348,409,386"/>
+<area shape="rect" id="node24" href="$class_fftw_complex_matrix.html#a7ba7468abf27ebb7ad4e28ca4f938933" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the z dimension. " alt="" coords="277,410,409,449"/>
+<area shape="rect" id="node25" href="$class_fftw_complex_matrix.html#a263b515e8d26fea4bd9cf935795dea10" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the x dimension. " alt="" coords="277,473,409,512"/>
+<area shape="rect" id="node26" href="$class_fftw_complex_matrix.html#a4eae758747fe1fe56e7b6559a7ff00c1" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the y dimension. " alt="" coords="277,536,409,574"/>
+<area shape="rect" id="node27" href="$class_fftw_complex_matrix.html#a17a531b6696389aeb995b0631e867819" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the z dimension. " alt="" coords="277,598,409,637"/>
+<area shape="rect" id="node28" href="$class_t_matrix_container.html#a9b34003db9951f1bf982a71d0c2e5eb0" title="Set all matrices recored &#45; populate the container. " alt="" coords="984,1102,1175,1141"/>
+<area shape="rect" id="node3" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1448,940,1497,965"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="509,192,687,230"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="1223,853,1400,892"/>
+<area shape="rect" id="node10" href="$class_t_k_space_first_order3_d_solver.html#abdeb70ec2795fec7c2cdf24f61ff962a" title="Calculate new p linear&#45;case, absorbing. " alt="" coords="509,808,687,846"/>
+<area shape="rect" id="node11" href="$class_t_k_space_first_order3_d_solver.html#a71dba69d4cca89edc418f3c7a4c8e37d" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="991,688,1168,726"/>
+<area shape="rect" id="node14" href="$class_t_k_space_first_order3_d_solver.html#a0d967415e111376e1a2e5eccbe6c0f2d" title="Calculate new p, non&#45;linear case. " alt="" coords="752,460,933,498"/>
+<area shape="rect" id="node17" href="$class_t_k_space_first_order3_d_solver.html#a153d0bb845efc85199f1f402f1a2643e" title="Store sensor data. " alt="" coords="754,614,931,653"/>
+<area shape="rect" id="node20" href="$class_t_k_space_first_order3_d_solver.html#a3669de8b5aa4c8847a11039357b9b281" title="Load simulation data from the input file. " alt="" coords="509,1016,687,1054"/>
+<area shape="rect" id="node29" href="$class_t_k_space_first_order3_d_solver.html#a3c5c3615275825231bd5212085e1f49e" title="Memory allocation. " alt="" coords="1223,1085,1400,1124"/>
+</map>

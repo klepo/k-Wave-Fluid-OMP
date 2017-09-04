@@ -1,0 +1,7 @@
+<map id="FftwComplexMatrix::createC2RFftPlan3D" name="FftwComplexMatrix::createC2RFftPlan3D">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="188,5,359,44"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="891,5,1061,44"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="407,33,624,72"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1109,12,1159,37"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="672,33,843,72"/>
+</map>

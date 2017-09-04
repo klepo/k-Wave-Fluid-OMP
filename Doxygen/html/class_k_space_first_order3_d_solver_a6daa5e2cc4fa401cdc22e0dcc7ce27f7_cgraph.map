@@ -1,0 +1,4 @@
+<map id="KSpaceFirstOrder3DSolver::isCheckpointInterruption" name="KSpaceFirstOrder3DSolver::isCheckpointInterruption">
+<area shape="rect" id="node2" href="$class_parameters.html#a74a45ad55bfb91e8e39153a01d0dd9d8" title="Get actual simulation time step. " alt="" coords="224,5,389,31"/>
+<area shape="rect" id="node3" href="$class_parameters.html#a1c5c9756337976b8bf0fad6e2d151626" title="Get total number of time steps. " alt="" coords="247,55,367,80"/>
+</map>

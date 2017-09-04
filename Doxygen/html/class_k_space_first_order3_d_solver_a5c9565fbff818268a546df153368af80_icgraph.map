@@ -1,0 +1,10 @@
+<map id="KSpaceFirstOrder3DSolver::getTempFftwShift" name="KSpaceFirstOrder3DSolver::getTempFftwShift">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="661,5,832,44"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#aaf86e5341ff67ec4d8e13d2418121e61" title="compute shifted velocity for –u_non_staggered flag. " alt="" coords="224,63,395,101"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1364,81,1535,120"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="880,81,1097,120"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1583,88,1632,113"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1145,81,1316,120"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#aabbbec65ef6379f439f0e0a1d8a4ab8b" title="Store sensor data. " alt="" coords="443,120,613,159"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="661,171,832,209"/>
+</map>

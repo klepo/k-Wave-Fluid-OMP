@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::compute" name="KSpaceFirstOrder3DSolver::compute">
+<area shape="rect" id="node2" href="$class_time_measure.html#aefe6a04c6738896ad7d966b83af703ff" title="Take start timestamp. " alt="" coords="512,181,639,206"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="235,1725,405,1764"/>
+<area shape="rect" id="node5" href="$class_parameters.html#aea354cdb22dcfd11501dd987e16d2e4d" title="Is checkpoint enabled? " alt="" coords="494,1342,657,1381"/>
+<area shape="rect" id="node7" href="$class_parameters.html#ad184f273d660ef760a55d25ca0c32284" title="Get checkpoint file name. " alt="" coords="490,332,661,370"/>
+<area shape="rect" id="node8" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="533,506,617,532"/>
+<area shape="rect" id="node9" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="735,244,905,269"/>
+<area shape="rect" id="node10" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="773,506,867,532"/>
+<area shape="rect" id="node11" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="743,1488,897,1513"/>
+<area shape="rect" id="node27" href="$class_k_space_first_order3_d_solver.html#a26160d00758622e3f5bfd2d9aedf1bcc" title="Compute pre&#45;processing phase. " alt="" coords="235,810,405,849"/>
+<area shape="rect" id="node39" href="$class_time_measure.html#afd34544fb28963c2906aa6ba0ca86ca8" title="Take stop timestamp. " alt="" coords="512,394,639,420"/>
+<area shape="rect" id="node40" href="$class_time_measure.html#a995e00f7ecd4ac3b2dc16807fc5d40bc" title="Get elapsed time. " alt="" coords="224,2472,416,2497"/>
+<area shape="rect" id="node41" href="$class_k_space_first_order3_d_solver.html#aff3a7eede176038992e9d3acc16b8335" title="Get memory usage in MB on the host side. " alt="" coords="490,444,661,482"/>
+<area shape="rect" id="node42" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="235,512,405,550"/>
+<area shape="rect" id="node43" href="$class_parameters.html#a74a45ad55bfb91e8e39153a01d0dd9d8" title="Get actual simulation time step. " alt="" coords="493,282,658,308"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#a6daa5e2cc4fa401cdc22e0dcc7ce27f7" title="Was the loop interrupted to checkpoint? " alt="" coords="235,346,405,385"/>
+<area shape="rect" id="node45" href="$class_logger.html#a9037a21510052c0bcc285a5cea5daa80" title="Logger::getLevel" alt="" coords="263,2521,377,2546"/>
+<area shape="rect" id="node46" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="235,284,405,322"/>
+<area shape="rect" id="node47" href="$class_hdf5_file.html#a2f2ba2b43b8fb3b12db9ea327b369248" title="Close the HDF5 file. " alt="" coords="524,132,627,157"/>
+<area shape="rect" id="node48" href="$class_k_space_first_order3_d_solver.html#a16e2f82b3d79783bae2005857d473b8d" title="Post processing, and closing the output streams. " alt="" coords="235,1125,405,1164"/>
+<area shape="rect" id="node49" href="$class_parameters.html#a43a65353c4e6c731efc8d577be0a5915" title="Get output file handle. " alt="" coords="493,1230,657,1256"/>
+<area shape="rect" id="node50" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="235,574,405,613"/>
+<area shape="rect" id="node4" href="$class_parameters.html#a12e7e0e755e20296697b5b5ed98f01ab" title="Get number of CPU threads to use. " alt="" coords="471,1708,680,1733"/>
+<area shape="rect" id="node6" href="$class_hdf5_file.html#a80728801e0d787e8a6dcdfd18303a316" title="Can I access the file. " alt="" coords="509,1757,642,1782"/>
+<area shape="rect" id="node12" href="$class_fftw_complex_matrix.html#aa55883b5ce23a549726926214564ba79" title="Import wisdom from the file. " alt="" coords="509,1806,641,1845"/>
+<area shape="rect" id="node13" href="$class_k_space_first_order3_d_solver.html#afc38ac60f042b7657fba197347ea947a" title="Get temporary matrix for 1D fft in x. " alt="" coords="490,1869,661,1908"/>
+<area shape="rect" id="node14" href="$class_fftw_complex_matrix.html#ac6a7665580966f17abcbcac113e5a356" title="Create FFTW plan for 3D Real&#45;to&#45;Complex. " alt="" coords="508,1932,643,1970"/>
+<area shape="rect" id="node15" href="$class_k_space_first_order3_d_solver.html#afdc5cc9f0b66c5943bcf7ce61f122e46" title="Get pressure matrix. " alt="" coords="490,1280,661,1318"/>
+<area shape="rect" id="node16" href="$class_k_space_first_order3_d_solver.html#acecc8b7f8f60a3f05cd710a39ac05693" title="Get temporary matrix for 1D fft in y. " alt="" coords="490,1994,661,2033"/>
+<area shape="rect" id="node17" href="$class_k_space_first_order3_d_solver.html#afd158a7b7474ee05c09e403ff73d88ac" title="Get temporary matrix for 1D fft in z. " alt="" coords="490,2057,661,2096"/>
+<area shape="rect" id="node18" href="$class_fftw_complex_matrix.html#af4538aa207c3fc72dc2ae45bfd8c2845" title="Create FFTW plan for 3D Complex&#45;to&#45;Real. " alt="" coords="508,2120,643,2158"/>
+<area shape="rect" id="node19" href="$class_parameters.html#ab1bb703829e5662c16cb668c37688364" title="Get instance of the singleton class. " alt="" coords="498,2182,653,2208"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#a5c9565fbff818268a546df153368af80" title="Get temporary matrix for fft shift. " alt="" coords="490,2232,661,2270"/>
+<area shape="rect" id="node21" href="$class_fftw_complex_matrix.html#af1e46eea72ec8f5cfa5531ebe49653c4" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the x dimension. " alt="" coords="504,2294,647,2333"/>
+<area shape="rect" id="node22" href="$class_fftw_complex_matrix.html#a8da50b0d086ed943487c58c9b4ec53b3" title="Create FFTW plan for Complex&#45;to&#45;Real in the x dimension. " alt="" coords="504,2357,647,2396"/>
+<area shape="rect" id="node23" href="$class_fftw_complex_matrix.html#a456bdccc725f39fcac2c4cc979d32117" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the y dimension. " alt="" coords="504,1457,647,1496"/>
+<area shape="rect" id="node24" href="$class_fftw_complex_matrix.html#af54d1233c2e4bec4c70e6b155e71373e" title="Create FFTW plan for Complex&#45;to&#45;Real in the y dimension. " alt="" coords="504,1520,647,1558"/>
+<area shape="rect" id="node25" href="$class_fftw_complex_matrix.html#a809a3d57663932ffe18a578a345792f1" title="Create an FFTW plan for 1D Real&#45;to&#45;Complex in the z dimension. " alt="" coords="504,1582,647,1621"/>
+<area shape="rect" id="node26" href="$class_fftw_complex_matrix.html#a832882fbfc4e308ee4bd5dde004d4b3b" title="Create FFTW plan for Complex&#45;to&#45;Real in the z dimension. " alt="" coords="504,1645,647,1684"/>
+<area shape="rect" id="node28" href="$class_parameters.html#a7c36e5176ad893dce7f8d07e607b88bb" title="Get sensor mask type (linear or corners). " alt="" coords="474,1118,677,1144"/>
+<area shape="rect" id="node29" href="$class_k_space_first_order3_d_solver.html#a6d758877acd5d85c58aacdc79156d3f9" title="Get linear sensor mask (spatial geometry of the sensor). " alt="" coords="490,1168,661,1206"/>
+<area shape="rect" id="node30" href="$class_index_matrix.html#aad66a5391417bc2204f70ac08147cb25" title="Recompute indices MATALAB&#45;&gt;C++. " alt="" coords="481,894,669,933"/>
+<area shape="rect" id="node31" href="$class_k_space_first_order3_d_solver.html#af0d90e39247449b7b2cdbeab9c2fa307" title="Get cuboid corners sensor mask. (Spatial geometry of multiple sensors). " alt="" coords="490,1056,661,1094"/>
+<area shape="rect" id="node32" href="$class_parameters.html#a595111584447c224639a673dd0ecea80" title="Get transducer source flag. " alt="" coords="490,556,661,594"/>
+<area shape="rect" id="node33" href="$class_parameters.html#ac2c34618d26d71791ff76e671b1cf2c0" title="Get velocity in x source flag. " alt="" coords="464,957,687,982"/>
+<area shape="rect" id="node34" href="$class_parameters.html#a3d98e8d2c9a011cc1405c1a9b5754abb" title="Get velocity in y source flag. " alt="" coords="464,1006,687,1032"/>
+<area shape="rect" id="node35" href="$class_parameters.html#ae11cfc5fba879fdd4567d22e362f04ce" title="Get velocity in z source flag. " alt="" coords="465,670,686,696"/>
+<area shape="rect" id="node36" href="$class_k_space_first_order3_d_solver.html#a93246c00841e643cc8746f2702ab94bc" title="Get velocity source geometry data. " alt="" coords="490,720,661,758"/>
+<area shape="rect" id="node37" href="$class_k_space_first_order3_d_solver.html#aafe03640db7d29053b755cef7565d049" title="Get delay mask for many types sources. " alt="" coords="490,782,661,821"/>
+<area shape="rect" id="node38" href="$class_parameters.html#a9a6cf68851b4df1313574835984523fe" title="Get pressure source flag. " alt="" coords="465,845,685,870"/>
+</map>

@@ -1,0 +1,51 @@
+<map id="Parameters::getInstance" name="Parameters::getInstance">
+<area shape="rect" id="node2" href="$class_matrix_container.html#ac07e369441915288927f5c8c7705e44d" title="Populate the container based on the simulation type. " alt="" coords="216,334,399,359"/>
+<area shape="rect" id="node4" href="$class_output_stream_container.html#a97bd5bc7cd18225fc5a9e79ddd4d4418" title="Add all streams in simulation in the container, set all streams records here! " alt="" coords="910,115,1061,154"/>
+<area shape="rect" id="node7" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1821,247,1871,272"/>
+<area shape="rect" id="node8" href="$class_output_stream_container.html#ae8baf6a7e9d1365c752ae50c8920c497" title="Create a new output stream. " alt="" coords="691,58,842,96"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="900,563,1071,602"/>
+<area shape="rect" id="node21" href="$class_matrix_container.html#ac0cb21a1d1d3b0713df28eda11acf46b" title="Load all marked matrices from the input HDF5 file. " alt="" coords="225,383,390,422"/>
+<area shape="rect" id="node23" href="$class_matrix_container.html#adc34543e615aea2e6f85c80d9503a8db" title="Load selected matrices from the checkpoint HDF5 file. " alt="" coords="225,446,390,484"/>
+<area shape="rect" id="node24" href="$class_matrix_container.html#af6fe7b98ad2c834ed3097e9c22e1ab3e" title="Store selected matrices into the checkpoint file. " alt="" coords="223,620,391,659"/>
+<area shape="rect" id="node26" href="$class_hdf5_file_header.html#ad01b653395568c89a1c326aac73f761b" title="Set memory consumption. " alt="" coords="220,1399,395,1438"/>
+<area shape="rect" id="node28" href="$class_hdf5_file_header.html#af911ba4c7586ee7593f929ddfee61ccb" title="Set number of cores. " alt="" coords="220,1336,395,1375"/>
+<area shape="rect" id="node29" href="$class_fftw_complex_matrix.html#a0a1a09944585359fe46e64b56dd7d51e" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the x dimension. " alt="" coords="478,1162,610,1200"/>
+<area shape="rect" id="node30" href="$class_fftw_complex_matrix.html#accb5eeb163bf4178cfc4d525f185f5ff" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the y dimension. " alt="" coords="478,1224,610,1263"/>
+<area shape="rect" id="node31" href="$class_fftw_complex_matrix.html#a7ba7468abf27ebb7ad4e28ca4f938933" title="Compute 1D out&#45;of&#45;place Real&#45;to&#45;Complex FFT in the z dimension. " alt="" coords="478,1287,610,1326"/>
+<area shape="rect" id="node32" href="$class_fftw_complex_matrix.html#a263b515e8d26fea4bd9cf935795dea10" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the x dimension. " alt="" coords="701,1116,833,1155"/>
+<area shape="rect" id="node33" href="$class_fftw_complex_matrix.html#a4eae758747fe1fe56e7b6559a7ff00c1" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the y dimension. " alt="" coords="478,1099,610,1138"/>
+<area shape="rect" id="node34" href="$class_fftw_complex_matrix.html#a17a531b6696389aeb995b0631e867819" title="Compute 1D out&#45;of&#45;place Complex&#45;to&#45;Real FFT in the z dimension. " alt="" coords="701,1054,833,1092"/>
+<area shape="rect" id="node35" href="$class_fftw_complex_matrix.html#ae10892df26fdf8fd26191043a4b5648f" title="FftwComplexMatrix::\lgetWisdomFileName" alt="" coords="476,822,612,860"/>
+<area shape="rect" id="node39" href="$class_base_output_stream.html#a89a071ffb6fed297427c62977e2ac8ba" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="208,1462,407,1487"/>
+<area shape="rect" id="node44" href="$class_cuboid_output_stream.html#a6e935536568301879f35de57c8d7f595" title="Reopen the output stream after restart and reload data. " alt="" coords="239,1511,376,1550"/>
+<area shape="rect" id="node45" href="$class_cuboid_output_stream.html#a4ec419267dd78848670a99add453cbdd" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="235,1574,379,1612"/>
+<area shape="rect" id="node47" href="$class_index_output_stream.html#a0381100e6228f9b91933784ed8c465d4" title="Create a HDF5 stream and allocate data for it. " alt="" coords="241,1636,374,1675"/>
+<area shape="rect" id="node48" href="$class_index_output_stream.html#ac2c7cb482d0692da82a1ecbe774152aa" title="Reopen the output stream after restart and reload data. " alt="" coords="241,1699,374,1738"/>
+<area shape="rect" id="node49" href="$class_whole_domain_output_stream.html#aae7404cff551602af2150cc6c7b180d9" title="Create a HDF5 stream and allocate data for it. " alt="" coords="220,1762,395,1800"/>
+<area shape="rect" id="node50" href="$class_whole_domain_output_stream.html#a4c19b17b2e3714d7e7481397a924892f" title="Reopen the output stream after restart and reload data. " alt="" coords="220,1824,395,1863"/>
+<area shape="rect" id="node3" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="461,475,627,500"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#a7eaf336838afbecdfd7cec33de1831e4" title="Memory allocation. " alt="" coords="1142,210,1313,248"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#a902f0b84de6f280b49166fd4673ec66d" title="Get the kappa matrix from the container. " alt="" coords="681,375,852,414"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#ab8c225afe7e85466e7e122d54eb83740" title="Get the c^2 matrix from the container. " alt="" coords="681,438,852,476"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#afdc5cc9f0b66c5943bcf7ce61f122e46" title="Get pressure matrix. " alt="" coords="681,500,852,539"/>
+<area shape="rect" id="node16" href="$class_k_space_first_order3_d_solver.html#a77069932c43bcb4eeb1653d7c7467a48" title="Get velocity matrix on staggered grid in x direction. " alt="" coords="681,740,852,779"/>
+<area shape="rect" id="node18" href="$class_k_space_first_order3_d_solver.html#afca4083335ce33b2ae4438cd4aca9491" title="Get velocity matrix on staggered grid in y direction. " alt="" coords="681,803,852,842"/>
+<area shape="rect" id="node19" href="$class_k_space_first_order3_d_solver.html#a875d422a158e241f6959af028944ab74" title="Get velocity matrix on staggered grid in z direction. " alt="" coords="681,866,852,904"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#a2078517eaf4789b25fd9e6e2bba5e317" title="Get velocity shifted on normal grid in x direction. " alt="" coords="681,928,852,967"/>
+<area shape="rect" id="node5" href="$class_output_stream_container.html#ae3564271db4b5018ab374479f78d2178" title="operator [] " alt="" coords="1152,87,1303,126"/>
+<area shape="rect" id="node13" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1603,624,1773,663"/>
+<area shape="rect" id="node14" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="1119,878,1336,916"/>
+<area shape="rect" id="node15" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1384,878,1555,916"/>
+<area shape="rect" id="node17" href="$class_k_space_first_order3_d_solver.html#aaf86e5341ff67ec4d8e13d2418121e61" title="compute shifted velocity for –u_non_staggered flag. " alt="" coords="900,1054,1071,1092"/>
+<area shape="rect" id="node22" href="$class_k_space_first_order3_d_solver.html#a158019a08bff430f0d5af5a223e4875d" title="Load simulation data. " alt="" coords="459,360,629,399"/>
+<area shape="rect" id="node25" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="900,662,1071,700"/>
+<area shape="rect" id="node27" href="$class_hdf5_file_header.html#af3ef655a2ba46ddbdbd4e577b942876d" title="Check minor file version. " alt="" coords="455,1402,633,1440"/>
+<area shape="rect" id="node36" href="$class_fftw_complex_matrix.html#afab7eff93f9b0bee1cfdab1fe5c7193e" title="Export wisdom to the file. " alt="" coords="701,678,833,716"/>
+<area shape="rect" id="node37" href="$class_fftw_complex_matrix.html#aa55883b5ce23a549726926214564ba79" title="Import wisdom from the file. " alt="" coords="701,563,833,602"/>
+<area shape="rect" id="node38" href="$class_fftw_complex_matrix.html#a328405dae7c02b4cbe94c0025f3260c9" title="Destroy wisdom in the file (delete it). " alt="" coords="699,991,835,1030"/>
+<area shape="rect" id="node40" href="$class_base_output_stream.html#a38f3eb6d04f5d2818fbdcc9ce1a2cd52" title="Destructor. " alt="" coords="478,1642,610,1680"/>
+<area shape="rect" id="node41" href="$class_cuboid_output_stream.html#a810ef1350a6056415ad07fd201e11877" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="475,1704,613,1743"/>
+<area shape="rect" id="node42" href="$class_index_output_stream.html#a912a25d0f9f7fded943d9bfa1534b519" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="477,1516,611,1555"/>
+<area shape="rect" id="node43" href="$class_whole_domain_output_stream.html#a3b1fb37b8b36fcb7760e4670dc8cc7a3" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="457,1579,631,1618"/>
+<area shape="rect" id="node46" href="$class_cuboid_output_stream.html#a410e03e7c368a94be0aa848826ea65d7" title="Create a HDF5 stream and allocate data for it. " alt="" coords="475,1767,613,1806"/>
+</map>

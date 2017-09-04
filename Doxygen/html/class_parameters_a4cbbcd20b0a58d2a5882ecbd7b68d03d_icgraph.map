@@ -1,0 +1,7 @@
+<map id="Parameters::getAlphaPower" name="Parameters::getAlphaPower">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#acf40f82dab3d9d6d5b285d9d612ef602" title="Generate kappa matrix, absorb_nabla1, absorb_nabla2 for absorbing media. " alt="" coords="236,5,413,57"/>
+<area shape="rect" id="node6" href="$class_t_k_space_first_order3_d_solver.html#a259167541c80e5a9bf29ebc24a329e46" title="Generate absorb_tau, absorb_eta for heterogenous media. " alt="" coords="228,81,421,133"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a75727bfe1df00bc28af4a3dfb483a1aa" title="Compute pre&#45;processing phase. " alt="" coords="469,51,647,89"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="695,51,872,89"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="920,57,969,83"/>
+</map>

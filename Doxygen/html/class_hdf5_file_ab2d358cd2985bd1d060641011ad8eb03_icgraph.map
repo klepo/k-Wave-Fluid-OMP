@@ -1,0 +1,8 @@
+<map id="Hdf5File::WriteScalarValue" name="Hdf5File::WriteScalarValue">
+<area shape="rect" id="node2" href="$class_t_k_space_first_order3_d_solver.html#a65eff022a325abf794ce87b4a36d919a" title="Save checkpoint data. " alt="" coords="223,5,400,44"/>
+<area shape="rect" id="node5" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="448,63,625,101"/>
+<area shape="rect" id="node6" href="$class_t_parameters.html#a758ac1f6a3f7507f83b7aa4486cd3d1f" title="Save scalar values into the output HDF5 file. " alt="" coords="228,120,395,159"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="673,35,851,73"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="899,41,948,67"/>
+<area shape="rect" id="node7" href="$class_t_parameters.html#a575333cd5182c9e53e8e05aa325cdf6d" title="Destructor. " alt="" coords="449,127,624,152"/>
+</map>

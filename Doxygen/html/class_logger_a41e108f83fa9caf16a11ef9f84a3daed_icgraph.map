@@ -1,0 +1,24 @@
+<map id="Logger::setLevel" name="Logger::setLevel">
+<area shape="rect" id="node2" href="$class_command_line_parameters.html#aee5810a913506149904ac8986661de85" title="Parse commandline parameters. " alt="" coords="167,163,333,202"/>
+<area shape="rect" id="node3" href="$class_command_line_parameters.html#a560478f7605c5fb40edcfc79c9358751" title="Get start time index when sensor data collection begins. " alt="" coords="381,191,560,230"/>
+<area shape="rect" id="node4" href="$class_parameters.html#ab5a94d4c887319ee776bc7feb40fcdd1" title="Parse command line and read scalar values form the input file. " alt="" coords="647,141,754,166"/>
+<area shape="rect" id="node6" href="$class_parameters.html#afdf48d8de5070c384783b3eb1a7452ca" title="Get start time index when sensor data collection begins. " alt="" coords="608,307,793,346"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="2013,22,2063,47"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#aabbbec65ef6379f439f0e0a1d8a4ab8b" title="Store sensor data. " alt="" coords="855,101,1026,139"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="1090,158,1261,197"/>
+<area shape="rect" id="node13" href="$class_base_output_stream.html#a89a071ffb6fed297427c62977e2ac8ba" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="841,258,1040,283"/>
+<area shape="rect" id="node18" href="$class_cuboid_output_stream.html#a6e935536568301879f35de57c8d7f595" title="Reopen the output stream after restart and reload data. " alt="" coords="872,307,1009,346"/>
+<area shape="rect" id="node19" href="$class_cuboid_output_stream.html#a4ec419267dd78848670a99add453cbdd" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="869,370,1013,409"/>
+<area shape="rect" id="node21" href="$class_index_output_stream.html#a0381100e6228f9b91933784ed8c465d4" title="Create a HDF5 stream and allocate data for it. " alt="" coords="874,433,1007,471"/>
+<area shape="rect" id="node22" href="$class_index_output_stream.html#ac2c7cb482d0692da82a1ecbe774152aa" title="Reopen the output stream after restart and reload data. " alt="" coords="874,495,1007,534"/>
+<area shape="rect" id="node23" href="$class_whole_domain_output_stream.html#a4c19b17b2e3714d7e7481397a924892f" title="Reopen the output stream after restart and reload data. " alt="" coords="853,558,1028,597"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="1090,43,1261,82"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="1311,101,1528,139"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1795,73,1965,111"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1576,101,1747,139"/>
+<area shape="rect" id="node14" href="$class_base_output_stream.html#a38f3eb6d04f5d2818fbdcc9ce1a2cd52" title="Destructor. " alt="" coords="1109,221,1241,259"/>
+<area shape="rect" id="node15" href="$class_cuboid_output_stream.html#a810ef1350a6056415ad07fd201e11877" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="1107,283,1244,322"/>
+<area shape="rect" id="node16" href="$class_index_output_stream.html#a912a25d0f9f7fded943d9bfa1534b519" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="1109,346,1242,385"/>
+<area shape="rect" id="node17" href="$class_whole_domain_output_stream.html#a3b1fb37b8b36fcb7760e4670dc8cc7a3" title="Apply post&#45;processing on the buffer and flush it to the file. " alt="" coords="1088,409,1263,447"/>
+<area shape="rect" id="node20" href="$class_cuboid_output_stream.html#a410e03e7c368a94be0aa848826ea65d7" title="Create a HDF5 stream and allocate data for it. " alt="" coords="1107,471,1244,510"/>
+</map>

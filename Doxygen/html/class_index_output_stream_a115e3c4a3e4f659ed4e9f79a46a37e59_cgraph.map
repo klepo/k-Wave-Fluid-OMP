@@ -1,0 +1,5 @@
+<map id="IndexOutputStream::~IndexOutputStream" name="IndexOutputStream::~IndexOutputStream">
+<area shape="rect" id="node2" href="$class_index_output_stream.html#a2a51d7fba5323aac8eab4763e5c568fc" title="Close stream (apply post&#45;processing if necessary, flush data and close). " alt="" coords="219,5,353,44"/>
+<area shape="rect" id="node4" href="$class_base_output_stream.html#addb9cdc6c65b16fd9226687bf4285e37" title="Free memory. " alt="" coords="188,68,384,93"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#a286eb597f1da666cc3cee6d19259a4e4" title="Close dataset. " alt="" coords="432,12,577,37"/>
+</map>

@@ -1,10 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_t_base_matrix.html" title="Abstract base class, the common ancestor defining the common interface and allowing derived classes t..." alt="" coords="5,79,96,105"/>
-<area shape="rect" id="node2" href="$class_t_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="145,54,263,79"/>
-<area shape="rect" id="node7" href="$class_t_base_index_matrix.html" title="Abstract base class for index based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="144,103,264,129"/>
-<area shape="rect" id="node3" href="$class_t_complex_matrix.html" title="The class for complex matrices. " alt="" coords="313,5,423,30"/>
-<area shape="rect" id="node5" href="$class_t_real_matrix.html" title="The class for real matrices. " alt="" coords="324,54,412,79"/>
-<area shape="rect" id="node4" href="$class_t_f_f_t_w_complex_matrix.html" title="Class implementing 3D Real&#45;To&#45;Complex and Complex&#45;To&#45;Real transforms using FFTW interface. " alt="" coords="473,5,615,30"/>
-<area shape="rect" id="node6" href="$class_tuxyz__sgxyz_matrix.html" title="The velocity matrix. " alt="" coords="481,54,607,79"/>
-<area shape="rect" id="node8" href="$class_t_index_matrix.html" title="The class for 64b unsigned integers (indices). It is used for sensor_mask_index or sensor_corners_mas..." alt="" coords="322,103,414,129"/>
+<area shape="rect" id="node1" href="$class_base_matrix.html" title="Abstract base class. The common ancestor defining the common interface and allowing derived classes t..." alt="" coords="5,80,88,105"/>
+<area shape="rect" id="node2" href="$class_base_float_matrix.html" title="Abstract base class for float based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="137,55,248,80"/>
+<area shape="rect" id="node6" href="$class_base_index_matrix.html" title="Abstract base class for index based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="136,104,249,129"/>
+<area shape="rect" id="node3" href="$class_complex_matrix.html" title="The class for complex matrices. " alt="" coords="297,5,401,31"/>
+<area shape="rect" id="node5" href="$class_real_matrix.html" title="The class for real matrices. " alt="" coords="309,55,390,80"/>
+<area shape="rect" id="node4" href="$class_fftw_complex_matrix.html" title="Class implementing 3D and 1D Real&#45;To&#45;Complex and Complex&#45;To&#45;Real transforms using FFTW interface..." alt="" coords="449,5,576,31"/>
+<area shape="rect" id="node7" href="$class_index_matrix.html" title="The class for 64b unsigned integers (indices). It is used for linear and cuboid corners masks to get ..." alt="" coords="307,104,392,129"/>
 </map>

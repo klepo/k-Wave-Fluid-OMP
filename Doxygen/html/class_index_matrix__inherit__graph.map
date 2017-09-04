@@ -1,0 +1,4 @@
+<map id="IndexMatrix" name="IndexMatrix">
+<area shape="rect" id="node2" href="$class_base_index_matrix.html" title="Abstract base class for index based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="5,79,119,104"/>
+<area shape="rect" id="node3" href="$class_base_matrix.html" title="Abstract base class. The common ancestor defining the common interface and allowing derived classes t..." alt="" coords="21,5,103,31"/>
+</map>

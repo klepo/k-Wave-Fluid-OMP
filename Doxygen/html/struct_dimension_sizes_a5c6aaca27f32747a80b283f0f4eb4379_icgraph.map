@@ -1,0 +1,51 @@
+<map id="DimensionSizes::is3D" name="DimensionSizes::is3D">
+<area shape="rect" id="node2" href="$class_hdf5_file.html#af545ee037f038282a77f8fcb574d4a3a" title="Create a float HDF5 dataset at a specified place in the file tree (3D/4D). " alt="" coords="733,1452,884,1477"/>
+<area shape="rect" id="node31" href="$struct_dimension_sizes.html#ad6d4d4c23ed984affb7d7fcb1268bc4a" title="Get the number of elements, in 3D only spatial domain, in 4D with time. " alt="" coords="196,532,371,557"/>
+<area shape="rect" id="node3" href="$class_hdf5_file.html#a757c1108f5f459f03d10433d07ba3a81" title="Get handle to the root group of the file. " alt="" coords="1019,1500,1169,1525"/>
+<area shape="rect" id="node17" href="$class_complex_matrix.html#a00f98f57af23b00246f3da87ecf2fce9" title="Write data into HDF5 file. " alt="" coords="1283,1919,1446,1944"/>
+<area shape="rect" id="node19" href="$class_index_matrix.html#a61a89e4c5845adf5ede8d63f980d1e6c" title="Write data into HDF5 file. " alt="" coords="1293,1172,1436,1197"/>
+<area shape="rect" id="node22" href="$class_real_matrix.html#abee43b845583fbd6f0ece07ef8f5c869" title="Write data into HDF5 file. " alt="" coords="1295,1221,1434,1247"/>
+<area shape="rect" id="node25" href="$class_index_output_stream.html#a0381100e6228f9b91933784ed8c465d4" title="Create a HDF5 stream and allocate data for it. " alt="" coords="1298,1968,1431,2007"/>
+<area shape="rect" id="node27" href="$class_whole_domain_output_stream.html#aae7404cff551602af2150cc6c7b180d9" title="Create a HDF5 stream and allocate data for it. " alt="" coords="1277,2083,1452,2121"/>
+<area shape="rect" id="node30" href="$class_cuboid_output_stream.html#a4ec419267dd78848670a99add453cbdd" title="Create a new dataset for a given cuboid specified by index (order). " alt="" coords="1022,1152,1166,1191"/>
+<area shape="rect" id="node4" href="$class_hdf5_file_header.html#a4e9c4bce3720deba2912d68262d554cb" title="Read header from the input file. " alt="" coords="1274,1385,1455,1424"/>
+<area shape="rect" id="node5" href="$class_parameters.html#a64ac186b60226dd447580b0a15b98aa1" title="Read scalar values from the input HDF5 file. " alt="" coords="1504,1436,1689,1475"/>
+<area shape="rect" id="node6" href="$class_hdf5_file_header.html#a95204b20d1c95890a39c3bbd6591986b" title="Read header from output file (necessary for checkpoint&#45;restart). " alt="" coords="1506,1753,1687,1792"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a158019a08bff430f0d5af5a223e4875d" title="Load simulation data. " alt="" coords="1761,1696,1931,1735"/>
+<area shape="rect" id="node8" href="$class_hdf5_file_header.html#a8a7b3a9f343debd489dc6baa13f1d4a0" title="Read the file header form the checkpoint file. " alt="" coords="1274,1652,1455,1691"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#a184df4f95ecd81be7c6a90e5e3dc186d" title="Check the file type and the version of the checkpoint file. " alt="" coords="1511,1639,1682,1677"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="2003,1493,2173,1532"/>
+<area shape="rect" id="node12" href="$class_hdf5_file_header.html#aa6f0ce2c5863f67a70ef5bb2487a7227" title="Write header into the output file. " alt="" coords="1755,1768,1937,1807"/>
+<area shape="rect" id="node13" href="$class_hdf5_file_header.html#a97dc738bc381a402b5bf6ab33f7b718a" title="Write header to the output file (only a subset of all possible fields are written). " alt="" coords="1273,1323,1456,1361"/>
+<area shape="rect" id="node14" href="$class_k_space_first_order3_d_solver.html#a02d20f666490bf56aaadee7cdf7ed5a0" title="Save checkpoint data and flush aggregated outputs into the output file. " alt="" coords="1511,1265,1682,1304"/>
+<area shape="rect" id="node15" href="$class_k_space_first_order3_d_solver.html#a39aa8d400c984454df2d70ca79085250" title="Check the output file has the correct format and version. " alt="" coords="1511,1564,1682,1603"/>
+<area shape="rect" id="node16" href="$class_complex_matrix.html#a0e52f43c59b9634847bf1221b0f8aed2" title="Read matrix from HDF5 file. " alt="" coords="1284,899,1445,924"/>
+<area shape="rect" id="node18" href="$class_index_matrix.html#affa0a0a83dac1aad8ef7db8b733232a1" title="Read matrix from HDF5 file. " alt="" coords="1293,948,1436,973"/>
+<area shape="rect" id="node21" href="$class_real_matrix.html#a9b875981400e72e14f9c15859042cbec" title="Read matrix from HDF5 file. " alt="" coords="1295,997,1434,1023"/>
+<area shape="rect" id="node23" href="$class_cuboid_output_stream.html#a410e03e7c368a94be0aa848826ea65d7" title="Create a HDF5 stream and allocate data for it. " alt="" coords="1296,1109,1433,1148"/>
+<area shape="rect" id="node24" href="$class_cuboid_output_stream.html#a6e935536568301879f35de57c8d7f595" title="Reopen the output stream after restart and reload data. " alt="" coords="1296,1047,1433,1085"/>
+<area shape="rect" id="node26" href="$class_index_output_stream.html#ac2c7cb482d0692da82a1ecbe774152aa" title="Reopen the output stream after restart and reload data. " alt="" coords="1298,2145,1431,2184"/>
+<area shape="rect" id="node28" href="$class_whole_domain_output_stream.html#a4c19b17b2e3714d7e7481397a924892f" title="Reopen the output stream after restart and reload data. " alt="" coords="1277,2208,1452,2247"/>
+<area shape="rect" id="node29" href="$class_parameters.html#a8efc66975054f85805d8c7b68b366844" title="Save scalar values into the output HDF5 file. " alt="" coords="1760,1851,1932,1889"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="1737,588,1955,627"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#a16e2f82b3d79783bae2005857d473b8d" title="Post processing, and closing the output streams. " alt="" coords="1511,1165,1682,1204"/>
+<area shape="rect" id="node32" href="$class_hdf5_file.html#a112d8041f8dedc169ae70fe4a704bf0c" title="Read data from the dataset at a specified place in the file tree. " alt="" coords="439,1101,634,1127"/>
+<area shape="rect" id="node34" href="$class_k_space_first_order3_d_solver.html#a8b3dbe0230bc67e81f7f2bfe8d8c9274" title="Compute new values of acoustic velocity gradients. " alt="" coords="1279,195,1450,233"/>
+<area shape="rect" id="node36" href="$class_k_space_first_order3_d_solver.html#acf1113852e24fd58cbf92679722cbdd8" title="Calculate initial pressure source. " alt="" coords="1279,260,1450,299"/>
+<area shape="rect" id="node37" href="$class_k_space_first_order3_d_solver.html#a7087928cac639a5502ad5c8217f20a53" title="Compute velocity for the initial pressure problem, heterogeneous medium, uniform grid. " alt="" coords="978,303,1210,341"/>
+<area shape="rect" id="node38" href="$class_k_space_first_order3_d_solver.html#aa427b58e8cf72ade7d701d57ffcb6824" title="Compute velocity for the initial pressure problem, homogeneous medium, uniform grid. " alt="" coords="980,124,1208,176"/>
+<area shape="rect" id="node39" href="$class_k_space_first_order3_d_solver.html#adbd6b55638a2510205e3d24a3ae1ec15" title="Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid..." alt="" coords="980,365,1208,417"/>
+<area shape="rect" id="node40" href="$class_k_space_first_order3_d_solver.html#adf8eca790c03ecd69b256990a6b3fe43" title="Compute acoustic velocity for heterogeneous medium and a uniform grid. " alt="" coords="993,493,1195,532"/>
+<area shape="rect" id="node42" href="$class_k_space_first_order3_d_solver.html#a249d7ec72db890c7e60552f92a11acdc" title="Compute acoustic velocity for homogeneous medium and a uniform grid. " alt="" coords="973,556,1215,595"/>
+<area shape="rect" id="node43" href="$class_k_space_first_order3_d_solver.html#ac4f146845d079a4787c60fccf3d3626f" title="Compute acoustic velocity for homogenous medium and nonuniform grid. " alt="" coords="963,619,1225,657"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#a139b515162d60ab627152cc7ca8c46d3" title="Calculate three temporary sums in the new pressure formula before taking the FFT, nonlinear absorbing..." alt="" coords="703,439,915,477"/>
+<area shape="rect" id="node45" href="$class_k_space_first_order3_d_solver.html#a69c10a9d97dc25466cbbb701ca4b84a9" title="Calculate two temporary sums in the new pressure formula before taking the FFT, linear absorbing case..." alt="" coords="712,663,905,701"/>
+<area shape="rect" id="node46" href="$class_k_space_first_order3_d_solver.html#a0915b5a44c84d8c7a6659e5c6b02d40e" title="Compute absorbing term with abosrbNabla1 and absorbNabla2. " alt="" coords="723,731,894,769"/>
+<area shape="rect" id="node47" href="$class_k_space_first_order3_d_solver.html#a4dac87ae9f35e81fe0d9dbdb582b908f" title="Sum sub&#45;terms to calculate new pressure, after FFTs, nonlinear case. " alt="" coords="443,768,631,807"/>
+<area shape="rect" id="node48" href="$class_k_space_first_order3_d_solver.html#a6842b34d355ca6e2e3ca96dcfd18d890" title="Sum sub&#45;terms to calculate new pressure, after FFTs, linear case. " alt="" coords="451,833,622,872"/>
+<area shape="rect" id="node49" href="$class_k_space_first_order3_d_solver.html#af2284a5d7ec7da9bda91e5ec35d76164" title="Sum sub&#45;terms for new pressure, linear lossless case. " alt="" coords="419,5,655,44"/>
+<area shape="rect" id="node50" href="$class_k_space_first_order3_d_solver.html#a48e3169a31663cc548298dae88a3f176" title="Sum sub&#45;terms for new pressure, linear lossless case. " alt="" coords="428,71,645,109"/>
+<area shape="rect" id="node33" href="$class_hdf5_file.html#a7b1d06060632f114a22ad4bde6860862" title="Read the scalar value under a specified group. " alt="" coords="725,2264,892,2289"/>
+<area shape="rect" id="node35" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="1511,264,1682,303"/>
+<area shape="rect" id="node41" href="$class_k_space_first_order3_d_solver.html#aa0dc0784182ae930255b125611be6335" title="Compute new values of acoustic velocity. " alt="" coords="1279,531,1450,569"/>
+</map>

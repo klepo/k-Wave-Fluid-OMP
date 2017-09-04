@@ -1,0 +1,51 @@
+<map id="KSpaceFirstOrder3DSolver::preProcessing" name="KSpaceFirstOrder3DSolver::preProcessing">
+<area shape="rect" id="node2" href="$class_logger.html#a6e186f1585b51f7724f8bb42be50aee2" title="Log desired activity for a given log level, version with string format. " alt="" coords="293,153,377,179"/>
+<area shape="rect" id="node6" href="$class_logger.html#a144abae890f1b6d0d5de36716d4fce72" title="Flush output messages. " alt="" coords="557,203,650,228"/>
+<area shape="rect" id="node8" href="$class_parameters.html#a7c36e5176ad893dce7f8d07e607b88bb" title="Get sensor mask type (linear or corners). " alt="" coords="234,321,437,347"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#a6d758877acd5d85c58aacdc79156d3f9" title="Get linear sensor mask (spatial geometry of the sensor). " alt="" coords="250,371,421,409"/>
+<area shape="rect" id="node11" href="$class_index_matrix.html#aad66a5391417bc2204f70ac08147cb25" title="Recompute indices MATALAB&#45;&gt;C++. " alt="" coords="241,1224,429,1263"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#af0d90e39247449b7b2cdbeab9c2fa307" title="Get cuboid corners sensor mask. (Spatial geometry of multiple sensors). " alt="" coords="250,433,421,472"/>
+<area shape="rect" id="node13" href="$class_parameters.html#a595111584447c224639a673dd0ecea80" title="Get transducer source flag. " alt="" coords="250,1287,421,1325"/>
+<area shape="rect" id="node14" href="$class_parameters.html#ac2c34618d26d71791ff76e671b1cf2c0" title="Get velocity in x source flag. " alt="" coords="224,1349,447,1375"/>
+<area shape="rect" id="node15" href="$class_parameters.html#a3d98e8d2c9a011cc1405c1a9b5754abb" title="Get velocity in y source flag. " alt="" coords="224,1399,447,1424"/>
+<area shape="rect" id="node16" href="$class_parameters.html#ae11cfc5fba879fdd4567d22e362f04ce" title="Get velocity in z source flag. " alt="" coords="225,1448,446,1473"/>
+<area shape="rect" id="node17" href="$class_k_space_first_order3_d_solver.html#a93246c00841e643cc8746f2702ab94bc" title="Get velocity source geometry data. " alt="" coords="250,496,421,535"/>
+<area shape="rect" id="node18" href="$class_k_space_first_order3_d_solver.html#aafe03640db7d29053b755cef7565d049" title="Get delay mask for many types sources. " alt="" coords="250,559,421,597"/>
+<area shape="rect" id="node19" href="$class_parameters.html#a9a6cf68851b4df1313574835984523fe" title="Get pressure source flag. " alt="" coords="225,1497,445,1523"/>
+<area shape="rect" id="node20" href="$class_k_space_first_order3_d_solver.html#a2ce4183d589d746db2e021428b05af21" title="Get pressure source geometry data. " alt="" coords="250,621,421,660"/>
+<area shape="rect" id="node21" href="$class_parameters.html#ad76a0fb737c095702e1bb16431c5f4fc" title="Is density in the medium homogeneous (scalar value)? " alt="" coords="237,1547,434,1572"/>
+<area shape="rect" id="node22" href="$class_parameters.html#ad7855f2fca8bffe1042bef1e28a3d760" title="Enable non uniform grid? &#45; not implemented yet. " alt="" coords="248,1596,423,1635"/>
+<area shape="rect" id="node23" href="$class_k_space_first_order3_d_solver.html#a39ae9774e38f6b2bd324c202903f5f91" title="Calculate dt ./ rho0 for nonuniform grids. " alt="" coords="250,837,421,876"/>
+<area shape="rect" id="node24" href="$class_k_space_first_order3_d_solver.html#a43f0e3cac36c58bbc9f55873e3a8a549" title="Get dt * rho0Sgx matrix (time step size * ambient velocity on staggered grid in x direction)..." alt="" coords="518,507,689,545"/>
+<area shape="rect" id="node26" href="$class_k_space_first_order3_d_solver.html#aa708679b70922946a55459a6947a02d7" title="Get dt * rho0Sgy matrix (time step size * ambient velocity on staggered grid in y direction)..." alt="" coords="518,569,689,608"/>
+<area shape="rect" id="node27" href="$class_k_space_first_order3_d_solver.html#a795139132c527461b9fb7b3de0c1510e" title="Get dt * rho0Sgz matrix (time step size * ambient velocity on staggered grid in z direction)..." alt="" coords="518,632,689,671"/>
+<area shape="rect" id="node28" href="$class_parameters.html#a7990bd57c8d54acef7ff5d61d88f0556" title="Get time step size. " alt="" coords="543,1219,663,1244"/>
+<area shape="rect" id="node34" href="$class_base_float_matrix.html#a0a782837615699922e72b0795ba82dc9" title="Calculate matrix = scalar / matrix. " alt="" coords="233,1659,438,1684"/>
+<area shape="rect" id="node35" href="$class_parameters.html#a3983946bb7b535f5165cf699f2584c90" title="Is the simulation absrobing or lossless? " alt="" coords="241,1708,429,1733"/>
+<area shape="rect" id="node36" href="$class_k_space_first_order3_d_solver.html#ad7fa716dd895810e2e2335dbdedd4161" title="Generate kappa matrix, absorbNabla1, absorbNabla2 for absorbing medium. " alt="" coords="248,1099,423,1137"/>
+<area shape="rect" id="node46" href="$class_k_space_first_order3_d_solver.html#a08ff917c206cec495baf6b3251ae2602" title="Generate absorbTau, absorbEta for heterogenous medium. " alt="" coords="250,984,421,1023"/>
+<area shape="rect" id="node49" href="$class_k_space_first_order3_d_solver.html#a0a29138b89fc937a7c2e2ac4b3710ae9" title="Generate kappa matrix for lossless media. " alt="" coords="250,1161,421,1200"/>
+<area shape="rect" id="node50" href="$class_k_space_first_order3_d_solver.html#a03f14fcba3bad35d61995c0c6a5799f6" title="Calculate square of velocity. " alt="" coords="250,921,421,960"/>
+<area shape="rect" id="node3" href="$class_logger.html#af64d530d6e0cdf12e2c9958373353e6d" title="C++&#45;11 replacement for sprintf that works with std::string instead of char*. " alt="" coords="528,55,679,80"/>
+<area shape="rect" id="node4" href="$class_logger.html#adbd96054fe0e3dd86e58af471b480646" title="Log an error. " alt="" coords="557,104,650,129"/>
+<area shape="rect" id="node5" href="$class_logger.html#ae9726167cb15e6d4434bec238611f600" title="Log an error and terminate the execution. " alt="" coords="518,153,689,179"/>
+<area shape="rect" id="node7" href="$class_logger.html#a69b1c519b1b47bb8e665ce2d3817b5d6" title="Logger::wordWrapString" alt="" coords="526,5,681,31"/>
+<area shape="rect" id="node10" href="$class_matrix_container.html#a1aa23627b0849454ba4cb6a47344f67c" title="Get the matrix with a specific type from the container. " alt="" coords="760,608,925,633"/>
+<area shape="rect" id="node25" href="$class_base_float_matrix.html#aabc7bd274b82ff87857039af92e6d1e7" title="Get raw data out of the class (for direct kernel access). " alt="" coords="524,932,683,957"/>
+<area shape="rect" id="node29" href="$class_k_space_first_order3_d_solver.html#a30f6e840e35436831589c478d020ea19" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="518,695,689,733"/>
+<area shape="rect" id="node30" href="$class_k_space_first_order3_d_solver.html#acec99d087a12528825ad08257193d089" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="518,757,689,796"/>
+<area shape="rect" id="node31" href="$class_k_space_first_order3_d_solver.html#a4877d1055ca2a2dff2b42549ecdee6c6" title="Non uniform grid acoustic velocity on staggered grid x. " alt="" coords="518,820,689,859"/>
+<area shape="rect" id="node32" href="$class_parameters.html#a7d3195ef54d5b988cda3d4f61d970c1d" title="Get full dimension sizes of the simulation (real classes). " alt="" coords="510,1093,697,1132"/>
+<area shape="rect" id="node33" href="$class_k_space_first_order3_d_solver.html#a540215b2cef3b444e650c3a18b2eb32b" title="Compute 1D index using 3 spatial coordinates and the size of the matrix. " alt="" coords="518,1156,689,1195"/>
+<area shape="rect" id="node37" href="$class_parameters.html#a05f99d825e6db8b72ac1db6af2f67a4d" title="Get spatial displacement in x. " alt="" coords="542,1505,665,1531"/>
+<area shape="rect" id="node38" href="$class_parameters.html#a252b6319d4ede1d15591a2b4c2d49f9d" title="Get spatial displacement in y. " alt="" coords="542,1617,665,1643"/>
+<area shape="rect" id="node39" href="$class_parameters.html#a01294bf097d707cf33841de574568cae" title="Get spatial displacement in z. " alt="" coords="542,1667,665,1692"/>
+<area shape="rect" id="node40" href="$class_parameters.html#a16816d27a8efdcbbee2e55011d169302" title="Get reference sound speed. " alt="" coords="535,1393,671,1419"/>
+<area shape="rect" id="node41" href="$class_parameters.html#a92fd1aff7e90f3553e524f7eeb6b24bc" title="Get reduced dimension sizes of the simulation (complex classes). " alt="" coords="495,1443,712,1481"/>
+<area shape="rect" id="node42" href="$class_k_space_first_order3_d_solver.html#a902f0b84de6f280b49166fd4673ec66d" title="Get the kappa matrix from the container. " alt="" coords="518,1555,689,1593"/>
+<area shape="rect" id="node43" href="$class_k_space_first_order3_d_solver.html#ac8eb6d205dd5a0bd598a488edf868c7d" title="Get absorbing coefficient Nabla1. " alt="" coords="518,1331,689,1369"/>
+<area shape="rect" id="node44" href="$class_k_space_first_order3_d_solver.html#a4e6243ae166d16c468c9df4f91a18534" title="Get absorbing coefficient Nabla2. " alt="" coords="518,1268,689,1307"/>
+<area shape="rect" id="node45" href="$class_parameters.html#a98bfaafbb4bcba9994db47b43b5a2351" title="Get alpha power value for the absorption law. " alt="" coords="516,1044,691,1069"/>
+<area shape="rect" id="node47" href="$class_parameters.html#abc0a2f4dea841c3a3e3502549daeba4f" title="Is alpha absorption coefficient homogeneous (scalar value)? " alt="" coords="519,981,688,1020"/>
+<area shape="rect" id="node48" href="$class_parameters.html#a86bda1388667a5d8296f27f9556b97f2" title="Is sound speed in the medium homogeneous (scalar value)? " alt="" coords="512,883,695,908"/>
+</map>

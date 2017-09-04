@@ -1,0 +1,9 @@
+<map id="CommandLineParameters::getCopySensorMaskFlag" name="CommandLineParameters::getCopySensorMaskFlag">
+<area shape="rect" id="node2" href="$class_parameters.html#a8ec88a37f7e4959e88b9d458cc927763" title="Is –copy_mask set set? " alt="" coords="220,37,396,76"/>
+<area shape="rect" id="node3" href="$class_t_k_space_first_order3_d_solver.html#ae4fcc11d2b638358dd740317422c9193" title="Post processing, and closing the output streams. " alt="" coords="444,5,621,44"/>
+<area shape="rect" id="node6" href="$class_parameters.html#a8efc66975054f85805d8c7b68b366844" title="Save scalar values into the output HDF5 file. " alt="" coords="447,68,619,107"/>
+<area shape="rect" id="node4" href="$class_t_k_space_first_order3_d_solver.html#a90ea773b837b769c59cf20b1be80465c" title="Compute the 3D kspace first order simulation. " alt="" coords="902,63,1079,101"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1135,99,1184,124"/>
+<area shape="rect" id="node7" href="$class_t_k_space_first_order3_d_solver.html#aae4589cc5a7ed3b235e4b23754149a90" title="Write statistics and header into the output file. " alt="" coords="669,63,847,101"/>
+<area shape="rect" id="node8" href="$class_parameters.html#ab22c04bf1f6ada208355f0437cd5f34f" title="Shall the code print version and exit? " alt="" coords="895,127,1087,152"/>
+</map>

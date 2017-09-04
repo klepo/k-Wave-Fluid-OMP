@@ -1,0 +1,17 @@
+<map id="KSpaceFirstOrder3DSolver::getP" name="KSpaceFirstOrder3DSolver::getP">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#ad773bdeb69b60f955d74cc9650f3dec7" title="Initialize FFTW plans. " alt="" coords="744,5,915,44"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a16e2f82b3d79783bae2005857d473b8d" title="Post processing, and closing the output streams. " alt="" coords="744,68,915,107"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#acf1113852e24fd58cbf92679722cbdd8" title="Calculate initial pressure source. " alt="" coords="517,421,687,460"/>
+<area shape="rect" id="node10" href="$class_k_space_first_order3_d_solver.html#a81ded7054aab8638d6dd7f6de5ef1375" title="Compute part of the new velocity term &#45; gradient of pressure. " alt="" coords="257,445,427,484"/>
+<area shape="rect" id="node12" href="$class_k_space_first_order3_d_solver.html#a4dac87ae9f35e81fe0d9dbdb582b908f" title="Sum sub&#45;terms to calculate new pressure, after FFTs, nonlinear case. " alt="" coords="508,359,696,397"/>
+<area shape="rect" id="node13" href="$class_k_space_first_order3_d_solver.html#a6842b34d355ca6e2e3ca96dcfd18d890" title="Sum sub&#45;terms to calculate new pressure, after FFTs, linear case. " alt="" coords="744,131,915,169"/>
+<area shape="rect" id="node14" href="$class_k_space_first_order3_d_solver.html#af2284a5d7ec7da9bda91e5ec35d76164" title="Sum sub&#45;terms for new pressure, linear lossless case. " alt="" coords="224,188,460,227"/>
+<area shape="rect" id="node15" href="$class_k_space_first_order3_d_solver.html#a48e3169a31663cc548298dae88a3f176" title="Sum sub&#45;terms for new pressure, linear lossless case. " alt="" coords="233,251,451,289"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1447,217,1617,256"/>
+<area shape="rect" id="node5" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="963,268,1180,307"/>
+<area shape="rect" id="node4" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1665,224,1715,249"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="1228,268,1399,307"/>
+<area shape="rect" id="node9" href="$class_k_space_first_order3_d_solver.html#aeb74043ffe31546e5865962c17b08028" title="Compute the main time loop of the kspaceFirstOrder3D. " alt="" coords="744,448,915,487"/>
+<area shape="rect" id="node11" href="$class_k_space_first_order3_d_solver.html#aa0dc0784182ae930255b125611be6335" title="Compute new values of acoustic velocity. " alt="" coords="517,484,687,523"/>
+<area shape="rect" id="node16" href="$class_k_space_first_order3_d_solver.html#a71218eb45a28022ff65abf9031bd3516" title="Compute acoustic pressure for linear case. " alt="" coords="517,296,687,335"/>
+</map>

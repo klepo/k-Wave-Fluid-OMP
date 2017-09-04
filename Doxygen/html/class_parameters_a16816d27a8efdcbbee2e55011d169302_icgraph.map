@@ -1,0 +1,9 @@
+<map id="Parameters::getCRef" name="Parameters::getCRef">
+<area shape="rect" id="node2" href="$class_k_space_first_order3_d_solver.html#a0a29138b89fc937a7c2e2ac4b3710ae9" title="Generate kappa matrix for lossless media. " alt="" coords="191,5,362,44"/>
+<area shape="rect" id="node8" href="$class_k_space_first_order3_d_solver.html#ad7fa716dd895810e2e2335dbdedd4161" title="Generate kappa matrix, absorbNabla1, absorbNabla2 for absorbing medium. " alt="" coords="189,68,364,107"/>
+<area shape="rect" id="node3" href="$class_k_space_first_order3_d_solver.html#a26160d00758622e3f5bfd2d9aedf1bcc" title="Compute pre&#45;processing phase. " alt="" coords="412,36,583,75"/>
+<area shape="rect" id="node6" href="$class_k_space_first_order3_d_solver.html#ac11697f04627625d455f529a6193c7ca" title="Get post&#45;processing time accumulated over all legs. " alt="" coords="631,65,848,104"/>
+<area shape="rect" id="node4" href="$class_k_space_first_order3_d_solver.html#ac18bea7940931a7f90b47d8f3291279a" title="This method computes k&#45;space First Order 3D simulation. " alt="" coords="1115,37,1285,76"/>
+<area shape="rect" id="node5" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1333,44,1383,69"/>
+<area shape="rect" id="node7" href="$class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943" title="Write statistics and header into the output file. " alt="" coords="896,65,1067,104"/>
+</map>
