@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        12 July      2012, 10:27 (created)\n
- *              02 September 2017, 20:47 (revised)
+ *              03 September 2017, 23:51 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -326,10 +326,13 @@ class KSpaceFirstOrder3DSolver
     /**
      * @brief Calculate three temporary sums in the new pressure formula before taking the FFT,
      *        nonlinear absorbing case.
+     * @tparam bOnAScalarFlag           - is nonlinearity homogenous?
+     * @tparam rho0ScalarFlag           - is density homogeneous?
      * @param [out] densitySum          - rhoX + rhoY + rhoZ
      * @param [out] nonlinearTerm       - BOnA + densitySum ^2 / 2 * rho0
      * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
      */
+    template<bool bOnAScalarFlag, bool rho0ScalarFlag>
     void computePressureTermsNonlinear(RealMatrix& densitySum,
                                        RealMatrix& nonlinearTerm,
                                        RealMatrix& velocityGradientSum);
@@ -353,24 +356,38 @@ class KSpaceFirstOrder3DSolver
 
     /**
      * @brief Sum sub-terms to calculate new pressure, after FFTs, nonlinear case.
-     * @param [in] absorbTauTerm - tau component
-     * @param [in] absorbEtaTerm - eta component  of the pressure term
-     * @param [in] nonlinearTerm - rho0 * (duxdx + duydy + duzdz)
+     *
+     * @tparams c0ScalarFlag        - is sound speed homogeneous?
+     * @tparams areTauAndEtaScalars - are absorbTau and absorbEeta scalars
+     * @param [in] absorbTauTerm    - tau component
+     * @param [in] absorbEtaTerm    - eta component  of the pressure term
+     * @param [in] nonlinearTerm    - rho0 * (duxdx + duydy + duzdz)
      */
+    template<bool c0ScalarFlag, bool areTauAndEtaScalars>
     void sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
                                    const RealMatrix& absorbEtaTerm,
                                    const RealMatrix& nonlinearTerm);
     /**
      * @brief Sum sub-terms to calculate new pressure, after FFTs, linear case.
+     *
+     * @tparams c0ScalarFlag        - is sound speed homogeneous?
+     * @tparams areTauAndEtaScalars - are absorbTau and absorbEeta homogeneous?
      * @param [in] absorbTauTerm - tau component
      * @param [in] absorbEtaTerm - eta component  of the pressure term
      * @param [in] densitySum    - Sum of three components of density (rhoXSgx + rhoYSgy + rhoZSgx)
      */
+    template<bool c0ScalarFlag, bool areTauAndEtaScalars>
     void sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
                                 const RealMatrix& absorbEtaTerm,
                                 const RealMatrix& densitySum);
 
-    /// Sum sub-terms for new pressure, linear lossless case.
+    /**
+     * @breif Sum sub-terms for new pressure, linear lossless case.
+     * @tparam c0ScalarFlag   - is sound speed homogeneous?
+     * @tparam nonlinearFlag  - is nonlinearity homogeneous?
+     * @tparam rho0ScalarFlag - is density homogeneous?
+     */
+    template<bool c0ScalarFlag, bool nonlinearFlag, bool rho0ScalarFlag>
     void sumPressureTermsNonlinearLossless();
     /// Sum sub-terms for new pressure, linear lossless case.
     void sumPressureTermsLinearLossless();

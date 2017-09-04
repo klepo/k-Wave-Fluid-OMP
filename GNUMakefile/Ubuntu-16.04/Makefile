@@ -69,14 +69,16 @@ COMPILER = GNU
 #COMPILER = Intel
 
 # static lining is deafult
-#LINKING = STATIC
-LINKING = DYNAMIC
+LINKING = STATIC
+#LINKING = DYNAMIC
 
 #Set up paths: FFT_DIR for FFTW or MKL for MKL
 FFT_DIR=$(EBROOTFFTW)
 #MKL_DIR=/opt/intel/composer_xe_2013/mkl
 #HDF5_DIR=/usr/local/hdf5-1.8.10-serial-icc
 HDF5_DIR=$(EBROOTHDF5)
+ZLIB_DIR=$(EBROOTZLIB)
+SZIP_DIR=$(EBROOTSZIP)
 
 # Select CPU architecture (what instruction set to be used). 
 # The libraries such as FFTW, HDF5 and MKL are to be compiled under the same architecture
@@ -124,14 +126,17 @@ ifeq ($(COMPILER),GNU)
   ifeq ($(LINKING),STATIC)
 	# Static link
 	LDFLAGS  = $(CPU_FLAGS)  -fopenmp               \
-                   -L$(HDF5_DIR)/lib -L$(FFT_DIR)/lib  --static
+                   -L$(HDF5_DIR)/lib -L$(FFT_DIR)/lib -static
+# --static
 
 	LIBS     = $(FFT_DIR)/lib/libfftw3f.a  		\
 		   $(FFT_DIR)/lib/libfftw3f_omp.a 	\
    	  	   $(HDF5_DIR)/lib/libhdf5_hl.a 	\
    		   $(HDF5_DIR)/lib/libhdf5.a 		\
-		  -lz  					\
-		  -ldl  # we need this for HDF5-1.8.11 and newer
+		   $(ZLIB_DIR)/lib/libz.a		\
+		   $(SZIP_DIR)/lib/libsz.a		\
+		   -lm	-lmvec				\
+		   -ldl  # we need this for HDF5-1.8.11 and newer
 
     else	
         # Dynamic link
