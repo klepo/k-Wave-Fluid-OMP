@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2011, 14:02 (created) \n
- *              25 August    2017, 15:13 (revised)
+ *              03 September 2017, 13:19 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -33,25 +33,15 @@
 #ifndef COMPLEX_MATRIX_H
 #define COMPLEX_MATRIX_H
 
+#include <complex>
+
 #include <MatrixClasses/BaseFloatMatrix.h>
 #include <MatrixClasses/RealMatrix.h>
 
 #include <Utils/DimensionSizes.h>
 
-
-/**
- * @struct FloatComplex
- * @brief  Structure for complex values.
- * @todo:  Change to classic C++ complex (better support of vectorisation)
- */
-struct FloatComplex
-{
-  /// real part
-  float real;
-  /// imaginary part
-  float imag;
-};//FloatComplex
-//----------------------------------------------------------------------------------------------------------------------
+/// Datatype for complex single precision numbers.
+using FloatComplex = std::complex<float>;
 
 
 /**
@@ -99,6 +89,24 @@ class ComplexMatrix : public BaseFloatMatrix
     virtual void writeData(Hdf5File&    file,
                            MatrixName&  matrixName,
                            const size_t compressionLevel);
+
+    /**
+     * @brief Get raw complex data out of the class (for direct kernel access).
+     * @return Mutable matrix data
+     */
+    virtual FloatComplex* getComplexData()
+    {
+      return reinterpret_cast<FloatComplex*> (mData);
+    };
+
+    /**
+     * @brief  Get raw complex data out of the class (for direct kernel access).
+     * @return Imutable matrix data
+     */
+    virtual const FloatComplex* getComplexData() const
+    {
+      return reinterpret_cast<FloatComplex*> (mData);
+    };
 
     /**
      * @brief  Operator [].

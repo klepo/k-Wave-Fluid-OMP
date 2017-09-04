@@ -10,7 +10,7 @@
  *
  * @version     kspaceFirstOrder3D 2.16
  * @date        12 July      2012, 10:27 (created)\n
- *              30 August    2017, 18:11 (revised)
+ *              03 September 2017, 23:51 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -377,7 +377,6 @@ std::string KSpaceFirstOrder3DSolver::getCodeName() const
 
 /**
  * Print full code name and the license.
- * @todo - Add __AVX512__ intrinsics
  */
 void KSpaceFirstOrder3DSolver::printFullCodeNameAndLicense() const
 {
@@ -635,10 +634,8 @@ void KSpaceFirstOrder3DSolver::computeMainLoop()
     // add in the transducer source term (t = t1) to ux
     if (mParameters.getTransducerSourceFlag() > timeIndex)
     {
-     getUxSgx().addTransducerSource(getVelocitySourceIndex(),
-                                    getTransducerSourceInput(),
-                                    getDelayMask(),
-                                    mParameters.getTimeIndex());
+      // transducer source is added only to the x component of the particle velocity
+      addTransducerSource();
     }
 
     // compute gradient of velocity
@@ -790,7 +787,7 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
        Logger::log(Logger::LogLevel::kFull, kOutFmtFailed);
      }
   #endif
-  
+
   // Create Checkpoint file
   Hdf5File& checkpointFile = mParameters.getCheckpointFile();
   // if it happens and the file is opened (from the recovery, close it)
@@ -867,58 +864,29 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
  */
  void KSpaceFirstOrder3DSolver::computeVelocity()
  {
-  // bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)), for all 3 dims
-  computePressureGradient();
+    // bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)), for all 3 dims
+    computePressureGradient();
 
-   getTempFftwX().computeC2RFft3D(getTemp1Real3D());
-   getTempFftwY().computeC2RFft3D(getTemp2Real3D());
-   getTempFftwZ().computeC2RFft3D(getTemp3Real3D());
+    getTempFftwX().computeC2RFft3D(getTemp1Real3D());
+    getTempFftwY().computeC2RFft3D(getTemp2Real3D());
+    getTempFftwZ().computeC2RFft3D(getTemp3Real3D());
 
-  #pragma omp parallel
-  {
     if (mParameters.getRho0ScalarFlag())
     { // scalars
       if (mParameters.getNonUniformGridFlag())
       {
-        getUxSgx().computeVelocityXHomogeneousNonuniform(getTemp1Real3D(),
-                                                         mParameters.getDtRho0SgxScalar(),
-                                                         getDxudxnSgx(),
-                                                         getPmlXSgx());
-        getUySgy().computeVelocityYHomogeneousNonuniform(getTemp2Real3D(),
-                                                         mParameters.getDtRho0SgyScalar(),
-                                                         getDyudynSgy(),
-                                                         getPmlYSgy());
-        getUzSgz().computeVelocityZHomogeneousNonuniform(getTemp3Real3D(),
-                                                         mParameters.getDtRho0SgzScalar(),
-                                                         getDzudznSgz(),
-                                                         getPmlZSgz());
+        computeVelocityHomogeneousNonuniform();
        }
       else
       {
-        getUxSgx().computeVelocityXHomogeneousUniform(getTemp1Real3D(),
-                                                      mParameters.getDtRho0SgxScalar(),
-                                                      getPmlXSgx());
-        getUySgy().computeVelocityYHomogeneousUniform(getTemp2Real3D(),
-                                                      mParameters.getDtRho0SgyScalar(),
-                                                      getPmlYSgy());
-        getUzSgz().computeVelocityZHomogeneousUniform(getTemp3Real3D(),
-                                                      mParameters.getDtRho0SgzScalar(),
-                                                      getPmlZSgz());
+        computeVelocityHomogeneousUniform();
       }
     }
     else
     {// matrices
-      getUxSgx().computeVelocityX(getTemp1Real3D(),
-                                  getDtRho0Sgx(),
-                                  getPmlXSgx());
-      getUySgy().computeVelocityY(getTemp2Real3D(),
-                                  getDtRho0Sgy(),
-                                  getPmlYSgy());
-      getUzSgz().computeVelocityZ(getTemp3Real3D(),
-                                  getDtRho0Sgz(),
-                                  getPmlZSgz());
+      computeVelocityHeterogeneous();
+
     }
-  } // parallel
 }// end of computeVelocity
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -931,64 +899,37 @@ void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
   getTempFftwY().computeR2CFft3D(getUySgy());
   getTempFftwZ().computeR2CFft3D(getUzSgz());
 
-  #pragma omp parallel
+  const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
+  const float divider = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nElements());
+
+  const float* kappa = getKappa().getData();
+
+  FloatComplex* tempFftX = getTempFftwX().getComplexData();
+  FloatComplex* tempFftY = getTempFftwY().getComplexData();
+  FloatComplex* tempFftZ = getTempFftwZ().getComplexData();
+
+  FloatComplex* ddxKShiftNeg = getDdxKShiftNeg().getComplexData();
+  FloatComplex* ddyKShiftNeg = getDdyKShiftNeg().getComplexData();
+  FloatComplex* ddzKShiftNeg = getDdzKShiftNeg().getComplexData();
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
   {
-    float* tempFftX = getTempFftwX().getData();
-    float* tempFftY = getTempFftwY().getData();
-    float* tempFftZ = getTempFftwZ().getData();
-
-    const float* kappa   = getKappa().getData();
-
-    const size_t fftDimZ = getTempFftwX().getDimensionSizes().nz;
-    const size_t fftDimY = getTempFftwX().getDimensionSizes().ny;
-    const size_t fftDimX = getTempFftwX().getDimensionSizes().nx;
-
-    const size_t slabSize = (fftDimX * fftDimY) << 1;
-    const float  divider = 1.0f / static_cast<float>(getUxSgx().size());
-
-    const FloatComplex* ddx = reinterpret_cast<FloatComplex*>(getDdxKShiftNeg().getData());
-    const FloatComplex* ddy = reinterpret_cast<FloatComplex*>(getDdyKShiftNeg().getData());
-    const FloatComplex* ddz = reinterpret_cast<FloatComplex*>(getDdzKShiftNeg().getData());
-
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < fftDimZ; z++)
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
     {
-      register size_t i = z * slabSize;
-
-      const float ddzNegRe = ddz[z].real;
-      const float ddzNegIm = ddz[z].imag;
-      for (size_t y = 0; y < fftDimY; y++)
+      #pragma omp simd
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
       {
-        const float ddyNegRe = ddy[y].real;
-        const float ddyNegIm = ddy[y].imag;
-        for (size_t x = 0; x < fftDimX; x++)
-        {
-          const float eKappa = kappa[i >> 1];
+        const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
+        const float eKappa = divider * kappa[i];
 
-          const float fftXRe = tempFftX[i]   *= eKappa;
-          const float ffyXIm = tempFftX[i+1] *= eKappa;
+        tempFftX[i] *=  ddxKShiftNeg[x] * eKappa;
+        tempFftY[i] *=  ddyKShiftNeg[y] * eKappa;
+        tempFftZ[i] *=  ddzKShiftNeg[z] * eKappa;
+      } // x
+    } // y
+  } // z
 
-          const float fftYre = tempFftY[i]   *= eKappa;
-          const float fftYIm = tempFftY[i+1] *= eKappa;
-
-          const float fftZRe = tempFftZ[i]   *= eKappa;
-          const float fftZIm = tempFftZ[i+1] *= eKappa;
-
-          tempFftX[i]     = ((fftXRe * ddx[x].real) - (ffyXIm * ddx[x].imag) ) * divider;
-          tempFftX[i + 1] = ((ffyXIm * ddx[x].real) + (fftXRe * ddx[x].imag) ) * divider;
-
-          tempFftY[i]     = ((fftYre * ddyNegRe) - (fftYIm * ddyNegIm)) * divider;
-          tempFftY[i + 1] = ((fftYIm * ddyNegRe) + (fftYre * ddyNegIm)) * divider;
-
-          tempFftZ[i]     = ((fftZRe * ddzNegRe) - (fftZIm * ddzNegIm)) * divider;
-          tempFftZ[i + 1] = ((fftZIm * ddzNegRe) + (fftZRe * ddzNegIm)) * divider;
-
-          i+=2;
-        } // x
-      } // y
-    } // z
-  } // parallel;
 
   getTempFftwX().computeC2RFft3D(getDuxdx());
   getTempFftwY().computeC2RFft3D(getDuydy());
@@ -997,66 +938,31 @@ void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
  //------------------------------------------------- Non linear grid -------------------------------------------------//
   if (mParameters.getNonUniformGridFlag() != 0)
   {
-    #pragma omp parallel
+    float* duxdx = getDuxdx().getData();
+    float* duydy = getDuydy().getData();
+    float* duzdz = getDuzdz().getData();
+
+    const float* duxdxn = getDxudxn().getData();
+    const float* duydyn = getDyudyn().getData();
+    const float* duzdzn = getDzudzn().getData();
+
+    const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
+
+    #pragma omp parallel for schedule(static)
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
-      float* duxdx = getDuxdx().getData();
-      float* duydy = getDuydy().getData();
-      float* duzdz = getDuzdz().getData();
-
-      const float* duxdxn = getDxudxn().getData();
-      const float* duydyn = getDyudyn().getData();
-      const float* duzdzn = getDzudzn().getData();
-
-      const size_t nz = getDuxdx().getDimensionSizes().nz;
-      const size_t ny = getDuxdx().getDimensionSizes().ny;
-      const size_t nx = getDuxdx().getDimensionSizes().nx;
-
-      const size_t SliceSize = (nx * ny);
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < ny; y++)
+        #pragma omp simd
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
         {
-          for (size_t x = 0; x < nx; x++)
-          {
-            duxdx[i] *= duxdxn[x];
-            i++;
-          } // x
-        } // y
-      } // z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < ny; y++)
-        {
-          const float eDyudyn = duydyn[y];
-          for (size_t x = 0; x < nx; x++)
-          {
-            duydy[i] *= eDyudyn;
-            i++;
-          } // x
-        } // y
-      } // z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        const float eDuzdzn = duzdzn[z];
-        register size_t i = z * SliceSize;
-        for (size_t y = 0; y < ny; y++)
-        {
-          for (size_t x = 0; x < nx; x++)
-          {
-            duzdz[i] *=  eDuzdzn;
-            i++;
-          } // x
-        } // y
-      } // z
-    } // parallel
+          const size_t i = get1DIndex(z, y, x, dimensionSizes);
+          duxdx[i] *= duxdxn[x];
+          duydy[i] *= duydyn[y];
+          duzdz[i] *= duzdzn[z];
+        } // x
+      } // y
+    } // z
  }// nonlinear
 }// end of computeVelocityGradient
 //----------------------------------------------------------------------------------------------------------------------
@@ -1075,81 +981,70 @@ void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
  */
 void KSpaceFirstOrder3DSolver::computeDensityNonliner()
 {
-  const size_t nz = getRhoX().getDimensionSizes().nz;
-  const size_t ny = getRhoX().getDimensionSizes().ny;
-  const size_t nx = getRhoX().getDimensionSizes().nx;
+  const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
 
   const float dt  = mParameters.getDt();
-  const size_t slabSize = ny * nx;
 
-  #pragma omp parallel
+  float* rhoX  = getRhoX().getData();
+  float* rhoY  = getRhoY().getData();
+  float* rhoZ  = getRhoZ().getData();
+
+  const float* pmlX  = getPmlX().getData();
+  const float* pmlY  = getPmlY().getData();
+  const float* pmlZ  = getPmlZ().getData();
+
+  const float* duxdx = getDuxdx().getData();
+  const float* duydy = getDuydy().getData();
+  const float* duzdz = getDuzdz().getData();
+
+  //----------------------------------------------- rho0 is scalar -------------------------------------------------//
+  if (mParameters.getRho0ScalarFlag())
   {
-    float* rhoX  = getRhoX().getData();
-    float* rhoY  = getRhoY().getData();
-    float* rhoZ  = getRhoZ().getData();
+    const float rho0 = mParameters.getRho0Scalar();
 
-    const float* pmlX  = getPmlX().getData();
-    const float* pmlY  = getPmlY().getData();
-    const float* pmlZ  = getPmlZ().getData();
-
-    const float* duxdx = getDuxdx().getData();
-    const float* duydy = getDuydy().getData();
-    const float* duzdz = getDuzdz().getData();
-
-    //----------------------------------------------- rho0 is scalar -------------------------------------------------//
-    if (mParameters.getRho0ScalarFlag())
+    #pragma omp parallel for schedule(static)
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
-      const float rho0 = mParameters.getRho0Scalar();
-
-      #pragma omp for schedule(static)
-      for (size_t z = 0; z < nz; z++)
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
-        size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
+        #pragma omp simd
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
         {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0) * dt;
+          const size_t i = get1DIndex(z, y, x, dimensionSizes);
+          const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0) * dt;
 
-            rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
-            rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
-            rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+          rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
+          rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
+          rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+        }// x
+      }// y
+    }// z
+  }
+  else
+  { //---------------------------------------------- rho0 is matrix ------------------------------------------------//
+    // rho0 is a matrix
+    const float* rho0  = getRho0().getData();
 
-            i++;
-          }// x
-        }// y
-      }// z
-    }
-    else
-    { //---------------------------------------------- rho0 is matrix ------------------------------------------------//
-      // rho0 is a matrix
-      const float* rho0  = getRho0().getData();
-
-      #pragma omp for schedule(static)
-      for (size_t z = 0; z < nz; z++)
+    #pragma omp parallel for schedule(static)
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
-        size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
+        #pragma omp simd
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
         {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0[i]) * dt;
+          const size_t i = get1DIndex(z, y, x, dimensionSizes);
+          const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0[i]) * dt;
 
-            rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
-            rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
-            rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
-
-            i++;
-          } // x
-        }// y
-      }// z
-    } // end rho is matrix
-  }// parallel
+          rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
+          rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
+          rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+        } // x
+      }// y
+    }// z
+  } // end rho is matrix
 }// end of computeDensityNonliner
 //----------------------------------------------------------------------------------------------------------------------
-
-
-
 
 /**
  * Calculate new values of acoustic density for linear case (rhoX, rhoy and rhoZ).
@@ -1165,142 +1060,66 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
  */
 void KSpaceFirstOrder3DSolver::computeDensityLinear()
 {
-  const size_t nz = getRhoX().getDimensionSizes().nz;
-  const size_t ny = getRhoX().getDimensionSizes().ny;
-  const size_t nx = getRhoX().getDimensionSizes().nx;
+  const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
+  const float dt = mParameters.getDt();
 
-  const float dt        = mParameters.getDt();
-  const size_t slabSize =  ny * nx;
+  float* rhoX  = getRhoX().getData();
+  float* rhoY  = getRhoY().getData();
+  float* rhoZ  = getRhoZ().getData();
 
-  #pragma omp parallel
-  {
-    float* rhox  = getRhoX().getData();
-    float* rhoy  = getRhoY().getData();
-    float* rhoz  = getRhoZ().getData();
+  const float* pmlX  = getPmlX().getData();
+  const float* pmlY  = getPmlY().getData();
+  const float* pmlZ  = getPmlZ().getData();
 
-    const float* pmlX  = getPmlX().getData();
-    const float* pmlY  = getPmlY().getData();
-    const float* pmlZ  = getPmlZ().getData();
+  const float* duxdx = getDuxdx().getData();
+  const float* duydy = getDuydy().getData();
+  const float* duzdz = getDuzdz().getData();
 
-    const float* duxdx = getDuxdx().getData();
-    const float* duydy = getDuydy().getData();
-    const float* duzdz = getDuzdz().getData();
+  //----------------------------------------------- rho0 is scalar -------------------------------------------------//
+  if (mParameters.getRho0ScalarFlag())
+  { // rho0 is a scalar
+    const float dtRho0 = mParameters.getRho0Scalar() * dt;
 
-    //----------------------------------------------- rho0 is scalar -------------------------------------------------//
-    if (mParameters.getRho0ScalarFlag())
-    { // rho0 is a scalar
-      const float dtRho0 = mParameters.getRho0Scalar() * dt;
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
+    #pragma omp parallel for schedule(static)
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
-        register size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
+        #pragma omp simd
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
         {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float ePmlX   = pmlX[x];
+          const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
-            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * duxdx[i])) );
-            i++;
-          } // x
-        }// y
-      }// z
+          rhoX[i] = pmlX[x] * (((pmlX[x] * rhoX[i]) - (dtRho0 * duxdx[i])));
+          rhoY[i] = pmlY[y] * (((pmlY[y] * rhoY[i]) - (dtRho0 * duydy[i])));
+          rhoZ[i] = pmlZ[z] * (((pmlZ[z] * rhoZ[i]) - (dtRho0 * duzdz[i])));
+        } // x
+      }// y
+    }// z
+  }
+  else
+  { //---------------------------------------------- rho0 is matrix ------------------------------------------------//
+    // rho0 is a matrix
+    const float* rho0  = getRho0().getData();
 
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
+    #pragma omp parallel for schedule(static)
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
-        register size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
+        #pragma omp simd
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
         {
-          const float ePmlY = pmlY[y];
-          for (size_t x = 0; x < nx; x++)
-          {
-            rhoy[i] = ePmlY * (((ePmlY * rhoy[i]) - (dtRho0 * duydy[i])));
-            i++;
-          } // x
-        }// y
-      }// z
+          const size_t i = get1DIndex(z, y, x, dimensionSizes);
+          const float dtRho0 = dt * rho0[i];
 
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        const float ePmlZ = pmlZ[z];
-
-        for (size_t y = 0; y < ny; y++)
-        {
-          for (size_t x = 0; x < nx; x++)
-          {
-            rhoz[i] = ePmlZ * (((ePmlZ * rhoz[i]) - (dtRho0 * duzdz[i])));
-            i++;
-          } // x
-        }// y
-      }// z
-
-    }
-    else
-    { //---------------------------------------------- rho0 is matrix ------------------------------------------------//
-      // rho0 is a matrix
-      const float* rho0  = getRho0().getData();
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
-        {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float ePmlX   = pmlX[x];
-            const float dtRho0 = dt * rho0[i];
-
-            rhox[i] = ePmlX * (((ePmlX * rhox[i]) - (dtRho0 * duxdx[i])));
-
-            i++;
-          } // x
-        }// y
-      }// z
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        for (size_t y = 0; y < ny; y++)
-        {
-          const float ePmlY = pmlY[y];
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float dtRho0 = dt * rho0[i];
-
-            rhoy[i] = ePmlY * (((ePmlY * rhoy[i]) - (dtRho0 * duydy[i])));
-            i++;
-
-          } // x
-        }// y
-      }// z
-
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
-      {
-        register size_t i = z * slabSize;
-        const float ePmlZ = pmlZ[z];
-
-        for (size_t y = 0; y < ny; y++)
-        {
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float dtRho0 = dt * rho0[i];
-
-            rhoz[i] = ePmlZ * (((ePmlZ * rhoz[i]) - (dtRho0 * duzdz[i])));
-            i++;
-          } // x
-        }// y
-      }// z
-
-   } // end rho is a matrix
-  }// parallel
+          rhoX[i] = pmlX[x] * (((pmlX[x] * rhoX[i]) - (dtRho0 * duxdx[i])));
+          rhoY[i] = pmlY[y] * (((pmlY[y] * rhoY[i]) - (dtRho0 * duydy[i])));
+          rhoZ[i] = pmlZ[z] * (((pmlZ[z] * rhoZ[i]) - (dtRho0 * duzdz[i])));
+        } // x
+      }// y
+    }// z
+  } // end rho is a matrix
 }// end of computeDensityLinear
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -1338,23 +1157,109 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
     RealMatrix& absorbTauTerm = velocitGradientSum;
     RealMatrix& absorbEtaTerm = densitySum;
 
-
-    computePressureTermsNonlinearSSE2(densitySum, nonlinearTerm, velocitGradientSum);
+    // different templated variants of computePressureTermsNonlinear
+    if ( mParameters.getBOnAScalarFlag())
+    {
+      if (mParameters.getRho0ScalarFlag())
+      {
+        computePressureTermsNonlinear<true, true>(densitySum, nonlinearTerm, velocitGradientSum);
+      }
+      else
+      {
+        computePressureTermsNonlinear<true, false>(densitySum, nonlinearTerm, velocitGradientSum);
+      }
+    }
+    else
+    {
+      if (mParameters.getRho0ScalarFlag())
+      {
+        computePressureTermsNonlinear<false, true>(densitySum, nonlinearTerm, velocitGradientSum);
+      }
+      else
+      {
+        computePressureTermsNonlinear<false, false>(densitySum, nonlinearTerm, velocitGradientSum);
+      }
+    }
 
     // ifftn( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
     getTempFftwX().computeR2CFft3D(velocitGradientSum);
     getTempFftwY().computeR2CFft3D(densitySum);
 
-    computeAbsorbtionTermSSE2(getTempFftwX(), getTempFftwY());
+    computeAbsorbtionTerm(getTempFftwX(), getTempFftwY());
 
     getTempFftwX().computeC2RFft3D(absorbTauTerm);
     getTempFftwY().computeC2RFft3D(absorbEtaTerm);
 
-    sumPressureTermsNonlinear(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
+    // different templated variants of sumPressureTermsNonlinear
+    if (mParameters.getC0ScalarFlag())
+    {
+      if (mParameters.getAlphaCoeffScalarFlag())
+      {
+        sumPressureTermsNonlinear<true, true>(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
+      }
+      else
+      {
+        sumPressureTermsNonlinear<true, false>(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
+      }
+    }
+    else
+    {
+      sumPressureTermsNonlinear<false, false>(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
+    }
+
   }
   else
-  {
-    sumPressureTermsNonlinearLossless();
+  { //------------------------------------------------ lossless case--------------------------------------------------//
+    if (mParameters.getC0ScalarFlag())
+    {
+      if (mParameters.getBOnAScalarFlag())
+      {
+        if (mParameters.getRho0ScalarFlag())
+        {
+          sumPressureTermsNonlinearLossless<true, true, true>();
+        }
+        else
+        {
+          sumPressureTermsNonlinearLossless<true, true, false>();
+        }
+      }
+      else
+      {
+        if (mParameters.getRho0ScalarFlag())
+        {
+          sumPressureTermsNonlinearLossless<true, false, true>();
+        }
+        else
+        {
+          sumPressureTermsNonlinearLossless<true, false, false>();
+        }
+      }
+    }
+    else
+    {
+      if (mParameters.getBOnAScalarFlag())
+      {
+        if (mParameters.getRho0ScalarFlag())
+        {
+          sumPressureTermsNonlinearLossless<false, true, true>();
+        }
+        else
+        {
+          sumPressureTermsNonlinearLossless<false, true, false>();
+        }
+      }
+      else
+      {
+        if (mParameters.getRho0ScalarFlag())
+        {
+          sumPressureTermsNonlinearLossless<false, false, true>();
+        }
+        else
+        {
+          sumPressureTermsNonlinearLossless<false, false, false>();
+        }
+      }
+    }
   }
 }// end of computePressureNonlinear
 //----------------------------------------------------------------------------------------------------------------------
@@ -1399,12 +1304,26 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
     getTempFftwX().computeR2CFft3D(velocityGradientTerm);
     getTempFftwY().computeR2CFft3D(densitySum);
 
-    computeAbsorbtionTermSSE2(getTempFftwX(), getTempFftwY());
+    computeAbsorbtionTerm(getTempFftwX(), getTempFftwY());
 
     getTempFftwX().computeC2RFft3D(absorbTauTerm);
     getTempFftwY().computeC2RFft3D(absorbEtaTerm);
 
-    sumPressureTermsLinear(absorbTauTerm, absorbEtaTerm, densitySum);
+    if (mParameters.getC0ScalarFlag())
+    {
+      if (mParameters.getAlphaCoeffScalarFlag())
+      {
+        sumPressureTermsLinear<true, true>(absorbTauTerm, absorbEtaTerm, densitySum);
+      }
+      else
+      {
+        sumPressureTermsLinear<true, false>(absorbTauTerm, absorbEtaTerm, densitySum);
+      }
+    }
+    else
+    {
+      sumPressureTermsLinear<false, false>(absorbTauTerm, absorbEtaTerm, densitySum);
+    }
   }
   else
   {
@@ -1423,31 +1342,56 @@ void KSpaceFirstOrder3DSolver::addVelocitySource()
 
   if (mParameters.getVelocityXSourceFlag() > timeIndex)
   {
-    getUxSgx().addVelocitySource(GetVelocityXSourceInput(),
-                                 getVelocitySourceIndex(),
-                                 timeIndex,
-                                 mParameters.getVelocitySourceMode(),
-                                 mParameters.getVelocitySourceMany());
+    computeVelocitySourceTerm(getUxSgx(), GetVelocityXSourceInput(), getVelocitySourceIndex());
   }
 
   if (mParameters.getVelocityYSourceFlag() > timeIndex)
   {
-    getUySgy().addVelocitySource(GetVelocityYSourceInput(),
-                                 getVelocitySourceIndex(),
-                                 timeIndex,
-                                 mParameters.getVelocitySourceMode(),
-                                 mParameters.getVelocitySourceMany());
+    computeVelocitySourceTerm(getUySgy(), GetVelocityYSourceInput(), getVelocitySourceIndex());
   }
 
   if (mParameters.getVelocityZSourceFlag() > timeIndex)
   {
-    getUzSgz().addVelocitySource(getVelocityZSourceInput(),
-                                 getVelocitySourceIndex(),
-                                 timeIndex,
-                                 mParameters.getVelocitySourceMode(),
-                                 mParameters.getVelocitySourceMany());
+    computeVelocitySourceTerm(getUzSgz(), getVelocityZSourceInput(), getVelocitySourceIndex());
   }
 }// end of addVelocitySource
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add in velocity source terms.
+ */
+void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
+                                                         const RealMatrix&  velocitySourceInput,
+                                                         const IndexMatrix& velocitySourceIndex)
+{
+
+  const size_t timeIndex  = mParameters.getTimeIndex();
+  const size_t sourceSize = velocitySourceIndex.size();
+  const size_t index2D    = (mParameters.getVelocitySourceMany() != 0) ? timeIndex * sourceSize : timeIndex;
+
+  const bool velocitySourceMode = mParameters.getVelocitySourceMode();
+  const bool velocitySourceMany = mParameters.getVelocitySourceMany();
+
+  if (velocitySourceMode == 0)
+  {
+    #pragma omp parallel for if (sourceSize > 16384)
+    for (size_t i = 0; i < sourceSize; i++)
+    {
+      const size_t signalIndex = (velocitySourceMany != 0) ? index2D + i : index2D;
+      velocityMatrix[velocitySourceIndex[i]] = velocitySourceInput[signalIndex];
+    }
+  }// end of Dirichlet
+
+  if (velocitySourceMode == 1)
+  {
+    #pragma omp parallel for if (sourceSize > 16384)
+    for (size_t i = 0; i < sourceSize; i++)
+    {
+      const size_t signalIndex = (velocitySourceMany != 0) ? index2D + i : index2D;
+      velocityMatrix[velocitySourceIndex[i]] += velocitySourceInput[signalIndex];
+    }
+  }// end of add
+}// end of computeVelocitySourceTerm
 //----------------------------------------------------------------------------------------------------------------------
 
  /**
@@ -1529,19 +1473,19 @@ void KSpaceFirstOrder3DSolver::addInitialPressureSource()
   const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
   const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  float* rhox = getRhoX().getData();
-  float* rhoy = getRhoY().getData();
-  float* rhoz = getRhoZ().getData();
+  float* rhoX = getRhoX().getData();
+  float* rhoY = getRhoY().getData();
+  float* rhoZ = getRhoZ().getData();
 
-  const size_t size = getRhoX().size();
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
 
-  #pragma omp parallel for schedule (static)
-  for (size_t i = 0; i < size; i++)
+  #pragma omp parallel for simd schedule(static)
+  for (size_t i = 0; i < nElements; i++)
   {
     const float tmp = sourceInput[i] / (3.0f * ((c0ScalarFlag) ? c2Scalar : c2Matrix[i]));
-    rhox[i] = tmp;
-    rhoy[i] = tmp;
-    rhoz[i] = tmp;
+    rhoX[i] = tmp;
+    rhoY[i] = tmp;
+    rhoZ[i] = tmp;
   }
 
   //------------------------------------------------------------------------//
@@ -1553,32 +1497,42 @@ void KSpaceFirstOrder3DSolver::addInitialPressureSource()
   if (mParameters.getRho0ScalarFlag())
   {
     if (mParameters.getNonUniformGridFlag())
-    { // non uniform grid
-      getUxSgx().computeInitialVelocityXHomogeneousNonuniform(mParameters.getDtRho0SgxScalar(),
-                                                              getDxudxnSgx(),
-                                                              getTempFftwX());
-      getUySgy().computeInitialVelocityYHomogeneousNonuniform(mParameters.getDtRho0SgyScalar(),
-                                                              getDyudynSgy(),
-                                                              getTempFftwY());
-      getUzSgz().computeInitialVelocityZHomogeneousNonuniform(mParameters.getDtRho0SgzScalar(),
-                                                              getDzudznSgz(),
-                                                              getTempFftwZ());
+    { // non uniform grid, homogeneous case
+      computeInitialVelocityHomogeneousNonuniform();
     }
     else
     { //uniform grid, heterogeneous
-      getUxSgx().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgxScalar(), getTempFftwX());
-      getUySgy().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgyScalar(), getTempFftwY());
-      getUzSgz().computeInitialVelocityHomogeneousUniform(mParameters.getDtRho0SgzScalar(), getTempFftwZ());
+      computeInitialVelocityHomogeneousUniform();
     }
   }
   else
   { // homogeneous, unifrom grid
     // divide the matrix by 2 and multiply with st./rho0_sg
-    getUxSgx().computeInitialVelocity(getDtRho0Sgx(), getTempFftwX());
-    getUySgy().computeInitialVelocity(getDtRho0Sgy(), getTempFftwY());
-    getUzSgz().computeInitialVelocity(getDtRho0Sgz(), getTempFftwZ());
+    computeInitialVelocityHeterogeneous();
   }
 }// end of addInitialPressureSource
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add transducer data source to velocity x component.
+ */
+void KSpaceFirstOrder3DSolver::addTransducerSource()
+{
+  float* uxSgx = getUxSgx().getData();
+
+  const size_t* velocitySourceIndex   = getVelocitySourceIndex().getData();
+  const float*  transducerSourceInput = getTransducerSourceInput().getData();
+  const size_t* delayMask             = getDelayMask().getData();
+
+  const size_t timeIndex  = mParameters.getTimeIndex();
+  const size_t sourceSize = getVelocitySourceIndex().size();
+
+  #pragma omp parallel for schedule(static) if (sourceSize > 16384)
+  for (size_t i = 0; i < sourceSize; i++)
+  {
+    uxSgx[velocitySourceIndex[i]] += transducerSourceInput[delayMask[i] + timeIndex];
+  }
+}// end of addTransducerSource
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -1586,52 +1540,49 @@ void KSpaceFirstOrder3DSolver::addInitialPressureSource()
  */
 void KSpaceFirstOrder3DSolver::generateKappa()
 {
-  #pragma omp parallel
+  const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
+  const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
+  const float dz2Rec = 1.0f / (mParameters.getDz() * mParameters.getDz());
+
+  const float cRefDtPi = mParameters.getCRef() * mParameters.getDt() * static_cast<float>(M_PI);
+
+  const float nxRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
+  const float nyRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().ny);
+  const float nzRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nz);
+
+  const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
+
+  float* kappa = getKappa().getData();
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
   {
-    const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
-    const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
-    const float dz2Rec = 1.0f / (mParameters.getDz() * mParameters.getDz());
+    const float zf    = static_cast<float>(z);
+          float zPart = 0.5f - fabs(0.5f - zf * nzRec);
+                zPart = (zPart * zPart) * dz2Rec;
 
-    const float cRefDtPi = mParameters.getCRef() * mParameters.getDt() * static_cast<float>(M_PI);
-
-    const float nxRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
-    const float nyRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().ny);
-    const float nzRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nz);
-
-    const size_t nx = mParameters.getReducedDimensionSizes().nx;
-    const size_t ny = mParameters.getReducedDimensionSizes().ny;
-    const size_t nz = mParameters.getReducedDimensionSizes().nz;
-
-    float* kappa = getKappa().getData();
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < nz; z++)
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
     {
-      const float zf    = static_cast<float>(z);
-            float zPart = 0.5f - fabs(0.5f - zf * nzRec);
-                  zPart = (zPart * zPart) * dz2Rec;
+      const float yf    = static_cast<float>(y);
+            float yPart = 0.5f - fabs(0.5f - yf * nyRec);
+                  yPart = (yPart * yPart) * dy2Rec;
 
-      for (size_t y = 0; y < ny; y++)
+      const float yzPart = zPart + yPart;
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
       {
-        const float yf    = static_cast<float>(y);
-              float yPart = 0.5f - fabs(0.5f - yf * nyRec);
-                    yPart = (yPart * yPart) * dy2Rec;
+        const float xf = static_cast<float>(x);
+              float xPart = 0.5f - fabs(0.5f - xf * nxRec);
+                    xPart = (xPart * xPart) * dx2Rec;
 
-        const float yzPart = zPart + yPart;
-        for (size_t x = 0; x < nx; x++)
-        {
-          const float xf = static_cast<float>(x);
-                float xPart = 0.5f - fabs(0.5f - xf * nxRec);
-                      xPart = (xPart * xPart) * dx2Rec;
+              float k = cRefDtPi * sqrt(xPart + yzPart);
 
-                float k = cRefDtPi * sqrt(xPart + yzPart);
+        const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
 
-          // kappa element
-          kappa[(z * ny + y) * nx + x ] = (k == 0.0f) ? 1.0f : sin(k) / k;
-        }//x
-      }//y
-    }// z
-  }// parallel
+        // kappa element
+        kappa[i] = (k == 0.0f) ? 1.0f : sin(k) / k;
+      }//x
+    }//y
+  }// z
 }// end of generateKappa
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -1640,71 +1591,65 @@ void KSpaceFirstOrder3DSolver::generateKappa()
  */
 void KSpaceFirstOrder3DSolver::generateKappaAndNablas()
 {
-  #pragma omp parallel
+  const float dxSqRec    = 1.0f / (mParameters.getDx() * mParameters.getDx());
+  const float dySqRec    = 1.0f / (mParameters.getDy() * mParameters.getDy());
+  const float dzSqRec    = 1.0f / (mParameters.getDz() * mParameters.getDz());
+
+  const float cRefDt2    = mParameters.getCRef() * mParameters.getDt() * 0.5f;
+  const float pi2        = static_cast<float>(M_PI) * 2.0f;
+
+  const size_t nx        = mParameters.getFullDimensionSizes().nx;
+  const size_t ny        = mParameters.getFullDimensionSizes().ny;
+  const size_t nz        = mParameters.getFullDimensionSizes().nz;
+
+  const float nxRec      = 1.0f / static_cast<float>(nx);
+  const float nyRec      = 1.0f / static_cast<float>(ny);
+  const float nzRec      = 1.0f / static_cast<float>(nz);
+
+  const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
+
+  float* kappa           = getKappa().getData();
+  float* absorbNabla1    = getAbsorbNabla1().getData();
+  float* absorbNabla2    = getAbsorbNabla2().getData();
+  const float alphaPower = mParameters.getAlphaPower();
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
   {
-    const float dxSqRec    = 1.0f / (mParameters.getDx() * mParameters.getDx());
-    const float dySqRec    = 1.0f / (mParameters.getDy() * mParameters.getDy());
-    const float dzSqRec    = 1.0f / (mParameters.getDz() * mParameters.getDz());
+    const float zf    = static_cast<float>(z);
+          float zPart = 0.5f - fabs(0.5f - zf * nzRec);
+                zPart = (zPart * zPart) * dzSqRec;
 
-    const float cRefDt2    = mParameters.getCRef() * mParameters.getDt() * 0.5f;
-    const float pi2        = static_cast<float>(M_PI) * 2.0f;
-
-    const size_t nx        = mParameters.getFullDimensionSizes().nx;
-    const size_t ny        = mParameters.getFullDimensionSizes().ny;
-    const size_t nz        = mParameters.getFullDimensionSizes().nz;
-
-    const float nxRec      = 1.0f / static_cast<float>(nx);
-    const float nyRec      = 1.0f / static_cast<float>(ny);
-    const float nzRec      = 1.0f / static_cast<float>(nz);
-
-    const size_t nxComplex = mParameters.getReducedDimensionSizes().nx;
-    const size_t nyComplex = mParameters.getReducedDimensionSizes().ny;
-    const size_t nzComplex = mParameters.getReducedDimensionSizes().nz;
-
-    float* kappa           = getKappa().getData();
-    float* absorbNabla1    = getAbsorbNabla1().getData();
-    float* absorbNabla2    = getAbsorbNabla2().getData();
-    const float alphaPower = mParameters.getAlphaPower();
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < nzComplex; z++)
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
     {
-      const float zf    = static_cast<float>(z);
-            float zPart = 0.5f - fabs(0.5f - zf * nzRec);
-                  zPart = (zPart * zPart) * dzSqRec;
+      const float yf    = static_cast<float>(y);
+            float yPart = 0.5f - fabs(0.5f - yf * nyRec);
+                  yPart = (yPart * yPart) * dySqRec;
 
-      for (size_t y = 0; y < nyComplex; y++)
+      const float yzPart = zPart + yPart;
+
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
       {
-        const float yf    = static_cast<float>(y);
-              float yPart = 0.5f - fabs(0.5f - yf * nyRec);
-                    yPart = (yPart * yPart) * dySqRec;
+        const float xf    = static_cast<float>(x);
+              float xPart = 0.5f - fabs(0.5f - xf * nxRec);
+                    xPart = (xPart * xPart) * dxSqRec;
 
-        const float yzPart = zPart + yPart;
+              float k     = pi2 * sqrt(xPart + yzPart);
+              float cRefK = cRefDt2 * k;
 
-        size_t i = (z * nyComplex + y) * nxComplex;
+        const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
 
-        for (size_t x = 0; x < nxComplex; x++)
-        {
-          const float xf    = static_cast<float>(x);
-                float xPart = 0.5f - fabs(0.5f - xf * nxRec);
-                      xPart = (xPart * xPart) * dxSqRec;
+        kappa[i]          = (cRefK == 0.0f) ? 1.0f : sin(cRefK) / cRefK;
 
-                float k     = pi2 * sqrt(xPart + yzPart);
-                float cRefK = cRefDt2 * k;
+        absorbNabla1[i] = pow(k, alphaPower - 2);
+        absorbNabla2[i] = pow(k, alphaPower - 1);
 
-          kappa[i]          = (cRefK == 0.0f) ? 1.0f : sin(cRefK) / cRefK;
+        if (absorbNabla1[i] ==  std::numeric_limits<float>::infinity()) absorbNabla1[i] = 0.0f;
+        if (absorbNabla2[i] ==  std::numeric_limits<float>::infinity()) absorbNabla2[i] = 0.0f;
+      }//x
+    }//y
+  }// z
 
-          absorbNabla1[i] = pow(k, alphaPower - 2);
-          absorbNabla2[i] = pow(k, alphaPower - 1);
-
-          if (absorbNabla1[i] ==  std::numeric_limits<float>::infinity()) absorbNabla1[i] = 0.0f;
-          if (absorbNabla2[i] ==  std::numeric_limits<float>::infinity()) absorbNabla2[i] = 0.0f;
-
-          i++;
-        }//x
-      }//y
-    }// z
-  }// parallel
 }// end of generateKappaAndNablas
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -1713,7 +1658,6 @@ void KSpaceFirstOrder3DSolver::generateKappaAndNablas()
  */
 void KSpaceFirstOrder3DSolver::generateTauAndEta()
 {
-
   if ((mParameters.getAlphaCoeffScalarFlag()) && (mParameters.getC0ScalarFlag()))
   { // scalar values
     const float alphaPower       = mParameters.getAlphaPower();
@@ -1728,55 +1672,51 @@ void KSpaceFirstOrder3DSolver::generateTauAndEta()
   }
   else
   { // matrix
-    #pragma omp parallel
+
+    const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
+
+    float* absorbTau = getAbsorbTau().getData();
+    float* absorbEta = getAbsorbEta().getData();
+
+    const bool   alphaCoeffScalarFlag = mParameters.getAlphaCoeffScalarFlag();
+    const float  alphaCoeffScalar     = (alphaCoeffScalarFlag) ? mParameters.getAlphaCoeffScalar() : 0;
+    const float* alphaCoeffMatrix     = (alphaCoeffScalarFlag) ? nullptr : getTemp1Real3D().getData();
+
+
+    const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
+    const float  c0Scalar     = (c0ScalarFlag) ? mParameters.getC0Scalar() : 0;
+    // here c2 still holds just c0!
+    const float* cOMatrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
+
+
+    const float alphaPower       = mParameters.getAlphaPower();
+    const float tanPi2AlphaPower = tan(static_cast<float>(M_PI_2) * alphaPower);
+
+    //alpha = 100*alpha.*(1e-6/(2*pi)).^y./
+    //                  (20*log10(exp(1)));
+    const float alphaNeperCoeff = (100.0f * pow(1.0e-6f / (2.0f * static_cast<float>(M_PI)), alphaPower)) /
+                                  (20.0f * static_cast<float>(M_LOG10E));
+
+
+    #pragma omp parallel for schedule (static)
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
-      const size_t nx  = mParameters.getFullDimensionSizes().nx;
-      const size_t ny  = mParameters.getFullDimensionSizes().ny;
-      const size_t nz  = mParameters.getFullDimensionSizes().nz;
-
-      float* absorbTau = getAbsorbTau().getData();
-      float* absorbEta = getAbsorbEta().getData();
-
-      const bool   alphaCoeffScalarFlag = mParameters.getAlphaCoeffScalarFlag();
-      const float  alphaCoeffScalar     = (alphaCoeffScalarFlag) ? mParameters.getAlphaCoeffScalar() : 0;
-      const float* alphaCoeffMatrix     = (alphaCoeffScalarFlag) ? nullptr : getTemp1Real3D().getData();
-
-
-      const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
-      const float  c0Scalar     = (c0ScalarFlag) ? mParameters.getC0Scalar() : 0;
-      // here c2 still holds just c0!
-      const float* cOMatrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
-
-
-      const float alphaPower       = mParameters.getAlphaPower();
-      const float tanPi2AlphaPower = tan(static_cast<float>(M_PI_2) * alphaPower);
-
-      //alpha = 100*alpha.*(1e-6/(2*pi)).^y./
-      //                  (20*log10(exp(1)));
-      const float alphaNeperCoeff = (100.0f * pow(1.0e-6f / (2.0f * static_cast<float>(M_PI)), alphaPower)) /
-                                    (20.0f * static_cast<float>(M_LOG10E));
-
-
-      #pragma omp for schedule (static)
-      for (size_t z = 0; z < nz; z++)
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
-        for (size_t y = 0; y < ny; y++)
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
         {
-          size_t i = (z * ny + y) * nx;
-          for (size_t x = 0; x < nx; x++)
-          {
-            const float alphaCoeff2 = 2.0f * alphaNeperCoeff *
-                                      ((alphaCoeffScalarFlag) ? alphaCoeffScalar : alphaCoeffMatrix[i]);
+          const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
-            absorbTau[i] = (-alphaCoeff2) * pow(((c0ScalarFlag) ? c0Scalar : cOMatrix[i]), alphaPower - 1);
-            absorbEta[i] =   alphaCoeff2  * pow(((c0ScalarFlag) ? c0Scalar : cOMatrix[i]),
-                                                  alphaPower) * tanPi2AlphaPower;
+          const float alphaCoeff2 = 2.0f * alphaNeperCoeff *
+                                    ((alphaCoeffScalarFlag) ? alphaCoeffScalar : alphaCoeffMatrix[i]);
 
-            i++;
-          }//x
-        }//y
-      }// z
-    }// parallel
+          absorbTau[i] = (-alphaCoeff2) * pow(((c0ScalarFlag) ? c0Scalar : cOMatrix[i]), alphaPower - 1);
+          absorbEta[i] =   alphaCoeff2  * pow(((c0ScalarFlag) ? c0Scalar : cOMatrix[i]),
+                                                alphaPower) * tanPi2AlphaPower;
+
+        }//x
+      }//y
+    }// z
   } // matrix
 }// end of generateTauAndEta
 //----------------------------------------------------------------------------------------------------------------------
@@ -1786,68 +1726,35 @@ void KSpaceFirstOrder3DSolver::generateTauAndEta()
  */
 void KSpaceFirstOrder3DSolver::generateInitialDenisty()
 {
-  #pragma omp parallel
+  float* dtRho0Sgx   = getDtRho0Sgx().getData();
+  float* dtRho0Sgy   = getDtRho0Sgy().getData();
+  float* dtRho0Sgz   = getDtRho0Sgz().getData();
+
+  const float dt = mParameters.getDt();
+
+  const float* duxdxnSgx = getDxudxnSgx().getData();
+  const float* duydynSgy = getDyudynSgy().getData();
+  const float* duzdznSgz = getDzudznSgz().getData();
+
+  const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
   {
-    float* dtRho0Sgx   = getDtRho0Sgx().getData();
-    float* dtRho0Sgy   = getDtRho0Sgy().getData();
-    float* dtRho0Sgz   = getDtRho0Sgz().getData();
-
-    const float dt = mParameters.getDt();
-
-    const float* duxdxnSgx = getDxudxnSgx().getData();
-    const float* duydynSgy = getDyudynSgy().getData();
-    const float* duzdznSgz = getDzudznSgz().getData();
-
-    const size_t nz = getDtRho0Sgx().getDimensionSizes().nz;
-    const size_t ny = getDtRho0Sgx().getDimensionSizes().ny;
-    const size_t nx = getDtRho0Sgx().getDimensionSizes().nx;
-
-    const size_t sliceSize = (nx * ny);
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < nz; z++)
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
     {
-      register size_t i = z * sliceSize;
-      for (size_t y = 0; y < ny; y++)
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
       {
-        for (size_t x = 0; x < nx; x++)
-        {
-          dtRho0Sgx[i] = (dt * duxdxnSgx[x]) / dtRho0Sgx[i];
-          i++;
-        } // x
-      } // y
-    } // z
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < nz; z++)
-    {
-      register size_t i = z * sliceSize;
-      for (size_t y = 0; y < ny; y++)
-      {
-        const float duydynEl = duydynSgy[y];
-        for (size_t x = 0; x < nx; x++)
-        {
-          dtRho0Sgy[i] = (dt * duydynEl) / dtRho0Sgy[i];
-          i++;
-        } // x
-      } // y
-    } // z
+        dtRho0Sgx[i] = (dt * duxdxnSgx[x]) / dtRho0Sgx[i];
+        dtRho0Sgy[i] = (dt * duydynSgy[y]) / dtRho0Sgy[i];
+        dtRho0Sgz[i] = (dt * duzdznSgz[z]) / dtRho0Sgz[i];
+      } // x
+    } // y
+  } // z
 
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < nz; z++)
-    {
-      register size_t i = z * sliceSize;
-      const float duzdznEl = duzdznSgz[z];
-      for (size_t y = 0; y < ny; y++)
-      {
-        for (size_t x = 0; x < nx; x++)
-        {
-          dtRho0Sgz[i] = (dt * duzdznEl) / dtRho0Sgz[i];
-          i++;
-        } // x
-      } // y
-    } // z
-  } // parallel
 }// end of generateInitialDenisty
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -1860,13 +1767,339 @@ void KSpaceFirstOrder3DSolver::computeC2()
   {
     float* c2 =  getC2().getData();
 
-    #pragma omp parallel for schedule (static)
-    for (size_t i=0; i< getC2().size(); i++)
+    #pragma omp parallel for simd schedule(static) aligned(c2)
+    for (size_t i=0; i < getC2().size(); i++)
     {
       c2[i] = c2[i] * c2[i];
     }
   }// matrix
 }// computeC2
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for initial pressure problem.
+ */
+void KSpaceFirstOrder3DSolver::computeInitialVelocityHeterogeneous()
+{
+  getTempFftwX().computeC2RFft3D(getUxSgx());
+  getTempFftwY().computeC2RFft3D(getUySgy());
+  getTempFftwZ().computeC2RFft3D(getUzSgz());
+
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+  const float  divider   = 1.0f / (2.0f * static_cast<float>(nElements));
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  const float* dtRho0Sgx = getDtRho0Sgx().getData();
+  const float* dtRho0Sgy = getDtRho0Sgy().getData();
+  const float* dtRho0Sgz = getDtRho0Sgz().getData();
+
+
+  #pragma omp parallel for simd schedule(static) \
+          aligned(uxSgx, uySgy, uzSgz, dtRho0Sgx, dtRho0Sgy, dtRho0Sgz)
+  for (size_t i = 0; i < nElements; i++)
+  {
+    uxSgx[i] *= dtRho0Sgx[i] * divider;
+    uySgy[i] *= dtRho0Sgy[i] * divider;
+    uzSgz[i] *= dtRho0Sgz[i] * divider;
+  }
+}// end of computeInitialVelocityHeterogeneous
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
+ */
+void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousUniform()
+{
+  getTempFftwX().computeC2RFft3D(getUxSgx());
+  getTempFftwY().computeC2RFft3D(getUySgy());
+  getTempFftwZ().computeC2RFft3D(getUzSgz());
+
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+  const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
+  const float dividerY = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
+  const float dividerZ = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  #pragma omp parallel for simd schedule(static) aligned(uxSgx, uySgy, uzSgz)
+  for (size_t i = 0; i < nElements; i++)
+  {
+    uxSgx[i] *= dividerX;
+    uySgy[i] *= dividerY;
+    uzSgz[i] *= dividerZ;
+  }
+}// end of computeInitialVelocityHomogeneousUniform
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
+ */
+void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousNonuniform()
+{
+  getTempFftwX().computeC2RFft3D(getUxSgx());
+  getTempFftwY().computeC2RFft3D(getUySgy());
+  getTempFftwZ().computeC2RFft3D(getUzSgz());
+
+  const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
+  const size_t nElements              = dimensionSizes.nElements();
+
+  const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
+  const float dividerY = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
+  const float dividerZ = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar();
+
+  const float* dxudxnSgx = getDxudxnSgx().getData();
+  const float* dyudynSgy = getDyudynSgy().getData();
+  const float* dzudznSgz = getDzudznSgz().getData();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+        uxSgx[i] *= dividerX * dxudxnSgx[x];
+        uySgy[i] *= dividerY * dyudynSgy[y];
+        uzSgz[i] *= dividerZ * dzudznSgz[z] ;
+      } // x
+    } // y
+  } // z
+}// end of computeInitialVelocityHomogeneousNonuniform
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for heterogeneous medium and a uniform grid, x direction.
+ */
+void KSpaceFirstOrder3DSolver::computeVelocityHeterogeneous()
+{
+  const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
+  const size_t nElements   = dimensionSizes.nElements();
+  const float  divider     = 1.0f / static_cast<float>(nElements);
+
+  const float* ifftX = getTemp1Real3D().getData();
+  const float* ifftY = getTemp2Real3D().getData();
+  const float* ifftZ = getTemp3Real3D().getData();
+
+  const float* dtRho0Sgx = getDtRho0Sgx().getData();
+  const float* dtRho0Sgy = getDtRho0Sgy().getData();
+  const float* dtRho0Sgz = getDtRho0Sgz().getData();
+
+  const float* pmlX = getPmlXSgx().getData();
+  const float* pmlY = getPmlYSgy().getData();
+  const float* pmlZ = getPmlZSgz().getData();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  // long loops are replicated for every dimension to save SIMD registers
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uxSgx[i] = (uxSgx[i] * pmlX[x] - divider * ifftX[i] * dtRho0Sgx[i]) * pmlX[x];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      const float ePmlY = pmlY[y];
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uySgy[i] = (uySgy[i] * ePmlY - divider * ifftY[i] * dtRho0Sgy[i]) * ePmlY;
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    const float ePmlZ = pmlZ[z];
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uzSgz[i] = (uzSgz[i] * ePmlZ - divider * ifftZ[i] * dtRho0Sgz[i]) * ePmlZ;
+      } // x
+    } // y
+  } // z
+}// end of computeVelocityHeterogeneous
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for homogeneous medium and a uniform grid.
+ */
+void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousUniform()
+{
+  const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
+  const size_t nElements = dimensionSizes.nElements();
+
+  const float dividerX = mParameters.getDtRho0SgxScalar() / static_cast<float>(nElements);
+  const float dividerY = mParameters.getDtRho0SgyScalar() / static_cast<float>(nElements);
+  const float dividerZ = mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements);
+
+  const float* ifftX = getTemp1Real3D().getData();
+  const float* ifftY = getTemp2Real3D().getData();
+  const float* ifftZ = getTemp3Real3D().getData();
+
+  const float* pmlX = getPmlXSgx().getData();
+  const float* pmlY = getPmlYSgy().getData();
+  const float* pmlZ = getPmlZSgz().getData();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  // long loops are replicated for every dimension to save SIMD registers
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uxSgx[i] = (uxSgx[i] * pmlX[x] - dividerX * ifftX[i]) * pmlX[x];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uySgy[i] = (uySgy[i] * pmlY[y] - dividerY * ifftY[i]) * pmlY[y];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uzSgz[i] = (uzSgz[i] * pmlZ[z] - dividerZ * ifftZ[i]) * pmlZ[z];
+      } // x
+    } // y
+  } // z
+}// end of computeVelocityXHomogeneousUniform
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Compute acoustic velocity for homogenous medium and nonuniform grid, x direction.
+ */
+void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousNonuniform()
+{
+  const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
+  const size_t nElements = dimensionSizes.nElements();
+
+  const float dividerX = mParameters.getDtRho0SgxScalar() / static_cast<float>(nElements);
+  const float dividerY = mParameters.getDtRho0SgyScalar() / static_cast<float>(nElements);
+  const float dividerZ = mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements);
+
+  const float* ifftX = getTemp1Real3D().getData();
+  const float* ifftY = getTemp2Real3D().getData();
+  const float* ifftZ = getTemp3Real3D().getData();
+
+  const float* dxudxnSgx = getDxudxnSgx().getData();
+  const float* dyudynSgy = getDyudynSgy().getData();
+  const float* dzudznSgz = getDzudznSgz().getData();
+
+  const float* pmlX = getPmlXSgx().getData();
+  const float* pmlY = getPmlYSgy().getData();
+  const float* pmlZ = getPmlZSgz().getData();
+
+  float* uxSgx = getUxSgx().getData();
+  float* uySgy = getUySgy().getData();
+  float* uzSgz = getUzSgz().getData();
+
+  // long loops are replicated for every dimension to save SIMD registers
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uxSgx[i] = (uxSgx[i] * pmlX[x] - (dividerX * dxudxnSgx[x] * ifftX[i])) * pmlX[x];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uySgy[i] = (uySgy[i] * pmlY[y] - (dividerY * dyudynSgy[y] * ifftY[i])) * pmlY[y];
+      } // x
+    } // y
+  } // z
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
+        const size_t i = get1DIndex(z, y, x, dimensionSizes);
+
+        uzSgz[i] = (uzSgz[i] * pmlZ[z] - (dividerZ * dzudznSgz[z] * ifftZ[i])) * pmlZ[z];
+      } // x
+    } // y
+  } // z
+}// end of computeVelocityHomogeneousNonuniform
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -1882,68 +2115,91 @@ void KSpaceFirstOrder3DSolver::computePressureGradient()
   // Compute FFT of pressure
   getTempFftwX().computeR2CFft3D(getP());
 
-  #pragma omp parallel
+  FloatComplex* ifftX = getTempFftwX().getComplexData();
+  FloatComplex* ifftY = getTempFftwY().getComplexData();
+  FloatComplex* ifftZ = getTempFftwZ().getComplexData();
+
+  const FloatComplex* ddxKShiftPos = getDdxKShiftPos().getComplexData();
+  const FloatComplex* ddyKShiftPos = getDdyKShiftPos().getComplexData();
+  const FloatComplex* ddzKShiftPos = getDdzKShiftPos().getComplexData();
+
+  const float* kappa  = getKappa().getData();
+
+  const DimensionSizes& reducedDimensionSizes= mParameters.getReducedDimensionSizes();
+
+  #pragma omp parallel for schedule(static)
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
   {
-    float* pkX = getTempFftwX().getData();
-    float* pkY = getTempFftwY().getData();
-    float* pkZ = getTempFftwZ().getData();
-
-    const float* kappa        = getKappa().getData();
-    const float* ddxKShiftPos = getDdxKShiftPos().getData();
-    const float* ddyKShiftPos = getDdyKShiftPos().getData();
-    const float* ddzKShiftPos = getDdzKShiftPos().getData();
-
-    const size_t nz = getTempFftwX().getDimensionSizes().nz;
-    const size_t ny = getTempFftwX().getDimensionSizes().ny;
-    const size_t nx = getTempFftwX().getDimensionSizes().nx;
-
-    const size_t slabSize = (ny * nx) << 1;
-
-    #pragma omp for schedule (static)
-    for (size_t z = 0; z < nz; z++)
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
     {
-      register size_t i = z * slabSize;
-      const size_t z2 = z<<1;
-      for (size_t y = 0; y < ny; y++)
+      #pragma omp simd
+      for (size_t x = 0; x < reducedDimensionSizes.nx;  x++)
       {
-        const size_t y2 = y<<1;
-        for (size_t x = 0; x < nx;  x++)
-        {
-          // kappa ./ p_k
-          const float eKappa  = kappa[i>>1];
-          const float ePkXRe = pkX[i]   * eKappa;
-          const float ePkXIm = pkX[i+1] * eKappa;
-          const size_t x2 = x<<1;
+        const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
 
-          //bsxfun(ddx...)
-          pkX[i]   = ePkXRe * ddxKShiftPos[x2]   - ePkXIm * ddxKShiftPos[x2+1];
-          pkX[i+1] = ePkXRe * ddxKShiftPos[x2+1] + ePkXIm * ddxKShiftPos[x2];
+        const FloatComplex eKappa = ifftX[i] * kappa[i];
 
-          //bsxfun(ddy...)
-          pkY[i]   = ePkXRe * ddyKShiftPos[y2]   - ePkXIm * ddyKShiftPos[y2+1];
-          pkY[i+1] = ePkXRe * ddyKShiftPos[y2+1] + ePkXIm * ddyKShiftPos[y2];
-
-          //bsxfun(ddz...)
-          pkZ[i]   = ePkXRe * ddzKShiftPos[z2]   - ePkXIm * ddzKShiftPos[z2+1];
-          pkZ[i+1] = ePkXRe * ddzKShiftPos[z2+1] + ePkXIm * ddzKShiftPos[z2];
-
-          i +=2;
-        } // x
-      } // y
-    } // z
-  }// parallel
+        ifftX[i] = eKappa * ddxKShiftPos[x];
+        ifftY[i] = eKappa * ddyKShiftPos[y];
+        ifftZ[i] = eKappa * ddzKShiftPos[z];
+      } // x
+    } // y
+  } // z
 }// end of computePressureGradient
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Calculate three temporary sums in the new pressure formula non-linear absorbing case, SSE2 version.
+ * Calculate three temporary sums in the new pressure formula non-linear absorbing case.
  */
-void KSpaceFirstOrder3DSolver::computePressureTermsNonlinearSSE2(RealMatrix& densitySum,
-                                                                 RealMatrix& nonlinearTerm,
-                                                                 RealMatrix& velocityGradientSum)
+template<bool bOnAScalarFlag, bool rho0ScalarFlag>
+void KSpaceFirstOrder3DSolver::computePressureTermsNonlinear(RealMatrix& densitySum,
+                                                             RealMatrix& nonlinearTerm,
+                                                             RealMatrix& velocityGradientSum)
 {
-  // step of 4
-  const size_t nElementsSSE = (densitySum.size() >> 2) << 2;
+  const float* rhoX = getRhoX().getData();
+  const float* rhoY = getRhoY().getData();
+  const float* rhoZ = getRhoZ().getData();
+
+  const float* duxdx = getDuxdx().getData();
+  const float* duydy = getDuydy().getData();
+  const float* duzdz = getDuzdz().getData();
+
+  const float  bOnAScalar     = (bOnAScalarFlag) ? mParameters.getBOnAScalar() : 0;
+  const float* bOnAMatrix     = (bOnAScalarFlag) ? nullptr : getBOnA().getData();
+
+  const float  rho0Scalar     = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
+  const float* rho0Matrix     = (rho0ScalarFlag) ? nullptr : getRho0().getData();
+
+
+  float* eDensitySum          = densitySum.getData();
+  float* eNonlinearTerm       = nonlinearTerm.getData();
+  float* eVelocityGradientSum = velocityGradientSum.getData();
+
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+
+  #pragma omp parallel for simd schedule(static) \
+          aligned(eDensitySum, eNonlinearTerm, eVelocityGradientSum, \
+                  rhoX, rhoY, rhoZ, bOnAMatrix, rho0Matrix, duxdx, duydy, duzdz)
+  for (size_t i = 0; i < nElements ; i++)
+  {
+    const float rhoSum = rhoX[i] + rhoY[i] + rhoZ[i];
+    const float bOnA   = (bOnAScalarFlag) ? bOnAScalar : bOnAMatrix[i];
+    const float rho0   = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
+
+    eDensitySum[i]          = rhoSum;
+    eNonlinearTerm[i]       = (bOnA * rhoSum * rhoSum) / (2.0f * rho0) + rhoSum;
+    eVelocityGradientSum[i] = rho0 * (duxdx[i] + duydy[i] + duzdz[i]);
+  }
+} // end of computePressureTermsNonlinear
+//----------------------------------------------------------------------------------------------------------------------
+
+ /**
+  * Calculate two temporary sums in the new pressure formula, linear absorbing case.
+  */
+void KSpaceFirstOrder3DSolver::computePressureTermsLinear(RealMatrix& densitySum,
+                                                          RealMatrix& velocityGradientSum)
+{
+  const size_t size = mParameters.getFullDimensionSizes().nElements();
 
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
@@ -1953,356 +2209,173 @@ void KSpaceFirstOrder3DSolver::computePressureTermsNonlinearSSE2(RealMatrix& den
   const float* duydy = getDuydy().getData();
   const float* duzdz = getDuzdz().getData();
 
-  float  bOnAScalaValue  = mParameters.getBOnAScalar();
-  float  rho0ScalarValue = mParameters.getRho0Scalar();
-  // set BonA to be either scalar or a matrix
-        float* bOnA;
-        size_t bOnAShift;
-  const bool   bOnAFlag = mParameters.getBOnAScalarFlag();
+  float* pDensitySum          = densitySum.getData();
+  float* pVelocityGradientSum = velocityGradientSum.getData();
 
-  if (bOnAFlag)
+  #pragma omp parallel for simd schedule(static) aligned (pDensitySum, rhoX, rhoY, rhoZ)
+  for (size_t i = 0; i < size; i++)
   {
-    bOnA = &bOnAScalaValue;
-    bOnAShift = 0;
-  }
-  else
-  {
-    bOnA = getBOnA().getData();
-    bOnAShift = 1;
+    pDensitySum[i] = rhoX[i] + rhoY[i] + rhoZ[i];
   }
 
-
-  // set rho0 to be either scalar or a matrix
-        float* rho0Data;
-        size_t rho0Shift;
-  const bool   rho0Flag = mParameters.getRho0ScalarFlag();
-
-
-  if (rho0Flag)
-  {
-    rho0Data = &rho0ScalarValue;
-    rho0Shift = 0;
-  }
-  else
-  {
-    rho0Data = getRho0().getData();
-    rho0Shift = 1;
-  }
-
-  // compute loop
-  #pragma  omp parallel
-  {
-    float* eDensitySum          = densitySum.getData();
-    float* eNonlinearTerm       = nonlinearTerm.getData();
-    float* eVelocityGradientSum = velocityGradientSum.getData();
-
-
-    const __m128 sseTwo   = _mm_set1_ps(2.0f);
-          __m128 sseBOnA  = _mm_set1_ps(mParameters.getBOnAScalar());
-          __m128 sseRho0  = _mm_set1_ps(mParameters.getRho0Scalar());
-
-
-   #pragma omp for schedule (static) nowait
-   for (size_t i = 0; i < nElementsSSE; i +=4 )
-   {
-      if (!bOnAFlag) sseBOnA = _mm_load_ps(&bOnA[i]);
-
-      __m128 xmm1 = _mm_load_ps(&rhoX[i]);
-      __m128 xmm2 = _mm_load_ps(&rhoY[i]);
-      __m128 xmm3 = _mm_load_ps(&rhoZ[i]);
-
-      if (!rho0Flag)  sseRho0 = _mm_load_ps(&rho0Data[i]);
-
-      __m128 sseRhoSumSq;
-      __m128 sseRhoSum;
-
-      //  register const float rho_xyz_el = rhox_data[i] + rhoy_data[i] + rhoz_data[i];
-      sseRhoSum = _mm_add_ps(xmm1, xmm2);
-      sseRhoSum = _mm_add_ps(xmm3, sseRhoSum);
-
-      // RHO_Temp_Data[i]  = rho_xyz_el;
-      _mm_stream_ps(&eDensitySum[i], sseRhoSum);
-
-      //  BonA_Temp_Data[i] =  ((BonA * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i])) + rho_xyz_el;
-      sseRhoSumSq = _mm_mul_ps(sseRhoSum, sseRhoSum);// (rho_xyz_el * rho_xyz_el)
-
-      xmm1           = _mm_mul_ps(sseRhoSumSq, sseBOnA);      //((BonA * (rho_xyz_el * rho_xyz_el))
-      xmm2           = _mm_mul_ps(sseTwo, sseRho0);             // (2.0f * rho0_data[i])
-      xmm3           = _mm_div_ps(xmm1, xmm2);                    // (BonA * (rho_xyz_el * rho_xyz_el)) /  (2.0f * rho0_data[i])
-
-      xmm1           = _mm_add_ps(xmm3, sseRhoSum);          // + rho_xyz_el
-
-      _mm_stream_ps(&eNonlinearTerm[i], xmm1);   //bypass cache
-
-      xmm1       = _mm_load_ps(&duxdx[i]); //dudx
-      xmm2       = _mm_load_ps(&duydy[i]); //dudu
-      xmm3       = _mm_load_ps(&duzdz[i]); //dudz
-
-      __m128 xmmAcc = _mm_add_ps(xmm1, xmm2);
-      xmmAcc        = _mm_add_ps(xmmAcc, xmm3);
-      xmmAcc        = _mm_mul_ps(xmmAcc, sseRho0);
-
-      _mm_stream_ps(&eVelocityGradientSum[i],xmmAcc);
-
-    // BonA_Temp_Data[i] =  ((BonA * (rho_xyz_el * rho_xyz_el)) / (2.0f * rho0_data[i])) + rho_xyz_el;
-    }
-
-    // non SSE code, in OpenMP only the last thread does this
-    #ifdef _OPENMP
-      if (omp_get_thread_num() == omp_get_num_threads() -1)
-    #endif
-    {
-      for (size_t i = nElementsSSE; i < densitySum.size() ; i++)
-      {
-        register const float rhoSum = rhoX[i] + rhoY[i] + rhoZ[i];
-
-        eDensitySum[i]          = rhoSum;
-        eNonlinearTerm[i]       = ((bOnA[i * bOnAShift] * (rhoSum * rhoSum)) /
-                                   (2.0f * rho0Data[i* rho0Shift])) + rhoSum;
-        eVelocityGradientSum[i] = rho0Data[i * rho0Shift] * (duxdx[i] + duydy[i] + duzdz[i]);
-      }
-    }
-  }// parallel
- } // end of computePressureTermsNonlinearSSE2
-//----------------------------------------------------------------------------------------------------------------------
-
-
- /**
-  * Calculate two temporary sums in the new pressure formula, linear absorbing case.
-  */
-void KSpaceFirstOrder3DSolver::computePressureTermsLinear(RealMatrix& densitySum,
-                                                          RealMatrix& velocityGradientSum)
- {
-  const size_t size = mParameters.getFullDimensionSizes().nElements();
-
-  #pragma  omp parallel
-  {
-    const float* rhoX = getRhoX().getData();
-    const float* rhoY = getRhoY().getData();
-    const float* rhoZ = getRhoZ().getData();
-
-    const float* duxdx = getDuxdx().getData();
-    const float* duydy = getDuydy().getData();
-    const float* duzdz = getDuzdz().getData();
-
-    const float* rho0 = nullptr;
-
+  if (mParameters.getRho0ScalarFlag())
+  { // scalar
     const float eRho0 = mParameters.getRho0Scalar();
-    if (!mParameters.getRho0ScalarFlag())
-    {
-      rho0 = getRho0().getData();
-    }
-
-    float* eDensitySum  = densitySum.getData();
-    float* eVelocityGradientSum = velocityGradientSum.getData();
-
-    #pragma omp for schedule (static)
+    #pragma omp parallel for simd schedule(static) aligned (pDensitySum, duxdx, duydy, duzdz)
     for (size_t i = 0; i < size; i++)
     {
-      eDensitySum[i] = rhoX[i] + rhoY[i] + rhoZ[i];
+      pVelocityGradientSum[i] = eRho0 * (duxdx[i] + duydy[i] + duzdz[i]);
     }
-
-    if (mParameters.getRho0ScalarFlag())
-    { // scalar
-      #pragma omp for schedule (static)
-      for (size_t i = 0; i < size; i++)
-      {
-        eVelocityGradientSum[i] = eRho0 * (duxdx[i] + duydy[i] + duzdz[i]);
-      }
+  }
+  else
+  { // matrix
+    const float* rho0 = getRho0().getData();
+    #pragma omp parallel for simd schedule(static) aligned (pDensitySum, rho0, duxdx, duydy, duzdz)
+    for (size_t i = 0; i < size; i++)
+    {
+      pVelocityGradientSum[i] = rho0[i] * (duxdx[i] + duydy[i] + duzdz[i]);
     }
-    else
-    { // matrix
-      #pragma omp for schedule (static)
-      for (size_t i = 0; i < size; i++)
-      {
-        eVelocityGradientSum[i] = rho0[i] * (duxdx[i] + duydy[i] + duzdz[i]);
-      }
-    }
-  } // parallel
+  }
 }// end of computePressureTermsLinear
 //----------------------------------------------------------------------------------------------------------------------
 
 
  /**
-  * Compute absorbing term with abosrbNabla1 and absorbNabla2, SSE2 version
+  * Compute absorbing term with abosrbNabla1 and absorbNabla2.
   */
-void KSpaceFirstOrder3DSolver::computeAbsorbtionTermSSE2(FftwComplexMatrix& fftPart1,
-                                                         FftwComplexMatrix& fftPart2)
+void KSpaceFirstOrder3DSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
+                                                     FftwComplexMatrix& fftPart2)
 {
-  const float* absorbNabla1 = getAbsorbNabla1().getData();
-  const float* absorbNabla2 = getAbsorbNabla2().getData();
+  const size_t nElements    = mParameters.getReducedDimensionSizes().nElements();
 
-  const size_t nElements     = fftPart1.size();
-  const size_t nElementsSSE = (fftPart1.size() >> 1) << 1;
+  FloatComplex* pFftPart1 = fftPart1.getComplexData();
+  FloatComplex* pFftPart2 = fftPart2.getComplexData();
 
-  #pragma omp parallel
+  float* absorbNabla1 = getAbsorbNabla1().getData();
+  float* absorbNabla2 = getAbsorbNabla2().getData();
+
+  #pragma omp parallel for simd schedule(static) aligned(pFftPart1, pFftPart2, absorbNabla1, absorbNabla2)
+  for (size_t i = 0; i < nElements; i++)
   {
-    float * fft1Data  = fftPart1.getData();
-    float * fft2Data  = fftPart2.getData();
-
-    #pragma omp for schedule (static) nowait
-    for (size_t i = 0; i < nElementsSSE; i += 2)
-    {
-       __m128 sseAbsorbNabla1 = _mm_set_ps(absorbNabla1[i + 1], absorbNabla1[i + 1], absorbNabla1[i], absorbNabla1[i]);
-       __m128 sseFft1  = _mm_load_ps(&fft1Data[2 * i]);
-
-              sseFft1  = _mm_mul_ps(sseAbsorbNabla1, sseFft1);
-                         _mm_store_ps(&fft1Data[2 * i],    sseFft1);
-    }
-
-    #pragma omp for schedule (static)
-    for (size_t i = 0; i < nElements; i += 2)
-    {
-      __m128 sseAbsorbNabla2 = _mm_set_ps(absorbNabla2[i + 1 ], absorbNabla2[i + 1], absorbNabla2[i], absorbNabla2[i]);
-      __m128 sseFft2  = _mm_load_ps(&fft2Data[2 * i]);
-
-             sseFft2  = _mm_mul_ps(sseAbsorbNabla2, sseFft2);
-                        _mm_store_ps(&fft2Data[2 * i], sseFft2);
-      }
-
-    //-- non SSE code --//
-    #ifdef _OPENMP
-      if (omp_get_thread_num() == omp_get_num_threads() -1)
-    #endif
-    {
-      for (size_t i = nElementsSSE; i < nElements ; i++)
-      {
-        fft1Data[(i << 1) ]    *= absorbNabla1[i];
-        fft1Data[(i << 1) + 1] *= absorbNabla1[i];
-
-        fft2Data[(i << 1) ]    *=  absorbNabla2[i];
-        fft2Data[(i << 1) + 1] *=  absorbNabla2[i];
-      }
-    }
-
-  }// parallel
- } // end of computeAbsorbtionTermSSE2
+    pFftPart1[i] *= absorbNabla1[i];
+    pFftPart2[i] *= absorbNabla2[i];
+  }
+} // end of computeAbsorbtionTerm
 //----------------------------------------------------------------------------------------------------------------------
-
 
  /**
   * @brief Sum sub-terms to calculate new pressure, after FFTs, non-linear case.
   */
+template<bool c0ScalarFlag, bool areTauAndEtaScalars>
 void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
                                                          const RealMatrix& absorbEtaTerm,
                                                          const RealMatrix& nonlinearTerm)
 {
-  const float* eAbsorbTauTerm = absorbTauTerm.getData();
-  const float* eAbsorbEtaTerm = absorbEtaTerm.getData();
+  const float* pAbsorbTauTerm = absorbTauTerm.getData();
+  const float* pAbsorbEtaTerm = absorbEtaTerm.getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
   const float  divider = 1.0f / static_cast<float>(nElements);
 
-  const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
   const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
   const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  const bool   areTauAndEtaScalars = mParameters.getC0ScalarFlag() && mParameters.getAlphaCoeffScalarFlag();
-  const float  absorbTauScalar     = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
-  const float* absorbTauMatrix     = (areTauAndEtaScalars) ? nullptr : getAbsorbTau().getData();
+  const float  absorbTauScalar = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
+  const float* absorbTauMatrix = (areTauAndEtaScalars) ? nullptr : getAbsorbTau().getData();
 
-  const float  absorbEtaScalar     = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
-  const float* absorbEtaMatrix     = (areTauAndEtaScalars) ? nullptr : getAbsorbEta().getData();;
+  const float  absorbEtaScalar = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
+  const float* absorbEtaMatrix = (areTauAndEtaScalars) ? nullptr : getAbsorbEta().getData();;
 
-  #pragma omp parallel
+  const float* bOnA = nonlinearTerm.getData();
+  float*       p    = getP().getData();
+
+  #pragma omp parallel for simd schedule(static) \
+          aligned(p, c2Matrix, pAbsorbTauTerm, absorbTauMatrix, pAbsorbEtaTerm, absorbEtaMatrix)
+  for (size_t i = 0; i < nElements; i++)
   {
-    const float* bOnA = nonlinearTerm.getData();
-    float*       p    = getP().getData();
+    const float c2        = (c0ScalarFlag) ?        c2Scalar        : c2Matrix[i];
+    const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
+    const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
 
-    #pragma omp for schedule (static)
-    for (size_t i = 0; i < nElements; i++)
-    {
-      const float c2        = (c0ScalarFlag) ?        c2Scalar        : c2Matrix[i];
-      const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
-      const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
-
-      p[i] = c2 *(bOnA[i] + (divider * ((eAbsorbTauTerm[i] * absorbTau) - (eAbsorbEtaTerm[i] * absorbEta))));
-    }
-  }// parallel
+    p[i] = c2 *(bOnA[i] + (divider * ((pAbsorbTauTerm[i] * absorbTau) - (pAbsorbEtaTerm[i] * absorbEta))));
+  }
 }// end of sumPressureTermsNonlinear
 //----------------------------------------------------------------------------------------------------------------------
 
  /**
   * Sum sub-terms to calculate new pressure, after FFTs, linear case.
   */
+template<bool c0ScalarFlag, bool areTauAndEtaScalars>
 void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
                                                       const RealMatrix& absorbEtaTerm,
                                                       const RealMatrix& densitySum)
 {
-  const float* eAbsorbTauTerm = absorbTauTerm.getData();
-  const float* eAbsorbEtaTerm = absorbEtaTerm.getData();
+  const float* pAbsorbTauTerm = absorbTauTerm.getData();
+  const float* pAbsorbEtaTerm = absorbEtaTerm.getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
   const float  divider = 1.0f / static_cast<float>(nElements);
 
-  const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
   const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
   const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  const bool   areTauAndEtaScalars = mParameters.getC0ScalarFlag() && mParameters.getAlphaCoeffScalarFlag();
   const float  absorbTauScalar     = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
   const float* absorbTauMatrix     = (areTauAndEtaScalars) ? nullptr : getAbsorbTau().getData();
 
   const float  absorbEtaScalar     = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
   const float* absorbEtaMatrix     = (areTauAndEtaScalars) ? nullptr : getAbsorbEta().getData();;
 
-  #pragma omp parallel
+  const float* pDenistySum = densitySum.getData();
+        float* p           = getP().getData();
+
+  #pragma omp parallel for simd schedule(static) \
+          aligned (p, pDenistySum, c2Matrix, absorbTauMatrix, absorbEtaMatrix, pAbsorbTauTerm, pAbsorbEtaTerm)
+  for (size_t i = 0; i < nElements; i++)
   {
-    const float* eDenistySum = densitySum.getData();
-          float* p           = getP().getData();
+    const float c2        = (c0ScalarFlag) ?        c2Scalar        : c2Matrix[i];
+    const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
+    const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
 
-    #pragma omp for schedule (static)
-    for (size_t i = 0; i < nElements; i++)
-    {
-      const float c2        = (c0ScalarFlag) ?        c2Scalar        : c2Matrix[i];
-      const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
-      const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
-
-      p[i] = c2 * (eDenistySum[i] + (divider * ((eAbsorbTauTerm[i] * absorbTau) - (eAbsorbEtaTerm[i] * absorbEta))));
-    }
-  }// parallel
+    p[i] = c2 * (pDenistySum[i] + (divider * ((pAbsorbTauTerm[i] * absorbTau) - (pAbsorbEtaTerm[i] * absorbEta))));
+  }
 }// end of sumPressureTermsLinear
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Sum sub-terms for new p, nonlinear lossless case.
  */
- void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinearLossless()
- {
-  #pragma omp parallel
+template<bool c0ScalarFlag, bool nonlinearFlag, bool rho0ScalarFlag>
+void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinearLossless()
+{
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+
+  float* p = getP().getData();
+
+  const float* rhoX = getRhoX().getData();
+  const float* rhoY = getRhoY().getData();
+  const float* rhoZ = getRhoZ().getData();
+
+  const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+  const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
+
+  const float  bOnAScalar    = (nonlinearFlag) ? mParameters.getBOnAScalar(): 0;
+  const float* bOnAMatrix    = (nonlinearFlag) ? nullptr : getBOnA().getData();
+
+  const float  rho0Scalar     = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
+  const float* rho0Matrix     = (rho0ScalarFlag) ? nullptr : getRho0().getData();
+
+  #pragma omp parallel for simd schedule (static)
+  for (size_t i = 0; i < nElements; i++)
   {
-    const size_t nElements = mParameters.getFullDimensionSizes().nElements();
-    float* p = getP().getData();
+    const float c2   = (c0ScalarFlag)   ? c2Scalar   : c2Matrix[i];
+    const float bOnA = (nonlinearFlag)  ? bOnAScalar : bOnAMatrix[i];
+    const float rho0 = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
 
-    const float* rhoX = getRhoX().getData();
-    const float* rhoY = getRhoY().getData();
-    const float* rhoZ = getRhoZ().getData();
+    const float sumDensity = rhoX[i] + rhoY[i] + rhoZ[i];
 
-    const bool   c0ScalarFlag = mParameters.getC0ScalarFlag();
-    const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
-    const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
-
-    const bool   nonlinearFlag = mParameters.getBOnAScalarFlag();
-    const float  bOnAScalar    = (nonlinearFlag) ? mParameters.getBOnAScalar(): 0;
-    const float* bOnAMatrix    = (nonlinearFlag) ? nullptr : getBOnA().getData();
-
-    const bool   rho0ScalarFlag = mParameters.getRho0ScalarFlag();
-    const float  rho0Scalar     = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
-    const float* rho0Matrix     = (rho0ScalarFlag) ? nullptr : getRho0().getData();
-
-    #pragma omp for schedule (static)
-    for (size_t i = 0; i < nElements; i++)
-    {
-      const float c2   = (c0ScalarFlag)   ? c2Scalar   : c2Matrix[i];
-      const float bOnA = (nonlinearFlag)  ? bOnAScalar : bOnAMatrix[i];
-      const float rho0 = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
-
-      const float sumDensity = rhoX[i] + rhoY[i] + rhoZ[i];
-
-      p[i] = c2 * (sumDensity + (bOnA * (sumDensity * sumDensity) / (2.0f * rho0)));
-    }
-  }// parallel
- }// end of sumPressureTermsNonlinearLossless
+    p[i] = c2 * (sumDensity + (bOnA * (sumDensity * sumDensity) / (2.0f * rho0)));
+  }
+}// end of sumPressureTermsNonlinearLossless
 //----------------------------------------------------------------------------------------------------------------------
 
  /**
@@ -2310,36 +2383,34 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
   */
  void KSpaceFirstOrder3DSolver::sumPressureTermsLinearLossless()
 {
-  #pragma omp parallel
+  const float* rhoX = getRhoX().getData();
+  const float* rhoY = getRhoY().getData();
+  const float* rhoZ = getRhoZ().getData();
+        float* p    = getP().getData();
+
+  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+
+  if (mParameters.getC0ScalarFlag())
   {
-    const float* rhoX = getRhoX().getData();
-    const float* rhoY = getRhoY().getData();
-    const float* rhoZ = getRhoZ().getData();
-          float* p    = getP().getData();
+    const float c2 = mParameters.getC2Scalar();
 
-    const size_t nElements = mParameters.getFullDimensionSizes().nElements();
-
-    if (mParameters.getC0ScalarFlag())
+    #pragma omp parallel for simd schedule(static) aligned(p, rhoX, rhoY, rhoZ)
+    for (size_t i = 0; i < nElements; i++)
     {
-      const float c2 = mParameters.getC2Scalar();
-
-      #pragma omp for schedule (static)
-      for (size_t i = 0; i < nElements; i++)
-      {
-        p[i] = c2 * (rhoX[i] + rhoY[i] + rhoZ[i]);
-      }
+      p[i] = c2 * (rhoX[i] + rhoY[i] + rhoZ[i]);
     }
-    else
+  }
+  else
+  {
+    const float* c2 = getC2().getData();
+
+    #pragma omp parallel for simd schedule(static) aligned(p, c2, rhoX, rhoY, rhoZ)
+    for (size_t i = 0; i < nElements; i++)
     {
-      const float* c2 = getC2().getData();
-
-      #pragma omp for schedule (static)
-      for (size_t i = 0; i < nElements; i++)
-      {
-        p[i] = c2[i] * (rhoX[i] + rhoY[i] + rhoZ[i]);
-      }
+      p[i] = c2[i] * (rhoX[i] + rhoY[i] + rhoZ[i]);
     }
-  }// parallel
+  }
+
 }// end of sumPressureTermsLinearLossless()
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -2357,11 +2428,11 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
 
 void KSpaceFirstOrder3DSolver::computeShiftedVelocity()
 {
-  const FloatComplex* xShiftNegR  = reinterpret_cast<FloatComplex*>(getXShiftNegR().getData());
-  const FloatComplex* yShiftNegR  = reinterpret_cast<FloatComplex*>(getYShiftNegR().getData());
-  const FloatComplex* zShiftNegR  = reinterpret_cast<FloatComplex*>(getZShiftNegR().getData());
+  const FloatComplex* xShiftNegR  = getXShiftNegR().getComplexData();
+  const FloatComplex* yShiftNegR  = getYShiftNegR().getComplexData();
+  const FloatComplex* zShiftNegR  = getZShiftNegR().getComplexData();
 
-        FloatComplex* tempFftShift = reinterpret_cast<FloatComplex*>(getTempFftwShift().getData());
+        FloatComplex* tempFftShift = getTempFftwShift().getComplexData();
 
 
   // sizes of frequency spaces
@@ -2382,28 +2453,17 @@ void KSpaceFirstOrder3DSolver::computeShiftedVelocity()
   //-------------------------------------------------- ux_shifted ----------------------------------------------------//
   getTempFftwShift().computeR2CFft1DX(getUxSgx());
 
-  #pragma omp parallel for schedule (static)
+  #pragma omp parallel for schedule(static)
   for (size_t z = 0; z < xShiftDims.nz; z++)
   {
-    register size_t i = z *  xShiftDims.ny * xShiftDims.nx;
     for (size_t y = 0; y < xShiftDims.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < xShiftDims.nx; x++)
       {
-        FloatComplex temp;
+        const size_t i = get1DIndex(z, y, x, xShiftDims);
 
-        temp.real = ((tempFftShift[i].real * xShiftNegR[x].real) -
-                     (tempFftShift[i].imag * xShiftNegR[x].imag)
-                    ) * dividerX;
-
-
-        temp.imag = ((tempFftShift[i].imag * xShiftNegR[x].real) +
-                     (tempFftShift[i].real * xShiftNegR[x].imag)
-                    ) * dividerX;
-
-        tempFftShift[i] = temp;
-
-        i++;
+        tempFftShift[i] = tempFftShift[i] * xShiftNegR[x] * dividerX;
       } // x
     } // y
   }//z*/
@@ -2413,28 +2473,17 @@ void KSpaceFirstOrder3DSolver::computeShiftedVelocity()
   //-------------------------------------------------- uy shifted ----------------------------------------------------//
   getTempFftwShift().computeR2CFft1DY(getUySgy());
 
-  #pragma omp parallel for schedule (static)
+  #pragma omp parallel for schedule(static)
   for (size_t z = 0; z < yShiftDims.nz; z++)
   {
-    register size_t i = z *  yShiftDims.ny * yShiftDims.nx;
     for (size_t y = 0; y < yShiftDims.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < yShiftDims.nx; x++)
       {
-        FloatComplex temp;
+        const size_t i = get1DIndex(z, y, x, yShiftDims);
 
-        temp.real = ((tempFftShift[i].real * yShiftNegR[y].real) -
-                     (tempFftShift[i].imag * yShiftNegR[y].imag)) *
-                      dividerY;
-
-
-        temp.imag = ((tempFftShift[i].imag * yShiftNegR[y].real) +
-                     (tempFftShift[i].real * yShiftNegR[y].imag)
-                    ) * dividerY;
-
-        tempFftShift[i] = temp;
-
-        i++;
+        tempFftShift[i] = (tempFftShift[i] * yShiftNegR[y]) * dividerY;
       } // x
     } // y
   }//z
@@ -2443,28 +2492,17 @@ void KSpaceFirstOrder3DSolver::computeShiftedVelocity()
 
   //-------------------------------------------------- uz_shifted ----------------------------------------------------//
   getTempFftwShift().computeR2CFft1DZ(getUzSgz());
-  #pragma omp parallel for schedule (static)
+  #pragma omp parallel for schedule(static)
   for (size_t z = 0; z < zShiftDims.nz; z++)
   {
-    register size_t i = z *  zShiftDims.ny * zShiftDims.nx;
     for (size_t y = 0; y < zShiftDims.ny; y++)
     {
+      #pragma omp simd
       for (size_t x = 0; x < zShiftDims.nx; x++)
       {
-        FloatComplex temp;
+        const size_t i = get1DIndex(z, y, x, zShiftDims);
 
-        temp.real = ((tempFftShift[i].real * zShiftNegR[z].real) -
-                     (tempFftShift[i].imag * zShiftNegR[z].imag)) *
-                      dividerZ;
-
-
-        temp.imag = ((tempFftShift[i].imag * zShiftNegR[z].real) +
-                     (tempFftShift[i].real * zShiftNegR[z].imag)
-                    ) * dividerZ;
-
-        tempFftShift[i] = temp;
-
-        i++;
+        tempFftShift[i] = (tempFftShift[i] * zShiftNegR[z]) * dividerZ;
       } // x
     } // y
   }//z
@@ -2662,6 +2700,15 @@ void KSpaceFirstOrder3DSolver::loadElapsedTimeFromOutputFile()
   mPostProcessingTime.SetElapsedTimeOverPreviousLegs(postProcessingTime);
 
 }// end of loadElapsedTimeFromOutputFile
+//----------------------------------------------------------------------------------------------------------------------
+
+inline size_t KSpaceFirstOrder3DSolver::get1DIndex(const size_t          z,
+                                                   const size_t          y,
+                                                   const size_t          x,
+                                                   const DimensionSizes& dimensionSizes)
+{
+  return (z * dimensionSizes.ny + y) * dimensionSizes.nx + x;
+}// end of get1DIndex
 //----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//

@@ -48,7 +48,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/MatrixClasses/FftwComplexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/IndexMatrix.o \
 	${OBJECTDIR}/MatrixClasses/RealMatrix.o \
-	${OBJECTDIR}/MatrixClasses/VelocityMatrix.o \
 	${OBJECTDIR}/OutputStreams/BaseOutputStream.o \
 	${OBJECTDIR}/OutputStreams/CuboidOutputStream.o \
 	${OBJECTDIR}/OutputStreams/IndexOutputStream.o \
@@ -146,11 +145,6 @@ ${OBJECTDIR}/MatrixClasses/RealMatrix.o: MatrixClasses/RealMatrix.cpp
 	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/RealMatrix.o MatrixClasses/RealMatrix.cpp
-
-${OBJECTDIR}/MatrixClasses/VelocityMatrix.o: MatrixClasses/VelocityMatrix.cpp
-	${MKDIR} -p ${OBJECTDIR}/MatrixClasses
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MatrixClasses/VelocityMatrix.o MatrixClasses/VelocityMatrix.cpp
 
 ${OBJECTDIR}/OutputStreams/BaseOutputStream.o: OutputStreams/BaseOutputStream.cpp
 	${MKDIR} -p ${OBJECTDIR}/OutputStreams

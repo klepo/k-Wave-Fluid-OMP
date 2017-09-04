@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        26 August    2017, 17:03 (created) \n
- *              29 August    2017, 10:19 (revised)
+ *              31 August    2017, 15:25 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -30,6 +30,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <algorithm>
 
 #include <OutputStreams/WholeDomainOutputStream.h>
 #include <Parameters/Parameters.h>

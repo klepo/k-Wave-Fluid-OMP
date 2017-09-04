@@ -11,7 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        12 July      2012, 10:27 (created)\n
- *              28 August    2017, 13:28 (revised)
+ *              03 September 2017, 23:51 (revised)
  *
  * @section License
  * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
@@ -45,7 +45,6 @@
 #include <MatrixClasses/ComplexMatrix.h>
 #include <MatrixClasses/IndexMatrix.h>
 #include <OutputStreams/BaseOutputStream.h>
-#include <MatrixClasses/VelocityMatrix.h>
 #include <MatrixClasses/FftwComplexMatrix.h>
 
 #include <Utils/TimeMeasure.h>
@@ -205,12 +204,23 @@ class KSpaceFirstOrder3DSolver
     void computePressureLinear();
 
 
-    /// Add in velocity source
+    /// Add in all velocity sources.
     void addVelocitySource();
+    /**
+      * @brief Add in velocity source terms.
+      * @param [in] velocityMatrix      - Velocity matrix to add the source in.
+      * @param [in] velocitySourceInput - Source input to add.
+      * @param [in] velocitySourceIndex - Source geometry index matrix.
+      */
+     void computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
+                                    const RealMatrix&  velocitySourceInput,
+                                    const IndexMatrix& velocitySourceIndex);
     /// Add in pressure source.
     void addPressureSource();
     /// Calculate initial pressure source.
     void addInitialPressureSource();
+    /// Add transducer data source to velocity x component.
+    void addTransducerSource();
 
 
     /// Generate kappa matrix for lossless media.
@@ -224,19 +234,108 @@ class KSpaceFirstOrder3DSolver
     /// Calculate square of velocity
     void computeC2();
 
+    /**
+    * @brief Compute velocity for the initial pressure problem, heterogeneous medium, uniform grid.
+    *
+    * <b> Matlab code: </b>
+    *
+    * \verbatim
+        ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
+        uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
+        uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
+     \endverbatim
+     */
+    void computeInitialVelocityHeterogeneous();
+
+   /**
+    * @brief Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
+    *
+    * <b> Matlab code: </b>
+    *
+    * \verbatim
+        ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
+        uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
+        uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
+    \endverbatim
+    *
+    */
+    void computeInitialVelocityHomogeneousUniform();
+
+    /**
+    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
+    *
+    * <b> Matlab code: </b>
+    *
+    * \verbatim
+        ux_sgx = dt ./ rho0_sgx .* dxudxn_sgx .* ifft(ux_sgx)
+        uy_sgy = dt ./ rho0_sgy .* dyudxn_sgy .* ifft(uy_sgy)
+        uz_sgz = dt ./ rho0_sgz .* dzudzn_sgz .* ifft(uz_sgz)
+    \endverbatim
+    *
+    */
+   void computeInitialVelocityHomogeneousNonuniform();
+
+    /**
+     * @brief Compute acoustic velocity for heterogeneous medium and a uniform grid.
+     *
+     * <b> Matlab code: </b>
+     *
+     * \verbatim
+        ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx) - dt .* rho0_sgx_inv .* real(ifftX)
+        uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) - dt .* rho0_sgy_inv .* real(ifftY)
+        uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz) - dt .* rho0_sgz_inv .* real(ifftZ)
+      \endverbatim
+     *
+     */
+    void computeVelocityHeterogeneous();
+
+    /**
+     * @brief Compute acoustic velocity for homogeneous medium and a uniform grid.
+     *
+     * <b> Matlab code: </b>
+     *
+     * \verbatim
+        ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx) - dt .* rho0_sgx_inv .* real(ifftX)
+        uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) - dt .* rho0_sgy_inv .* real(ifftY)
+        uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz) - dt .* rho0_sgz_inv .* real(ifftZ)
+      \endverbatim
+     *
+     */
+    void computeVelocityHomogeneousUniform();
+
+    /**
+     * @brief Compute acoustic velocity for homogenous medium and nonuniform grid.
+     *
+     * <b> Matlab code: </b>
+     *
+     * \verbatim
+        ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx)  ...
+                        - dt .* rho0_sgx_inv .* dxudxnSgx.* real(ifftX))
+        uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) ...
+                        - dt .* rho0_sgy_inv .* dyudynSgy.* real(ifftY)
+        uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz)
+                        - dt .* rho0_sgz_inv .* dzudznSgz.* real(ifftZ)
+      \endverbatim
+     */
+    void computeVelocityHomogeneousNonuniform();
+
+
 
     /// Compute part of the new velocity term - gradient of pressure.
     void computePressureGradient();
     /**
      * @brief Calculate three temporary sums in the new pressure formula before taking the FFT,
-     *        nonlinear absorbing case, SSE2 version.
+     *        nonlinear absorbing case.
+     * @tparam bOnAScalarFlag           - is nonlinearity homogenous?
+     * @tparam rho0ScalarFlag           - is density homogeneous?
      * @param [out] densitySum          - rhoX + rhoY + rhoZ
      * @param [out] nonlinearTerm       - BOnA + densitySum ^2 / 2 * rho0
      * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
      */
-    void computePressureTermsNonlinearSSE2(RealMatrix& densitySum,
-                                           RealMatrix& nonlinearTerm,
-                                           RealMatrix& velocityGradientSum);
+    template<bool bOnAScalarFlag, bool rho0ScalarFlag>
+    void computePressureTermsNonlinear(RealMatrix& densitySum,
+                                       RealMatrix& nonlinearTerm,
+                                       RealMatrix& velocityGradientSum);
     /**
      * @brief Calculate two temporary sums in the new pressure formula before taking the FFT,
      *        linear absorbing case.
@@ -247,34 +346,48 @@ class KSpaceFirstOrder3DSolver
                                     RealMatrix& velocityGradientSum);
 
     /**
-     * @brief Compute absorbing term with abosrbNabla1 and absorbNabla2, SSE2 version
+     * @brief Compute absorbing term with abosrbNabla1 and absorbNabla2.
      *
      * @param [in,out] fftPart1 - fftPart1 = absorbNabla1 .* fftPart1
      * @param [in,out] fftPart2 - fftPart1 = absorbNabla1 .* fftPart2
      */
-    void computeAbsorbtionTermSSE2(FftwComplexMatrix& fftPart1,
-                                   FftwComplexMatrix& fftPart2);
+    void computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
+                               FftwComplexMatrix& fftPart2);
 
     /**
      * @brief Sum sub-terms to calculate new pressure, after FFTs, nonlinear case.
-     * @param [in] absorbTauTerm - tau component
-     * @param [in] absorbEtaTerm - eta component  of the pressure term
-     * @param [in] nonlinearTerm - rho0 * (duxdx + duydy + duzdz)
+     *
+     * @tparams c0ScalarFlag        - is sound speed homogeneous?
+     * @tparams areTauAndEtaScalars - are absorbTau and absorbEeta scalars
+     * @param [in] absorbTauTerm    - tau component
+     * @param [in] absorbEtaTerm    - eta component  of the pressure term
+     * @param [in] nonlinearTerm    - rho0 * (duxdx + duydy + duzdz)
      */
+    template<bool c0ScalarFlag, bool areTauAndEtaScalars>
     void sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
                                    const RealMatrix& absorbEtaTerm,
                                    const RealMatrix& nonlinearTerm);
     /**
      * @brief Sum sub-terms to calculate new pressure, after FFTs, linear case.
+     *
+     * @tparams c0ScalarFlag        - is sound speed homogeneous?
+     * @tparams areTauAndEtaScalars - are absorbTau and absorbEeta homogeneous?
      * @param [in] absorbTauTerm - tau component
      * @param [in] absorbEtaTerm - eta component  of the pressure term
      * @param [in] densitySum    - Sum of three components of density (rhoXSgx + rhoYSgy + rhoZSgx)
      */
+    template<bool c0ScalarFlag, bool areTauAndEtaScalars>
     void sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
                                 const RealMatrix& absorbEtaTerm,
                                 const RealMatrix& densitySum);
 
-    /// Sum sub-terms for new pressure, linear lossless case.
+    /**
+     * @breif Sum sub-terms for new pressure, linear lossless case.
+     * @tparam c0ScalarFlag   - is sound speed homogeneous?
+     * @tparam nonlinearFlag  - is nonlinearity homogeneous?
+     * @tparam rho0ScalarFlag - is density homogeneous?
+     */
+    template<bool c0ScalarFlag, bool nonlinearFlag, bool rho0ScalarFlag>
     void sumPressureTermsNonlinearLossless();
     /// Sum sub-terms for new pressure, linear lossless case.
     void sumPressureTermsLinearLossless();
@@ -284,7 +397,7 @@ class KSpaceFirstOrder3DSolver
 
     /// Print progress statistics.
     void printStatistics();
-    
+
     /**
      * @brief  Is time to checkpoint (save actual state on disk).
      * @return true if it is time to interrupt the simulation and checkpoint.
@@ -310,6 +423,19 @@ class KSpaceFirstOrder3DSolver
     /// Reads the header of the output file and sets the cumulative elapsed time from the first log.
     void loadElapsedTimeFromOutputFile();
 
+    /**
+     * @brief Compute 1D index using 3 spatial coordinates and the size of the matrix.
+     * @param [in] z              - z coordinate
+     * @param [in] y              - y coordinate
+     * @param [in] x              - x coordinate
+     * @param [in] dimensionSizes - Size of the matrix.
+     * @return
+     */
+
+    size_t get1DIndex(const size_t          z,
+                      const size_t          y,
+                      const size_t          x,
+                      const DimensionSizes& dimensionSizes);
     //----------------------------------------------- Get matrices ---------------------------------------------------//
     /**
      * @brief  Get the kappa matrix from the container.
@@ -343,25 +469,25 @@ class KSpaceFirstOrder3DSolver
      * @brief  Get velocity matrix on staggered grid in x direction.
      * @return Velocity matrix on staggered grid.
      */
-    VelocityMatrix& getUxSgx()
+    RealMatrix& getUxSgx()
     {
-      return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUxSgx);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kUxSgx);
     };
     /**
      * @brief  Get velocity matrix on staggered grid in y direction.
      * @return Velocity matrix on staggered grid.
      */
-    VelocityMatrix& getUySgy()
+    RealMatrix& getUySgy()
     {
-      return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUySgy);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kUySgy);
     };
     /**
      * @brief  Get velocity matrix on staggered grid in z direction.
      * @return Velocity matrix on staggered grid.
      */
-    VelocityMatrix& getUzSgz()
+    RealMatrix& getUzSgz()
     {
-      return mMatrixContainer.getMatrix<VelocityMatrix>(MatrixContainer::MatrixIdx::kUzSgz);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kUzSgz);
     };
 
     /**
