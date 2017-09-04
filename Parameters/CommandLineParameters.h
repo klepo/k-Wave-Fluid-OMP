@@ -10,7 +10,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        29 August    2012, 11:25 (created) \n
- *              30 August    2017, 14:37 (revised)
+ *              04 September 2017, 10:47 (revised)
  *
  * @section Params Command Line Parameters
  *
@@ -98,7 +98,7 @@
  *
 \verbatim
 ┌───────────────────────────────────────────────────────────────┐
-│                  kspaceFirstOrder3D-OMP v1.1                  │
+│                  kspaceFirstOrder3D-OMP v1.2                  │
 ├───────────────────────────────────────────────────────────────┤
 │                             Usage                             │
 ├───────────────────────────────────────────────────────────────┤
