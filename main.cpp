@@ -1,7 +1,8 @@
 /**
  * @file        main.cpp
- * @author      Jiri Jaros              \n
- *              Faculty of Information Technology\n
+ *
+ * @author      Jiri Jaros \n
+ *              Faculty of Information Technology \n
  *              Brno University of Technology \n
  *              jarosjir@fit.vutbr.cz
  *
@@ -10,8 +11,7 @@
  * @version     kspaceFirstOrder3D 2.16
  *
  * @date        11 July      2012, 10:57 (created) \n
- *              30 August    2017, 17:17 (revised)
- *
+ *              04 September 2017, 11:14 (revised)
  *
  * @mainpage kspaceFirstOrder3D-OMP
  *
@@ -180,7 +180,7 @@
 \endverbatim
  *
  *
- *
+ * @section   Parameters 3 Command Line Parameters
  *
  * The C++ code requires two mandatory parameters and accepts a few optional parameters and  flags. Ill parameters,
  * bad simulation files, and runtime errors such as out-of-memory problems, lead to an exception followed by an error
@@ -190,7 +190,8 @@
  * path conventions for particular operating system. If any of the files is not specified, cannot be found or created,
  * an error message is shown and the code terminates.
  *
- * The <tt>-t</tt> parameter sets the number of threads used, which defaults the system maximum. If possible enable
+ * The <tt>-t</tt> parameter sets the number of threads used, which defaults the system maximum. If the system support
+ * hyperthreading, it is recommended to use only a half of the threads to prevent cache overloading. If possible enable
  * tread binding and placement using export OMP_PROC_BIND=true.
  *
  *
@@ -264,7 +265,7 @@
  *
 \verbatim
 ┌───────────────────────────────────────────────────────────────┐
-│                  kspaceFirstOrder3D-OMP v1.1                  │
+│                  kspaceFirstOrder3D-OMP v1.2                  │
 ├───────────────────────────────────────────────────────────────┤
 │                             Usage                             │
 ├───────────────────────────────────────────────────────────────┤
@@ -753,22 +754,20 @@
 \endverbatim
  *
  *
- * @section License
- * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
+ * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
- * k-Wave is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * This file is part of the k-Wave. k-Wave is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with k-Wave. If not, see http://www.gnu.org/licenses/.
+ * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
+ * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
 

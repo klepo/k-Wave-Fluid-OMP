@@ -1,18 +1,19 @@
 /**
- * @file        CommandLineParameters.h
- * @author      Jiri Jaros \n
- *              Faculty of Information Technology\n
- *              Brno University of Technology \n
- *              jarosjir@fit.vutbr.cz
+ * @file      CommandLineParameters.h
  *
- * @brief       The header file containing the command line parameters.
+ * @author    Jiri Jaros \n
+ *            Faculty of Information Technology \n
+ *            Brno University of Technology \n
+ *            jarosjir@fit.vutbr.cz
  *
- * @version     kspaceFirstOrder3D 2.16
+ * @brief     The header file containing the command line parameters.
  *
- * @date        29 August    2012, 11:25 (created) \n
- *              04 September 2017, 10:47 (revised)
+ * @version   kspaceFirstOrder3D 2.16
  *
- * @section Params Command Line Parameters
+ * @date      29 August    2012, 11:25 (created) \n
+ *            04 September 2017, 10:47 (revised)
+ *
+ * @section   Params Command Line Parameters
  *
  * The C++ code requires two mandatory parameters and accepts a few optional parameters and  flags. Ill parameters,
  * bad simulation files, and runtime errors such as out-of-memory problems, lead to an exception followed by an error
@@ -22,7 +23,8 @@
  * path conventions for particular operating system. If any of the files is not specified, cannot be found or created,
  * an error message is shown and the code terminates.
  *
- * The <tt>-t</tt> parameter sets the number of threads used, which defaults the system maximum. If possible enable
+ * The <tt>-t</tt> parameter sets the number of threads used, which defaults the system maximum. If the system support
+ * hyperthreading, it is recommended to use only a half of the threads to prevent cache overloading. If possible enable
  * tread binding and placement using export OMP_PROC_BIND=true.
  *
  *
@@ -162,6 +164,7 @@
 │                               │   (default = 1)               │
 └───────────────────────────────┴───────────────────────────────┘
 \endverbatim
+ *
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *

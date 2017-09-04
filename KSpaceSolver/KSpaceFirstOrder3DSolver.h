@@ -1,34 +1,32 @@
 /**
- * @file        KSpaceFirstOrder3DSolver.h
- * @author      Jiri Jaros              \n
- *              Faculty of Information Technology\n
- *              Brno University of Technology \n
- *              jarosjir@fit.vutbr.cz
+ * @file      KSpaceFirstOrder3DSolver.h
  *
- * @brief       The header file containing the main class of the project
- *              responsible for the entire simulation.
+ * @author    Jiri Jaros \n
+ *            Faculty of Information Technology\n
+ *            Brno University of Technology \n
+ *            jarosjir@fit.vutbr.cz
  *
- * @version     kspaceFirstOrder3D 2.16
+ * @brief     The header file containing the main class of the project responsible for the entire simulation.
  *
- * @date        12 July      2012, 10:27 (created)\n
- *              03 September 2017, 23:51 (revised)
+ * @version   kspaceFirstOrder3D 2.16
  *
- * @section License
- * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2014 Jiri Jaros and Bradley Treeby.
+ * @date      12 July      2012, 10:27 (created)\n
+ *            04 September 2017, 10:58 (revised)
  *
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
- * k-Wave is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the k-Wave. k-Wave is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
+ * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
 #ifndef KSPACE_FIRST_ORDER_3D_SOLVER_H
@@ -357,8 +355,8 @@ class KSpaceFirstOrder3DSolver
     /**
      * @brief Sum sub-terms to calculate new pressure, after FFTs, nonlinear case.
      *
-     * @tparams c0ScalarFlag        - is sound speed homogeneous?
-     * @tparams areTauAndEtaScalars - are absorbTau and absorbEeta scalars
+     * @tparam c0ScalarFlag        - is sound speed homogeneous?
+     * @tparam areTauAndEtaScalars - are absorbTau and absorbEeta scalars
      * @param [in] absorbTauTerm    - tau component
      * @param [in] absorbEtaTerm    - eta component  of the pressure term
      * @param [in] nonlinearTerm    - rho0 * (duxdx + duydy + duzdz)
@@ -370,8 +368,8 @@ class KSpaceFirstOrder3DSolver
     /**
      * @brief Sum sub-terms to calculate new pressure, after FFTs, linear case.
      *
-     * @tparams c0ScalarFlag        - is sound speed homogeneous?
-     * @tparams areTauAndEtaScalars - are absorbTau and absorbEeta homogeneous?
+     * @tparam c0ScalarFlag        - is sound speed homogeneous?
+     * @tparam areTauAndEtaScalars - are absorbTau and absorbEeta homogeneous?
      * @param [in] absorbTauTerm - tau component
      * @param [in] absorbEtaTerm - eta component  of the pressure term
      * @param [in] densitySum    - Sum of three components of density (rhoXSgx + rhoYSgy + rhoZSgx)
@@ -382,7 +380,7 @@ class KSpaceFirstOrder3DSolver
                                 const RealMatrix& densitySum);
 
     /**
-     * @breif Sum sub-terms for new pressure, linear lossless case.
+     * @brief Sum sub-terms for new pressure, linear lossless case.
      * @tparam c0ScalarFlag   - is sound speed homogeneous?
      * @tparam nonlinearFlag  - is nonlinearity homogeneous?
      * @tparam rho0ScalarFlag - is density homogeneous?

@@ -8,10 +8,10 @@
  *
  * @brief     The implementation of the class responsible for working with file headers.
  *
- * @version   kspaceFirstOrder3D 32.16
+ * @version   kspaceFirstOrder3D 2.16
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            30 August    2017, 18:36 (revised)
+ *            04 September 2017, 10:58 (revised)
  *
  * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *

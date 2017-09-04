@@ -1,33 +1,32 @@
 /**
- * @file        ErrorMessages.h
- * @author      Jiri Jaros              \n
- *              Faculty of Information Technology\n
- *              Brno University of Technology \n
- *              jarosjir@fit.vutbr.cz
+ * @file      ErrorMessages.h
  *
- * @brief       The header file containing all error messages of the project.
+ * @author    Jiri Jaros \n
+ *            Faculty of Information Technology \n
+ *            Brno University of Technology \n
+ *            jarosjir@fit.vutbr.cz
  *
- * @version     kspaceFirstOrder3D 2.16
+ * @brief     The header file containing all error messages of the project.
  *
- * @date        09 August    2011, 12:34      (created) \n
- *              24 August    2017, 09:23      (revised)
+ * @version   kspaceFirstOrder3D 2.16
  *
- * @section License
- * This file is part of the C++ extension of the k-Wave Toolbox (http://www.k-wave.org).\n
- * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
+ * @date      09 August     2011, 12:34 (created) \n
+ *            04 September  2017, 11:16 (revised)
  *
- * This file is part of k-Wave. k-Wave is free software: you can redistribute it
- * and/or modify it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
  *
- * k-Wave is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the k-Wave. k-Wave is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
+ * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
 
