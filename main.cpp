@@ -1,17 +1,17 @@
 /**
- * @file        main.cpp
+ * @file     main.cpp
  *
- * @author      Jiri Jaros \n
- *              Faculty of Information Technology \n
- *              Brno University of Technology \n
- *              jarosjir@fit.vutbr.cz
+ * @author   Jiri Jaros \n
+ *           Faculty of Information Technology \n
+ *           Brno University of Technology \n
+ *           jarosjir@fit.vutbr.cz
  *
- * @brief       The main file of kspaceFirstOrder3D-OMP.
+ * @brief    The main file of kspaceFirstOrder3D-OMP.
  *
- * @version     kspaceFirstOrder3D 2.16
+ * @version  kspaceFirstOrder3D 2.17
  *
- * @date        11 July      2012, 10:57 (created) \n
- *              04 September 2017, 14:15 (revised)
+ * @date     11 July      2012, 10:57 (created) \n
+ *           07 January   2019, 18:07 (revised)
  *
  * @mainpage kspaceFirstOrder3D-OMP
  *
@@ -265,7 +265,7 @@
  *
 \verbatim
 ┌───────────────────────────────────────────────────────────────┐
-│                  kspaceFirstOrder3D-OMP v1.2                  │
+│                  kspaceFirstOrder3D-OMP v1.3                  │
 ├───────────────────────────────────────────────────────────────┤
 │                             Usage                             │
 ├───────────────────────────────────────────────────────────────┤
@@ -615,6 +615,7 @@
 | Ny                          (1, 1, 1)       long           real                                                      |
 | Nz                          (1, 1, 1)       long           real                                                      |
 | Nt                          (1, 1, 1)       long           real                                                      |
+| t_index                     (1, 1, 1)       long           real                                                      |
 | dt                          (1, 1, 1)       float          real                                                      |
 | dx                          (1, 1, 1)       float          real                                                      |
 | dy                          (1, 1, 1)       float          real                                                      |
@@ -754,7 +755,7 @@
 \endverbatim
  *
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -861,7 +862,7 @@ int main(int argc, char** argv)
   };
 
 
-    //-------------------------------------- Load input data --------------------------------------//
+  //-------------------------------------- Load input data --------------------------------------//
   try
   {
     kSpaceSolver.loadInputData();

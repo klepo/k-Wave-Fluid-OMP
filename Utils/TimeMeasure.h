@@ -11,9 +11,9 @@
  * @version   kspaceFirstOrder3D 2.16
  *
  * @date      15 August    2012, 09:35 (created) \n
- *            04 September  2017, 11:16 (revised)
+ *            07 January   2019, 18:17 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
