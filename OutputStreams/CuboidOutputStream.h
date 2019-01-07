@@ -9,12 +9,12 @@
  * @brief     The header file of classes responsible for storing output quantities based on the
  *            cuboid sensor mask into the output HDF5 file.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      26 August    2017, 16:55 (created) \n
- *            04 September 2017, 11:10 (revised)
+ *            07 January   2019, 18:38 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -66,7 +66,7 @@ class CuboidOutputStream : public BaseOutputStream
                        MatrixName&          groupName,
                        const RealMatrix&    sourceMatrix,
                        const IndexMatrix&   sensorMask,
-                       const ReduceOperator ReduceOp,
+                       const ReduceOperator reduceOp,
                        float*               bufferToReuse = nullptr);
 
     /// Copy constructor is not allowed.

@@ -1,6 +1,6 @@
 /**
  * @file      BaseOutputStream.h
- * 
+ *
  * @author    Jiri Jaros \n
  *            Faculty of Information Technology \n
  *            Brno University of Technology \n
@@ -8,12 +8,12 @@
  *
  * @brief     The header file of the class saving RealMatrix data into the output HDF5 file.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      11 July      2012, 10:30 (created) \n
- *            04 September 2017, 11:10 (revised)
+ *            07 January   2019, 18:36 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -141,7 +141,7 @@ class BaseOutputStream
     /// Reduction operator.
     const ReduceOperator mReduceOp;
 
-    /// if true, the container reuses another matrix as scratch place, e.g. Temp_1_RS3D, Temp_2_RS3D, Temp_3_RS3D.
+    /// if true, the container reuses another matrix as scratch place, e.g. kTemp1Real3D, kTemp1Real3D, kTemp1Real3D.
     bool   mBufferReuse;
     /// Buffer size.
     size_t mBufferSize;
