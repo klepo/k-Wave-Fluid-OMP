@@ -8,10 +8,10 @@
  *
  * @brief     The header file containing the command line parameters.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      29 August    2012, 11:25 (created) \n
- *            04 September 2017, 10:47 (revised)
+ *            07 January   2019, 18:30 (revised)
  *
  * @section   Params Command Line Parameters
  *
@@ -100,7 +100,7 @@
  *
 \verbatim
 ┌───────────────────────────────────────────────────────────────┐
-│                  kspaceFirstOrder3D-OMP v1.2                  │
+│                  kspaceFirstOrder3D-OMP v1.3                  │
 ├───────────────────────────────────────────────────────────────┤
 │                             Usage                             │
 ├───────────────────────────────────────────────────────────────┤
@@ -166,7 +166,7 @@
 \endverbatim
  *
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
