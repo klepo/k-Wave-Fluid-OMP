@@ -8,12 +8,12 @@
  *
  * @brief     The header file containing metadata about matrices stored in the matrix container.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      27 August    2017, 08:54 (created) \n
- *            04 September 2017, 10:54 (revised)
+ *            09 January   2019, 11:34 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *

@@ -8,12 +8,12 @@
  *
  * @brief     The implementation file containing the matrix container.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            04 September 2017, 10:54 (revised)
+ *            09 January   2019, 11:36 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -379,7 +379,7 @@ void MatrixContainer::addMatrices()
       shiftDims.nx = nxR;
     }
 
-    mContainer[MI::kTempFftwShift].set(MT::kFftw, shiftDims, kNoLoad, kNoCheckpoint, kCufftShiftTempName);
+    mContainer[MI::kTempFftwShift].set(MT::kFftw, shiftDims, kNoLoad, kNoCheckpoint, kFftwShiftTempName);
 
     // these three are necessary only for u_non_staggered calculation now
     mContainer[MI::kUxShifted].set(MT::kReal, fullDims, kNoLoad, kNoCheckpoint, kUxShiftedName);
@@ -407,9 +407,9 @@ void MatrixContainer::addMatrices()
   mContainer[MI::kTemp2Real3D].set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kTemp2Real3DName);
   mContainer[MI::kTemp3Real3D].set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kTemp3Real3DName);
 
-  mContainer[MI::kTempFftwX].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kCufftXTempName);
-  mContainer[MI::kTempFftwY].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kCufftYTempName);
-  mContainer[MI::kTempFftwZ].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kCufftZTempName);
+  mContainer[MI::kTempFftwX].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kFftwXTempName);
+  mContainer[MI::kTempFftwY].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kFftwYTempName);
+  mContainer[MI::kTempFftwZ].set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kFftwZTempName);
 }// end of addMatrices
 //----------------------------------------------------------------------------------------------------------------------
 
