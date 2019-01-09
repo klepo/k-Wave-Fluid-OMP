@@ -11,7 +11,7 @@
  * @version  kspaceFirstOrder3D 2.17
  *
  * @date     11 July      2012, 10:57 (created) \n
- *           09 January   2019, 11:33 (revised)
+ *           09 January   2019, 12:04 (revised)
  *
  * @mainpage kspaceFirstOrder3D-OMP
  *
@@ -325,6 +325,8 @@
 ├───────────────────────────────┼───────────────────────────────┤
 │ -s <time_step>                │ When data collection begins   │
 │                               │   (default = 1)               │
+│ --copy_sensor_mask            │ Copy sensor mask to the       │
+│                               │    output file                │
 └───────────────────────────────┴───────────────────────────────┘
 \endverbatim
  *
