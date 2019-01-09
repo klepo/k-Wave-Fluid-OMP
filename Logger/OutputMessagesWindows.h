@@ -8,12 +8,12 @@
  *
  * @brief     The header file containing all windows specific messages going to the standard output.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            04 September 2017, 10:47 (revised)
+ *            09 January   2019, 11:05 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -153,7 +153,7 @@ OutputMessage kOutFmtGitHashLeft
 
 ///Output message
 OutputMessage kOutFmtKWaveVersion
-  = "kspaceFirstOrder3D-OMP v1.2";
+  = "kspaceFirstOrder3D-OMP v1.3";
 
 ///Output message
 OutputMessage kOutFmtFftPlans
@@ -254,7 +254,7 @@ OutputMessage kOutFmtCopySensorMask
 OutputMessage kOutFmtBuildNoDataTime
   = "|                       Build information                       |\n"
     "+---------------------------------------------------------------+\n"
-    "| Build number:     kspaceFirstOrder3D v2.16                    |\n"
+    "| Build number:     kspaceFirstOrder3D v2.17                    |\n"
     "| Build date:       %*.*s                                 |\n"
     "| Build time:       %*.*s                                    |\n";
 
@@ -307,7 +307,7 @@ OutputMessage kOutFmtLicense
     "| Contact email:    jarosjir@fit.vutbr.cz                       |\n"
     "| Contact web:      http://www.k-wave.org                       |\n"
     "+---------------------------------------------------------------+\n"
-    "|       Copyright (C) 2017 Jiri Jaros and Bradley Treeby        |\n"
+    "|       Copyright (C) 2019 Jiri Jaros and Bradley Treeby        |\n"
     "+---------------------------------------------------------------+\n";
 
 
