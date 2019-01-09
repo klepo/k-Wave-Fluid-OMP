@@ -4,16 +4,16 @@
 # *              Faculty of Information Technology
 # *              Brno University of Technology 
 # * @Email       jarosjir@fit.vutbr.cz
-# * @Comments    Linux makefile for Ubuntu 16:04
+# * @Comments    Linux makefile for Ubuntu 18:04
 # * 
-# * @Tool        kspaceFirstOrder3D 2.16
+# * @Tool        kspaceFirstOrder3D 2.17
 # * @Created     04 September 2017, 12:50 
-# * @LastModif   04 September 2017, 14:46
+# * @LastModif   09 January   2019, 11:52
 #
 # * @License: 
 # * This file is part of the C++ extension of the k-Wave Toolbox 
 # *   (http://www.k-wave.org)
-# * Copyright (C) 2014 Jiri Jaros and Bradley Treeby
+# * Copyright (C) 2019 Jiri Jaros and Bradley Treeby
 # * 
 # * This file is part of the k-Wave. k-Wave is free software: you can redistribute it 
 # * and/or modify it under the terms of the GNU Lesser General Public License as 

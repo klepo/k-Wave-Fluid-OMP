@@ -6,11 +6,11 @@
 # * @Email       jarosjir@fit.vutbr.cz
 # * @Comments    Linux makefile for Anselm supercomputer
 # * 
-# * @Tool        kspaceFirstOrder3D 2.16
+# * @Tool        kspaceFirstOrder3D 2.17
 # * @Created     04 September 2017, 12:50 
-# * @LastModif   04 September 2017, 12:50
+# * @LastModif   09 January   2019, 11:53
 #
-# * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+# * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
 # *
 # * This file is part of the C++ extension of the [k-Wave Toolbox]
 # *  (http://www.k-wave.org).
