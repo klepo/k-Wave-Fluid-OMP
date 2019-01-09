@@ -8,12 +8,12 @@
  *
  * @brief     The implementation file containing the HDF5 related classes.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      27 July      2012, 14:14 (created) \n
- *            04 September 2017, 10:54 (revised)
+ *            09 January   2019, 11:28 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -429,10 +429,10 @@ void Hdf5File::writeHyperSlab<size_t>(const hid_t           dataset,
  * Write a cuboid selected within the matrixData into a hyperslab.
  */
 void Hdf5File::writeCuboidToHyperSlab(const hid_t dataset,
-                                      const DimensionSizes & hyperslabPosition,
-                                      const DimensionSizes & cuboidPosition,
-                                      const DimensionSizes & cuboidSize,
-                                      const DimensionSizes & matrixDimensions,
+                                      const DimensionSizes& hyperslabPosition,
+                                      const DimensionSizes& cuboidPosition,
+                                      const DimensionSizes& cuboidSize,
+                                      const DimensionSizes& matrixDimensions,
                                       const float*           matrixData)
 {
   herr_t status;
@@ -448,7 +448,7 @@ void Hdf5File::writeCuboidToHyperSlab(const hid_t dataset,
                                    hyperslabPosition.ny,
                                    hyperslabPosition.nx};
   hsize_t offsetInMatrixData[]  = {cuboidPosition.nz, cuboidPosition.ny, cuboidPosition.nx};
-  hsize_t matrixSize []         = {matrixDimensions.nz, matrixDimensions.ny, matrixDimensions.nx};
+  hsize_t matrixSize[]          = {matrixDimensions.nz, matrixDimensions.ny, matrixDimensions.nx};
 
 
   // select hyperslab in the HDF5 dataset
@@ -672,7 +672,7 @@ void Hdf5File::readScalarValue<size_t>
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Read data from the dataset at a specified place in the file tree, float version.
+ * Read data from the dataset at a specified place in the file tree.
  */
 template<class T>
 void Hdf5File::readCompleteDataset(const hid_t           parentGroup,
@@ -802,7 +802,7 @@ void Hdf5File::writeMatrixDataType(const hid_t           parentGroup,
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Write matrix data type into the dataset at a specified place in the file tree.
+ * Write matrix domain type into the dataset at a specified place in the file tree.
  */
 void Hdf5File::writeMatrixDomainType(const hid_t             parentGroup,
                                      MatrixName&             datasetName,
@@ -871,7 +871,7 @@ Hdf5File::MatrixDomainType Hdf5File::readMatrixDomainType(const hid_t parentGrou
 
 
 /**
- * Write integer attribute at a specified place in the file tree.
+ * Write string attribute at a specified place in the file tree.
  */
 void Hdf5File::writeStringAttribute(const hid_t   parentGroup,
                                     MatrixName&   datasetName,
@@ -887,7 +887,7 @@ void Hdf5File::writeStringAttribute(const hid_t   parentGroup,
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Read integer attribute  at a specified place in the file tree.
+ * Read string attribute  at a specified place in the file tree.
  */
 string Hdf5File::readStringAttribute(const hid_t  parentGroup,
                                      MatrixName& datasetName,

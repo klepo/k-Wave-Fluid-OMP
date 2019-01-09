@@ -8,12 +8,12 @@
  *
  * @brief     The implementation of the class responsible for working with file headers.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            04 September 2017, 15:03 (revised)
+ *            09 January   2019, 11:25 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -59,7 +59,7 @@ using std::ios;
 const string Hdf5FileHeader::kFileTypesNames[]  = {"input", "output", "checkpoint", "unknown"};
 
 const string Hdf5FileHeader::kMajorFileVersionsNames[] = {"1"};
-const string Hdf5FileHeader::kMinorFileVersionsNames[] = {"0","1"};
+const string Hdf5FileHeader::kMinorFileVersionsNames[] = {"0", "1"};
 
 
 /**

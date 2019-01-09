@@ -11,7 +11,7 @@
  * @version  kspaceFirstOrder3D 2.17
  *
  * @date     11 July      2012, 10:57 (created) \n
- *           07 January   2019, 18:07 (revised)
+ *           09 January   2019, 11:33 (revised)
  *
  * @mainpage kspaceFirstOrder3D-OMP
  *
@@ -349,7 +349,7 @@
  * (http://www.hdfgroup.org/HDF5/doc/index.html).
  *
  *
- * kspaceFirstOrder3D-OMP v1.2 uses the file format introduced in version 1.1. The code is happy to work with both
+ * kspaceFirstOrder3D-OMP v1.3 uses the file format introduced in version 1.1. The code is happy to work with both
  * versions (1.0 and 1.1), however when working with an input file of version 1.0, some features are not supported,
  * namely the cuboid sensor mask, and <tt>u_non_staggered_raw</tt>. When running from within the actual MATLAB K-Wave
  * Toolbox, the files will always be generated in version 1.1.
@@ -629,13 +629,6 @@
 | pml_x_alpha                 (1, 1, 1)       float          real                                                      |
 | pml_y_alpha                 (1, 1, 1)       float          real                                                      |
 | pml_z_alpha                 (1, 1, 1)       float          real                                                      |
-|                                                                                                                      |
-| pml_x                       (Nx, 1, 1)      float          real                                                      |
-| pml_x_sgx                   (Nx, 1, 1)      float          real                                                      |
-| pml_y                       (1, Ny, 1)      float          real                                                      |
-| pml_y_sgy                   (1, Ny, 1)      float          real                                                      |
-| pml_z                       (1, 1, Nz)      float          real                                                      |
-| pml_z_sgz                   (1, 1, Nz)      float          real                                                      |
 +----------------------------------------------------------------------------------------------------------------------+
 | 4. Sensor Variables (present if --copy_sensor_mask)                                                                  |
 +----------------------------------------------------------------------------------------------------------------------+

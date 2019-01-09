@@ -8,18 +8,18 @@
  *
  * @brief     The header file containing the HDF5 related classes.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      27 July      2012, 14:14 (created) \n
- *            04 September 2017, 10:58 (revised)
+ *            09 January   2019, 11:26 (revised)
  *
  *
  *
  * @section   HDF5File HDF5 File Structure
  *
- * The CUDA/C++ code has been designed as a standalone application which is not dependent  on MATLAB libraries or a MEX
+ * The C++ code has been designed as a standalone application which is not dependent on MATLAB libraries or a MEX
  * interface. This is of particular importance when using servers and supercomputers without MATLAB support. For this
- * reason, simulation data must be transferred between the CUDA/C++ code and MATLAB using external input and output
+ * reason, simulation data must be transferred between the C++ code and MATLAB using external input and output
  * files. These files are stored using the [Hierarchical Data Format HDF5] (http://www.hdfgroup.org/HDF5/). This is a
  * data model, library, and file format for storing and managing data. It supports a variety of datatypes, and is
  * designed for flexible and efficient I/O and for high volume and complex data.  The HDF5 technology suite includes
@@ -35,12 +35,12 @@
  * (http://www.hdfgroup.org/HDF5/doc/index.html).
  *
  *
- * kspaceFirstOrder3D-CUDA v1.2 uses the file format introduced in version 1.1. The code is happy to work with both
+ * kspaceFirstOrder3D-OMP v1.3 uses the file format introduced in version 1.1. The code is happy to work with both
  * versions (1.0 and 1.1), however when working with an input file of version 1.0, some features are not supported,
  * namely the cuboid sensor mask, and <tt>u_non_staggered_raw</tt>. When running from within the actual MATLAB K-Wave
  * Toolbox, the files will always be generated in version 1.1.
  *
- * The HDF5 input file for the CUDA/C++ simulation code contains a file header with brief description of the simulation
+ * The HDF5 input file for the C++ simulation code contains a file header with brief description of the simulation
  * stored in string attributes, and the root group <tt>'/'</tt> which stores  all the simulation properties in the form
  * of 3D  datasets (a complete list of input datasets is  given bellow).
  * The HDF5 checkpoint file contains the same file header as the input file and the root group <tt>'/'</tt> with a few
@@ -98,8 +98,7 @@
  * Nx for a 3D matrix, Ny for a 1D vector oriented in the y-direction). The datasets are physically stored in row-major
  * order (in contrast to column-major order used by MATLAB) using either the <tt>'H5T_IEEE_F32LE'</tt> data type for
  * floating point datasets or <tt>'H5T_STD_U64LE'</tt> for integer based datasets. All the datasets are store under the
- * root group.
- *
+ * root group. The output file of version 1.0 could only store recorded quantities as 3D datasets  under the root group.
  *
  * The output file of version 1.0 could only store recorded quantities as 3D datasets  under the root group. However,
  * with version 1.1 and the new cuboid corner sensor mask, the sampled quantities may be laid out as 4D quantities
@@ -115,8 +114,7 @@
  * \li <tt> (1M elements, 1, 1) </tt> in the case of 1D variables - index sensor mask (8MB blocks).
  * \li <tt> (Nx, Ny, 1)         </tt> in the case of 3D variables (one 2D slab).
  * \li <tt> (Nx, Ny, Nz, 1)     </tt> in the case of 4D variables (one time step).
- * \li <tt> (N_sensor_points, 1, 1) </tt> in the case of the output time series (one time step of
- *                                    the simulation).
+ * \li <tt> (N_sensor_points, 1, 1) </tt> in the case of the output time series (one time step of the simulation).
  *
  *
  * All datasets have two attributes that specify the content of the dataset. The <tt>'data_type'</tt> attribute
@@ -301,6 +299,7 @@
 | Ny                          (1, 1, 1)       long           real                                                      |
 | Nz                          (1, 1, 1)       long           real                                                      |
 | Nt                          (1, 1, 1)       long           real                                                      |
+| t_index                     (1, 1, 1)       long           real                                                      |
 | dt                          (1, 1, 1)       float          real                                                      |
 | dx                          (1, 1, 1)       float          real                                                      |
 | dy                          (1, 1, 1)       float          real                                                      |
@@ -315,12 +314,6 @@
 | pml_y_alpha                 (1, 1, 1)       float          real                                                      |
 | pml_z_alpha                 (1, 1, 1)       float          real                                                      |
 |                                                                                                                      |
-| pml_x                       (Nx, 1, 1)      float          real                                                      |
-| pml_x_sgx                   (Nx, 1, 1)      float          real                                                      |
-| pml_y                       (1, Ny, 1)      float          real                                                      |
-| pml_y_sgy                   (1, Ny, 1)      float          real                                                      |
-| pml_z                       (1, 1, Nz)      float          real                                                      |
-| pml_z_sgz                   (1, 1, Nz)      float          real                                                      |
 +----------------------------------------------------------------------------------------------------------------------+
 | 4. Sensor Variables (present if --copy_sensor_mask)                                                                  |
 +----------------------------------------------------------------------------------------------------------------------+
@@ -441,7 +434,7 @@
  *
  *
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -613,7 +606,7 @@ class Hdf5File
      * @brief   Open a dataset at a specified place in the file tree.
      * @details Other HDF5 flags are set to default.
      *
-     * @param [in] parentGroup - Parent group id (can be the file id for root)..
+     * @param [in] parentGroup - Parent group id (can be the file id for root).
      * @param [in] datasetName - Dataset name.
      * @return A handle to open dataset.
      * @throw ios::failure     - If error happens.
@@ -781,6 +774,7 @@ class Hdf5File
      * @param [in] datasetName - Dataset name.
      * @return Number of elements.
      * @throw ios::failure     - If error happens.
+     * @Warning - returns only 3D matrix sizes
      */
     size_t getDatasetSize(const hid_t parentGroup,
                           MatrixName& datasetName);
@@ -796,7 +790,7 @@ class Hdf5File
                               MatrixName&           datasetName,
                               const MatrixDataType& matrixDataType);
     /**
-     * @brief  Write matrix data type into the dataset at a specified place in the file tree.
+     * @brief  Write matrix domain type into the dataset at a specified place in the file tree.
      *
      * @param [in] parentGroup      - Where the dataset is.
      * @param [in] datasetName      - Dataset name.
