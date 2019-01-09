@@ -8,12 +8,12 @@
  *
  * @brief     The header file containing the class that implements 3D FFT using the FFTW interface
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      09 August    2011, 13:10 (created) \n
- *            04 September 2017, 11:02 (revised)
+ *            09 January   2019, 10:55 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -96,7 +96,7 @@ class FftwComplexMatrix : public ComplexMatrix
      * @brief Create an FFTW plan for 1D Real-to-Complex in the y dimension.
      *
      * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build! \n
-     * The FFTW version processes the whole matrix at one while the MKL slab by slab
+     * The FFTW version processes the whole matrix at one while the MKL slab by slab.
      *
      * @param   [in,out] inMatrix  - RealMatrix of which to create the plan.
      * @throw   std::runtime_error - If the plan can't be created.
@@ -110,7 +110,7 @@ class FftwComplexMatrix : public ComplexMatrix
      * @brief Create an FFTW plan for 1D Real-to-Complex in the z dimension.
      *
      * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build! \n
-     * The FFTW version processes the whole matrix at one while the MKL slab by slab
+     * The FFTW version processes the whole matrix at one while the MKL slab by slab.
      *
      * @param   [in,out] inMatrix  - RealMatrix of which to create the plan.
      * @throw   std::runtime_error - If the plan can't be created.
