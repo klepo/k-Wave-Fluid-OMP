@@ -8,12 +8,12 @@
  *
  * @brief     The implementation file containing parameters of the simulation.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      09 August    2012, 13:39 (created) \n
- *            04 September 2017, 11:13 (revised)
+ *            07 January   2019, 18:30 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -121,8 +121,8 @@ void Parameters::init(int argc, char** argv)
     mNt = mCommandLineParameters.getBenchmarkTimeStepsCount();
   }
 
-  if ((mNt <= mCommandLineParameters.getSamplingStartTimeIndex()) ||
-      (0 > mCommandLineParameters.getSamplingStartTimeIndex()))
+  if ((mCommandLineParameters.getSamplingStartTimeIndex() >= mNt) ||
+      (mCommandLineParameters.getSamplingStartTimeIndex() < 0))
   {
     throw std::invalid_argument(Logger::formatMessage(kErrFmtIllegalSamplingStartTimeStep, 1l, mNt));
   }
@@ -427,21 +427,21 @@ void Parameters::saveScalarsToOutputFile()
   mOutputFile.writeScalarValue(rootGroup, kNonLinearFlagName, mNonLinearFlag);
 
 
-  // uxyz_source_flags
+// velocity source flags.
   if ((mVelocityXSourceFlag > 0) || (mVelocityYSourceFlag > 0) || (mVelocityZSourceFlag > 0))
   {
     mOutputFile.writeScalarValue(rootGroup, kVelocitySourceManyName, mVelocitySourceMany);
     mOutputFile.writeScalarValue(rootGroup, kVelocitySourceModeName, mVelocitySourceMode);
   }
 
-  // p_source_flag
+  // pressure source flags.
   if (mPressureSourceFlag != 0)
   {
     mOutputFile.writeScalarValue(rootGroup, kPressureSourceManyName, mPressureSourceMany);
     mOutputFile.writeScalarValue(rootGroup, kPressureSourceModeName, mPressureSourceMode);
   }
 
-  // absorb flag
+  // absorption flag
   if (mAbsorbingFlag != 0)
   {
     mOutputFile.writeScalarValue(rootGroup, kAlphaPowerName, mAlphaPower);

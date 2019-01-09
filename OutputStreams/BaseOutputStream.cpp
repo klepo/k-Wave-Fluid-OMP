@@ -8,12 +8,12 @@
  *
  * @brief     The implementation file of the class saving RealMatrix data into the output HDF5 file.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      11 July      2012, 10:30 (created) \n
- *            04 September 2017, 11:10 (revised)
+ *            07 January   2019, 18:36 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *

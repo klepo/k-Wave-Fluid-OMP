@@ -9,10 +9,10 @@
  * @brief     The header file containing the class processing file headers.
  *            Detail about the file header are described below.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            29 August    2017, 10:00 (revised)
+ *            09 January   2019, 11:25 (revised)
  *
  * @section   Hdf5FileHeader HDF5 File Header Structure
  *
@@ -55,7 +55,7 @@
  \endverbatim
  *
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *

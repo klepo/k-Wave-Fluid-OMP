@@ -9,12 +9,12 @@
  * @brief     The header file containing the base class for index matrices (based on the size_t datatype).
  *
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      26 July      2011, 12:17  (created) \n
- *            04 September 2017, 11:02 (revised)
+ *            09 January   2019, 10:58 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *

@@ -8,12 +8,12 @@
  *
  * @brief     The header file storing names of all variables.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      14 September  2012, 14:33 (created) \n
- *            04 September  2017, 11:16 (revised)
+ *            07 January    2019, 18:16 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -326,14 +326,13 @@ MatrixName kTemp2Real3DName = "Temp_2_RS3D";
 /// Temp_3_RS3D variable name
 MatrixName kTemp3Real3DName = "Temp_3_RS3D";
 
-
-/// CUFFT_shift_temp variable name
-MatrixName kCufftShiftTempName = "CUFFT_shift_temp";
-/// CUFFT_X_temp variable name
-MatrixName kCufftXTempName     = "CUFFT_X_temp";
-/// CUFFT_Y_temp variable name
-MatrixName kCufftYTempName     = "CUFFT_Y_temp";
-/// CUFFT_Z_temp variable name
-MatrixName kCufftZTempName     = "CUFFT_Z_temp";
+/// FFTW_shift_temp variable name
+MatrixName kFftwShiftTempName = "FFTW_shift_temp";
+/// FFTW_X_temp variable name
+MatrixName kFftwXTempName     = "FFTW_X_temp";
+/// FFTW_Y_temp variable name
+MatrixName kFftwYTempName     = "FFTW_Y_temp";
+/// FFTW_Z_temp variable name
+MatrixName kFftwZTempName     = "FFTW_Z_temp";
 
 #endif	/* MATRIX_NAMES_H */

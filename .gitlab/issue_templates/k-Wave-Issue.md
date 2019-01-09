@@ -26,7 +26,7 @@ Checkbox list of the changes made to the software, and the remaining tasks to co
   1. [ ] Part 2
 1. [ ] Major task 3
 
-# Changes Following Peer Review
+## Changes Following Peer Review
 
 Checkbox list of additional changes made to the software following peer review and a rejected merge request.
 
@@ -41,7 +41,9 @@ Details of how the feature, function, or bug fix was tested.
 Static tests
 
 1. [ ] Compile with Visual Studio 2017 and Windows 7
-1. [ ] Compile with CUDA 8.0 and GCC 5.4.0
+1. [ ] Compile with GCC 5.4.0
+1. [ ] Compile with GCC 7.3.0
+1. [ ] Compile with Intel 2018
 
 Unit tests
  

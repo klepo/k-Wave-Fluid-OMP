@@ -8,12 +8,12 @@
  *
  * @brief     The implementation file containing the command line parameters.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      29 August    2012, 11:25 (created) \n
- *            04 September 2017, 11:10 (revised)
+ *            07 January   2017, 18:31 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -242,15 +242,15 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
     { "p_final",              no_argument, nullptr, 15 },
 
     { "u_raw",                no_argument, nullptr,'u' },
-    { "u_rms",                no_argument, nullptr, 20},
-    { "u_max",                no_argument, nullptr, 21},
-    { "u_min",                no_argument, nullptr, 22},
-    { "u_max_all",            no_argument, nullptr, 23},
-    { "u_min_all",            no_argument, nullptr, 24},
-    { "u_final",              no_argument, nullptr, 25},
-    { "u_non_staggered_raw",  no_argument, nullptr, 26},
+    { "u_rms",                no_argument, nullptr, 20 },
+    { "u_max",                no_argument, nullptr, 21 },
+    { "u_min",                no_argument, nullptr, 22 },
+    { "u_max_all",            no_argument, nullptr, 23 },
+    { "u_min_all",            no_argument, nullptr, 24 },
+    { "u_final",              no_argument, nullptr, 25 },
+    { "u_non_staggered_raw",  no_argument, nullptr, 26 },
 
-    { nullptr,                no_argument, nullptr, 0}
+    { nullptr,                no_argument, nullptr, 0  }
   };
 
   // all optional arguments are in fact requested. This was chosen to prevent
@@ -258,13 +258,13 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
   opterr = 0;
 
   // Short parameters //
-  while ((c = getopt_long (argc, argv, shortOpts, longOpts, &longIndex )) != -1)
+  while ((c = getopt_long(argc, argv, shortOpts, longOpts, &longIndex)) != -1)
   {
     switch (c)
     {
       case 'i':
       {
-        // test if the wile was correctly entered (if not, getopt could eat
+        // test if the file was correctly entered (if not, getopt could eat
         // the following parameter)
         if ((optarg != nullptr) &&
             ((strlen(optarg) > 0) && (optarg[0] != '-')))

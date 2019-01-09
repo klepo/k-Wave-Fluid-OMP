@@ -8,12 +8,12 @@
  *
  * @brief     The header file containing the main class of the project responsible for the entire simulation.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            04 September 2017, 10:58 (revised)
+ *            09 January   2019, 11:13 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -32,7 +32,6 @@
 #ifndef KSPACE_FIRST_ORDER_3D_SOLVER_H
 #define KSPACE_FIRST_ORDER_3D_SOLVER_H
 
-//#include <fftw3.h>
 
 #include <Parameters/Parameters.h>
 
@@ -185,7 +184,27 @@ class KSpaceFirstOrder3DSolver
     void saveCheckpointData();
 
 
-    /// Compute new values of acoustic velocity.
+    /**
+     * @brief Compute new values of acoustic velocity in all three dimensions (UxSgx, UySgy, UzSgz).
+     *
+     * <b>Matlab code:</b> \n
+     *
+     * \verbatim
+        p_k = fftn(p);
+        ux_sgx = bsxfun(@times, pml_x_sgx, ...
+             bsxfun(@times, pml_x_sgx, ux_sgx) ...
+             - dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) ...
+             );
+        uy_sgy = bsxfun(@times, pml_y_sgy, ...
+             bsxfun(@times, pml_y_sgy, uy_sgy) ...
+             - dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) ...
+             );
+        uz_sgz = bsxfun(@times, pml_z_sgz, ...
+             bsxfun(@times, pml_z_sgz, uz_sgz) ...
+             - dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) ...
+             );
+     \endverbatim
+     */
     void computeVelocity();
     /// Compute new values of acoustic velocity gradients.
     void computeVelocityGradient();

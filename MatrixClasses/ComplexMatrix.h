@@ -1,6 +1,6 @@
 /**
  * @file      ComplexMatrix.h
- * 
+ *
  * @author    Jiri Jaros \n
  *            Faculty of Information Technology \n
  *            Brno University of Technology \n
@@ -8,12 +8,12 @@
  *
  * @brief     The header file with the class for complex matrices.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      11 July      2011, 14:02 (created) \n
- *            04 September 2017, 11:02 (revised)
+ *            09 January   2019, 10:57 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -160,7 +160,7 @@ class ComplexMatrix : public BaseFloatMatrix
 
   private:
    /**
-     * @brief Initialize dimension sizes
+     * @brief Initialize dimension sizes.
      * @param [in] dimensionSizes - Dimension sizes of the matrix.
      */
     void initDimensions(const DimensionSizes& dimensionSizes);

@@ -8,12 +8,12 @@
  *
  * @brief     The implementation file containing the main class of the project responsible for the entire simulation.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            04 September 2017, 10:59 (revised)
+ *            09 January   2019, 11:15 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -515,16 +515,16 @@ void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
   if (Parameters::getInstance().getStoreVelocityNonStaggeredRawFlag())
   {
     // X shifts
-    getTempFftwShift().createR2CFftPlan1DX(getP());
-    getTempFftwShift().createC2RFftPlan1DX(getP());
+    getTempFftwShift().createR2CFftPlan1DX(getUxShifted());
+    getTempFftwShift().createC2RFftPlan1DX(getUxShifted());
 
     // Y shifts
-    getTempFftwShift().createR2CFftPlan1DY(getP());
-    getTempFftwShift().createC2RFftPlan1DY(getP());
+    getTempFftwShift().createR2CFftPlan1DY(getUyShifted());
+    getTempFftwShift().createC2RFftPlan1DY(getUyShifted());
 
     // Z shifts
-    getTempFftwShift().createR2CFftPlan1DZ(getP());
-    getTempFftwShift().createC2RFftPlan1DZ(getP());
+    getTempFftwShift().createR2CFftPlan1DZ(getUzShifted());
+    getTempFftwShift().createC2RFftPlan1DZ(getUzShifted());
   }// end u_non_staggered
 
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
@@ -610,7 +610,7 @@ void KSpaceFirstOrder3DSolver::preProcessing()
 void KSpaceFirstOrder3DSolver::computeMainLoop()
 {
   mActPercent = 0;
-  // set ActPercent to correspond the t_index after recovery
+  // set ActPercent to correspond the time index after recovery
   if (mParameters.getTimeIndex() > 0)
   {
     mActPercent = (100 * mParameters.getTimeIndex()) / mParameters.getNt();
@@ -663,7 +663,10 @@ void KSpaceFirstOrder3DSolver::computeMainLoop()
     }
 
     // calculate initial pressure
-    if ((timeIndex == 0) && (mParameters.getInitialPressureSourceFlag() == 1)) addInitialPressureSource();
+    if ((timeIndex == 0) && (mParameters.getInitialPressureSourceFlag() == 1))
+    {
+      addInitialPressureSource();
+    }
 
     storeSensorData();
     printStatistics();
@@ -889,7 +892,7 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
 }// end of computeVelocity
 //----------------------------------------------------------------------------------------------------------------------
 
- /**
+/**
  * Compute new values for duxdx, duydy, duzdz.
  */
 void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
@@ -934,7 +937,7 @@ void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
   getTempFftwY().computeC2RFft3D(getDuydy());
   getTempFftwZ().computeC2RFft3D(getDuzdz());
 
- //------------------------------------------------- Non linear grid -------------------------------------------------//
+  //------------------------------------------------ Nonuniform grid -------------------------------------------------//
   if (mParameters.getNonUniformGridFlag() != 0)
   {
     float* duxdx = getDuxdx().getData();
@@ -1500,12 +1503,12 @@ void KSpaceFirstOrder3DSolver::addInitialPressureSource()
       computeInitialVelocityHomogeneousNonuniform();
     }
     else
-    { //uniform grid, heterogeneous
+    { //uniform grid, homogeneous
       computeInitialVelocityHomogeneousUniform();
     }
   }
   else
-  { // homogeneous, unifrom grid
+  { // heterogeneous, unifrom grid
     // divide the matrix by 2 and multiply with st./rho0_sg
     computeInitialVelocityHeterogeneous();
   }
@@ -1586,7 +1589,7 @@ void KSpaceFirstOrder3DSolver::generateKappa()
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Generate kappa, absorb_nabla1, absorb_nabla2 for absorbing medium.
+ * Generate kappa matrix, absorbNabla1, absorbNabla2 for absorbing medium.
  */
 void KSpaceFirstOrder3DSolver::generateKappaAndNablas()
 {
@@ -2250,8 +2253,8 @@ void KSpaceFirstOrder3DSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1
   FloatComplex* pFftPart1 = fftPart1.getComplexData();
   FloatComplex* pFftPart2 = fftPart2.getComplexData();
 
-  float* absorbNabla1 = getAbsorbNabla1().getData();
-  float* absorbNabla2 = getAbsorbNabla2().getData();
+  const float* absorbNabla1 = getAbsorbNabla1().getData();
+  const float* absorbNabla2 = getAbsorbNabla2().getData();
 
   #pragma omp parallel for simd schedule(static) aligned(pFftPart1, pFftPart2, absorbNabla1, absorbNabla2)
   for (size_t i = 0; i < nElements; i++)
@@ -2575,7 +2578,7 @@ void KSpaceFirstOrder3DSolver::checkOutputFile()
 {
   // The header has already been read
   Hdf5FileHeader& fileHeader = mParameters.getFileHeader();
-  Hdf5File&        outputFile = mParameters.getOutputFile();
+  Hdf5File&       outputFile = mParameters.getOutputFile();
 
   // test file type
   if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kOutput)
@@ -2587,7 +2590,7 @@ void KSpaceFirstOrder3DSolver::checkOutputFile()
   if (!fileHeader.checkMajorFileVersion())
   {
     throw ios::failure(Logger::formatMessage(kErrFmtBadMajorFileVersion,
-                                             mParameters.getCheckpointFileName().c_str(),
+                                             mParameters.getOutputFileName().c_str(),
                                              fileHeader.getFileMajorVersion().c_str()));
   }
 
@@ -2595,19 +2598,15 @@ void KSpaceFirstOrder3DSolver::checkOutputFile()
   if (!fileHeader.checkMinorFileVersion())
   {
     throw ios::failure(Logger::formatMessage(kErrFmtBadMinorFileVersion,
-                                             mParameters.getCheckpointFileName().c_str(),
+                                             mParameters.getOutputFileName().c_str(),
                                              fileHeader.getFileMinorVersion().c_str()));
   }
 
 
   // Check dimension sizes
   DimensionSizes outputDimSizes;
-  outputFile.readScalarValue(outputFile.getRootGroup(),
-                             kNxName,
-                             outputDimSizes.nx);
-
+  outputFile.readScalarValue(outputFile.getRootGroup(), kNxName, outputDimSizes.nx);
   outputFile.readScalarValue(outputFile.getRootGroup(), kNyName, outputDimSizes.ny);
-
   outputFile.readScalarValue(outputFile.getRootGroup(), kNzName, outputDimSizes.nz);
 
  if (mParameters.getFullDimensionSizes() != outputDimSizes)

@@ -8,12 +8,12 @@
  *
  * @brief     The header file containing the base class for single precisions floating point numbers (floats).
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      11 July      2011, 12:13 (created) \n
- *            04 September 2017, 11:02 (revised)
+ *            09 January   2019, 10:54 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -104,11 +104,11 @@ class BaseFloatMatrix : public BaseMatrix
   protected:
 
    /**
-    * @brief Aligned memory allocation (both on CPU and GPU).
+    * @brief Aligned memory allocation.
     * @throw std::bad_alloc - If there's not enough memory.
     */
     virtual void allocateMemory();
-    /// Memory allocation (both on CPU and GPU).
+    /// Memory deallocation.
     virtual void freeMemory();
 
     /// Total number of used elements.

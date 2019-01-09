@@ -8,12 +8,12 @@
  *
  * @brief     The header file containing the parameters of the simulation.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      08 December  2011, 16:34 (created) \n
- *            04 September 2017, 11:13 (revised)
+ *            07 January   2019, 18:28 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -183,7 +183,7 @@ class Parameters
      */
     std::string getCheckpointFileName() const { return mCommandLineParameters.getCheckpointFileName(); };
 
-  //-------------------------------------------- Simulation dimensions ---------------------------------------------//
+    //-------------------------------------------- Simulation dimensions ---------------------------------------------//
     /**
      * @brief  Get full dimension sizes of the simulation (real classes).
      * @return Dimension sizes of 3D real matrices.
@@ -301,7 +301,6 @@ class Parameters
     float  getDtRho0SgzScalar() const { return mDt / mRho0SgzScalar; };
 
     //----------------------------------------- Absorption and nonlinearity ------------------------------------------//
-
     /**
      * @brief  Enable non uniform grid? - not implemented yet.
      * @return Non uniform flag.

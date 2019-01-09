@@ -8,12 +8,12 @@
  *
  * @brief     The header file of the common ancestor of all matrix classes. A pure abstract class.
  *
- * @version   kspaceFirstOrder3D 2.16
+ * @version   kspaceFirstOrder3D 2.17
  *
  * @date      11 July      2012, 11:34 (created) \n
- *            04 September 2017, 11:02 (revised)
+ *            09 January   2019, 10:58 (revised)
  *
- * @copyright Copyright (C) 2017 Jiri Jaros and Bradley Treeby.
+ * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
  * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
  *
@@ -55,7 +55,7 @@ class BaseMatrix
     /// Destructor
     virtual ~BaseMatrix() {};
 
-  /// Operator= is not allowed.
+    /// Operator= is not allowed.
     BaseMatrix& operator=(const BaseMatrix&) = delete;
 
     /**
