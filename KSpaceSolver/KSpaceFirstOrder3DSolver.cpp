@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            13 January   2019, 17:54 (revised)
+ *            13 January   2019, 20:02 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -595,6 +595,17 @@ void KSpaceFirstOrder3DSolver::preProcessing()
   else
   {
     generateKappa();
+  }
+
+  /// Generate sourceKappa
+  if (((mParameters.getVelocitySourceMode() == Parameters::SourceMode::kAdditive) ||
+       (mParameters.getPressureSourceMode() == Parameters::SourceMode::kAdditive)) &&
+      (mParameters.getPressureSourceFlag()  ||
+       mParameters.getVelocityXSourceFlag() ||
+       mParameters.getVelocityYSourceFlag() ||
+       mParameters.getVelocityZSourceFlag()))
+  {
+    generateSourceKappa();
   }
 
   // calculate c^2. It has to be after kappa gen... because of c modification
@@ -1585,6 +1596,57 @@ void KSpaceFirstOrder3DSolver::generateKappa()
     }//y
   }// z
 }// end of generateKappa
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Generate sourceKappa matrix for additive sources.
+ */
+void KSpaceFirstOrder3DSolver::generateSourceKappa()
+{
+  const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
+  const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
+  const float dz2Rec = 1.0f / (mParameters.getDz() * mParameters.getDz());
+
+  const float cRefDtPi = mParameters.getCRef() * mParameters.getDt() * static_cast<float>(M_PI);
+
+  const float nxRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
+  const float nyRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().ny);
+  const float nzRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nz);
+
+  const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
+
+  float* sourceKappa = getSourceKappa().getData();
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
+  {
+    const float zf    = static_cast<float>(z);
+          float zPart = 0.5f - fabs(0.5f - zf * nzRec);
+                zPart = (zPart * zPart) * dz2Rec;
+
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
+    {
+      const float yf    = static_cast<float>(y);
+            float yPart = 0.5f - fabs(0.5f - yf * nyRec);
+                  yPart = (yPart * yPart) * dy2Rec;
+
+      const float yzPart = zPart + yPart;
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
+      {
+        const float xf = static_cast<float>(x);
+              float xPart = 0.5f - fabs(0.5f - xf * nxRec);
+                    xPart = (xPart * xPart) * dx2Rec;
+
+              float k = cRefDtPi * sqrt(xPart + yzPart);
+
+        const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
+
+        // sourceKappa element
+        sourceKappa[i] = cos(k);
+      }//x
+    }//y
+  }// z
+}// end of generateSourceKappa
 //----------------------------------------------------------------------------------------------------------------------
 
 /**

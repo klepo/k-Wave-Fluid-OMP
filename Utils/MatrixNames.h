@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      14 September  2012, 14:33 (created) \n
- *            07 January    2019, 18:16 (revised)
+ *            13 January    2019, 19:21 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -178,7 +178,9 @@ MatrixName kDelayMaskName                  = "delay_mask";
 
 
 /// kappa_r variable name
-MatrixName kKappaRName = "kappa_r";
+MatrixName kKappaRName       = "kappa_r";
+/// source_kappa_r variable name;
+MatrixName kSourceKappaRName = "source_kappa_r";
 /// BonA variable name
 MatrixName kBonAName   = "BonA";
 /// p variable name
