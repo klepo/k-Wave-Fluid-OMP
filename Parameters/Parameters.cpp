@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      09 August    2012, 13:39 (created) \n
- *            07 January   2019, 18:30 (revised)
+ *            13 January   2019, 17:54 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -318,25 +318,62 @@ void Parameters::readScalarsFromInputFile()
   if ((mVelocityXSourceFlag > 0) || (mVelocityYSourceFlag > 0) || (mVelocityZSourceFlag > 0))
   {
     mInputFile.readScalarValue(rootGroup, kVelocitySourceManyName, mVelocitySourceMany);
-    mInputFile.readScalarValue(rootGroup, kVelocitySourceModeName, mVelocitySourceMode);
+
+    size_t sourceModeNumericValue = 0;
+    mInputFile.readScalarValue(rootGroup, kVelocitySourceModeName, sourceModeNumericValue);
+
+    // convert the size_t value to enum
+    switch (sourceModeNumericValue)
+    {
+      case 0: mVelocitySourceMode = SourceMode::kDirichlet;
+        break;
+      case 1: mVelocitySourceMode = SourceMode::kAdditiveNoCorrection;
+        break;
+      case 2: mVelocitySourceMode = SourceMode::kAdditive;
+        break;
+      default:
+      {
+        throw ios::failure(kErrFmtBadVelocitySourceMode);
+        break;
+      }
+    }//case
   }
   else
   {
     mVelocitySourceMany = 0;
-    mVelocitySourceMode = 0;
+    mVelocitySourceMode = SourceMode::kDirichlet;
   }
 
   // p_source_flag
   if (mPressureSourceFlag != 0)
   {
     mInputFile.readScalarValue(rootGroup, kPressureSourceManyName, mPressureSourceMany);
-    mInputFile.readScalarValue(rootGroup, kPressureSourceModeName, mPressureSourceMode);
+
+    size_t sourceModeNumericValue = 0;
+    mInputFile.readScalarValue(rootGroup, kPressureSourceModeName, sourceModeNumericValue);
+
+        // convert the size_t value to enum
+    switch (sourceModeNumericValue)
+    {
+      case 0: mPressureSourceMode = SourceMode::kDirichlet;
+        break;
+      case 1: mPressureSourceMode = SourceMode::kAdditiveNoCorrection;
+        break;
+      case 2: mPressureSourceMode = SourceMode::kAdditive;
+        break;
+      default:
+      {
+        throw ios::failure(kErrFmtBadPressureSourceMode);
+        break;
+      }
+    }//case
+
 
     mPressureSourceIndexSize = mInputFile.getDatasetSize(rootGroup, kPressureSourceIndexName);
   }
   else
   {
-    mPressureSourceMode = 0;
+    mPressureSourceMode = SourceMode::kDirichlet;
     mPressureSourceMany = 0;
     mPressureSourceIndexSize = 0;
   }
@@ -431,14 +468,14 @@ void Parameters::saveScalarsToOutputFile()
   if ((mVelocityXSourceFlag > 0) || (mVelocityYSourceFlag > 0) || (mVelocityZSourceFlag > 0))
   {
     mOutputFile.writeScalarValue(rootGroup, kVelocitySourceManyName, mVelocitySourceMany);
-    mOutputFile.writeScalarValue(rootGroup, kVelocitySourceModeName, mVelocitySourceMode);
+    mOutputFile.writeScalarValue(rootGroup, kVelocitySourceModeName, static_cast<size_t>(mVelocitySourceMode));
   }
 
   // pressure source flags.
   if (mPressureSourceFlag != 0)
   {
     mOutputFile.writeScalarValue(rootGroup, kPressureSourceManyName, mPressureSourceMany);
-    mOutputFile.writeScalarValue(rootGroup, kPressureSourceModeName, mPressureSourceMode);
+    mOutputFile.writeScalarValue(rootGroup, kPressureSourceModeName, static_cast<size_t>(mPressureSourceMode));
   }
 
   // absorption flag
@@ -504,7 +541,8 @@ Parameters::Parameters() :
     mPressureSourceFlag(0), mInitialPressureSourceFlag(0), mTransducerSourceFlag(0),
     mVelocityXSourceFlag(0), mVelocityYSourceFlag(0), mVelocityZSourceFlag(0),
     mPressureSourceIndexSize(0), mTransducerSourceInputSize(0),mVelocitySourceIndexSize(0),
-    mPressureSourceMode(0), mPressureSourceMany(0),  mVelocitySourceMode(0), mVelocitySourceMany(0),
+    mPressureSourceMode(SourceMode::kDirichlet), mPressureSourceMany(0),
+    mVelocitySourceMode(SourceMode::kDirichlet), mVelocitySourceMany(0),
     mSensorMaskType(SensorMaskType::kIndex), mSensorMaskIndexSize (0), mSensorMaskCornersSize(0)
 {
 

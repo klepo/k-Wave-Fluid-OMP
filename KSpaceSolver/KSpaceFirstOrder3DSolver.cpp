@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            09 January   2019, 11:15 (revised)
+ *            13 January   2019, 17:54 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -1371,10 +1371,9 @@ void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velo
   const size_t sourceSize = velocitySourceIndex.size();
   const size_t index2D    = (mParameters.getVelocitySourceMany() != 0) ? timeIndex * sourceSize : timeIndex;
 
-  const bool velocitySourceMode = mParameters.getVelocitySourceMode();
   const bool velocitySourceMany = mParameters.getVelocitySourceMany();
 
-  if (velocitySourceMode == 0)
+  if (mParameters.getVelocitySourceMode() == Parameters::SourceMode::kDirichlet)
   {
     #pragma omp parallel for if (sourceSize > 16384)
     for (size_t i = 0; i < sourceSize; i++)
@@ -1384,7 +1383,7 @@ void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velo
     }
   }// end of Dirichlet
 
-  if (velocitySourceMode == 1)
+  if (mParameters.getVelocitySourceMode() == Parameters::SourceMode::kAdditiveNoCorrection)
   {
     #pragma omp parallel for if (sourceSize > 16384)
     for (size_t i = 0; i < sourceSize; i++)
@@ -1417,7 +1416,7 @@ void KSpaceFirstOrder3DSolver::addPressureSource()
     const size_t index2D     = (isManyFlag) ? timeIndex * sourceSize : timeIndex;
 
     // replacement
-    if (mParameters.getPressureSourceMode() == 0)
+    if (mParameters.getPressureSourceMode() == Parameters::SourceMode::kDirichlet)
     {
       #pragma omp parallel for if (sourceSize > 16384)
       for (size_t i = 0; i < sourceSize; i++)
