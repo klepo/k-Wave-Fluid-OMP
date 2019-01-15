@@ -13,7 +13,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            13 January   2019, 18:04 (revised)
+ *            15 January   2019, 19:50 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -204,8 +204,10 @@ ErrorMessage kErrFmtBadSensorMaskType
 /// Command line parameters error message
 ErrorMessage kErrFmtNonStaggeredVelocityNotSupportedFileVersion
   = "Error: --u_non_staggered_raw is not supported along with the input file of the version 1.0.";
+/// Command line parameters error message
 ErrorMessage kErrFmtBadVelocitySourceMode
   = "Error: The velocity source mode type specified in the input file is not supported.";
+/// Command line parameters error message
 ErrorMessage kErrFmtBadPressureSourceMode
   = "Error: The pressure source mode specified in the input file is not supported.";
 
