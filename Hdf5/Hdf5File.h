@@ -774,7 +774,7 @@ class Hdf5File
      * @param [in] datasetName - Dataset name.
      * @return Number of elements.
      * @throw ios::failure     - If error happens.
-     * @Warning - returns only 3D matrix sizes
+     * @warning - returns only 3D matrix sizes
      */
     size_t getDatasetSize(const hid_t parentGroup,
                           MatrixName& datasetName);

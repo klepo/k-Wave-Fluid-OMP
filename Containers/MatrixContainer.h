@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      14 September 2012, 14:33 (created) \n
- *            09 January   2019, 11:35 (revised)
+ *            13 January   2019, 19:15 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -57,6 +57,8 @@ class MatrixContainer
     {
       /// Kappa matrix.
       kKappa,
+      /// Kappa for source scaling.
+      kSourceKappa,
       /// c^2 matrix.
       kC2,
       /// Pressure matrix.

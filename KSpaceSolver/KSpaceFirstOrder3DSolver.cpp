@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            09 January   2019, 11:15 (revised)
+ *            14 January   2019, 15:01 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -595,6 +595,17 @@ void KSpaceFirstOrder3DSolver::preProcessing()
   else
   {
     generateKappa();
+  }
+
+  /// Generate sourceKappa
+  if (((mParameters.getVelocitySourceMode() == Parameters::SourceMode::kAdditive) ||
+       (mParameters.getPressureSourceMode() == Parameters::SourceMode::kAdditive)) &&
+      (mParameters.getPressureSourceFlag()  ||
+       mParameters.getVelocityXSourceFlag() ||
+       mParameters.getVelocityYSourceFlag() ||
+       mParameters.getVelocityZSourceFlag()))
+  {
+    generateSourceKappa();
   }
 
   // calculate c^2. It has to be after kappa gen... because of c modification
@@ -1366,33 +1377,93 @@ void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velo
                                                          const RealMatrix&  velocitySourceInput,
                                                          const IndexMatrix& velocitySourceIndex)
 {
+  // time is solved one level up.
+  float*        pVelocityMatrix = velocityMatrix.getData();
+
+  const float*  sourceInput = velocitySourceInput.getData();
+  const size_t* sourceIndex = velocitySourceIndex.getData();
 
   const size_t timeIndex  = mParameters.getTimeIndex();
+
+  const bool   isManyFlag = (mParameters.getVelocitySourceMany() != 0);
   const size_t sourceSize = velocitySourceIndex.size();
-  const size_t index2D    = (mParameters.getVelocitySourceMany() != 0) ? timeIndex * sourceSize : timeIndex;
+  const size_t index2D    = (isManyFlag) ? timeIndex * sourceSize : timeIndex;
 
-  const bool velocitySourceMode = mParameters.getVelocitySourceMode();
-  const bool velocitySourceMany = mParameters.getVelocitySourceMany();
-
-  if (velocitySourceMode == 0)
+  switch (mParameters.getVelocitySourceMode())
   {
-    #pragma omp parallel for if (sourceSize > 16384)
-    for (size_t i = 0; i < sourceSize; i++)
+    case Parameters::SourceMode::kDirichlet:
     {
-      const size_t signalIndex = (velocitySourceMany != 0) ? index2D + i : index2D;
-      velocityMatrix[velocitySourceIndex[i]] = velocitySourceInput[signalIndex];
+      #pragma omp parallel for if (sourceSize > 16384)
+      for (size_t i = 0; i < sourceSize; i++)
+      {
+        const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+        pVelocityMatrix[sourceIndex[i]] = sourceInput[signalIndex];
+      }
+      break;
     }
-  }// end of Dirichlet
 
-  if (velocitySourceMode == 1)
-  {
-    #pragma omp parallel for if (sourceSize > 16384)
-    for (size_t i = 0; i < sourceSize; i++)
+    case Parameters::SourceMode::kAdditiveNoCorrection:
     {
-      const size_t signalIndex = (velocitySourceMany != 0) ? index2D + i : index2D;
-      velocityMatrix[velocitySourceIndex[i]] += velocitySourceInput[signalIndex];
+      #pragma omp parallel for if (sourceSize > 16384)
+      for (size_t i = 0; i < sourceSize; i++)
+      {
+        const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+        pVelocityMatrix[sourceIndex[i]] += sourceInput[signalIndex];
+      }
+      break;
     }
-  }// end of add
+
+    case Parameters::SourceMode::kAdditive:
+    {
+      // temp matrix for additive source
+      RealMatrix&        scaledSource = getTemp1Real3D();
+      FftwComplexMatrix& fftMatrix    = getTempFftwX();
+
+      float*        pScaledSource = getTemp1Real3D().getData();
+      float*        pSourceKappa  = getSourceKappa().getData();
+      FloatComplex* pFftMatrix    = getTempFftwX().getComplexData();
+
+      const size_t  nElementsFull    = mParameters.getFullDimensionSizes().nElements();
+      const size_t  nElementsReduced = mParameters.getReducedDimensionSizes().nElements();
+      const float   divider          = 1.0f / static_cast<float>(nElementsFull);
+
+      // clear scaledSource the matrix
+      scaledSource.zeroMatrix();
+
+      // source_mat(u_source_pos_index) = source.u(u_source_sig_index, t_index);
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < sourceSize; i++)
+      {
+        const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+        pScaledSource[sourceIndex[i]] = sourceInput[signalIndex];
+      }
+
+      // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
+      fftMatrix.computeR2CFft3D(scaledSource);
+
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < nElementsReduced; i++)
+      {
+        pFftMatrix[i] *= divider * pSourceKappa[i];
+      }
+
+      // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
+      fftMatrix.computeC2RFft3D(scaledSource);
+
+      // add the source values to the existing field values
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < nElementsFull; i++)
+      {
+        pVelocityMatrix[i] += pScaledSource[i];
+      }
+
+      break;
+    }
+    default:
+    {
+      break;
+    }
+  } // end of switch
 }// end of computeVelocitySourceTerm
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -1416,32 +1487,88 @@ void KSpaceFirstOrder3DSolver::addPressureSource()
     const size_t sourceSize  = getPressureSourceIndex().size();
     const size_t index2D     = (isManyFlag) ? timeIndex * sourceSize : timeIndex;
 
-    // replacement
-    if (mParameters.getPressureSourceMode() == 0)
+    // different pressure sources
+    switch (mParameters.getPressureSourceMode())
     {
-      #pragma omp parallel for if (sourceSize > 16384)
-      for (size_t i = 0; i < sourceSize; i++)
+      case Parameters::SourceMode::kDirichlet:
       {
-        const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+        #pragma omp parallel for if (sourceSize > 16384)
+        for (size_t i = 0; i < sourceSize; i++)
+        {
+          const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
 
-        rhox[sourceIndex[i]] = sourceInput[signalIndex];
-        rhoy[sourceIndex[i]] = sourceInput[signalIndex];
-        rhoz[sourceIndex[i]] = sourceInput[signalIndex];
+          rhox[sourceIndex[i]] = sourceInput[signalIndex];
+          rhoy[sourceIndex[i]] = sourceInput[signalIndex];
+          rhoz[sourceIndex[i]] = sourceInput[signalIndex];
+        }
+        break;
       }
-    }
-    // Addition
-    else
-    {
-      #pragma omp parallel for if (sourceSize > 16384)
-      for (size_t i = 0; i < sourceSize; i++)
+
+      case Parameters::SourceMode::kAdditiveNoCorrection:
       {
-        const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+        #pragma omp parallel for if (sourceSize > 16384)
+        for (size_t i = 0; i < sourceSize; i++)
+        {
+          const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
 
-        rhox[sourceIndex[i]] += sourceInput[signalIndex];
-        rhoy[sourceIndex[i]] += sourceInput[signalIndex];
-        rhoz[sourceIndex[i]] += sourceInput[signalIndex];
+          rhox[sourceIndex[i]] += sourceInput[signalIndex];
+          rhoy[sourceIndex[i]] += sourceInput[signalIndex];
+          rhoz[sourceIndex[i]] += sourceInput[signalIndex];
+        }
+        break;
       }
-    }// type of replacement
+
+      case Parameters::SourceMode::kAdditive:
+      { // temp matrix for additive source
+        RealMatrix&        scaledSource = getTemp1Real3D();
+        FftwComplexMatrix& fftMatrix    = getTempFftwX();
+
+        float*        pScaledSource = getTemp1Real3D().getData();
+        float*        pSourceKappa  = getSourceKappa().getData();
+        FloatComplex* pFftMatrix    = getTempFftwX().getComplexData();
+
+        const size_t  nElementsFull    = mParameters.getFullDimensionSizes().nElements();
+        const size_t  nElementsReduced = mParameters.getReducedDimensionSizes().nElements();
+        const float   divider          = 1.0f / static_cast<float>(nElementsFull);
+
+        // clear scaledSource the matrix
+        scaledSource.zeroMatrix();
+
+        // source_mat(p_source_pos_index) = source.p(p_source_sig_index, t_index);
+        #pragma omp parallel for simd
+        for (size_t i = 0; i < sourceSize; i++)
+        {
+          const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+          pScaledSource[sourceIndex[i]] = sourceInput[signalIndex];
+        }
+
+        // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
+        fftMatrix.computeR2CFft3D(scaledSource);
+
+        #pragma omp parallel for simd
+        for (size_t i = 0; i < nElementsReduced ; i++)
+        {
+          pFftMatrix[i] *= divider * pSourceKappa[i];
+        }
+
+        // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
+        fftMatrix.computeC2RFft3D(scaledSource);
+
+        // add the source values to the existing field values
+        #pragma omp parallel for simd
+        for (size_t i = 0; i < nElementsFull; i++)
+        {
+          rhox[i] += pScaledSource[i];
+          rhoy[i] += pScaledSource[i];
+          rhoz[i] += pScaledSource[i];
+        }
+        break;
+      }
+      default:
+      {
+        break;
+      }
+    } // switch
   }// if do at all
 }// end of addPressureSource
 //----------------------------------------------------------------------------------------------------------------------
@@ -1586,6 +1713,57 @@ void KSpaceFirstOrder3DSolver::generateKappa()
     }//y
   }// z
 }// end of generateKappa
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Generate sourceKappa matrix for additive sources.
+ */
+void KSpaceFirstOrder3DSolver::generateSourceKappa()
+{
+  const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
+  const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
+  const float dz2Rec = 1.0f / (mParameters.getDz() * mParameters.getDz());
+
+  const float cRefDtPi = mParameters.getCRef() * mParameters.getDt() * static_cast<float>(M_PI);
+
+  const float nxRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
+  const float nyRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().ny);
+  const float nzRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nz);
+
+  const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
+
+  float* sourceKappa = getSourceKappa().getData();
+
+  #pragma omp parallel for schedule (static)
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
+  {
+    const float zf    = static_cast<float>(z);
+          float zPart = 0.5f - fabs(0.5f - zf * nzRec);
+                zPart = (zPart * zPart) * dz2Rec;
+
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
+    {
+      const float yf    = static_cast<float>(y);
+            float yPart = 0.5f - fabs(0.5f - yf * nyRec);
+                  yPart = (yPart * yPart) * dy2Rec;
+
+      const float yzPart = zPart + yPart;
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
+      {
+        const float xf = static_cast<float>(x);
+              float xPart = 0.5f - fabs(0.5f - xf * nxRec);
+                    xPart = (xPart * xPart) * dx2Rec;
+
+              float k = cRefDtPi * sqrt(xPart + yzPart);
+
+        const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
+
+        // sourceKappa element
+        sourceKappa[i] = cos(k);
+      }//x
+    }//y
+  }// z
+}// end of generateSourceKappa
 //----------------------------------------------------------------------------------------------------------------------
 
 /**

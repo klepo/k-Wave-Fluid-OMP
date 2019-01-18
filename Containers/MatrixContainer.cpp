@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            09 January   2019, 11:36 (revised)
+ *            13 January   2019, 20:02 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -336,6 +336,15 @@ void MatrixContainer::addMatrices()
     }
   }// uz_source_input
 
+
+  /// Add sourceKappa
+  if (((params.getVelocitySourceMode() == Parameters::SourceMode::kAdditive) ||
+       (params.getPressureSourceMode() == Parameters::SourceMode::kAdditive)) &&
+      (params.getPressureSourceFlag()  ||
+       params.getVelocityXSourceFlag() || params.getVelocityYSourceFlag() || params.getVelocityZSourceFlag()))
+  {
+    mContainer[MI::kSourceKappa].set(MT::kReal, reducedDims, kNoLoad, kNoCheckpoint, kSourceKappaRName);
+  }
 
   //------------------------------------------------ Nonlinear grid --------------------------------------------------//
   if (params.getNonUniformGridFlag()!= 0)
