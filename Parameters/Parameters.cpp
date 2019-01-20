@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      09 August    2012, 13:39 (created) \n
- *            13 January   2019, 17:54 (revised)
+ *            19 January   2019, 14:09 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -132,7 +132,8 @@ void Parameters::init(int argc, char** argv)
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Print parameters of the simulation based in the actual level of verbosity.
+ * Print parameters of the simulation based in the actual level of verbosity. For 2D simulations, all flags not found
+ * in the input file left at default values.
  */
 void Parameters::printSimulatoinSetup()
 {
@@ -140,10 +141,13 @@ void Parameters::printSimulatoinSetup()
 
   Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulationDetailsTitle);
 
-  const string domainsSizes = Logger::formatMessage(kOutFmtDomainSizeFormat,
-                                                    getFullDimensionSizes().nx,
-                                                    getFullDimensionSizes().ny,
-                                                    getFullDimensionSizes().nz);
+  const string domainsSizes = (isSimulation3D()) ? Logger::formatMessage(kOutFmt3DDomainSizeFormat,
+                                                                         getFullDimensionSizes().nx,
+                                                                         getFullDimensionSizes().ny,
+                                                                         getFullDimensionSizes().nz)
+                                                 : Logger::formatMessage(kOutFmt2DDomainSizeFormat,
+                                                                         getFullDimensionSizes().nx,
+                                                                         getFullDimensionSizes().ny);
   // Print simulation size
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDomainSize, domainsSizes.c_str());
 
@@ -201,37 +205,42 @@ void Parameters::readScalarsFromInputFile()
 
   const hid_t rootGroup = mInputFile.getRootGroup();
 
-  mInputFile.readScalarValue(rootGroup, kNtName, mNt);
-
-  mInputFile.readScalarValue(rootGroup, kDtName, mDt);
-  mInputFile.readScalarValue(rootGroup, kDxName, mDx);
-  mInputFile.readScalarValue(rootGroup, kDyName, mDy);
-  mInputFile.readScalarValue(rootGroup, kDzName, mDz);
-
-  mInputFile.readScalarValue(rootGroup, kCRefName, mCRef);
-
-  mInputFile.readScalarValue(rootGroup, kPmlXSizeName, mPmlXSize);
-  mInputFile.readScalarValue(rootGroup, kPmlYSizeName, mPmlYSize);
-  mInputFile.readScalarValue(rootGroup, kPmlZSizeName, mPmlZSize);
-
-  mInputFile.readScalarValue(rootGroup, kPmlXAlphaName, mPmlXAlpha);
-  mInputFile.readScalarValue(rootGroup, kPmlYAlphaName, mPmlYAlpha);
-  mInputFile.readScalarValue(rootGroup, kPmlZAlphaName, mPmlZAlpha);
-
+  // read dimension sizes
   size_t x, y, z;
   mInputFile.readScalarValue(rootGroup, kNxName, x);
   mInputFile.readScalarValue(rootGroup, kNyName, y);
   mInputFile.readScalarValue(rootGroup, kNzName, z);
 
-  mFullDimensionSizes.nx = x;
-  mFullDimensionSizes.ny = y;
-  mFullDimensionSizes.nz = z;
+  mFullDimensionSizes    = DimensionSizes(x, y, z);
+  mReducedDimensionSizes = DimensionSizes(((x / 2) + 1), y, z);
 
-  mReducedDimensionSizes.nx = ((x / 2) + 1);
-  mReducedDimensionSizes.ny = y;
-  mReducedDimensionSizes.nz = z;
+  mInputFile.readScalarValue(rootGroup, kNtName, mNt);
 
-// if the file is of version 1.0, there must be a sensor mask index (backward compatibility)
+  mInputFile.readScalarValue(rootGroup, kDtName, mDt);
+  mInputFile.readScalarValue(rootGroup, kDxName, mDx);
+  mInputFile.readScalarValue(rootGroup, kDyName, mDy);
+  if (isSimulation3D())
+  {
+    mInputFile.readScalarValue(rootGroup, kDzName, mDz);
+  }
+
+  mInputFile.readScalarValue(rootGroup, kCRefName, mCRef);
+
+  mInputFile.readScalarValue(rootGroup, kPmlXSizeName, mPmlXSize);
+  mInputFile.readScalarValue(rootGroup, kPmlYSizeName, mPmlYSize);
+  if (isSimulation3D())
+  {
+    mInputFile.readScalarValue(rootGroup, kPmlZSizeName, mPmlZSize);
+  }
+
+  mInputFile.readScalarValue(rootGroup, kPmlXAlphaName, mPmlXAlpha);
+  mInputFile.readScalarValue(rootGroup, kPmlYAlphaName, mPmlYAlpha);
+  if (isSimulation3D())
+  {
+    mInputFile.readScalarValue(rootGroup, kPmlZAlphaName, mPmlZAlpha);
+  }
+
+  // if the file is of version 1.0, there must be a sensor mask index (backward compatibility)
   if (mFileHeader.getFileVersion() == Hdf5FileHeader::FileVersion::kVersion10)
   {
     mSensorMaskIndexSize = mInputFile.getDatasetSize(rootGroup, kSensorMaskIndexName);
@@ -284,13 +293,17 @@ void Parameters::readScalarsFromInputFile()
 
 
   // flags.
-  mInputFile.readScalarValue(rootGroup, kVelocityXSourceFlagName,  mVelocityXSourceFlag);
-  mInputFile.readScalarValue(rootGroup, kVelocityYSourceFlagName,  mVelocityYSourceFlag);
-  mInputFile.readScalarValue(rootGroup, kVelocityZSourceFlagName,  mVelocityZSourceFlag);
-  mInputFile.readScalarValue(rootGroup, kTransducerSourceFlagName, mTransducerSourceFlag);
-
   mInputFile.readScalarValue(rootGroup, kPressureSourceFlagName,       mPressureSourceFlag);
   mInputFile.readScalarValue(rootGroup, kInitialPressureSourceFlagName,mInitialPressureSourceFlag);
+
+  mInputFile.readScalarValue(rootGroup, kTransducerSourceFlagName, mTransducerSourceFlag);
+
+  mInputFile.readScalarValue(rootGroup, kVelocityXSourceFlagName,  mVelocityXSourceFlag);
+  mInputFile.readScalarValue(rootGroup, kVelocityYSourceFlagName,  mVelocityYSourceFlag);
+  if (isSimulation3D())
+  {
+    mInputFile.readScalarValue(rootGroup, kVelocityZSourceFlagName,  mVelocityZSourceFlag);
+  }
 
   mInputFile.readScalarValue(rootGroup, kNonUniformGridFlagName, mNonUniformGridFlag);
   mInputFile.readScalarValue(rootGroup, kAbsorbingFlagName,      mAbsorbingFlag);
@@ -307,8 +320,9 @@ void Parameters::readScalarsFromInputFile()
     mTransducerSourceInputSize = mInputFile.getDatasetSize(rootGroup, kTransducerSourceInputName);
   }
 
+  // in 2D mVelocityZSourceFlag is always 0
   if ((mTransducerSourceFlag > 0) || (mVelocityXSourceFlag > 0) ||
-      (mVelocityYSourceFlag > 0) || (mVelocityZSourceFlag > 0))
+      (mVelocityYSourceFlag > 0)  || (mVelocityZSourceFlag > 0))
   {
     mVelocitySourceIndexSize = mInputFile.getDatasetSize(rootGroup, kVelocitySourceIndexName);
   }
@@ -417,7 +431,10 @@ void Parameters::readScalarsFromInputFile()
     mInputFile.readScalarValue(rootGroup, kRho0Name, mRho0Scalar);
     mInputFile.readScalarValue(rootGroup, kRho0SgxName, mRho0SgxScalar);
     mInputFile.readScalarValue(rootGroup, kRho0SgyName, mRho0SgyScalar);
-    mInputFile.readScalarValue(rootGroup, kRho0SgzName, mRho0SgzScalar);
+    if (isSimulation3D())
+    {
+      mInputFile.readScalarValue(rootGroup, kRho0SgzName, mRho0SgzScalar);
+    }
   }
 }// end of readScalarsFromInputFile
 //----------------------------------------------------------------------------------------------------------------------
@@ -429,7 +446,7 @@ void Parameters::saveScalarsToOutputFile()
 {
   const hid_t rootGroup = mOutputFile.getRootGroup();
 
-  // Write dimension sizes
+  // Write dimension sizes (Z is always written to distinguish 2D and 3D simulations)
   mOutputFile.writeScalarValue(rootGroup, kNxName, mFullDimensionSizes.nx);
   mOutputFile.writeScalarValue(rootGroup, kNyName, mFullDimensionSizes.ny);
   mOutputFile.writeScalarValue(rootGroup, kNzName, mFullDimensionSizes.nz);
@@ -439,29 +456,42 @@ void Parameters::saveScalarsToOutputFile()
   mOutputFile.writeScalarValue(rootGroup, kDtName, mDt);
   mOutputFile.writeScalarValue(rootGroup, kDxName, mDx);
   mOutputFile.writeScalarValue(rootGroup, kDyName, mDy);
-  mOutputFile.writeScalarValue(rootGroup, kDzName, mDz);
+  if (isSimulation3D())
+  {
+    mOutputFile.writeScalarValue(rootGroup, kDzName, mDz);
+  }
 
   mOutputFile.writeScalarValue(rootGroup, kCRefName, mCRef);
 
   mOutputFile.writeScalarValue(rootGroup, kPmlXSizeName, mPmlXSize);
   mOutputFile.writeScalarValue(rootGroup, kPmlYSizeName, mPmlYSize);
-  mOutputFile.writeScalarValue(rootGroup, kPmlZSizeName, mPmlZSize);
+  if (isSimulation3D())
+  {
+    mOutputFile.writeScalarValue(rootGroup, kPmlZSizeName, mPmlZSize);
+  }
 
   mOutputFile.writeScalarValue(rootGroup, kPmlXAlphaName, mPmlXAlpha);
   mOutputFile.writeScalarValue(rootGroup, kPmlYAlphaName, mPmlYAlpha);
-  mOutputFile.writeScalarValue(rootGroup, kPmlZAlphaName, mPmlZAlpha);
+  if (isSimulation3D())
+  {
+    mOutputFile.writeScalarValue(rootGroup, kPmlZAlphaName, mPmlZAlpha);
+  }
 
-  mOutputFile.writeScalarValue(rootGroup, kVelocityXSourceFlagName, mVelocityXSourceFlag);
-  mOutputFile.writeScalarValue(rootGroup, kVelocityYSourceFlagName, mVelocityYSourceFlag);
-  mOutputFile.writeScalarValue(rootGroup, kVelocityZSourceFlagName, mVelocityZSourceFlag);
-  mOutputFile.writeScalarValue(rootGroup, kTransducerSourceFlagName, mTransducerSourceFlag);
-
-  mOutputFile.writeScalarValue(rootGroup, kPressureSourceFlagName, mPressureSourceFlag);
+  mOutputFile.writeScalarValue(rootGroup, kPressureSourceFlagName,        mPressureSourceFlag);
   mOutputFile.writeScalarValue(rootGroup, kInitialPressureSourceFlagName, mInitialPressureSourceFlag);
 
+  mOutputFile.writeScalarValue(rootGroup, kTransducerSourceFlagName,  mTransducerSourceFlag);
+
+  mOutputFile.writeScalarValue(rootGroup, kVelocityXSourceFlagName,   mVelocityXSourceFlag);
+  mOutputFile.writeScalarValue(rootGroup, kVelocityYSourceFlagName,   mVelocityYSourceFlag);
+  if (isSimulation3D())
+  {
+    mOutputFile.writeScalarValue(rootGroup, kVelocityZSourceFlagName, mVelocityZSourceFlag);
+  }
+
   mOutputFile.writeScalarValue(rootGroup, kNonUniformGridFlagName, mNonUniformGridFlag);
-  mOutputFile.writeScalarValue(rootGroup, kAbsorbingFlagName, mAbsorbingFlag);
-  mOutputFile.writeScalarValue(rootGroup, kNonLinearFlagName, mNonLinearFlag);
+  mOutputFile.writeScalarValue(rootGroup, kAbsorbingFlagName,      mAbsorbingFlag);
+  mOutputFile.writeScalarValue(rootGroup, kNonLinearFlagName,      mNonLinearFlag);
 
 
 // velocity source flags.

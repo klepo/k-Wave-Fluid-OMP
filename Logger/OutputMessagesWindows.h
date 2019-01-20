@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            09 January   2019, 12:04 (revised)
+ *            20 January   2019, 13:28 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -133,8 +133,10 @@ OutputMessage kOutFmtReadingConfiguration
 OutputMessage kOutFmtDomainSize
   = "| Domain dimensions: %42s |\n";
 ///Output message
-OutputMessage kOutFmtDomainSizeFormat
+OutputMessage kOutFmt3DDomainSizeFormat
   = "%lu x %lu x %lu";
+OutputMessage kOutFmt2DDomainSizeFormat
+  = "%lu x %lu";
 
 
 ///Output message

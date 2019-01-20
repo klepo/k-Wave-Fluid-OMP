@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      08 December  2011, 16:34 (created) \n
- *            13 January   2019, 17:44 (revised)
+ *            20 January   2019, 13:12 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -204,12 +204,22 @@ class Parameters
      * @return Dimension sizes of 3D real matrices.
      */
     DimensionSizes getFullDimensionSizes()    const { return mFullDimensionSizes;  };
-    ///
     /**
      * @brief  Get reduced dimension sizes of the simulation (complex classes).
      * @return Dimension sizes of reduced complex 3D matrices.
      */
     DimensionSizes getReducedDimensionSizes() const { return mReducedDimensionSizes; };
+
+    /**
+     * @brief  Is the simulation executed in 2 dimensions?
+     * @return True if the simulation space is 2D.
+     */
+    bool isSimulation2D()                     const { return mFullDimensionSizes.is2D(); };
+    /**
+     * @brief  Is the simulation executed in 3 dimensions.
+     * @return True if the simulation space is 3D.
+     */
+    bool isSimulation3D()                     const { return !isSimulation2D(); }
 
     /**
      * @brief  Get total number of time steps.
