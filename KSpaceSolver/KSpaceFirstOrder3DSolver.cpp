@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            14 January   2019, 15:01 (revised)
+ *            05 February  2019, 15:47 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -500,14 +500,14 @@ void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
   Logger::flush(Logger::LogLevel::kBasic);
 
   // create real to complex plans
-  getTempFftwX().createR2CFftPlan3D(getP());
-  getTempFftwY().createR2CFftPlan3D(getP());
-  getTempFftwZ().createR2CFftPlan3D(getP());
+  getTempFftwX().createR2CFftPlanND(getP());
+  getTempFftwY().createR2CFftPlanND(getP());
+  getTempFftwZ().createR2CFftPlanND(getP());
 
   // create real to complex plans
-  getTempFftwX().createC2RFftPlan3D(getP());
-  getTempFftwY().createC2RFftPlan3D(getP());
-  getTempFftwZ().createC2RFftPlan3D(getP());
+  getTempFftwX().createC2RFftPlanND(getP());
+  getTempFftwY().createC2RFftPlanND(getP());
+  getTempFftwZ().createC2RFftPlanND(getP());
 
   // if necessary, create 1D shift plans.
   // in this case, the matrix has a bit bigger dimensions to be able to store
@@ -880,9 +880,9 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
     // bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)), for all 3 dims
     computePressureGradient();
 
-    getTempFftwX().computeC2RFft3D(getTemp1Real3D());
-    getTempFftwY().computeC2RFft3D(getTemp2Real3D());
-    getTempFftwZ().computeC2RFft3D(getTemp3Real3D());
+    getTempFftwX().computeC2RFftND(getTemp1Real3D());
+    getTempFftwY().computeC2RFftND(getTemp2Real3D());
+    getTempFftwZ().computeC2RFftND(getTemp3Real3D());
 
     if (mParameters.getRho0ScalarFlag())
     { // scalars
@@ -908,9 +908,9 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
  */
 void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
 {
-  getTempFftwX().computeR2CFft3D(getUxSgx());
-  getTempFftwY().computeR2CFft3D(getUySgy());
-  getTempFftwZ().computeR2CFft3D(getUzSgz());
+  getTempFftwX().computeR2CFftND(getUxSgx());
+  getTempFftwY().computeR2CFftND(getUySgy());
+  getTempFftwZ().computeR2CFftND(getUzSgz());
 
   const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
   const float divider = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nElements());
@@ -944,9 +944,9 @@ void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
   } // z
 
 
-  getTempFftwX().computeC2RFft3D(getDuxdx());
-  getTempFftwY().computeC2RFft3D(getDuydy());
-  getTempFftwZ().computeC2RFft3D(getDuzdz());
+  getTempFftwX().computeC2RFftND(getDuxdx());
+  getTempFftwY().computeC2RFftND(getDuydy());
+  getTempFftwZ().computeC2RFftND(getDuzdz());
 
   //------------------------------------------------ Nonuniform grid -------------------------------------------------//
   if (mParameters.getNonUniformGridFlag() != 0)
@@ -1195,13 +1195,13 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
     }
 
     // ifftn( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
-    getTempFftwX().computeR2CFft3D(velocitGradientSum);
-    getTempFftwY().computeR2CFft3D(densitySum);
+    getTempFftwX().computeR2CFftND(velocitGradientSum);
+    getTempFftwY().computeR2CFftND(densitySum);
 
     computeAbsorbtionTerm(getTempFftwX(), getTempFftwY());
 
-    getTempFftwX().computeC2RFft3D(absorbTauTerm);
-    getTempFftwY().computeC2RFft3D(absorbEtaTerm);
+    getTempFftwX().computeC2RFftND(absorbTauTerm);
+    getTempFftwY().computeC2RFftND(absorbEtaTerm);
 
     // different templated variants of sumPressureTermsNonlinear
     if (mParameters.getC0ScalarFlag())
@@ -1314,13 +1314,13 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
 
     // ifftn ( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
 
-    getTempFftwX().computeR2CFft3D(velocityGradientTerm);
-    getTempFftwY().computeR2CFft3D(densitySum);
+    getTempFftwX().computeR2CFftND(velocityGradientTerm);
+    getTempFftwY().computeR2CFftND(densitySum);
 
     computeAbsorbtionTerm(getTempFftwX(), getTempFftwY());
 
-    getTempFftwX().computeC2RFft3D(absorbTauTerm);
-    getTempFftwY().computeC2RFft3D(absorbEtaTerm);
+    getTempFftwX().computeC2RFftND(absorbTauTerm);
+    getTempFftwY().computeC2RFftND(absorbEtaTerm);
 
     if (mParameters.getC0ScalarFlag())
     {
@@ -1439,7 +1439,7 @@ void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velo
       }
 
       // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
-      fftMatrix.computeR2CFft3D(scaledSource);
+      fftMatrix.computeR2CFftND(scaledSource);
 
       #pragma omp parallel for simd
       for (size_t i = 0; i < nElementsReduced; i++)
@@ -1448,7 +1448,7 @@ void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velo
       }
 
       // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
-      fftMatrix.computeC2RFft3D(scaledSource);
+      fftMatrix.computeC2RFftND(scaledSource);
 
       // add the source values to the existing field values
       #pragma omp parallel for simd
@@ -1543,7 +1543,7 @@ void KSpaceFirstOrder3DSolver::addPressureSource()
         }
 
         // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
-        fftMatrix.computeR2CFft3D(scaledSource);
+        fftMatrix.computeR2CFftND(scaledSource);
 
         #pragma omp parallel for simd
         for (size_t i = 0; i < nElementsReduced ; i++)
@@ -1552,7 +1552,7 @@ void KSpaceFirstOrder3DSolver::addPressureSource()
         }
 
         // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
-        fftMatrix.computeC2RFft3D(scaledSource);
+        fftMatrix.computeC2RFftND(scaledSource);
 
         // add the source values to the existing field values
         #pragma omp parallel for simd
@@ -1961,9 +1961,9 @@ void KSpaceFirstOrder3DSolver::computeC2()
  */
 void KSpaceFirstOrder3DSolver::computeInitialVelocityHeterogeneous()
 {
-  getTempFftwX().computeC2RFft3D(getUxSgx());
-  getTempFftwY().computeC2RFft3D(getUySgy());
-  getTempFftwZ().computeC2RFft3D(getUzSgz());
+  getTempFftwX().computeC2RFftND(getUxSgx());
+  getTempFftwY().computeC2RFftND(getUySgy());
+  getTempFftwZ().computeC2RFftND(getUzSgz());
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
   const float  divider   = 1.0f / (2.0f * static_cast<float>(nElements));
@@ -1993,9 +1993,9 @@ void KSpaceFirstOrder3DSolver::computeInitialVelocityHeterogeneous()
  */
 void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousUniform()
 {
-  getTempFftwX().computeC2RFft3D(getUxSgx());
-  getTempFftwY().computeC2RFft3D(getUySgy());
-  getTempFftwZ().computeC2RFft3D(getUzSgz());
+  getTempFftwX().computeC2RFftND(getUxSgx());
+  getTempFftwY().computeC2RFftND(getUySgy());
+  getTempFftwZ().computeC2RFftND(getUzSgz());
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
   const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
@@ -2021,9 +2021,9 @@ void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousUniform()
  */
 void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousNonuniform()
 {
-  getTempFftwX().computeC2RFft3D(getUxSgx());
-  getTempFftwY().computeC2RFft3D(getUySgy());
-  getTempFftwZ().computeC2RFft3D(getUzSgz());
+  getTempFftwX().computeC2RFftND(getUxSgx());
+  getTempFftwY().computeC2RFftND(getUySgy());
+  getTempFftwZ().computeC2RFftND(getUzSgz());
 
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
   const size_t nElements              = dimensionSizes.nElements();
@@ -2293,7 +2293,7 @@ void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousNonuniform()
 void KSpaceFirstOrder3DSolver::computePressureGradient()
 {
   // Compute FFT of pressure
-  getTempFftwX().computeR2CFft3D(getP());
+  getTempFftwX().computeR2CFftND(getP());
 
   FloatComplex* ifftX = getTempFftwX().getComplexData();
   FloatComplex* ifftY = getTempFftwY().getComplexData();

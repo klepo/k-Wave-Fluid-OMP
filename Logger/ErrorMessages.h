@@ -13,7 +13,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            15 January   2019, 19:50 (revised)
+ *            19 January   2019, 23:07 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -235,11 +235,11 @@ ErrorMessage kErrFmtOutputDimensionsMismatch
 
 //-------------------------------------------------- FFTW errors -----------------------------------------------------//
 /// FFTW error message
-ErrorMessage kErrFmtCreateR2CFftPlan3D
-  = "creating plan for 3D real-to-complex fft.";
+ErrorMessage kErrFmtCreateR2CFftPlanND
+  = "creating plan for ND real-to-complex fft.";
 /// FFTW error message
-ErrorMessage kErrFmtCreateC2RFftPlan3D
- = "creating plan for 3D complex-to-real fft.";
+ErrorMessage kErrFmtCreateC2RFftPlanND
+ = "creating plan for ND complex-to-real fft.";
 /// FFTW error message
 ErrorMessage kErrFmtCreateR2CFftPlan1DX
  = "creating for 1D real-to-complex fft plan in X direction.";
@@ -258,6 +258,14 @@ ErrorMessage kErrFmtCreateC2RFftPlan1DY
 /// FFTW error message
 ErrorMessage kErrFmtCreateC2RFftPlan1DZ
   = "creating 1D complex-to-real fft plan in Z direction.";
+
+/// FFTW error message
+ErrorMessage kErrFmtCannotCallR2CFftPlan1DZfor2D
+  = "createR2CFftPlan1DZ cannot be called in 2D simulations";
+/// FFTW error message
+ErrorMessage kErrFmtCannotCallC2RFftPlan1DZfor2D
+  = "createC2RFftPlan1DZ cannot be called in 2D simulations";
+
 
 /// FFTW error message
 ErrorMessage kErrFmtDestroyR2CFftPlan3D
