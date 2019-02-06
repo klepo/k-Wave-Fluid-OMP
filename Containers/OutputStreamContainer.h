@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      27 August    2017, 08:58 (created) \n
- *            09 January   2019, 11:34 (revised)
+ *            06 February  2019, 15:48 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -162,7 +162,7 @@ class OutputStreamContainer
      *
      * @param [in] matrixContainer - matrix container to link the steams with sampled matrices and sensor masks.
      */
-    void addStreams(MatrixContainer& matrixContainer);
+    void init(MatrixContainer& matrixContainer);
 
     /// Create all streams - opens the datasets.
     void createStreams();

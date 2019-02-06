@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            05 February  2019, 15:47 (revised)
+ *            06 February  2019, 19:22 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -104,13 +104,13 @@ void KSpaceFirstOrder3DSolver::allocateMemory()
   Logger::log(Logger::LogLevel::kBasic, kOutFmtMemoryAllocation);
   Logger::flush(Logger::LogLevel::kBasic);
 
-  // create container, then all matrices
-  mMatrixContainer.addMatrices();
+  // add matrices into the container and create all matrices
+  mMatrixContainer.init();
   mMatrixContainer.createMatrices();
 
   // add output streams into container
   //@todo Think about moving under LoadInputData routine...
-  mOutputStreamContainer.addStreams(mMatrixContainer);
+  mOutputStreamContainer.init(mMatrixContainer);
 
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
 }// end of allocateMemory

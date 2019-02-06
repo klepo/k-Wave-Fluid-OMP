@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            13 January   2019, 20:02 (revised)
+ *            06 February  2019, 19:09 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -947,7 +947,7 @@ class KSpaceFirstOrder3DSolver
      */
     RealMatrix& getTemp1Real3D()
     {
-      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp1Real3D);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp1RealND);
     };
     /**
      * @brief  Get second real 3D temporary matrix.
@@ -955,7 +955,7 @@ class KSpaceFirstOrder3DSolver
      */
     RealMatrix& getTemp2Real3D()
     {
-      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp2Real3D);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp2RealND);
     };
     /**
      * @brief  Get third real 3D temporary matrix.
@@ -963,7 +963,7 @@ class KSpaceFirstOrder3DSolver
      */
     RealMatrix& getTemp3Real3D()
     {
-      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp3Real3D);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp3RealND);
     };
 
     /**
