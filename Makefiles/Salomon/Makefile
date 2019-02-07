@@ -8,7 +8,7 @@
 # * 
 # * @Tool        kspaceFirstOrder3D 2.17
 # * @Created     04 September 2017, 12:50 
-# * @LastModif   09 January   2009, 11:53
+# * @LastModif   07 February  2009, 20:37
 #
 # * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
 # *
@@ -179,7 +179,7 @@ $(TARGET):	main.o 					 \
 		Containers/OutputStreamContainer.o       \
 		Hdf5/Hdf5File.o				 \
 		Hdf5/Hdf5FileHeader.o			 \
-		KSpaceSolver/KSpaceFirstOrder3DSolver.o	 \
+		KSpaceSolver/KSpaceFirstOrderSolver.o	 \
 		Logger/Logger.o				 \
 		MatrixClasses/BaseFloatMatrix.o		 \
 		MatrixClasses/BaseIndexMatrix.o		 \
@@ -201,7 +201,7 @@ $(TARGET):	main.o 					 \
 		Containers/OutputStreamContainer.o       \
 		Hdf5/Hdf5File.o				 \
 		Hdf5/Hdf5FileHeader.o			 \
-		KSpaceSolver/KSpaceFirstOrder3DSolver.o	 \
+		KSpaceSolver/KSpaceFirstOrderSolver.o	 \
 		Logger/Logger.o				 \
 		MatrixClasses/BaseFloatMatrix.o		 \
 		MatrixClasses/BaseIndexMatrix.o		 \

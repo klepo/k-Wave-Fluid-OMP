@@ -1,5 +1,5 @@
 /**
- * @file      KSpaceFirstOrder3DSolver.cpp
+ * @file      KSpaceFirstOrderSolver.cpp
  *
  * @author    Jiri Jaros \n
  *            Faculty of Information Technology \n
@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            06 February  2019, 19:22 (revised)
+ *            07 February  2019, 20:26 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -51,7 +51,7 @@
 #include <ctime>
 #include <limits>
 
-#include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
+#include <KSpaceSolver/KSpaceFirstOrderSolver.h>
 #include <Containers/MatrixContainer.h>
 #include <Containers/OutputStreamContainer.h>
 
@@ -71,7 +71,7 @@ using std::ios;
 /**
  * Constructor of the class.
  */
-KSpaceFirstOrder3DSolver::KSpaceFirstOrder3DSolver():
+KSpaceFirstOrderSolver::KSpaceFirstOrderSolver():
         mMatrixContainer(), mOutputStreamContainer(),
         mParameters(Parameters::getInstance()),
         mActPercent(0l),
@@ -82,24 +82,24 @@ KSpaceFirstOrder3DSolver::KSpaceFirstOrder3DSolver():
 
   //Switch off HDF5 error messages
   H5Eset_auto(H5E_DEFAULT, NULL, NULL);
-}// end of KSpaceFirstOrder3DSolver
+}// end of KSpaceFirstOrderSolver
 //----------------------------------------------------------------------------------------------------------------------
 
 
 /**
  * Destructor of the class.
  */
-KSpaceFirstOrder3DSolver::~KSpaceFirstOrder3DSolver()
+KSpaceFirstOrderSolver::~KSpaceFirstOrderSolver()
 {
   freeMemory();
-}// end of KSpaceFirstOrder3DSolver
+}// end of KSpaceFirstOrderSolver
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * The method allocates the matrix container, creates all matrices and creates all output streams
  * (however not allocating memory).
  */
-void KSpaceFirstOrder3DSolver::allocateMemory()
+void KSpaceFirstOrderSolver::allocateMemory()
 {
   Logger::log(Logger::LogLevel::kBasic, kOutFmtMemoryAllocation);
   Logger::flush(Logger::LogLevel::kBasic);
@@ -119,7 +119,7 @@ void KSpaceFirstOrder3DSolver::allocateMemory()
 /**
  * The method frees all memory allocated by the class.
  */
-void KSpaceFirstOrder3DSolver::freeMemory()
+void KSpaceFirstOrderSolver::freeMemory()
 {
   mMatrixContainer.freeMatrices();
   mOutputStreamContainer.freeStreams();
@@ -129,7 +129,7 @@ void KSpaceFirstOrder3DSolver::freeMemory()
 /**
  * Load data from the input file provided by the Parameter class and creates the output time series streams.
  */
-void KSpaceFirstOrder3DSolver::loadInputData()
+void KSpaceFirstOrderSolver::loadInputData()
 {
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDataLoading);
   Logger::flush(Logger::LogLevel::kBasic);
@@ -223,7 +223,7 @@ void KSpaceFirstOrder3DSolver::loadInputData()
 /**
 * This method computes k-space First Order 3D simulation.
  */
-void KSpaceFirstOrder3DSolver::compute()
+void KSpaceFirstOrderSolver::compute()
 {
   // fft initialisation and preprocessing
   try
@@ -337,7 +337,7 @@ void KSpaceFirstOrder3DSolver::compute()
 /**
  * Get peak memory usage.
  */
-size_t KSpaceFirstOrder3DSolver::getMemoryUsage() const
+size_t KSpaceFirstOrderSolver::getMemoryUsage() const
 {
   // Linux build
   #ifdef __linux__
@@ -367,7 +367,7 @@ size_t KSpaceFirstOrder3DSolver::getMemoryUsage() const
 /**
  * Get release code version.
  */
-std::string KSpaceFirstOrder3DSolver::getCodeName() const
+std::string KSpaceFirstOrderSolver::getCodeName() const
 {
   return std::string(kOutFmtKWaveVersion);
 }// end of getCodeName
@@ -377,7 +377,7 @@ std::string KSpaceFirstOrder3DSolver::getCodeName() const
 /**
  * Print full code name and the license.
  */
-void KSpaceFirstOrder3DSolver::printFullCodeNameAndLicense() const
+void KSpaceFirstOrderSolver::printFullCodeNameAndLicense() const
 {
   Logger::log(Logger::LogLevel::kBasic, kOutFmtBuildNoDataTime, 10, 11, __DATE__, 8, 8, __TIME__);
 
@@ -431,7 +431,7 @@ void KSpaceFirstOrder3DSolver::printFullCodeNameAndLicense() const
 /**
  * Set processor affinity.
  */
-void KSpaceFirstOrder3DSolver::setProcessorAffinity()
+void KSpaceFirstOrderSolver::setProcessorAffinity()
 {
   // Linux Build
   #ifdef __linux__
@@ -460,7 +460,7 @@ void KSpaceFirstOrder3DSolver::setProcessorAffinity()
 /**
  * Initialize FFTW plans.
  */
-void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
+void KSpaceFirstOrderSolver::InitializeFftwPlans()
 {
 
   // initialization of FFTW library
@@ -534,7 +534,7 @@ void KSpaceFirstOrder3DSolver::InitializeFftwPlans()
 /**
  * Compute pre-processing phase.
  */
-void KSpaceFirstOrder3DSolver::preProcessing()
+void KSpaceFirstOrderSolver::preProcessing()
 {
   Logger::log(Logger::LogLevel::kBasic,kOutFmtPreProcessing);
   Logger::flush(Logger::LogLevel::kBasic);
@@ -618,7 +618,7 @@ void KSpaceFirstOrder3DSolver::preProcessing()
 /**
  * Compute the main time loop of KSpaceFirstOrder3D.
  */
-void KSpaceFirstOrder3DSolver::computeMainLoop()
+void KSpaceFirstOrderSolver::computeMainLoop()
 {
   mActPercent = 0;
   // set ActPercent to correspond the time index after recovery
@@ -689,7 +689,7 @@ void KSpaceFirstOrder3DSolver::computeMainLoop()
 /**
  * Post processing the quantities, closing the output streams and storing the sensor mask.
  */
-void KSpaceFirstOrder3DSolver::postProcessing()
+void KSpaceFirstOrderSolver::postProcessing()
 {
   if (mParameters.getStorePressureFinalAllFlag())
   {
@@ -730,7 +730,7 @@ void KSpaceFirstOrder3DSolver::postProcessing()
 /**
  * Store sensor data.
  */
-void KSpaceFirstOrder3DSolver::storeSensorData()
+void KSpaceFirstOrderSolver::storeSensorData()
 {
   // Unless the time for sampling has come, exit
   if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex())
@@ -747,7 +747,7 @@ void KSpaceFirstOrder3DSolver::storeSensorData()
 /**
  * Write statistics and the header into the output file.
  */
-void KSpaceFirstOrder3DSolver::writeOutputDataInfo()
+void KSpaceFirstOrderSolver::writeOutputDataInfo()
 {
   // write timeIndex into the output file
   mParameters.getOutputFile().writeScalarValue(mParameters.getOutputFile().getRootGroup(),
@@ -784,7 +784,7 @@ void KSpaceFirstOrder3DSolver::writeOutputDataInfo()
 /**
  * Save checkpoint data into the checkpoint file, flush aggregated outputs into the output file.
  */
-void KSpaceFirstOrder3DSolver::saveCheckpointData()
+void KSpaceFirstOrderSolver::saveCheckpointData()
 {
   #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
      Logger::log(Logger::LogLevel::kFull, kOutFmtStoringFftwWisdom);
@@ -875,7 +875,7 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
        );
  \endverbatim
  */
- void KSpaceFirstOrder3DSolver::computeVelocity()
+ void KSpaceFirstOrderSolver::computeVelocity()
  {
     // bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)), for all 3 dims
     computePressureGradient();
@@ -906,7 +906,7 @@ void KSpaceFirstOrder3DSolver::saveCheckpointData()
 /**
  * Compute new values for duxdx, duydy, duzdz.
  */
-void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
+void  KSpaceFirstOrderSolver::computeVelocityGradient()
 {
   getTempFftwX().computeR2CFftND(getUxSgx());
   getTempFftwY().computeR2CFftND(getUySgy());
@@ -992,7 +992,7 @@ void  KSpaceFirstOrder3DSolver::computeVelocityGradient()
     rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0_plus_rho .* duzdz);
  \endverbatim
  */
-void KSpaceFirstOrder3DSolver::computeDensityNonliner()
+void KSpaceFirstOrderSolver::computeDensityNonliner()
 {
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
 
@@ -1071,7 +1071,7 @@ void KSpaceFirstOrder3DSolver::computeDensityNonliner()
 \endverbatim
  *
  */
-void KSpaceFirstOrder3DSolver::computeDensityLinear()
+void KSpaceFirstOrderSolver::computeDensityLinear()
 {
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
   const float dt = mParameters.getDt();
@@ -1157,7 +1157,7 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
 
  \endverbatim
  */
- void KSpaceFirstOrder3DSolver::computePressureNonlinear()
+ void KSpaceFirstOrderSolver::computePressureNonlinear()
 {
   if (mParameters.getAbsorbingFlag())
   { // absorbing case
@@ -1298,7 +1298,7 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
             );
  \endverbatim
  */
- void KSpaceFirstOrder3DSolver::computePressureLinear()
+ void KSpaceFirstOrderSolver::computePressureLinear()
  {
   // rhox + rhoy + rhoz
   if (mParameters.getAbsorbingFlag())
@@ -1349,7 +1349,7 @@ void KSpaceFirstOrder3DSolver::computeDensityLinear()
 /**
  * Add u source to the particle velocity.
  */
-void KSpaceFirstOrder3DSolver::addVelocitySource()
+void KSpaceFirstOrderSolver::addVelocitySource()
 {
   const size_t timeIndex = mParameters.getTimeIndex();
 
@@ -1373,9 +1373,9 @@ void KSpaceFirstOrder3DSolver::addVelocitySource()
 /**
  * Add in velocity source terms.
  */
-void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
-                                                         const RealMatrix&  velocitySourceInput,
-                                                         const IndexMatrix& velocitySourceIndex)
+void KSpaceFirstOrderSolver::computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
+                                                       const RealMatrix&  velocitySourceInput,
+                                                       const IndexMatrix& velocitySourceIndex)
 {
   // time is solved one level up.
   float*        pVelocityMatrix = velocityMatrix.getData();
@@ -1470,7 +1470,7 @@ void KSpaceFirstOrder3DSolver::computeVelocitySourceTerm(RealMatrix&        velo
  /**
   * Add in pressure source.
   */
-void KSpaceFirstOrder3DSolver::addPressureSource()
+void KSpaceFirstOrderSolver::addPressureSource()
 {
   const size_t timeIndex = mParameters.getTimeIndex();
 
@@ -1592,7 +1592,7 @@ void KSpaceFirstOrder3DSolver::addPressureSource()
     uz_sgz = dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) / 2;
  \endverbatim
  */
-void KSpaceFirstOrder3DSolver::addInitialPressureSource()
+void KSpaceFirstOrderSolver::addInitialPressureSource()
 {
   getP().copyData(getInitialPressureSourceInput());
 
@@ -1645,7 +1645,7 @@ void KSpaceFirstOrder3DSolver::addInitialPressureSource()
 /**
  * Add transducer data source to velocity x component.
  */
-void KSpaceFirstOrder3DSolver::addTransducerSource()
+void KSpaceFirstOrderSolver::addTransducerSource()
 {
   float* uxSgx = getUxSgx().getData();
 
@@ -1667,7 +1667,7 @@ void KSpaceFirstOrder3DSolver::addTransducerSource()
 /**
  * Generate kappa matrix for lossless medium.
  */
-void KSpaceFirstOrder3DSolver::generateKappa()
+void KSpaceFirstOrderSolver::generateKappa()
 {
   const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
@@ -1718,7 +1718,7 @@ void KSpaceFirstOrder3DSolver::generateKappa()
 /**
  * Generate sourceKappa matrix for additive sources.
  */
-void KSpaceFirstOrder3DSolver::generateSourceKappa()
+void KSpaceFirstOrderSolver::generateSourceKappa()
 {
   const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
@@ -1769,7 +1769,7 @@ void KSpaceFirstOrder3DSolver::generateSourceKappa()
 /**
  * Generate kappa matrix, absorbNabla1, absorbNabla2 for absorbing medium.
  */
-void KSpaceFirstOrder3DSolver::generateKappaAndNablas()
+void KSpaceFirstOrderSolver::generateKappaAndNablas()
 {
   const float dxSqRec    = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dySqRec    = 1.0f / (mParameters.getDy() * mParameters.getDy());
@@ -1836,7 +1836,7 @@ void KSpaceFirstOrder3DSolver::generateKappaAndNablas()
 /**
  * Generate absorbTau and absorbEta in for heterogenous medium.
  */
-void KSpaceFirstOrder3DSolver::generateTauAndEta()
+void KSpaceFirstOrderSolver::generateTauAndEta()
 {
   if ((mParameters.getAlphaCoeffScalarFlag()) && (mParameters.getC0ScalarFlag()))
   { // scalar values
@@ -1904,7 +1904,7 @@ void KSpaceFirstOrder3DSolver::generateTauAndEta()
 /**
  * Prepare dt./ rho0  for non-uniform grid.
  */
-void KSpaceFirstOrder3DSolver::generateInitialDenisty()
+void KSpaceFirstOrderSolver::generateInitialDenisty()
 {
   float* dtRho0Sgx   = getDtRho0Sgx().getData();
   float* dtRho0Sgy   = getDtRho0Sgy().getData();
@@ -1941,7 +1941,7 @@ void KSpaceFirstOrder3DSolver::generateInitialDenisty()
 /**
  * Compute c^2.
  */
-void KSpaceFirstOrder3DSolver::computeC2()
+void KSpaceFirstOrderSolver::computeC2()
 {
   if (!mParameters.getC0ScalarFlag())
   {
@@ -1959,7 +1959,7 @@ void KSpaceFirstOrder3DSolver::computeC2()
 /**
  * Compute acoustic velocity for initial pressure problem.
  */
-void KSpaceFirstOrder3DSolver::computeInitialVelocityHeterogeneous()
+void KSpaceFirstOrderSolver::computeInitialVelocityHeterogeneous()
 {
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
@@ -1991,7 +1991,7 @@ void KSpaceFirstOrder3DSolver::computeInitialVelocityHeterogeneous()
 /**
  * Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
  */
-void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousUniform()
+void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousUniform()
 {
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
@@ -2019,7 +2019,7 @@ void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousUniform()
 /**
  * Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
  */
-void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousNonuniform()
+void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousNonuniform()
 {
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
@@ -2062,7 +2062,7 @@ void KSpaceFirstOrder3DSolver::computeInitialVelocityHomogeneousNonuniform()
 /**
  * Compute acoustic velocity for heterogeneous medium and a uniform grid, x direction.
  */
-void KSpaceFirstOrder3DSolver::computeVelocityHeterogeneous()
+void KSpaceFirstOrderSolver::computeVelocityHeterogeneous()
 {
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
   const size_t nElements   = dimensionSizes.nElements();
@@ -2137,7 +2137,7 @@ void KSpaceFirstOrder3DSolver::computeVelocityHeterogeneous()
 /**
  * Compute acoustic velocity for homogeneous medium and a uniform grid.
  */
-void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousUniform()
+void KSpaceFirstOrderSolver::computeVelocityHomogeneousUniform()
 {
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
   const size_t nElements = dimensionSizes.nElements();
@@ -2209,7 +2209,7 @@ void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousUniform()
 /**
  * Compute acoustic velocity for homogenous medium and nonuniform grid, x direction.
  */
-void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousNonuniform()
+void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform()
 {
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
   const size_t nElements = dimensionSizes.nElements();
@@ -2290,7 +2290,7 @@ void KSpaceFirstOrder3DSolver::computeVelocityHomogeneousNonuniform()
     bsxfun(\@times, ddx_k_shift_pos, kappa .* fftn(p))
   \endverbatim
  */
-void KSpaceFirstOrder3DSolver::computePressureGradient()
+void KSpaceFirstOrderSolver::computePressureGradient()
 {
   // Compute FFT of pressure
   getTempFftwX().computeR2CFftND(getP());
@@ -2332,9 +2332,9 @@ void KSpaceFirstOrder3DSolver::computePressureGradient()
  * Calculate three temporary sums in the new pressure formula non-linear absorbing case.
  */
 template<bool bOnAScalarFlag, bool rho0ScalarFlag>
-void KSpaceFirstOrder3DSolver::computePressureTermsNonlinear(RealMatrix& densitySum,
-                                                             RealMatrix& nonlinearTerm,
-                                                             RealMatrix& velocityGradientSum)
+void KSpaceFirstOrderSolver::computePressureTermsNonlinear(RealMatrix& densitySum,
+                                                           RealMatrix& nonlinearTerm,
+                                                           RealMatrix& velocityGradientSum)
 {
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
@@ -2376,8 +2376,8 @@ void KSpaceFirstOrder3DSolver::computePressureTermsNonlinear(RealMatrix& density
  /**
   * Calculate two temporary sums in the new pressure formula, linear absorbing case.
   */
-void KSpaceFirstOrder3DSolver::computePressureTermsLinear(RealMatrix& densitySum,
-                                                          RealMatrix& velocityGradientSum)
+void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
+                                                        RealMatrix& velocityGradientSum)
 {
   const size_t size = mParameters.getFullDimensionSizes().nElements();
 
@@ -2423,8 +2423,8 @@ void KSpaceFirstOrder3DSolver::computePressureTermsLinear(RealMatrix& densitySum
  /**
   * Compute absorbing term with abosrbNabla1 and absorbNabla2.
   */
-void KSpaceFirstOrder3DSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
-                                                     FftwComplexMatrix& fftPart2)
+void KSpaceFirstOrderSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
+                                                   FftwComplexMatrix& fftPart2)
 {
   const size_t nElements    = mParameters.getReducedDimensionSizes().nElements();
 
@@ -2447,9 +2447,9 @@ void KSpaceFirstOrder3DSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1
   * @brief Sum sub-terms to calculate new pressure, after FFTs, non-linear case.
   */
 template<bool c0ScalarFlag, bool areTauAndEtaScalars>
-void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
-                                                         const RealMatrix& absorbEtaTerm,
-                                                         const RealMatrix& nonlinearTerm)
+void KSpaceFirstOrderSolver::sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
+                                                       const RealMatrix& absorbEtaTerm,
+                                                       const RealMatrix& nonlinearTerm)
 {
   const float* pAbsorbTauTerm = absorbTauTerm.getData();
   const float* pAbsorbEtaTerm = absorbEtaTerm.getData();
@@ -2486,9 +2486,9 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinear(const RealMatrix& absor
   * Sum sub-terms to calculate new pressure, after FFTs, linear case.
   */
 template<bool c0ScalarFlag, bool areTauAndEtaScalars>
-void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
-                                                      const RealMatrix& absorbEtaTerm,
-                                                      const RealMatrix& densitySum)
+void KSpaceFirstOrderSolver::sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
+                                                    const RealMatrix& absorbEtaTerm,
+                                                    const RealMatrix& densitySum)
 {
   const float* pAbsorbTauTerm = absorbTauTerm.getData();
   const float* pAbsorbEtaTerm = absorbEtaTerm.getData();
@@ -2525,7 +2525,7 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsLinear(const RealMatrix& absorbTa
  * Sum sub-terms for new p, nonlinear lossless case.
  */
 template<bool c0ScalarFlag, bool nonlinearFlag, bool rho0ScalarFlag>
-void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinearLossless()
+void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
 {
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
 
@@ -2561,7 +2561,7 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinearLossless()
  /**
   * Sum sub-terms for new pressure, linear lossless case.
   */
- void KSpaceFirstOrder3DSolver::sumPressureTermsLinearLossless()
+ void KSpaceFirstOrderSolver::sumPressureTermsLinearLossless()
 {
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
@@ -2606,7 +2606,7 @@ void KSpaceFirstOrder3DSolver::sumPressureTermsNonlinearLossless()
   \endverbatim
  */
 
-void KSpaceFirstOrder3DSolver::computeShiftedVelocity()
+void KSpaceFirstOrderSolver::computeShiftedVelocity()
 {
   const FloatComplex* xShiftNegR  = getXShiftNegR().getComplexData();
   const FloatComplex* yShiftNegR  = getYShiftNegR().getComplexData();
@@ -2693,7 +2693,7 @@ void KSpaceFirstOrder3DSolver::computeShiftedVelocity()
 /**
  * Print progress statistics.
  */
-void KSpaceFirstOrder3DSolver::printStatistics()
+void KSpaceFirstOrderSolver::printStatistics()
 {
   const size_t nt =  mParameters.getNt();
   const size_t timeIndex = mParameters.getTimeIndex();
@@ -2729,7 +2729,7 @@ void KSpaceFirstOrder3DSolver::printStatistics()
 /**
  * Is time to checkpoint?
  */
-bool KSpaceFirstOrder3DSolver::isTimeToCheckpoint()
+bool KSpaceFirstOrderSolver::isTimeToCheckpoint()
 {
   if (!mParameters.isCheckpointEnabled()) return false;
 
@@ -2743,7 +2743,7 @@ bool KSpaceFirstOrder3DSolver::isTimeToCheckpoint()
 /**
  * Was the loop interrupted to checkpoint?
  */
-bool KSpaceFirstOrder3DSolver::isCheckpointInterruption() const
+bool KSpaceFirstOrderSolver::isCheckpointInterruption() const
 {
   return (mParameters.getTimeIndex() != mParameters.getNt());
 }// end of isCheckpointInterruption
@@ -2752,7 +2752,7 @@ bool KSpaceFirstOrder3DSolver::isCheckpointInterruption() const
 /**
  * Check the output file has the correct format and version.
  */
-void KSpaceFirstOrder3DSolver::checkOutputFile()
+void KSpaceFirstOrderSolver::checkOutputFile()
 {
   // The header has already been read
   Hdf5FileHeader& fileHeader = mParameters.getFileHeader();
@@ -2804,7 +2804,7 @@ void KSpaceFirstOrder3DSolver::checkOutputFile()
 /**
  * Check the file type and the version of the checkpoint file.
  */
-void KSpaceFirstOrder3DSolver::checkCheckpointFile()
+void KSpaceFirstOrderSolver::checkCheckpointFile()
 {
   // read the header and check the file version
   Hdf5FileHeader fileHeader;
@@ -2858,7 +2858,7 @@ void KSpaceFirstOrder3DSolver::checkCheckpointFile()
 /**
  * Restore cumulated elapsed time from the output file.
  */
-void KSpaceFirstOrder3DSolver::loadElapsedTimeFromOutputFile()
+void KSpaceFirstOrderSolver::loadElapsedTimeFromOutputFile()
 {
   double totalTime, dataLoadTime, preProcessingTime, simulationTime, postProcessingTime;
 
@@ -2878,10 +2878,10 @@ void KSpaceFirstOrder3DSolver::loadElapsedTimeFromOutputFile()
 }// end of loadElapsedTimeFromOutputFile
 //----------------------------------------------------------------------------------------------------------------------
 
-inline size_t KSpaceFirstOrder3DSolver::get1DIndex(const size_t          z,
-                                                   const size_t          y,
-                                                   const size_t          x,
-                                                   const DimensionSizes& dimensionSizes)
+inline size_t KSpaceFirstOrderSolver::get1DIndex(const size_t          z,
+                                                 const size_t          y,
+                                                 const size_t          x,
+                                                 const DimensionSizes& dimensionSizes)
 {
   return (z * dimensionSizes.ny + y) * dimensionSizes.nx + x;
 }// end of get1DIndex

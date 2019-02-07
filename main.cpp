@@ -11,7 +11,7 @@
  * @version  kspaceFirstOrder3D 2.17
  *
  * @date     11 July      2012, 10:57 (created) \n
- *           09 January   2019, 12:04 (revised)
+ *           07 February  2019, 20:31 (revised)
  *
  * @mainpage kspaceFirstOrder3D-OMP
  *
@@ -774,7 +774,7 @@
   #include <omp.h>
 #endif
 
-#include <KSpaceSolver/KSpaceFirstOrder3DSolver.h>
+#include <KSpaceSolver/KSpaceFirstOrderSolver.h>
 #include <Logger/Logger.h>
 
 
@@ -793,7 +793,7 @@ using std::string;
 int main(int argc, char** argv)
 {
   // Create K-Space solver
-  KSpaceFirstOrder3DSolver kSpaceSolver;
+  KSpaceFirstOrderSolver kSpaceSolver;
 
   // print header
   Logger::log(Logger::LogLevel::kBasic, kOutFmtFirstSeparator);

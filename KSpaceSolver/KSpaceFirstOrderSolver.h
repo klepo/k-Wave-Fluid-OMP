@@ -1,5 +1,5 @@
 /**
- * @file      KSpaceFirstOrder3DSolver.h
+ * @file      KSpaceFirstOrderSolver.h
  *
  * @author    Jiri Jaros \n
  *            Faculty of Information Technology\n
@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            06 February  2019, 19:09 (revised)
+ *            07 February  2019, 20:26 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -29,8 +29,8 @@
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
-#ifndef KSPACE_FIRST_ORDER_3D_SOLVER_H
-#define KSPACE_FIRST_ORDER_3D_SOLVER_H
+#ifndef KSPACE_FIRST_ORDER_SOLVER_H
+#define KSPACE_FIRST_ORDER_SOLVER_H
 
 
 #include <Parameters/Parameters.h>
@@ -47,23 +47,23 @@
 #include <Utils/TimeMeasure.h>
 
 /**
- * @class   KSpaceFirstOrder3DSolver
- * @brief   Class responsible for running the k-space first order 3D method.
- * @details Class responsible for running the k-space first order 3D method. This class maintain
+ * @class   KSpaceFirstOrderSolver
+ * @brief   Class responsible for running the k-space first order method in 2D and 3D media.
+ * @details Class responsible for running the k-space first order method in 2D and 3D media. This class maintain
  *          the whole k-wave (implements the time loop).
  *
  */
-class KSpaceFirstOrder3DSolver
+class KSpaceFirstOrderSolver
 {
   public:
     /// Constructor.
-    KSpaceFirstOrder3DSolver();
+    KSpaceFirstOrderSolver();
     /// Copy constructor not allowed for public.
-    KSpaceFirstOrder3DSolver(const KSpaceFirstOrder3DSolver&) = delete;
+    KSpaceFirstOrderSolver(const KSpaceFirstOrderSolver&) = delete;
     /// Destructor.
-    virtual ~KSpaceFirstOrder3DSolver();
+    virtual ~KSpaceFirstOrderSolver();
     /// operator= not allowed for public.
-    KSpaceFirstOrder3DSolver& operator=(const KSpaceFirstOrder3DSolver&) = delete;
+    KSpaceFirstOrderSolver& operator=(const KSpaceFirstOrderSolver&) = delete;
 
     /// Memory allocation.
     virtual void allocateMemory();
@@ -1024,8 +1024,8 @@ class KSpaceFirstOrder3DSolver
     /// Iteration time of the simulation.
     TimeMeasure mIterationTime;
 
-};// end of KSpaceFirstOrder3DSolver
+};// end of KSpaceFirstOrderSolver
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* KSPACE_FIRST_ORDER_3D_SOLVER_H */
+#endif	/* KSPACE_FIRST_ORDER_SOLVER_H */
 

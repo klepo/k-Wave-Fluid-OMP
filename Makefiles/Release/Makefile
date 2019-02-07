@@ -8,7 +8,7 @@
 # * 
 # * @Tool        kspaceFirstOrder3D 2.17
 # * @Created     04 September 2017, 12:50 
-# * @LastModif   09 January   2019, 11:52
+# * @LastModif   07 February  2019, 20:37
 #
 # * @License: 
 # * This file is part of the C++ extension of the k-Wave Toolbox 
@@ -216,7 +216,7 @@ $(TARGET):	main.o 					 \
 		Containers/OutputStreamContainer.o       \
 		Hdf5/Hdf5File.o				 \
 		Hdf5/Hdf5FileHeader.o			 \
-		KSpaceSolver/KSpaceFirstOrder3DSolver.o	 \
+		KSpaceSolver/KSpaceFirstOrderSolver.o	 \
 		Logger/Logger.o				 \
 		MatrixClasses/BaseFloatMatrix.o		 \
 		MatrixClasses/BaseIndexMatrix.o		 \
@@ -238,7 +238,7 @@ $(TARGET):	main.o 					 \
 		Containers/OutputStreamContainer.o       \
 		Hdf5/Hdf5File.o				 \
 		Hdf5/Hdf5FileHeader.o			 \
-		KSpaceSolver/KSpaceFirstOrder3DSolver.o	 \
+		KSpaceSolver/KSpaceFirstOrderSolver.o	 \
 		Logger/Logger.o				 \
 		MatrixClasses/BaseFloatMatrix.o		 \
 		MatrixClasses/BaseIndexMatrix.o		 \
