@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            07 February  2019, 21:35 (revised)
+ *            07 February  2019, 22:22 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -173,7 +173,11 @@ class KSpaceFirstOrderSolver
      */
     template<Parameters::SimulationDimension simulationDimension>
     void preProcessing();
-    /// Compute the main time loop of the kspaceFirstOrder3D.
+    /**
+     * @breif Compute the main time loop of the kspaceFirstOrder3D.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeMainLoop();
     /// Post processing, and closing the output streams.
     void postProcessing();
@@ -206,7 +210,10 @@ class KSpaceFirstOrderSolver
              - dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) ...
              );
      \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocity();
     /// Compute new values of acoustic velocity gradients.
     void computeVelocityGradient();
@@ -312,7 +319,9 @@ class KSpaceFirstOrderSolver
         uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz) - dt .* rho0_sgz_inv .* real(ifftZ)
       \endverbatim
      *
+     * @tparam simulationDimension - Dimensionality of the simulation.
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocityHeterogeneous();
 
     /**
@@ -326,7 +335,9 @@ class KSpaceFirstOrderSolver
         uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz) - dt .* rho0_sgz_inv .* real(ifftZ)
       \endverbatim
      *
+     * @tparam simulationDimension - Dimensionality of the simulation.
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocityHomogeneousUniform();
 
     /**
@@ -342,12 +353,19 @@ class KSpaceFirstOrderSolver
         uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz)
                         - dt .* rho0_sgz_inv .* dzudznSgz.* real(ifftZ)
       \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocityHomogeneousNonuniform();
 
 
 
-    /// Compute part of the new velocity term - gradient of pressure.
+    /**
+     * @breif Compute part of the new velocity term - gradient of pressure.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computePressureGradient();
     /**
      * @brief Calculate three temporary sums in the new pressure formula before taking the FFT,
@@ -949,26 +967,27 @@ class KSpaceFirstOrderSolver
 
     //--------------------------------------------- Temporary matrices -----------------------------------------------//
     /**
-     * @brief  Get first real 3D temporary matrix.
-     * @return Temporary real 3D matrix.
+     * @brief  Get first real 2D/3D temporary matrix.
+     * @return Temporary real 2D/3D matrix.
      */
-    RealMatrix& getTemp1Real3D()
+    RealMatrix& getTemp1RealND()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp1RealND);
     };
     /**
-     * @brief  Get second real 3D temporary matrix.
-     * @return Temporary real 3D matrix.
+     * @brief  Get second real 2D/3D temporary matrix.
+     * @return Temporary real 2D/3D matrix.
      */
-    RealMatrix& getTemp2Real3D()
+    RealMatrix& getTemp2RealND()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp2RealND);
     };
     /**
-     * @brief  Get third real 3D temporary matrix.
+     * @brief  Get third real 3D temporary matrix.T
+     * This matrix is only present for 3D simulations,
      * @return Temporary real 3D matrix.
      */
-    RealMatrix& getTemp3Real3D()
+    RealMatrix& getTemp3RealND()
     {
       return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp3RealND);
     };
