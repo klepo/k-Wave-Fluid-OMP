@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            07 February  2019, 20:26 (revised)
+ *            07 February  2019, 21:35 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -169,7 +169,9 @@ class KSpaceFirstOrderSolver
      * Initialize all indices, pre-compute constants such as c^2, rho0Sgx * dt  and create kappa,
      * absorbEta, absorbTau, absorbNabla1, absorbNabla2  matrices.
      *
+     * @tparam simulationDimension - Dimensionality of the simulation.
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void preProcessing();
     /// Compute the main time loop of the kspaceFirstOrder3D.
     void computeMainLoop();
@@ -248,7 +250,12 @@ class KSpaceFirstOrderSolver
     void generateKappaAndNablas();
     /// Generate absorbTau, absorbEta for heterogenous medium.
     void generateTauAndEta();
-    /// Calculate dt ./ rho0 for nonuniform grids.
+
+    /**
+     * @breif Calculate dt ./ rho0 for nonuniform grids.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void generateInitialDenisty();
     /// Calculate square of velocity
     void computeC2();

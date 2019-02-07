@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            07 February  2019, 20:26 (revised)
+ *            07 February  2019, 21:35 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -59,6 +59,8 @@
 #include <Logger/Logger.h>
 
 using std::ios;
+// shortcut for Simulation dimensions
+using SD = Parameters::SimulationDimension;
 
 //--------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------- Constants -----------------------------------------------------//
@@ -234,7 +236,10 @@ void KSpaceFirstOrderSolver::compute()
     InitializeFftwPlans();
 
     // preprocessing phase generating necessary variables
-    preProcessing();
+    if (mParameters.isSimulation3D())
+      preProcessing<Parameters::SimulationDimension::k3D>();
+    else
+      preProcessing<Parameters::SimulationDimension::k2D>();
 
     mPreProcessingTime.stop();
   }
@@ -502,12 +507,19 @@ void KSpaceFirstOrderSolver::InitializeFftwPlans()
   // create real to complex plans
   getTempFftwX().createR2CFftPlanND(getP());
   getTempFftwY().createR2CFftPlanND(getP());
-  getTempFftwZ().createR2CFftPlanND(getP());
+  if (mParameters.isSimulation3D())
+  {
+    getTempFftwZ().createR2CFftPlanND(getP());
+  }
+
 
   // create real to complex plans
   getTempFftwX().createC2RFftPlanND(getP());
   getTempFftwY().createC2RFftPlanND(getP());
-  getTempFftwZ().createC2RFftPlanND(getP());
+  if (mParameters.isSimulation3D())
+  {
+    getTempFftwZ().createC2RFftPlanND(getP());
+  }
 
   // if necessary, create 1D shift plans.
   // in this case, the matrix has a bit bigger dimensions to be able to store
@@ -523,8 +535,11 @@ void KSpaceFirstOrderSolver::InitializeFftwPlans()
     getTempFftwShift().createC2RFftPlan1DY(getUyShifted());
 
     // Z shifts
-    getTempFftwShift().createR2CFftPlan1DZ(getUzShifted());
-    getTempFftwShift().createC2RFftPlan1DZ(getUzShifted());
+    if (mParameters.isSimulation3D())
+    {
+      getTempFftwShift().createR2CFftPlan1DZ(getUzShifted());
+      getTempFftwShift().createC2RFftPlan1DZ(getUzShifted());
+    }
   }// end u_non_staggered
 
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
@@ -534,6 +549,7 @@ void KSpaceFirstOrderSolver::InitializeFftwPlans()
 /**
  * Compute pre-processing phase.
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::preProcessing()
 {
   Logger::log(Logger::LogLevel::kBasic,kOutFmtPreProcessing);
@@ -576,13 +592,16 @@ void KSpaceFirstOrderSolver::preProcessing()
     // rho is matrix
     if (mParameters.getNonUniformGridFlag())
     {
-      generateInitialDenisty();
+      generateInitialDenisty<simulationDimension>();
     }
     else
     {
       getDtRho0Sgx().scalarDividedBy(mParameters.getDt());
       getDtRho0Sgy().scalarDividedBy(mParameters.getDt());
-      getDtRho0Sgz().scalarDividedBy(mParameters.getDt());
+      if (simulationDimension == SD::k3D)
+      {
+        getDtRho0Sgz().scalarDividedBy(mParameters.getDt());
+      }
     }
   }
 
@@ -1666,6 +1685,7 @@ void KSpaceFirstOrderSolver::addTransducerSource()
 
 /**
  * Generate kappa matrix for lossless medium.
+ * For 2D simulation, the zPart == 0.
  */
 void KSpaceFirstOrderSolver::generateKappa()
 {
@@ -1683,13 +1703,14 @@ void KSpaceFirstOrderSolver::generateKappa()
 
   float* kappa = getKappa().getData();
 
-  #pragma omp parallel for schedule (static)
+  #pragma omp parallel for schedule(static) if (mParameters.isSimulation3D())
   for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
   {
     const float zf    = static_cast<float>(z);
           float zPart = 0.5f - fabs(0.5f - zf * nzRec);
                 zPart = (zPart * zPart) * dz2Rec;
 
+    #pragma omp parallel for schedule(static) if (mParameters.isSimulation2D())
     for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
     {
       const float yf    = static_cast<float>(y);
@@ -1717,6 +1738,7 @@ void KSpaceFirstOrderSolver::generateKappa()
 
 /**
  * Generate sourceKappa matrix for additive sources.
+ * For 2D simulation, the zPart == 0.
  */
 void KSpaceFirstOrderSolver::generateSourceKappa()
 {
@@ -1734,13 +1756,14 @@ void KSpaceFirstOrderSolver::generateSourceKappa()
 
   float* sourceKappa = getSourceKappa().getData();
 
-  #pragma omp parallel for schedule (static)
+  #pragma omp parallel for schedule(static) if (mParameters.isSimulation3D())
   for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
   {
     const float zf    = static_cast<float>(z);
           float zPart = 0.5f - fabs(0.5f - zf * nzRec);
                 zPart = (zPart * zPart) * dz2Rec;
 
+    #pragma omp parallel for schedule(static) if (mParameters.isSimulation2D())
     for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
     {
       const float yf    = static_cast<float>(y);
@@ -1768,6 +1791,7 @@ void KSpaceFirstOrderSolver::generateSourceKappa()
 
 /**
  * Generate kappa matrix, absorbNabla1, absorbNabla2 for absorbing medium.
+ * For the 2D simulation the zPart == 0
  */
 void KSpaceFirstOrderSolver::generateKappaAndNablas()
 {
@@ -1793,13 +1817,14 @@ void KSpaceFirstOrderSolver::generateKappaAndNablas()
   float* absorbNabla2    = getAbsorbNabla2().getData();
   const float alphaPower = mParameters.getAlphaPower();
 
-  #pragma omp parallel for schedule (static)
+  #pragma omp parallel for schedule(static) if (mParameters.isSimulation3D())
   for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
   {
     const float zf    = static_cast<float>(z);
           float zPart = 0.5f - fabs(0.5f - zf * nzRec);
                 zPart = (zPart * zPart) * dzSqRec;
 
+    #pragma omp parallel for schedule(static) if (mParameters.isSimulation2D())
     for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
     {
       const float yf    = static_cast<float>(y);
@@ -1878,9 +1903,10 @@ void KSpaceFirstOrderSolver::generateTauAndEta()
                                   (20.0f * static_cast<float>(M_LOG10E));
 
 
-    #pragma omp parallel for schedule (static)
+    #pragma omp parallel for schedule(static) if (mParameters.isSimulation3D())
     for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
+      #pragma omp parallel for schedule(static) if (mParameters.isSimulation2D())
       for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
         for (size_t x = 0; x < dimensionSizes.nx; x++)
@@ -1904,23 +1930,25 @@ void KSpaceFirstOrderSolver::generateTauAndEta()
 /**
  * Prepare dt./ rho0  for non-uniform grid.
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::generateInitialDenisty()
 {
   float* dtRho0Sgx   = getDtRho0Sgx().getData();
   float* dtRho0Sgy   = getDtRho0Sgy().getData();
-  float* dtRho0Sgz   = getDtRho0Sgz().getData();
+  float* dtRho0Sgz   = (simulationDimension == SD::k3D) ? getDtRho0Sgz().getData() : nullptr;
 
   const float dt = mParameters.getDt();
 
   const float* duxdxnSgx = getDxudxnSgx().getData();
   const float* duydynSgy = getDyudynSgy().getData();
-  const float* duzdznSgz = getDzudznSgz().getData();
+  const float* duzdznSgz = (simulationDimension == SD::k3D) ? getDzudznSgz().getData() : nullptr;
 
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
 
-  #pragma omp parallel for schedule(static)
+  #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
   for (size_t z = 0; z < dimensionSizes.nz; z++)
   {
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
     for (size_t y = 0; y < dimensionSizes.ny; y++)
     {
       #pragma omp simd
@@ -1930,7 +1958,10 @@ void KSpaceFirstOrderSolver::generateInitialDenisty()
 
         dtRho0Sgx[i] = (dt * duxdxnSgx[x]) / dtRho0Sgx[i];
         dtRho0Sgy[i] = (dt * duydynSgy[y]) / dtRho0Sgy[i];
-        dtRho0Sgz[i] = (dt * duzdznSgz[z]) / dtRho0Sgz[i];
+        if (simulationDimension == SD::k3D)
+        {
+          dtRho0Sgz[i] = (dt * duzdznSgz[z]) / dtRho0Sgz[i];
+        }
       } // x
     } // y
   } // z

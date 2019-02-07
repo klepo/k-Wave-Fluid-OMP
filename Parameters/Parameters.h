@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      08 December  2011, 16:34 (created) \n
- *            20 January   2019, 13:12 (revised)
+ *            07 February  2019, 20:51 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -66,8 +66,8 @@ class Parameters
 
     /**
      * @enum    SourceMode
-     * @brief   Source mode (dirichlet, additive, additive-no-correction
-     * @details The enum is based on the matlab definition
+     * @brief   Source mode (dirichlet, additive, additive-no-correction.
+     * @details The enum is based on the matlab definition.
      */
     enum class SourceMode
     {
@@ -78,6 +78,20 @@ class Parameters
       /// Additive source condition
       kAdditive = 2
     };
+
+    /**
+     * @enum    SimulationDimension
+     * @brief   What is the simulation dimensionality.
+     * @details What is the simulation dimensionality.
+     */
+    enum class SimulationDimension
+    {
+      /// 2D simulation
+      k2D,
+      /// 3D simulation
+      k3D
+    };
+
 
     /// Copy constructor not allowed.
     Parameters(const Parameters&) = delete;
@@ -220,6 +234,14 @@ class Parameters
      * @return True if the simulation space is 3D.
      */
     bool isSimulation3D()                     const { return !isSimulation2D(); }
+    /**
+     * @brief Return the number of dimensions for the current simulations
+     * @return number of dimensions
+     */
+    SimulationDimension getSimulationDimension() const
+    {
+      return (isSimulation3D()) ? SimulationDimension::k3D : SimulationDimension::k2D;
+    };
 
     /**
      * @brief  Get total number of time steps.
