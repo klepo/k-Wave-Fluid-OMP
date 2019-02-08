@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            08 February  2019, 14:30 (revised)
+ *            08 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -686,7 +686,7 @@ void KSpaceFirstOrderSolver::computeMainLoop()
 
 
      // add in the source pressure term
-     addPressureSource();
+     addPressureSource<simulationDimension>();
 
     if (mParameters.getNonLinearFlag())
     {
@@ -1532,6 +1532,7 @@ void KSpaceFirstOrderSolver::computeVelocitySourceTerm(RealMatrix&        veloci
  /**
   * Add in pressure source.
   */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::addPressureSource()
 {
   const size_t timeIndex = mParameters.getTimeIndex();
@@ -1540,7 +1541,7 @@ void KSpaceFirstOrderSolver::addPressureSource()
   {
     float* rhox = getRhoX().getData();
     float* rhoy = getRhoY().getData();
-    float* rhoz = getRhoZ().getData();
+    float* rhoz = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
     const float*  sourceInput = getPressureSourceInput().getData();
     const size_t* sourceIndex = getPressureSourceIndex().getData();
@@ -1561,7 +1562,10 @@ void KSpaceFirstOrderSolver::addPressureSource()
 
           rhox[sourceIndex[i]] = sourceInput[signalIndex];
           rhoy[sourceIndex[i]] = sourceInput[signalIndex];
-          rhoz[sourceIndex[i]] = sourceInput[signalIndex];
+          if (simulationDimension == SD::k3D)
+          {
+            rhoz[sourceIndex[i]] = sourceInput[signalIndex];
+          }
         }
         break;
       }
@@ -1575,7 +1579,10 @@ void KSpaceFirstOrderSolver::addPressureSource()
 
           rhox[sourceIndex[i]] += sourceInput[signalIndex];
           rhoy[sourceIndex[i]] += sourceInput[signalIndex];
-          rhoz[sourceIndex[i]] += sourceInput[signalIndex];
+          if (simulationDimension == SD::k3D)
+          {
+            rhoz[sourceIndex[i]] += sourceInput[signalIndex];
+          }
         }
         break;
       }
@@ -1622,7 +1629,10 @@ void KSpaceFirstOrderSolver::addPressureSource()
         {
           rhox[i] += pScaledSource[i];
           rhoy[i] += pScaledSource[i];
-          rhoz[i] += pScaledSource[i];
+          if (simulationDimension == SD::k3D)
+          {
+            rhoz[i] += pScaledSource[i];
+          }
         }
         break;
       }
