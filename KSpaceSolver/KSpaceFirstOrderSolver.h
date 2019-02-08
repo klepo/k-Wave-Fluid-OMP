@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            07 February  2019, 22:22 (revised)
+ *            08 February  2019, 14:29 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -215,13 +215,45 @@ class KSpaceFirstOrderSolver
      */
     template<Parameters::SimulationDimension simulationDimension>
     void computeVelocity();
-    /// Compute new values of acoustic velocity gradients.
+    /**
+     * @brief Compute new values of acoustic velocity gradients.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocityGradient();
 
 
-    /// Compute new values of acoustic density for nonlinear case.
+    /**
+     * @brief Compute new values of acoustic density for nonlinear case.
+     *
+     * <b>Matlab code:</b> \n
+     *
+     *\verbatim
+        rho0_plus_rho = 2 .* (rhox + rhoy + rhoz) + rho0;
+        rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0_plus_rho .* duxdx);
+        rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0_plus_rho .* duydy);
+        rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0_plus_rho .* duzdz);
+     \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeDensityNonliner();
-    /// Compute new values of acoustic density for linear case.
+
+    /**
+     * @brief Compute new values of acoustic density for linear case.
+     *
+     *  * <b>Matlab code:</b> \n
+     *
+     *\verbatim
+        rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0 .* duxdx);
+        rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0 .* duydy);
+        rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0 .* duzdz);
+      \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeDensityLinear();
 
     /// Compute acoustic pressure for nonlinear case.

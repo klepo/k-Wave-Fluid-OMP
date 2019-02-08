@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            07 February  2019, 22:22 (revised)
+ *            08 February  2019, 14:30 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -673,15 +673,15 @@ void KSpaceFirstOrderSolver::computeMainLoop()
     }
 
     // compute gradient of velocity
-    computeVelocityGradient();
+    computeVelocityGradient<simulationDimension>();
 
     if (mParameters.getNonLinearFlag())
     {
-      computeDensityNonliner();
+      computeDensityNonliner<simulationDimension>();
     }
     else
     {
-      computeDensityLinear();
+      computeDensityLinear<simulationDimension>();
     }
 
 
@@ -933,11 +933,15 @@ void KSpaceFirstOrderSolver::computeVelocity()
 /**
  * Compute new values for duxdx, duydy, duzdz.
  */
+template<Parameters::SimulationDimension simulationDimension>
 void  KSpaceFirstOrderSolver::computeVelocityGradient()
 {
   getTempFftwX().computeR2CFftND(getUxSgx());
   getTempFftwY().computeR2CFftND(getUySgy());
-  getTempFftwZ().computeR2CFftND(getUzSgz());
+  if (simulationDimension == SD::k3D)
+  {
+    getTempFftwZ().computeR2CFftND(getUzSgz());
+  }
 
   const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
   const float divider = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nElements());
@@ -946,15 +950,16 @@ void  KSpaceFirstOrderSolver::computeVelocityGradient()
 
   FloatComplex* tempFftX = getTempFftwX().getComplexData();
   FloatComplex* tempFftY = getTempFftwY().getComplexData();
-  FloatComplex* tempFftZ = getTempFftwZ().getComplexData();
+  FloatComplex* tempFftZ = (simulationDimension == SD::k3D) ? getTempFftwZ().getComplexData() : nullptr;
 
   FloatComplex* ddxKShiftNeg = getDdxKShiftNeg().getComplexData();
   FloatComplex* ddyKShiftNeg = getDdyKShiftNeg().getComplexData();
-  FloatComplex* ddzKShiftNeg = getDdzKShiftNeg().getComplexData();
+  FloatComplex* ddzKShiftNeg = (simulationDimension == SD::k3D) ? getDdzKShiftNeg().getComplexData() : nullptr;
 
-  #pragma omp parallel for schedule(static)
+  #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
   for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
   {
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
     for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
     {
       #pragma omp simd
@@ -965,7 +970,10 @@ void  KSpaceFirstOrderSolver::computeVelocityGradient()
 
         tempFftX[i] *=  ddxKShiftNeg[x] * eKappa;
         tempFftY[i] *=  ddyKShiftNeg[y] * eKappa;
-        tempFftZ[i] *=  ddzKShiftNeg[z] * eKappa;
+        if (simulationDimension == SD::k3D)
+        {
+          tempFftZ[i] *=  ddzKShiftNeg[z] * eKappa;
+        }
       } // x
     } // y
   } // z
@@ -973,24 +981,28 @@ void  KSpaceFirstOrderSolver::computeVelocityGradient()
 
   getTempFftwX().computeC2RFftND(getDuxdx());
   getTempFftwY().computeC2RFftND(getDuydy());
-  getTempFftwZ().computeC2RFftND(getDuzdz());
+  if (simulationDimension == SD::k3D)
+  {
+    getTempFftwZ().computeC2RFftND(getDuzdz());
+  }
 
   //------------------------------------------------ Nonuniform grid -------------------------------------------------//
   if (mParameters.getNonUniformGridFlag() != 0)
   {
     float* duxdx = getDuxdx().getData();
     float* duydy = getDuydy().getData();
-    float* duzdz = getDuzdz().getData();
+    float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
     const float* duxdxn = getDxudxn().getData();
     const float* duydyn = getDyudyn().getData();
-    const float* duzdzn = getDzudzn().getData();
+    const float* duzdzn = (simulationDimension == SD::k3D) ? getDzudzn().getData() : nullptr;
 
     const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
 
-    #pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
     for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
+      #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
       for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
         #pragma omp simd
@@ -999,7 +1011,10 @@ void  KSpaceFirstOrderSolver::computeVelocityGradient()
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
           duxdx[i] *= duxdxn[x];
           duydy[i] *= duydyn[y];
-          duzdz[i] *= duzdzn[z];
+          if (simulationDimension == SD::k3D)
+          {
+            duzdz[i] *= duzdzn[z];
+          }
         } // x
       } // y
     } // z
@@ -1010,15 +1025,8 @@ void  KSpaceFirstOrderSolver::computeVelocityGradient()
 /**
  * Calculate new values of acoustic density for nonlinear case (rhoX, rhoy and rhoZ).
  *
- * <b>Matlab code:</b> \n
- *
- *\verbatim
-    rho0_plus_rho = 2 .* (rhox + rhoy + rhoz) + rho0;
-    rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0_plus_rho .* duxdx);
-    rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0_plus_rho .* duydy);
-    rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0_plus_rho .* duzdz);
- \endverbatim
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeDensityNonliner()
 {
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
@@ -1027,35 +1035,42 @@ void KSpaceFirstOrderSolver::computeDensityNonliner()
 
   float* rhoX  = getRhoX().getData();
   float* rhoY  = getRhoY().getData();
-  float* rhoZ  = getRhoZ().getData();
+  float* rhoZ  = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
   const float* pmlX  = getPmlX().getData();
   const float* pmlY  = getPmlY().getData();
-  const float* pmlZ  = getPmlZ().getData();
+  const float* pmlZ  = (simulationDimension == SD::k3D) ? getPmlZ().getData() : nullptr;
 
   const float* duxdx = getDuxdx().getData();
   const float* duydy = getDuydy().getData();
-  const float* duzdz = getDuzdz().getData();
+  const float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
   //----------------------------------------------- rho0 is scalar -------------------------------------------------//
   if (mParameters.getRho0ScalarFlag())
   {
     const float rho0 = mParameters.getRho0Scalar();
 
-    #pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
     for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
+      #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
       for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
         #pragma omp simd
         for (size_t x = 0; x < dimensionSizes.nx; x++)
         {
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
-          const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0) * dt;
+          // 3D and 2D summation
+          const float sumRhos   = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i])
+                                                                   : (rhoX[i] + rhoY[i]);
+          const float sumRhosDt = (2.0f * sumRhos + rho0) * dt;
 
           rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
           rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
-          rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+          if (simulationDimension == SD::k3D)
+          {
+            rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+          }
         }// x
       }// y
     }// z
@@ -1065,20 +1080,28 @@ void KSpaceFirstOrderSolver::computeDensityNonliner()
     // rho0 is a matrix
     const float* rho0  = getRho0().getData();
 
-    #pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
     for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
+      #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
       for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
         #pragma omp simd
         for (size_t x = 0; x < dimensionSizes.nx; x++)
         {
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
-          const float sumRhosDt = (2.0f * (rhoX[i] + rhoY[i] + rhoZ[i]) + rho0[i]) * dt;
+          // 3D and 2D summation
+          const float sumRhos   = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i])
+                                                                   : (rhoX[i] + rhoY[i]);
+
+          const float sumRhosDt = (2.0f * sumRhos + rho0[i]) * dt;
 
           rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
           rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
-          rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+          if (simulationDimension == SD::k3D)
+          {
+            rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
+          }
         } // x
       }// y
     }// z
@@ -1098,6 +1121,7 @@ void KSpaceFirstOrderSolver::computeDensityNonliner()
 \endverbatim
  *
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeDensityLinear()
 {
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
@@ -1105,24 +1129,25 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
 
   float* rhoX  = getRhoX().getData();
   float* rhoY  = getRhoY().getData();
-  float* rhoZ  = getRhoZ().getData();
+  float* rhoZ  = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
   const float* pmlX  = getPmlX().getData();
   const float* pmlY  = getPmlY().getData();
-  const float* pmlZ  = getPmlZ().getData();
+  const float* pmlZ  = (simulationDimension == SD::k3D) ? getPmlZ().getData() : nullptr;
 
   const float* duxdx = getDuxdx().getData();
   const float* duydy = getDuydy().getData();
-  const float* duzdz = getDuzdz().getData();
+  const float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
   //----------------------------------------------- rho0 is scalar -------------------------------------------------//
   if (mParameters.getRho0ScalarFlag())
   { // rho0 is a scalar
     const float dtRho0 = mParameters.getRho0Scalar() * dt;
 
-    #pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
     for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
+      #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
       for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
         #pragma omp simd
@@ -1132,7 +1157,10 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
 
           rhoX[i] = pmlX[x] * (((pmlX[x] * rhoX[i]) - (dtRho0 * duxdx[i])));
           rhoY[i] = pmlY[y] * (((pmlY[y] * rhoY[i]) - (dtRho0 * duydy[i])));
-          rhoZ[i] = pmlZ[z] * (((pmlZ[z] * rhoZ[i]) - (dtRho0 * duzdz[i])));
+          if (simulationDimension == SD::k3D)
+          {
+            rhoZ[i] = pmlZ[z] * (((pmlZ[z] * rhoZ[i]) - (dtRho0 * duzdz[i])));
+          }
         } // x
       }// y
     }// z
@@ -1142,9 +1170,10 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
     // rho0 is a matrix
     const float* rho0  = getRho0().getData();
 
-    #pragma omp parallel for schedule(static)
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
     for (size_t z = 0; z < dimensionSizes.nz; z++)
     {
+      #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
       for (size_t y = 0; y < dimensionSizes.ny; y++)
       {
         #pragma omp simd
@@ -1155,7 +1184,10 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
 
           rhoX[i] = pmlX[x] * (((pmlX[x] * rhoX[i]) - (dtRho0 * duxdx[i])));
           rhoY[i] = pmlY[y] * (((pmlY[y] * rhoY[i]) - (dtRho0 * duydy[i])));
-          rhoZ[i] = pmlZ[z] * (((pmlZ[z] * rhoZ[i]) - (dtRho0 * duzdz[i])));
+          if (simulationDimension == SD::k3D)
+          {
+            rhoZ[i] = pmlZ[z] * (((pmlZ[z] * rhoZ[i]) - (dtRho0 * duzdz[i])));
+          }
         } // x
       }// y
     }// z
@@ -1390,9 +1422,12 @@ void KSpaceFirstOrderSolver::addVelocitySource()
     computeVelocitySourceTerm(getUySgy(), GetVelocityYSourceInput(), getVelocitySourceIndex());
   }
 
-  if (mParameters.getVelocityZSourceFlag() > timeIndex)
+  if (mParameters.isSimulation3D())
   {
-    computeVelocitySourceTerm(getUzSgz(), getVelocityZSourceInput(), getVelocitySourceIndex());
+    if (mParameters.getVelocityZSourceFlag() > timeIndex)
+    {
+      computeVelocitySourceTerm(getUzSgz(), getVelocityZSourceInput(), getVelocitySourceIndex());
+    }
   }
 }// end of addVelocitySource
 //----------------------------------------------------------------------------------------------------------------------
