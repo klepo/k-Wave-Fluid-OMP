@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            08 February  2019, 16:13 (revised)
+ *            09 February  2019, 11:29 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -700,7 +700,7 @@ void KSpaceFirstOrderSolver::computeMainLoop()
     // calculate initial pressure
     if ((timeIndex == 0) && (mParameters.getInitialPressureSourceFlag() == 1))
     {
-      addInitialPressureSource();
+      addInitialPressureSource<simulationDimension>();
     }
 
     storeSensorData();
@@ -1612,23 +1612,8 @@ void KSpaceFirstOrderSolver::addPressureSource()
 
 /**
  * Calculate p0 source when necessary.
- *
- * <b>Matlab code:</b> \n
- *
- *\verbatim
-    % add the initial pressure to rho as a mass source
-    p = source.p0;
-    rhox = source.p0 ./ (3 .* c.^2);
-    rhoy = source.p0 ./ (3 .* c.^2);
-    rhoz = source.p0 ./ (3 .* c.^2);
-
-    % compute u(t = t1 + dt/2) based on the assumption u(dt/2) = -u(-dt/2)
-    % which forces u(t = t1) = 0
-    ux_sgx = dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) / 2;
-    uy_sgy = dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) / 2;
-    uz_sgz = dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) / 2;
- \endverbatim
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::addInitialPressureSource()
 {
   getP().copyData(getInitialPressureSourceInput());
@@ -1641,40 +1626,45 @@ void KSpaceFirstOrderSolver::addInitialPressureSource()
 
   float* rhoX = getRhoX().getData();
   float* rhoY = getRhoY().getData();
-  float* rhoZ = getRhoZ().getData();
+  float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+  const float  dimScalingFactor = (simulationDimension == SD::k3D) ? 3.0f : 2.0f;
 
   #pragma omp parallel for simd schedule(static)
   for (size_t i = 0; i < nElements; i++)
   {
-    const float tmp = sourceInput[i] / (3.0f * ((c0ScalarFlag) ? c2Scalar : c2Matrix[i]));
+    const float tmp = sourceInput[i] / (dimScalingFactor * ((c0ScalarFlag) ? c2Scalar : c2Matrix[i]));
+
     rhoX[i] = tmp;
     rhoY[i] = tmp;
-    rhoZ[i] = tmp;
+    if ((simulationDimension == SD::k3D))
+    {
+      rhoZ[i] = tmp;
+    }
   }
 
   //------------------------------------------------------------------------//
   //--  compute u(t = t1 + dt/2) based on the assumption u(dt/2) = -u(-dt/2) --//
   //--    which forces u(t = t1) = 0 --//
   //------------------------------------------------------------------------//
-  computePressureGradient<SD::k3D>();
+  computePressureGradient<simulationDimension>();
 
   if (mParameters.getRho0ScalarFlag())
   {
     if (mParameters.getNonUniformGridFlag())
     { // non uniform grid, homogeneous case
-      computeInitialVelocityHomogeneousNonuniform();
+      computeInitialVelocityHomogeneousNonuniform<simulationDimension>();
     }
     else
     { //uniform grid, homogeneous
-      computeInitialVelocityHomogeneousUniform();
+      computeInitialVelocityHomogeneousUniform<simulationDimension>();
     }
   }
   else
   { // heterogeneous, unifrom grid
     // divide the matrix by 2 and multiply with st./rho0_sg
-    computeInitialVelocityHeterogeneous();
+    computeInitialVelocityHeterogeneous<simulationDimension>();
   }
 }// end of addInitialPressureSource
 //----------------------------------------------------------------------------------------------------------------------
@@ -2008,22 +1998,26 @@ void KSpaceFirstOrderSolver::computeC2()
 /**
  * Compute acoustic velocity for initial pressure problem.
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeInitialVelocityHeterogeneous()
 {
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
-  getTempFftwZ().computeC2RFftND(getUzSgz());
+  if (simulationDimension == SD::k3D)
+  {
+    getTempFftwZ().computeC2RFftND(getUzSgz());
+  }
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
   const float  divider   = 1.0f / (2.0f * static_cast<float>(nElements));
 
   float* uxSgx = getUxSgx().getData();
   float* uySgy = getUySgy().getData();
-  float* uzSgz = getUzSgz().getData();
+  float* uzSgz = (simulationDimension == SD::k3D) ? getUzSgz().getData() : nullptr;
 
   const float* dtRho0Sgx = getDtRho0Sgx().getData();
   const float* dtRho0Sgy = getDtRho0Sgy().getData();
-  const float* dtRho0Sgz = getDtRho0Sgz().getData();
+  const float* dtRho0Sgz = (simulationDimension == SD::k3D) ? getDtRho0Sgz().getData() : nullptr;
 
 
   #pragma omp parallel for simd schedule(static) \
@@ -2032,7 +2026,10 @@ void KSpaceFirstOrderSolver::computeInitialVelocityHeterogeneous()
   {
     uxSgx[i] *= dtRho0Sgx[i] * divider;
     uySgy[i] *= dtRho0Sgy[i] * divider;
-    uzSgz[i] *= dtRho0Sgz[i] * divider;
+    if (simulationDimension == SD::k3D)
+    {
+      uzSgz[i] *= dtRho0Sgz[i] * divider;
+    }
   }
 }// end of computeInitialVelocityHeterogeneous
 //----------------------------------------------------------------------------------------------------------------------
@@ -2040,27 +2037,36 @@ void KSpaceFirstOrderSolver::computeInitialVelocityHeterogeneous()
 /**
  * Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousUniform()
 {
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
-  getTempFftwZ().computeC2RFftND(getUzSgz());
+  if (simulationDimension == SD::k3D)
+  {
+    getTempFftwZ().computeC2RFftND(getUzSgz());
+  }
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
   const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
   const float dividerY = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
-  const float dividerZ = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar();
+  const float dividerZ = ((simulationDimension == SD::k3D))
+                              ? 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar()
+                              : 1.0f;
 
   float* uxSgx = getUxSgx().getData();
   float* uySgy = getUySgy().getData();
-  float* uzSgz = getUzSgz().getData();
+  float* uzSgz = (simulationDimension == SD::k3D) ? getUzSgz().getData() : nullptr;
 
   #pragma omp parallel for simd schedule(static) aligned(uxSgx, uySgy, uzSgz)
   for (size_t i = 0; i < nElements; i++)
   {
     uxSgx[i] *= dividerX;
     uySgy[i] *= dividerY;
-    uzSgz[i] *= dividerZ;
+    if (simulationDimension == SD::k3D)
+    {
+      uzSgz[i] *= dividerZ;
+    }
   }
 }// end of computeInitialVelocityHomogeneousUniform
 //----------------------------------------------------------------------------------------------------------------------
@@ -2068,31 +2074,38 @@ void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousUniform()
 /**
  * Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousNonuniform()
 {
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
-  getTempFftwZ().computeC2RFftND(getUzSgz());
+  if (simulationDimension == SD::k3D)
+  {
+    getTempFftwZ().computeC2RFftND(getUzSgz());
+  }
 
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
-  const size_t nElements              = dimensionSizes.nElements();
+  const size_t nElements               = dimensionSizes.nElements();
 
   const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
   const float dividerY = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
-  const float dividerZ = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar();
+  const float dividerZ = (simulationDimension == SD::k3D)
+                             ? 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar()
+                             : 1.0f;
 
   const float* dxudxnSgx = getDxudxnSgx().getData();
   const float* dyudynSgy = getDyudynSgy().getData();
-  const float* dzudznSgz = getDzudznSgz().getData();
+  const float* dzudznSgz = (simulationDimension == SD::k3D) ? getDzudznSgz().getData() : nullptr;
 
   float* uxSgx = getUxSgx().getData();
   float* uySgy = getUySgy().getData();
-  float* uzSgz = getUzSgz().getData();
+  float* uzSgz = (simulationDimension == SD::k3D) ? getUzSgz().getData() : nullptr;
 
 
-  #pragma omp parallel for schedule(static)
+  #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
   for (size_t z = 0; z < dimensionSizes.nz; z++)
   {
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
     for (size_t y = 0; y < dimensionSizes.ny; y++)
     {
       #pragma omp simd
@@ -2101,7 +2114,10 @@ void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousNonuniform()
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
         uxSgx[i] *= dividerX * dxudxnSgx[x];
         uySgy[i] *= dividerY * dyudynSgy[y];
-        uzSgz[i] *= dividerZ * dzudznSgz[z] ;
+        if ((simulationDimension == SD::k3D))
+        {
+          uzSgz[i] *= dividerZ * dzudznSgz[z];
+        }
       } // x
     } // y
   } // z

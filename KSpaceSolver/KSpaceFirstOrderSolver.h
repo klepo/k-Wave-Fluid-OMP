@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            08 February  2019, 16:13 (revised)
+ *            09 February  2019, 11:29 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -260,7 +260,7 @@ class KSpaceFirstOrderSolver
      * @brief Compute acoustic pressure for nonlinear case.
      *
      * <b>Matlab code:</b> \n
-     * 
+     *
      *\verbatim
         case 'lossless'
             % calculate p using a nonlinear adiabatic equation of state
@@ -316,9 +316,9 @@ class KSpaceFirstOrderSolver
       * @param [in] velocitySourceInput - Source input to add.
       * @param [in] velocitySourceIndex - Source geometry index matrix.
       */
-     void computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
-                                    const RealMatrix&  velocitySourceInput,
-                                    const IndexMatrix& velocitySourceIndex);
+    void computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
+                                   const RealMatrix&  velocitySourceInput,
+                                   const IndexMatrix& velocitySourceIndex);
 
      /**
       * @brief  Add in pressure source.
@@ -326,7 +326,28 @@ class KSpaceFirstOrderSolver
       */
     template<Parameters::SimulationDimension simulationDimension>
     void addPressureSource();
-    /// Calculate initial pressure source.
+    /**
+     * @brief Calculate initial pressure source.
+     *
+     * <b>Matlab code:</b> \n
+     *
+     *\verbatim
+        % add the initial pressure to rho as a mass source
+        p = source.p0;
+        rhox = source.p0 ./ (3 .* c.^2);
+        rhoy = source.p0 ./ (3 .* c.^2);
+        rhoz = source.p0 ./ (3 .* c.^2);
+
+        % compute u(t = t1 + dt/2) based on the assumption u(dt/2) = -u(-dt/2)
+        % which forces u(t = t1) = 0
+        ux_sgx = dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) / 2;
+        uy_sgy = dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) / 2;
+        uz_sgz = dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) / 2;
+     \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void addInitialPressureSource();
     /// Add transducer data source to velocity x component.
     void addTransducerSource();
@@ -351,45 +372,51 @@ class KSpaceFirstOrderSolver
     void computeC2();
 
     /**
-    * @brief Compute velocity for the initial pressure problem, heterogeneous medium, uniform grid.
-    *
-    * <b> Matlab code: </b>
-    *
-    * \verbatim
+     * @brief Compute velocity for the initial pressure problem, heterogeneous medium, uniform grid.
+     *
+     * <b> Matlab code: </b>
+     *
+     * \verbatim
+        ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
+        uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
+        uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
+      \endverbatim
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
+    void computeInitialVelocityHeterogeneous();
+
+    /**
+     * @brief Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
+     *
+     * <b> Matlab code: </b>
+     *
+     * \verbatim
         ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
         uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
         uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
      \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
      */
-    void computeInitialVelocityHeterogeneous();
-
-   /**
-    * @brief Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
-    *
-    * <b> Matlab code: </b>
-    *
-    * \verbatim
-        ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
-        uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
-        uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
-    \endverbatim
-    *
-    */
-    void computeInitialVelocityHomogeneousUniform();
+     template<Parameters::SimulationDimension simulationDimension>
+     void computeInitialVelocityHomogeneousUniform();
 
     /**
-    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
-    *
-    * <b> Matlab code: </b>
-    *
-    * \verbatim
+     * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
+     *
+     * <b> Matlab code: </b>
+     *
+     * \verbatim
         ux_sgx = dt ./ rho0_sgx .* dxudxn_sgx .* ifft(ux_sgx)
         uy_sgy = dt ./ rho0_sgy .* dyudxn_sgy .* ifft(uy_sgy)
         uz_sgz = dt ./ rho0_sgz .* dzudzn_sgz .* ifft(uz_sgz)
-    \endverbatim
-    *
-    */
-   void computeInitialVelocityHomogeneousNonuniform();
+     \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
+    void computeInitialVelocityHomogeneousNonuniform();
 
     /**
      * @brief Compute acoustic velocity for heterogeneous medium and a uniform grid.
