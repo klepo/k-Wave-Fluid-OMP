@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            09 February  2019, 11:29 (revised)
+ *            09 February  2019, 13:50 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -761,7 +761,14 @@ void KSpaceFirstOrderSolver::storeSensorData()
   {
     if (mParameters.getStoreVelocityNonStaggeredRawFlag())
     {
-      computeShiftedVelocity();
+      if (mParameters.isSimulation3D())
+      {
+        computeShiftedVelocity<SD::k3D>();
+      }
+      else
+      {
+        computeShiftedVelocity<SD::k2D>();
+      }
     }
     mOutputStreamContainer.sampleStreams();
   }
@@ -1365,7 +1372,7 @@ void KSpaceFirstOrderSolver::computePressureLinear()
   else
   {
     // lossless case
-    sumPressureTermsLinearLossless();
+    sumPressureTermsLinearLossless<simulationDimension>();
   }
 }// end of computePressureLinear
 //----------------------------------------------------------------------------------------------------------------------
@@ -1638,7 +1645,7 @@ void KSpaceFirstOrderSolver::addInitialPressureSource()
 
     rhoX[i] = tmp;
     rhoY[i] = tmp;
-    if ((simulationDimension == SD::k3D))
+    if (simulationDimension == SD::k3D)
     {
       rhoZ[i] = tmp;
     }
@@ -2662,11 +2669,12 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
  /**
   * Sum sub-terms for new pressure, linear lossless case.
   */
- void KSpaceFirstOrderSolver::sumPressureTermsLinearLossless()
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::sumPressureTermsLinearLossless()
 {
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
-  const float* rhoZ = getRhoZ().getData();
+  const float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
         float* p    = getP().getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
@@ -2678,7 +2686,8 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
     #pragma omp parallel for simd schedule(static) aligned(p, rhoX, rhoY, rhoZ)
     for (size_t i = 0; i < nElements; i++)
     {
-      p[i] = c2 * (rhoX[i] + rhoY[i] + rhoZ[i]);
+      const float sumRhos = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
+      p[i] = c2 * sumRhos;
     }
   }
   else
@@ -2688,33 +2697,25 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
     #pragma omp parallel for simd schedule(static) aligned(p, c2, rhoX, rhoY, rhoZ)
     for (size_t i = 0; i < nElements; i++)
     {
-      p[i] = c2[i] * (rhoX[i] + rhoY[i] + rhoZ[i]);
+      const float sumRhos = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
+      p[i] = c2[i] * sumRhos;
     }
   }
-
 }// end of sumPressureTermsLinearLossless()
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculated shifted velocities.
  *
- * <b>Matlab code:</b> \n
- *
- * \verbatim
-    ux_shifted = real(ifft(bsxfun(\@times, x_shift_neg, fft(ux_sgx, [], 1)), [], 1));
-    uy_shifted = real(ifft(bsxfun(\@times, y_shift_neg, fft(uy_sgy, [], 2)), [], 2));
-    uz_shifted = real(ifft(bsxfun(\@times, z_shift_neg, fft(uz_sgz, [], 3)), [], 3));
-  \endverbatim
  */
-
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeShiftedVelocity()
 {
   const FloatComplex* xShiftNegR  = getXShiftNegR().getComplexData();
   const FloatComplex* yShiftNegR  = getYShiftNegR().getComplexData();
-  const FloatComplex* zShiftNegR  = getZShiftNegR().getComplexData();
+  const FloatComplex* zShiftNegR  = (simulationDimension == SD::k3D) ? getZShiftNegR().getComplexData(): nullptr;
 
         FloatComplex* tempFftShift = getTempFftwShift().getComplexData();
-
 
   // sizes of frequency spaces
   DimensionSizes xShiftDims    = mParameters.getFullDimensionSizes();
@@ -2723,20 +2724,23 @@ void KSpaceFirstOrderSolver::computeShiftedVelocity()
   DimensionSizes yShiftDims    = mParameters.getFullDimensionSizes();
                  yShiftDims.ny = yShiftDims.ny / 2 + 1;
 
+  // This remains 1 for 2D simulation
   DimensionSizes zShiftDims    = mParameters.getFullDimensionSizes();
                  zShiftDims.nz = zShiftDims.nz / 2 + 1;
 
   // normalization constants for FFTs
   const float dividerX = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
   const float dividerY = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().ny);
+  // This remains 1 for 2D simulation
   const float dividerZ = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nz);
 
   //-------------------------------------------------- ux_shifted ----------------------------------------------------//
   getTempFftwShift().computeR2CFft1DX(getUxSgx());
 
-  #pragma omp parallel for schedule(static)
+  #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
   for (size_t z = 0; z < xShiftDims.nz; z++)
   {
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
     for (size_t y = 0; y < xShiftDims.ny; y++)
     {
       #pragma omp simd
@@ -2754,9 +2758,10 @@ void KSpaceFirstOrderSolver::computeShiftedVelocity()
   //-------------------------------------------------- uy shifted ----------------------------------------------------//
   getTempFftwShift().computeR2CFft1DY(getUySgy());
 
-  #pragma omp parallel for schedule(static)
+  #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
   for (size_t z = 0; z < yShiftDims.nz; z++)
   {
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
     for (size_t y = 0; y < yShiftDims.ny; y++)
     {
       #pragma omp simd
@@ -2770,24 +2775,26 @@ void KSpaceFirstOrderSolver::computeShiftedVelocity()
   }//z
   getTempFftwShift().computeC2RFft1DY(getUyShifted());
 
-
   //-------------------------------------------------- uz_shifted ----------------------------------------------------//
-  getTempFftwShift().computeR2CFft1DZ(getUzSgz());
-  #pragma omp parallel for schedule(static)
-  for (size_t z = 0; z < zShiftDims.nz; z++)
+  if (simulationDimension == SD::k3D)
   {
-    for (size_t y = 0; y < zShiftDims.ny; y++)
+    getTempFftwShift().computeR2CFft1DZ(getUzSgz());
+    #pragma omp parallel for schedule(static)
+    for (size_t z = 0; z < zShiftDims.nz; z++)
     {
-      #pragma omp simd
-      for (size_t x = 0; x < zShiftDims.nx; x++)
+      for (size_t y = 0; y < zShiftDims.ny; y++)
       {
-        const size_t i = get1DIndex(z, y, x, zShiftDims);
+        #pragma omp simd
+        for (size_t x = 0; x < zShiftDims.nx; x++)
+        {
+          const size_t i = get1DIndex(z, y, x, zShiftDims);
 
-        tempFftShift[i] = (tempFftShift[i] * zShiftNegR[z]) * dividerZ;
-      } // x
-    } // y
-  }//z
-  getTempFftwShift().computeC2RFft1DZ(getUzShifted());
+          tempFftShift[i] = (tempFftShift[i] * zShiftNegR[z]) * dividerZ;
+        } // x
+      } // y
+    }//z
+    getTempFftwShift().computeC2RFft1DZ(getUzShifted());
+  }
 }// end of computeShiftedVelocity
 //----------------------------------------------------------------------------------------------------------------------
 

@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            09 February  2019, 11:29 (revised)
+ *            09 February  2019, 13:50 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -320,10 +320,10 @@ class KSpaceFirstOrderSolver
                                    const RealMatrix&  velocitySourceInput,
                                    const IndexMatrix& velocitySourceIndex);
 
-     /**
-      * @brief  Add in pressure source.
-      * @tparam simulationDimension - Dimensionality of the simulation.
-      */
+    /**
+     * @brief  Add in pressure source.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
     template<Parameters::SimulationDimension simulationDimension>
     void addPressureSource();
     /**
@@ -553,10 +553,28 @@ class KSpaceFirstOrderSolver
              bool nonlinearFlag,
              bool rho0ScalarFlag>
     void sumPressureTermsNonlinearLossless();
-    /// Sum sub-terms for new pressure, linear lossless case.
+
+    /**
+     * @brief Sum sub-terms for new pressure, linear lossless case.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void sumPressureTermsLinearLossless();
 
-    /// compute shifted velocity for --u_non_staggered flag.
+    /**
+     * @brief Compute shifted velocity for --u_non_staggered flag.
+     *
+     * <b>Matlab code:</b> \n
+     *
+     * \verbatim
+        ux_shifted = real(ifft(bsxfun(\@times, x_shift_neg, fft(ux_sgx, [], 1)), [], 1));
+        uy_shifted = real(ifft(bsxfun(\@times, y_shift_neg, fft(uy_sgy, [], 2)), [], 2));
+        uz_shifted = real(ifft(bsxfun(\@times, z_shift_neg, fft(uz_sgz, [], 3)), [], 3));
+      \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeShiftedVelocity();
 
     /// Print progress statistics.
