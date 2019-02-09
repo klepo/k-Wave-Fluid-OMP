@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            08 February  2019, 14:45 (revised)
+ *            08 February  2019, 16:13 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -243,7 +243,7 @@ class KSpaceFirstOrderSolver
     /**
      * @brief Compute new values of acoustic density for linear case.
      *
-     *  * <b>Matlab code:</b> \n
+     * <b>Matlab code:</b> \n
      *
      *\verbatim
         rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0 .* duxdx);
@@ -256,9 +256,55 @@ class KSpaceFirstOrderSolver
     template<Parameters::SimulationDimension simulationDimension>
     void computeDensityLinear();
 
-    /// Compute acoustic pressure for nonlinear case.
+    /**
+     * @brief Compute acoustic pressure for nonlinear case.
+     *
+     * <b>Matlab code:</b> \n
+     * 
+     *\verbatim
+        case 'lossless'
+            % calculate p using a nonlinear adiabatic equation of state
+            p = c.^2 .* (rhox + rhoy + rhoz + medium.BonA .* (rhox + rhoy + rhoz).^2 ./ (2 .* rho0));
+
+        case 'absorbing'
+            % calculate p using a nonlinear absorbing equation of state
+            p = c.^2 .* (...
+                (rhox + rhoy + rhoz) ...
+                + absorb_tau .* real(ifftn( absorb_nabla1 .* fftn(rho0 .* (duxdx + duydy + duzdz)) ))...
+                - absorb_eta .* real(ifftn( absorb_nabla2 .* fftn(rhox + rhoy + rhoz) ))...
+                + medium.BonA .*(rhox + rhoy + rhoz).^2 ./ (2 .* rho0) ...
+                );
+
+     \endverbatim
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computePressureNonlinear();
-    /// Compute acoustic pressure for linear case.
+
+    /**
+     * @brief Compute acoustic pressure for linear case.
+     *
+     * <b>Matlab code:</b> \n
+     *
+     *\verbatim
+        case 'lossless'
+
+            % calculate p using a linear adiabatic equation of state
+            p = c.^2 .* (rhox + rhoy + rhoz);
+
+        case 'absorbing'
+
+            % calculate p using a linear absorbing equation of state
+            p = c.^2 .* ( ...
+                (rhox + rhoy + rhoz) ...
+                + absorb_tau .* real(ifftn( absorb_nabla1 .* fftn(rho0 .* (duxdx + duydy + duzdz)) )) ...
+                - absorb_eta .* real(ifftn( absorb_nabla2 .* fftn(rhox + rhoy + rhoz) )) ...
+                );
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computePressureLinear();
 
 
@@ -407,22 +453,27 @@ class KSpaceFirstOrderSolver
     /**
      * @brief Calculate three temporary sums in the new pressure formula before taking the FFT,
      *        nonlinear absorbing case.
+     * @tparam simulationDimension      - Dimensionality of the simulation.
      * @tparam bOnAScalarFlag           - is nonlinearity homogenous?
      * @tparam rho0ScalarFlag           - is density homogeneous?
      * @param [out] densitySum          - rhoX + rhoY + rhoZ
      * @param [out] nonlinearTerm       - BOnA + densitySum ^2 / 2 * rho0
      * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
      */
-    template<bool bOnAScalarFlag, bool rho0ScalarFlag>
+    template<Parameters::SimulationDimension simulationDimension,
+             bool bOnAScalarFlag,
+             bool rho0ScalarFlag>
     void computePressureTermsNonlinear(RealMatrix& densitySum,
                                        RealMatrix& nonlinearTerm,
                                        RealMatrix& velocityGradientSum);
     /**
      * @brief Calculate two temporary sums in the new pressure formula before taking the FFT,
      *        linear absorbing case.
+     * @tparam simulationDimension      - Dimensionality of the simulation.
      * @param [out] densitySum          - rhoxSgx + rhoySgy + rhozSgz
      * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computePressureTermsLinear(RealMatrix& densitySum,
                                     RealMatrix& velocityGradientSum);
 
@@ -464,11 +515,16 @@ class KSpaceFirstOrderSolver
 
     /**
      * @brief Sum sub-terms for new pressure, linear lossless case.
-     * @tparam c0ScalarFlag   - is sound speed homogeneous?
-     * @tparam nonlinearFlag  - is nonlinearity homogeneous?
-     * @tparam rho0ScalarFlag - is density homogeneous?
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     * @tparam c0ScalarFlag        - is sound speed homogeneous?
+     * @tparam nonlinearFlag       - is nonlinearity homogeneous?
+     * @tparam rho0ScalarFlag      - is density homogeneous?
      */
-    template<bool c0ScalarFlag, bool nonlinearFlag, bool rho0ScalarFlag>
+    template<Parameters::SimulationDimension simulationDimension,
+             bool c0ScalarFlag,
+             bool nonlinearFlag,
+             bool rho0ScalarFlag>
     void sumPressureTermsNonlinearLossless();
     /// Sum sub-terms for new pressure, linear lossless case.
     void sumPressureTermsLinearLossless();

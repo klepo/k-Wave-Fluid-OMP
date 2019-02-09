@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            08 February  2019, 14:45 (revised)
+ *            08 February  2019, 16:13 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -690,11 +690,11 @@ void KSpaceFirstOrderSolver::computeMainLoop()
 
     if (mParameters.getNonLinearFlag())
     {
-      computePressureNonlinear();
+      computePressureNonlinear<simulationDimension>();
     }
     else
     {
-      computePressureLinear();
+      computePressureLinear<simulationDimension>();
     }
 
     // calculate initial pressure
@@ -1198,29 +1198,12 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
 /**
  * Compute acoustic pressure for non-linear case.
  *
- * <b>Matlab code:</b> \n
- *
- *\verbatim
-    case 'lossless'
-        % calculate p using a nonlinear adiabatic equation of state
-        p = c.^2 .* (rhox + rhoy + rhoz + medium.BonA .* (rhox + rhoy + rhoz).^2 ./ (2 .* rho0));
-
-    case 'absorbing'
-        % calculate p using a nonlinear absorbing equation of state
-        p = c.^2 .* (...
-            (rhox + rhoy + rhoz) ...
-            + absorb_tau .* real(ifftn( absorb_nabla1 .* fftn(rho0 .* (duxdx + duydy + duzdz)) ))...
-            - absorb_eta .* real(ifftn( absorb_nabla2 .* fftn(rhox + rhoy + rhoz) ))...
-            + medium.BonA .*(rhox + rhoy + rhoz).^2 ./ (2 .* rho0) ...
-            );
-
- \endverbatim
  */
- void KSpaceFirstOrderSolver::computePressureNonlinear()
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computePressureNonlinear()
 {
   if (mParameters.getAbsorbingFlag())
-  { // absorbing case
-
+  { //----------------------------------------------- absorbing case--------------------------------------------------//
     RealMatrix& densitySum         = getTemp1RealND();
     RealMatrix& nonlinearTerm      = getTemp2RealND();
     RealMatrix& velocitGradientSum = getTemp3RealND();
@@ -1234,22 +1217,22 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
     {
       if (mParameters.getRho0ScalarFlag())
       {
-        computePressureTermsNonlinear<true, true>(densitySum, nonlinearTerm, velocitGradientSum);
+        computePressureTermsNonlinear<simulationDimension, true, true>(densitySum, nonlinearTerm, velocitGradientSum);
       }
       else
       {
-        computePressureTermsNonlinear<true, false>(densitySum, nonlinearTerm, velocitGradientSum);
+        computePressureTermsNonlinear<simulationDimension, true, false>(densitySum, nonlinearTerm, velocitGradientSum);
       }
     }
     else
     {
       if (mParameters.getRho0ScalarFlag())
       {
-        computePressureTermsNonlinear<false, true>(densitySum, nonlinearTerm, velocitGradientSum);
+        computePressureTermsNonlinear<simulationDimension, false, true>(densitySum, nonlinearTerm, velocitGradientSum);
       }
       else
       {
-        computePressureTermsNonlinear<false, false>(densitySum, nonlinearTerm, velocitGradientSum);
+        computePressureTermsNonlinear<simulationDimension, false, false>(densitySum, nonlinearTerm, velocitGradientSum);
       }
     }
 
@@ -1278,7 +1261,6 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
     {
       sumPressureTermsNonlinear<false, false>(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
     }
-
   }
   else
   { //------------------------------------------------ lossless case--------------------------------------------------//
@@ -1288,22 +1270,22 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
       {
         if (mParameters.getRho0ScalarFlag())
         {
-          sumPressureTermsNonlinearLossless<true, true, true>();
+          sumPressureTermsNonlinearLossless<simulationDimension, true, true, true>();
         }
         else
         {
-          sumPressureTermsNonlinearLossless<true, true, false>();
+          sumPressureTermsNonlinearLossless<simulationDimension, true, true, false>();
         }
       }
       else
       {
         if (mParameters.getRho0ScalarFlag())
         {
-          sumPressureTermsNonlinearLossless<true, false, true>();
+          sumPressureTermsNonlinearLossless<simulationDimension, true, false, true>();
         }
         else
         {
-          sumPressureTermsNonlinearLossless<true, false, false>();
+          sumPressureTermsNonlinearLossless<simulationDimension, true, false, false>();
         }
       }
     }
@@ -1313,22 +1295,22 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
       {
         if (mParameters.getRho0ScalarFlag())
         {
-          sumPressureTermsNonlinearLossless<false, true, true>();
+          sumPressureTermsNonlinearLossless<simulationDimension, false, true, true>();
         }
         else
         {
-          sumPressureTermsNonlinearLossless<false, true, false>();
+          sumPressureTermsNonlinearLossless<simulationDimension, false, true, false>();
         }
       }
       else
       {
         if (mParameters.getRho0ScalarFlag())
         {
-          sumPressureTermsNonlinearLossless<false, false, true>();
+          sumPressureTermsNonlinearLossless<simulationDimension, false, false, true>();
         }
         else
         {
-          sumPressureTermsNonlinearLossless<false, false, false>();
+          sumPressureTermsNonlinearLossless<simulationDimension, false, false, false>();
         }
       }
     }
@@ -1338,27 +1320,10 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
 
 /**
  * Compute new p for linear case.
- *
- * <b>Matlab code:</b> \n
- *
- *\verbatim
-    case 'lossless'
-
-        % calculate p using a linear adiabatic equation of state
-        p = c.^2 .* (rhox + rhoy + rhoz);
-
-    case 'absorbing'
-
-        % calculate p using a linear absorbing equation of state
-        p = c.^2 .* ( ...
-            (rhox + rhoy + rhoz) ...
-            + absorb_tau .* real(ifftn( absorb_nabla1 .* fftn(rho0 .* (duxdx + duydy + duzdz)) )) ...
-            - absorb_eta .* real(ifftn( absorb_nabla2 .* fftn(rhox + rhoy + rhoz) )) ...
-            );
- \endverbatim
  */
- void KSpaceFirstOrderSolver::computePressureLinear()
- {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computePressureLinear()
+{
   // rhox + rhoy + rhoz
   if (mParameters.getAbsorbingFlag())
   { // absorbing case
@@ -1369,7 +1334,7 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
     RealMatrix& absorbTauTerm        = getTemp2RealND();
     RealMatrix& absorbEtaTerm        = getTemp3RealND();
 
-    computePressureTermsLinear(densitySum, velocityGradientTerm);
+    computePressureTermsLinear<simulationDimension>(densitySum, velocityGradientTerm);
 
     // ifftn ( absorb_nabla1 * fftn (rho0 * (duxdx+duydy+duzdz))
 
@@ -1402,7 +1367,7 @@ void KSpaceFirstOrderSolver::computeDensityLinear()
     // lossless case
     sumPressureTermsLinearLossless();
   }
- }// end of computePressureLinear
+}// end of computePressureLinear
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -2441,18 +2406,20 @@ void KSpaceFirstOrderSolver::computePressureGradient()
 /**
  * Calculate three temporary sums in the new pressure formula non-linear absorbing case.
  */
-template<bool bOnAScalarFlag, bool rho0ScalarFlag>
+template<Parameters::SimulationDimension simulationDimension,
+         bool bOnAScalarFlag,
+         bool rho0ScalarFlag>
 void KSpaceFirstOrderSolver::computePressureTermsNonlinear(RealMatrix& densitySum,
                                                            RealMatrix& nonlinearTerm,
                                                            RealMatrix& velocityGradientSum)
 {
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
-  const float* rhoZ = getRhoZ().getData();
+  const float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
   const float* duxdx = getDuxdx().getData();
   const float* duydy = getDuydy().getData();
-  const float* duzdz = getDuzdz().getData();
+  const float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
   const float  bOnAScalar     = (bOnAScalarFlag) ? mParameters.getBOnAScalar() : 0;
   const float* bOnAMatrix     = (bOnAScalarFlag) ? nullptr : getBOnA().getData();
@@ -2472,13 +2439,15 @@ void KSpaceFirstOrderSolver::computePressureTermsNonlinear(RealMatrix& densitySu
                   rhoX, rhoY, rhoZ, bOnAMatrix, rho0Matrix, duxdx, duydy, duzdz)
   for (size_t i = 0; i < nElements ; i++)
   {
-    const float rhoSum = rhoX[i] + rhoY[i] + rhoZ[i];
+    const float rhoSum = (simulationDimension == SD::k3D) ? (rhoX[i]  + rhoY[i]  + rhoZ[i])  : (rhoX[i]  + rhoY[i]);
+    const float duSum  = (simulationDimension == SD::k3D) ? (duxdx[i] + duydy[i] + duzdz[i]) : (duxdx[i] + duydy[i]);
+
     const float bOnA   = (bOnAScalarFlag) ? bOnAScalar : bOnAMatrix[i];
     const float rho0   = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
 
     eDensitySum[i]          = rhoSum;
     eNonlinearTerm[i]       = (bOnA * rhoSum * rhoSum) / (2.0f * rho0) + rhoSum;
-    eVelocityGradientSum[i] = rho0 * (duxdx[i] + duydy[i] + duzdz[i]);
+    eVelocityGradientSum[i] = rho0 * duSum;
   }
 } // end of computePressureTermsNonlinear
 //----------------------------------------------------------------------------------------------------------------------
@@ -2486,6 +2455,7 @@ void KSpaceFirstOrderSolver::computePressureTermsNonlinear(RealMatrix& densitySu
  /**
   * Calculate two temporary sums in the new pressure formula, linear absorbing case.
   */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
                                                         RealMatrix& velocityGradientSum)
 {
@@ -2493,11 +2463,11 @@ void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
 
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
-  const float* rhoZ = getRhoZ().getData();
+  const float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
   const float* duxdx = getDuxdx().getData();
   const float* duydy = getDuydy().getData();
-  const float* duzdz = getDuzdz().getData();
+  const float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
   float* pDensitySum          = densitySum.getData();
   float* pVelocityGradientSum = velocityGradientSum.getData();
@@ -2505,7 +2475,7 @@ void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
   #pragma omp parallel for simd schedule(static) aligned (pDensitySum, rhoX, rhoY, rhoZ)
   for (size_t i = 0; i < size; i++)
   {
-    pDensitySum[i] = rhoX[i] + rhoY[i] + rhoZ[i];
+    pDensitySum[i] = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
   }
 
   if (mParameters.getRho0ScalarFlag())
@@ -2514,7 +2484,8 @@ void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
     #pragma omp parallel for simd schedule(static) aligned (pDensitySum, duxdx, duydy, duzdz)
     for (size_t i = 0; i < size; i++)
     {
-      pVelocityGradientSum[i] = eRho0 * (duxdx[i] + duydy[i] + duzdz[i]);
+      const float duSum = (simulationDimension == SD::k3D) ? (duxdx[i] + duydy[i] + duzdz[i]) : (duxdx[i] + duydy[i]);
+      pVelocityGradientSum[i] = eRho0 * duSum;
     }
   }
   else
@@ -2523,7 +2494,8 @@ void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
     #pragma omp parallel for simd schedule(static) aligned (pDensitySum, rho0, duxdx, duydy, duzdz)
     for (size_t i = 0; i < size; i++)
     {
-      pVelocityGradientSum[i] = rho0[i] * (duxdx[i] + duydy[i] + duzdz[i]);
+      const float duSum = (simulationDimension == SD::k3D) ? (duxdx[i] + duydy[i] + duzdz[i]) : (duxdx[i] + duydy[i]);
+      pVelocityGradientSum[i] = rho0[i] * duSum;
     }
   }
 }// end of computePressureTermsLinear
@@ -2634,7 +2606,10 @@ void KSpaceFirstOrderSolver::sumPressureTermsLinear(const RealMatrix& absorbTauT
 /**
  * Sum sub-terms for new p, nonlinear lossless case.
  */
-template<bool c0ScalarFlag, bool nonlinearFlag, bool rho0ScalarFlag>
+template<Parameters::SimulationDimension simulationDimension,
+         bool c0ScalarFlag,
+         bool nonlinearFlag,
+         bool rho0ScalarFlag>
 void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
 {
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
@@ -2643,16 +2618,16 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
 
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
-  const float* rhoZ = getRhoZ().getData();
+  const float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
   const float  c2Scalar     = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
   const float* c2Matrix     = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  const float  bOnAScalar    = (nonlinearFlag) ? mParameters.getBOnAScalar(): 0;
-  const float* bOnAMatrix    = (nonlinearFlag) ? nullptr : getBOnA().getData();
+  const float  bOnAScalar   = (nonlinearFlag) ? mParameters.getBOnAScalar(): 0;
+  const float* bOnAMatrix   = (nonlinearFlag) ? nullptr : getBOnA().getData();
 
-  const float  rho0Scalar     = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
-  const float* rho0Matrix     = (rho0ScalarFlag) ? nullptr : getRho0().getData();
+  const float  rho0Scalar   = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
+  const float* rho0Matrix   = (rho0ScalarFlag) ? nullptr : getRho0().getData();
 
   #pragma omp parallel for simd schedule (static)
   for (size_t i = 0; i < nElements; i++)
@@ -2661,7 +2636,7 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
     const float bOnA = (nonlinearFlag)  ? bOnAScalar : bOnAMatrix[i];
     const float rho0 = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
 
-    const float sumDensity = rhoX[i] + rhoY[i] + rhoZ[i];
+    const float sumDensity = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]) ;
 
     p[i] = c2 * (sumDensity + (bOnA * (sumDensity * sumDensity) / (2.0f * rho0)));
   }

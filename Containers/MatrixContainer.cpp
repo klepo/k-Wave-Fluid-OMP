@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            06 February  2019, 16:09 (revised)
+ *            08 February  2019, 16:15 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -403,10 +403,9 @@ void MatrixContainer::init()
   }
 
   mContainer[MI::kTemp2RealND]  .set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kTemp2RealNDName);
-  if (is3DSimulation)
-  {
-    mContainer[MI::kTemp3RealND].set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kTemp3RealNDName);
-  }
+  // This one is necessary for absorption
+  mContainer[MI::kTemp3RealND]  .set(MT::kReal, fullDims   , kNoLoad, kNoCheckpoint, kTemp3RealNDName);
+
 
   mContainer[MI::kTempFftwX]    .set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kFftwXTempName);
   mContainer[MI::kTempFftwY]    .set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kFftwYTempName);
