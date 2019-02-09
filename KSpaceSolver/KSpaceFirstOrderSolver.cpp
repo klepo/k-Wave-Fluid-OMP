@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            09 February  2019, 16:21 (revised)
+ *            09 February  2019, 20:25 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -1122,14 +1122,6 @@ void KSpaceFirstOrderSolver::computeDensityNonliner()
 /**
  * Calculate new values of acoustic density for linear case (rhoX, rhoy and rhoZ).
  *
- * <b>Matlab code:</b> \n
- *
- *\verbatim
-    rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0 .* duxdx);
-    rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0 .* duydy);
-    rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0 .* duzdz);
-\endverbatim
- *
  */
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeDensityLinear()
@@ -1709,12 +1701,14 @@ void KSpaceFirstOrderSolver::generateKappa()
 {
   const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
-  const float dz2Rec = 1.0f / (mParameters.getDz() * mParameters.getDz());
+  // For 2D simulation set dz to 0
+  const float dz2Rec = (mParameters.isSimulation3D()) ? 1.0f / (mParameters.getDz() * mParameters.getDz()) : 0.0f;
 
   const float cRefDtPi = mParameters.getCRef() * mParameters.getDt() * static_cast<float>(M_PI);
 
   const float nxRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
   const float nyRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().ny);
+  // For 2D simulation, nzRec remains 1
   const float nzRec = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nz);
 
   const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
@@ -1762,7 +1756,7 @@ void KSpaceFirstOrderSolver::generateSourceKappa()
 {
   const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
-  const float dz2Rec = 1.0f / (mParameters.getDz() * mParameters.getDz());
+  const float dz2Rec = (mParameters.isSimulation3D()) ? 1.0f / (mParameters.getDz() * mParameters.getDz()) : 0.0f;
 
   const float cRefDtPi = mParameters.getCRef() * mParameters.getDt() * static_cast<float>(M_PI);
 
@@ -1815,7 +1809,7 @@ void KSpaceFirstOrderSolver::generateKappaAndNablas()
 {
   const float dxSqRec    = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dySqRec    = 1.0f / (mParameters.getDy() * mParameters.getDy());
-  const float dzSqRec    = 1.0f / (mParameters.getDz() * mParameters.getDz());
+  const float dzSqRec    = (mParameters.isSimulation3D()) ? 1.0f / (mParameters.getDz() * mParameters.getDz()) : 0.0f;
 
   const float cRefDt2    = mParameters.getCRef() * mParameters.getDt() * 0.5f;
   const float pi2        = static_cast<float>(M_PI) * 2.0f;
@@ -2227,7 +2221,7 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousUniform()
   const float dividerX = mParameters.getDtRho0SgxScalar() / static_cast<float>(nElements);
   const float dividerY = mParameters.getDtRho0SgyScalar() / static_cast<float>(nElements);
   const float dividerZ = (simulationDimension == SD::k3D)
-                             ? mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements) : 0.f;
+                             ? mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements) : 1.0f;
 
   const float* ifftX = getTemp1RealND().getData();
   const float* ifftY = getTemp2RealND().getData();
@@ -2306,7 +2300,7 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform()
   const float dividerX = mParameters.getDtRho0SgxScalar() / static_cast<float>(nElements);
   const float dividerY = mParameters.getDtRho0SgyScalar() / static_cast<float>(nElements);
   const float dividerZ = (simulationDimension == SD::k3D)
-                             ? mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements) : 0.f;
+                             ? mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements) : 1.0f;
 
 
   const float* ifftX = getTemp1RealND().getData();
@@ -2662,7 +2656,7 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
     const float bOnA = (nonlinearFlag)  ? bOnAScalar : bOnAMatrix[i];
     const float rho0 = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
 
-    const float sumDensity = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]) ;
+    const float sumDensity = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
 
     p[i] = c2 * (sumDensity + (bOnA * (sumDensity * sumDensity) / (2.0f * rho0)));
   }
