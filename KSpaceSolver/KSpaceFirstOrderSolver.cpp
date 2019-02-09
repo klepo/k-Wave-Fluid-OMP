@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            09 February  2019, 13:50 (revised)
+ *            09 February  2019, 16:21 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -724,7 +724,10 @@ void KSpaceFirstOrderSolver::postProcessing()
   {
     getUxSgx().writeData(mParameters.getOutputFile(), kUxFinalName, mParameters.getCompressionLevel());
     getUySgy().writeData(mParameters.getOutputFile(), kUyFinalName, mParameters.getCompressionLevel());
-    getUzSgz().writeData(mParameters.getOutputFile(), kUzFinalName, mParameters.getCompressionLevel());
+    if (mParameters.isSimulation3D())
+    {
+      getUzSgz().writeData(mParameters.getOutputFile(), kUzFinalName, mParameters.getCompressionLevel());
+    }
   }// u_final
 
   // Apply post-processing and close
