@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      29 August    2012, 11:25 (created) \n
- *            09 January   2019, 12:04 (revised)
+ *            11 February  2019, 15:29 (revised)
  *
  * @section   Params Command Line Parameters
  *
@@ -93,7 +93,7 @@
  * the starting time step when the collection begins can be specified using the -s parameter.  Note, the index for the
  * first time step is 1 (this follows the MATLAB indexing convention).
  *
- * The <tt>\--copy_sensor_mask</tt> will copy the sensor from the input file to the output  one at the end of the
+ * The <tt>\--copy_sensor_mask</tt> flag will copy the sensor from the input file to the output  one at the end of the
  * simulation. This helps in post-processing and visualisation of the outputs.
  *
  *

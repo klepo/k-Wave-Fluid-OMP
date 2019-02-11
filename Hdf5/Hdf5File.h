@@ -11,19 +11,20 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      27 July      2012, 14:14 (created) \n
- *            09 January   2019, 11:26 (revised)
+ *            11 February  2019, 15:16 (revised)
  *
  *
  *
  * @section   HDF5File HDF5 File Structure
  *
- * The C++ code has been designed as a standalone application which is not dependent on MATLAB libraries or a MEX
- * interface. This is of particular importance when using servers and supercomputers without MATLAB support. For this
- * reason, simulation data must be transferred between the C++ code and MATLAB using external input and output
- * files. These files are stored using the [Hierarchical Data Format HDF5] (http://www.hdfgroup.org/HDF5/). This is a
- * data model, library, and file format for storing and managing data. It supports a variety of datatypes, and is
- * designed for flexible and efficient I/O and for high volume and complex data.  The HDF5 technology suite includes
- * tools and applications for managing, manipulating, viewing, and analysing data in the HDF5 format.
+ * The C++ code has been designed as a standalone application supporting both 2D and 3D simulations which is not
+ * dependent on MATLAB libraries or a MEX interface. This is of particular importance when using servers and
+ * supercomputers without MATLAB support. For this reason, simulation data must be transferred between the C++ code and
+ * MATLAB using external input and output files. These files are stored using the [Hierarchical Data Format HDF5]
+ * (http://www.hdfgroup.org/HDF5/). This is a data model, library, and file format for storing and managing data. It
+ * supports a variety of datatypes, and is designed for flexible and efficient I/O and for high volume and complex data.
+ * The HDF5 technology suite includes tools and applications for managing, manipulating, viewing, and analysing data in
+ * the HDF5 format.
  *
  *
  * Each HDF5 file is a container for storing a variety of scientific data and is composed of two primary types of
@@ -35,22 +36,24 @@
  * (http://www.hdfgroup.org/HDF5/doc/index.html).
  *
  *
- * kspaceFirstOrder3D-OMP v1.3 uses the file format introduced in version 1.1. The code is happy to work with both
+ * kspaceFirstOrder-OMP v1.3 uses the file format introduced in version 1.1. The code is happy to work with both
  * versions (1.0 and 1.1), however when working with an input file of version 1.0, some features are not supported,
  * namely the cuboid sensor mask, and <tt>u_non_staggered_raw</tt>. When running from within the actual MATLAB K-Wave
  * Toolbox, the files will always be generated in version 1.1.
  *
  * The HDF5 input file for the C++ simulation code contains a file header with brief description of the simulation
- * stored in string attributes, and the root group <tt>'/'</tt> which stores  all the simulation properties in the form
- * of 3D  datasets (a complete list of input datasets is  given bellow).
+ * stored in string attributes, and the root group <tt>'/'</tt> which stores all the simulation properties in the form
+ * of 3D datasets no matter the medium is 2D or 3D (a complete list of input datasets is  given bellow).
+ * In the case of 2D simulation, Nz equals to 1.
+ *
  * The HDF5 checkpoint file contains the same file header as the input file and the root group <tt>'/'</tt> with a few
  * datasets keeping the actual simulation state. The HDF5 output file contains a file header with the simulation
  * description as well as performance statistics, such as the simulation  time and memory consumption, stored in string
  * attributes.
 
- * The results of the simulation are stored in the root group <tt>'/'</tt> in the form of 3D datasets. If the linear
- * sensor mask is used, all output quantities are stored as datasets in the root group. If the cuboid corners sensor
- * mask is used, the sampled quantities form private groups containing datasets on per cuboid basis.
+ * The results of the simulation are stored in the root group <tt>'/'</tt> in the form of 3D or 4D datasets. If the
+ * linear sensor mask is used, all output quantities are stored as datasets in the root group. If the cuboid corners
+ * sensor mask is used, the sampled quantities form private groups containing datasets on per cuboid basis.
  *
  *\verbatim
 +----------------------------------------------------------------------------------------------------------------------+
@@ -91,7 +94,8 @@
  *
  *
  * The input and checkpoint file stores all quantities as three dimensional datasets with dimension sizes designed by
- * <tt>(Nx, Ny, Nz)</tt>. In order to support scalars and 1D and 2D arrays, the  unused dimensions are set to 1. For
+ * <tt>(Nx, Ny, Nz)</tt>. If the simulation is 2D, Nz equals to 1.
+ * In order to support scalars and 1D and 2D arrays, the unused dimensions are set to 1. For
  * example, scalar variables are stored with a dimension size of  <tt>(1,1,1)</tt>, 1D vectors oriented in y-direction
  * are stored with a dimension  size of  <tt>(1, Ny, 1)</tt>,  and so on. If the dataset stores a complex variable, the
  * real and imaginary parts are stored in an interleaved layout and the lowest used dimension size is doubled (i.e.,
@@ -111,9 +115,9 @@
  * but broken into chunks that may be compressed by the ZIP library  and stored separately. The chunk size is defined
  * as follows:
  *
- * \li <tt> (1M elements, 1, 1) </tt> in the case of 1D variables - index sensor mask (8MB blocks).
- * \li <tt> (Nx, Ny, 1)         </tt> in the case of 3D variables (one 2D slab).
- * \li <tt> (Nx, Ny, Nz, 1)     </tt> in the case of 4D variables (one time step).
+ * \li <tt> (1M elements, 1, 1)     </tt> in the case of 1D variables - index sensor mask (8MB blocks).
+ * \li <tt> (Nx, Ny, 1)             </tt> in the case of 3D variables (one 2D slab).
+ * \li <tt> (Nx, Ny, Nz, 1)         </tt> in the case of 4D variables (one time step).
  * \li <tt> (N_sensor_points, 1, 1) </tt> in the case of the output time series (one time step of the simulation).
  *
  *
@@ -135,7 +139,7 @@
 +----------------------------------------------------------------------------------------------------------------------+
 | ux_source_flag              (1, 1, 1)        long          real                                                      |
 | uy_source_flag              (1, 1, 1)        long          real                                                      |
-| uz_source_flag              (1, 1, 1)        long          real                                                      |
+| uz_source_flag              (1, 1, 1)        long          real           Nz > 1                                     |
 | p_source_flag               (1, 1, 1)        long          real                                                      |
 | p0_source_flag              (1, 1, 1)        long          real                                                      |
 | transducer_source_flag      (1, 1, 1)        long          real                                                      |
@@ -152,7 +156,7 @@
 | dt                          (1, 1, 1)        float         real                                                      |
 | dx                          (1, 1, 1)        float         real                                                      |
 | dy                          (1, 1, 1)        float         real                                                      |
-| dz                          (1, 1, 1)        float         real                                                      |
+| dz                          (1, 1, 1)        float         real           Nz > 1                                     |
 +----------------------------------------------------------------------------------------------------------------------+
 | 3. Medium Properties                                                                                                 |
 +----------------------------------------------------------------------------------------------------------------------+
@@ -163,8 +167,8 @@
 |                             (1, 1, 1)        float         real           homogenous                                 |
 | rho0_sgy                    (Nx, Ny, Nz)     float         real           heterogenous                               |
 |                             (1, 1, 1)        float         real           homogenous                                 |
-| rho0_sgz                    (Nx, Ny, Nz)     float         real           heterogenous                               |
-|                             (1, 1, 1)        float         real           homogenous                                 |
+| rho0_sgz                    (Nx, Ny, Nz)     float         real           Nz > 1 and heterogenous                    |
+|                             (1, 1, 1)        float         real           Nz > 1 and homogenous                      |
 | c0                          (Nx, Ny, Nz)     float         real           heterogenous                               |
 |                             (1, 1, 1)        float         real           homogenous                                 |
 | c_ref                       (1, 1, 1)        float         real                                                      |
@@ -196,8 +200,8 @@
 |                             (Nsrc, Nt_src, 1)  float       real           u_source_many == 1                         |
 | uy_source_input             (1, Nt_src,  1)    float       real           u_source_many == 0                         |
 |                             (Nsrc, Nt_src, 1)  float       real           u_source_many == 1                         |
-| uz_source_input             (1, Nt_src, 1)     float       real           u_source_many == 0                         |
-|                             (Nt_src, Nsrc, 1)  float       real           u_source_many == 1                         |
+| uz_source_input             (1, Nt_src, 1)     float       real           Nz > 1 and u_source_many == 0              |
+|                             (Nt_src, Nsrc, 1)  float       real           Nz > 1 and u_source_many == 1              |
 |                                                                                                                      |
 | 5.2 Pressure Source Terms (defined if (p_source_flag == 1))                                                          |
 | p_source_mode               (1, 1, 1)          long        real                                                      |
@@ -220,27 +224,27 @@
 | ddx_k_shift_neg_r           (Nx/2 + 1, 1, 1)  float        complex                                                   |
 | ddy_k_shift_pos             (1, Ny, 1)        float        complex                                                   |
 | ddy_k_shift_neg             (1, Ny, 1)        float        complex                                                   |
-| ddz_k_shift_pos             (1, 1, Nz)        float        complex                                                   |
-| ddz_k_shift_neg             (1, 1, Nz)        float        complex                                                   |
+| ddz_k_shift_pos             (1, 1, Nz)        float        complex        Nz > 1                                     |
+| ddz_k_shift_neg             (1, 1, Nz)        float        complex        Nz > 1                                     |
 | x_shift_neg_r               (Nx/2 + 1, 1, 1)  float        complex        file version 1.1                           |
 | y_shift_neg_r               (1, Ny/2 + 1, 1)  float        complex        file version 1.1                           |
-| z_shift_neg_r               (1, 1, Nz/2)      float        complex        file version 1.1                           |
+| z_shift_neg_r               (1, 1, Nz/2)      float        complex        Nz > 1 and file version 1.1                |
 +----------------------------------------------------------------------------------------------------------------------+
 | 7. PML Variables                                                                                                     |
 +----------------------------------------------------------------------------------------------------------------------+
 | pml_x_size                  (1, 1, 1)       long           real                                                      |
 | pml_y_size                  (1, 1, 1)       long           real                                                      |
-| pml_z_size                  (1, 1, 1)       long           real                                                      |
+| pml_z_size                  (1, 1, 1)       long           real           Nz > 1                                     |
 | pml_x_alpha                 (1, 1, 1)       float          real                                                      |
 | pml_y_alpha                 (1, 1, 1)       float          real                                                      |
-| pml_z_alpha                 (1, 1, 1)       float          real                                                      |
+| pml_z_alpha                 (1, 1, 1)       float          real           Nz > 1                                     |
 |                                                                                                                      |
 | pml_x                       (Nx, 1, 1)      float          real                                                      |
 | pml_x_sgx                   (Nx, 1, 1)      float          real                                                      |
 | pml_y                       (1, Ny, 1)      float          real                                                      |
 | pml_y_sgy                   (1, Ny, 1)      float          real                                                      |
-| pml_z                       (1, 1, Nz)      float          real                                                      |
-| pml_z_sgz                   (1, 1, Nz)      float          real                                                      |
+| pml_z                       (1, 1, Nz)      float          real           Nz > 1                                     |
+| pml_z_sgz                   (1, 1, Nz)      float          real           Nz > 1                                     |
 +----------------------------------------------------------------------------------------------------------------------+
  \endverbatim
 
@@ -255,7 +259,6 @@
 | Nx                          (1, 1, 1)       long           real                                                      |
 | Ny                          (1, 1, 1)       long           real                                                      |
 | Nz                          (1, 1, 1)       long           real                                                      |
-| Nt                          (1, 1, 1)       long           real                                                      |
 | t_index                     (1, 1, 1)       long           real                                                      |
 +----------------------------------------------------------------------------------------------------------------------+
 |  2. Simulation State                                                                                                 |
@@ -263,10 +266,10 @@
 | p                           (Nx, Ny, Nz)    float          real                                                      |
 | ux_sgx                      (Nx, Ny, Nz)    float          real                                                      |
 | uy_sgy                      (Nx, Ny, Nz)    float          real                                                      |
-| uz_sgz                      (Nx, Ny, Nz)    float          real                                                      |
+| uz_sgz                      (Nx, Ny, Nz)    float          real           Nz > 1                                     |
 | rhox                        (Nx, Ny, Nz)    float          real                                                      |
 | rhoy                        (Nx, Ny, Nz)    float          real                                                      |
-| rhoz                        (Nx, Ny, Nz)    float          real                                                      |
+| rhoz                        (Nx, Ny, Nz)    float          real           Nz > 1                                     |
 +----------------------------------------------------------------------------------------------------------------------+
 \endverbatim
 
@@ -281,7 +284,7 @@
 +----------------------------------------------------------------------------------------------------------------------+
 | ux_source_flag              (1, 1, 1)       long           real                                                      |
 | uy_source_flag              (1, 1, 1)       long           real                                                      |
-| uz_source_flag              (1, 1, 1)       long           real                                                      |
+| uz_source_flag              (1, 1, 1)       long           real           Nz > 1                                     |
 | p_source_flag               (1, 1, 1)       long           real                                                      |
 | p0_source_flag              (1, 1, 1)       long           real                                                      |
 | transducer_source_flag      (1, 1, 1)       long           real                                                      |
@@ -303,16 +306,16 @@
 | dt                          (1, 1, 1)       float          real                                                      |
 | dx                          (1, 1, 1)       float          real                                                      |
 | dy                          (1, 1, 1)       float          real                                                      |
-| dz                          (1, 1, 1)       float          real                                                      |
+| dz                          (1, 1, 1)       float          real           Nz > 1                                     |
 +----------------------------------------------------------------------------------------------------------------------+
 | 3. PML Variables                                                                                                     |
 +----------------------------------------------------------------------------------------------------------------------+
 | pml_x_size                  (1, 1, 1)       long           real                                                      |
 | pml_y_size                  (1, 1, 1)       long           real                                                      |
-| pml_z_size                  (1, 1, 1)       long           real                                                      |
+| pml_z_size                  (1, 1, 1)       long           real           Nz > 1                                     |
 | pml_x_alpha                 (1, 1, 1)       float          real                                                      |
 | pml_y_alpha                 (1, 1, 1)       float          real                                                      |
-| pml_z_alpha                 (1, 1, 1)       float          real                                                      |
+| pml_z_alpha                 (1, 1, 1)       float          real           Nz > 1                                     |
 |                                                                                                                      |
 +----------------------------------------------------------------------------------------------------------------------+
 | 4. Sensor Variables (present if --copy_sensor_mask)                                                                  |
@@ -333,35 +336,36 @@
 |                                                                                                                      |
 | ux                          (Nsens, Nt - s, 1) float       real           -u or --u_raw                              |
 | uy                          (Nsens, Nt - s, 1) float       real           -u or --u_raw                              |
-| uz                          (Nsens, Nt - s, 1) float       real           -u or --u_raw                              |
+| uz                          (Nsens, Nt - s, 1) float       real           -u or --u_raw and Nz > 1                   |
 |                                                                                                                      |
 | ux_non_staggered            (Nsens, Nt - s, 1) float       real           --u_non_staggered_raw (File version ==1.1) |
 | uy_non_staggered            (Nsens, Nt - s, 1) float       real           --u_non_staggered_raw (File version ==1.1) |
 | uz_non_staggered            (Nsens, Nt - s, 1) float       real           --u_non_staggered_raw (File version ==1.1) |
+|                                                                                      and Nz > 1                      |
 |                                                                                                                      |
 | ux_rms                      (Nsens, 1, 1)      float       real           --u_rms                                    |
 | uy_rms                      (Nsens, 1, 1)      float       real           --u_rms                                    |
-| uz_rms                      (Nsens, 1, 1)      float       real           --u_rms                                    |
+| uz_rms                      (Nsens, 1, 1)      float       real           --u_rms    and Nz > 1                      |
 |                                                                                                                      |
 | ux_max                      (Nsens, 1, 1)      float       real           --u_max                                    |
 | uy_max                      (Nsens, 1, 1)      float       real           --u_max                                    |
-| uz_max                      (Nsens, 1, 1)      float       real           --u_max                                    |
+| uz_max                      (Nsens, 1, 1)      float       real           --u_max     and Nz > 1                     |
 |                                                                                                                      |
 | ux_min                      (Nsens, 1, 1)      float       real           --u_min                                    |
 | uy_min                      (Nsens, 1, 1)      float       real           --u_min                                    |
-| uz_min                      (Nsens, 1, 1)      float       real           --u_min                                    |
+| uz_min                      (Nsens, 1, 1)      float       real           --u_min     and Nz > 1                     |
 |                                                                                                                      |
 | ux_max_all                  (Nx, Ny, Nz)       float       real           --u_max_all                                |
 | uy_max_all                  (Nx, Ny, Nz)       float       real           --u_max_all                                |
-| uz_max_all                  (Nx, Ny, Nz)       float       real           --u_max_all                                |
+| uz_max_all                  (Nx, Ny, Nz)       float       real           --u_max_all and Nz > 1                     |
 |                                                                                                                      |
 | ux_min_all                  (Nx, Ny, Nz)       float       real           --u_min_all                                |
 | uy_min_all                  (Nx, Ny, Nz)       float       real           --u_min_all                                |
-| uz_min_all                  (Nx, Ny, Nz)       float       real           --u_min_all                                |
+| uz_min_all                  (Nx, Ny, Nz)       float       real           --u_min_all and Nz > 1                     |
 |                                                                                                                      |
 | ux_final                    (Nx, Ny, Nz)       float       real           --u_final                                  |
 | uy_final                    (Nx, Ny, Nz)       float       real           --u_final                                  |
-| uz_final                    (Nx, Ny, Nz)       float       real           --u_final                                  |
+| uz_final                    (Nx, Ny, Nz)       float       real           --u_final   and Nz > 1                     |
 +----------------------------------------------------------------------------------------------------------------------+
 | 5b. Simulation Results: if sensor_mask_type == 1 (corners) and file version == 1.1                                   |
 +----------------------------------------------------------------------------------------------------------------------+
@@ -387,48 +391,48 @@
 | /ux/1                       (Cx, Cy, Cz, Nt-s) float       real              1st sampled cuboid                      |
 | /uy                         group of datasets, one per cuboid             -u or --u_raw                              |
 | /uy/1                       (Cx, Cy, Cz, Nt-s) float       real              1st sampled cuboid                      |
-| /uz                         group of datasets, one per cuboid             -u or --u_raw                              |
+| /uz                         group of datasets, one per cuboid             -u or --u_raw         and Nz > 1           |
 | /uz/1                       (Cx, Cy, Cz, Nt-s) float       real              1st sampled cuboid                      |
 |                                                                                                                      |
 | /ux_non_staggered           group of datasets, one per cuboid             --u_non_staggered_raw                      |
 | /ux_non_staggered/1         (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 | /uy_non_staggered           group of datasets, one per cuboid             --u_non_staggered_raw                      |
 | /uy_non_staggered/1         (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
-| /uz_non_staggered           group of datasets, one per cuboid             --u_non_staggered_raw                      |
+| /uz_non_staggered           group of datasets, one per cuboid             --u_non_staggered_raw and Nz > 1           |
 | /uz_non_staggered/1         (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 |                                                                                                                      |
 | /ux_rms                     group of datasets, one per cuboid             --u_rms                                    |
 | /ux_rms/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 | /uy_rms                     group of datasets, one per cuboid             --u_rms                                    |
 | /uy_rms/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
-| /uz_rms                     group of datasets, one per cuboid             --u_rms                                    |
+| /uz_rms                     group of datasets, one per cuboid             --u_rms               and Nz > 1           |
 | /uy_rms/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 |                                                                                                                      |
 | /ux_max                     group of datasets, one per cuboid             --u_max                                    |
 | /ux_max/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 | /uy_max                     group of datasets, one per cuboid             --u_max                                    |
 | /ux_max/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
-| /uz_max                     group of datasets, one per cuboid             --u_max                                    |
+| /uz_max                     group of datasets, one per cuboid             --u_max               and Nz > 1           |
 | /ux_max/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 |                                                                                                                      |
 | /ux_min                     group of datasets, one per cuboid             --u_min                                    |
 | /ux_min/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 | /uy_min                     group of datasets, one per cuboid             --u_min                                    |
 | /ux_min/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
-| /uz_min                     group of datasets, one per cuboid             --u_min                                    |
+| /uz_min                     group of datasets, one per cuboid             --u_min               and Nz > 1           |
 | /ux_min/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 |                                                                                                                      |
 | ux_max_all                  (Nx, Ny, Nz)       float       real           --u_max_all                                |
 | uy_max_all                  (Nx, Ny, Nz)       float       real           --u_max_all                                |
-| uz_max_all                  (Nx, Ny, Nz)       float       real           --u_max_all                                |
+| uz_max_all                  (Nx, Ny, Nz)       float       real           --u_max_all           and Nz > 1           |
 |                                                                                                                      |
 | ux_min_all                  (Nx, Ny, Nz)       float       real           --u_min_all                                |
 | uy_min_all                  (Nx, Ny, Nz)       float       real           --u_min_all                                |
-| uz_min_all                  (Nx, Ny, Nz)       float       real           --u_min_all                                |
+| uz_min_all                  (Nx, Ny, Nz)       float       real           --u_min_all           and Nz > 1           |
 |                                                                                                                      |
 | ux_final                    (Nx, Ny, Nz)       float       real           --u_final                                  |
 | uy_final                    (Nx, Ny, Nz)       float       real           --u_final                                  |
-| uz_final                    (Nx, Ny, Nz)       float       real           --u_final                                  |
+| uz_final                    (Nx, Ny, Nz)       float       real           --u_final             and Nz > 1           |
 +----------------------------------------------------------------------------------------------------------------------+
 \endverbatim
  *

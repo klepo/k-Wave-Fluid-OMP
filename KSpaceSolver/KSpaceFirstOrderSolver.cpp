@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            09 February  2019, 20:25 (revised)
+ *            11 February  2019, 20:19 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -59,7 +59,7 @@
 #include <Logger/Logger.h>
 
 using std::ios;
-// shortcut for Simulation dimensions
+/// shortcut for Simulation dimensions
 using SD = Parameters::SimulationDimension;
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -223,7 +223,7 @@ void KSpaceFirstOrderSolver::loadInputData()
 
 
 /**
-* This method computes k-space First Order 3D simulation.
+ * This method computes k-space First Order 2D/3D simulation.
  */
 void KSpaceFirstOrderSolver::compute()
 {
@@ -620,7 +620,7 @@ void KSpaceFirstOrderSolver::preProcessing()
     generateKappa();
   }
 
-  /// Generate sourceKappa
+  // Generate sourceKappa
   if (((mParameters.getVelocitySourceMode() == Parameters::SourceMode::kAdditive) ||
        (mParameters.getPressureSourceMode() == Parameters::SourceMode::kAdditive)) &&
       (mParameters.getPressureSourceFlag()  ||
@@ -639,7 +639,7 @@ void KSpaceFirstOrderSolver::preProcessing()
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * Compute the main time loop of KSpaceFirstOrder3D.
+ * Compute the main time loop of KSpaceFirstOrder solver.
  */
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeMainLoop()
@@ -888,26 +888,8 @@ void KSpaceFirstOrderSolver::saveCheckpointData()
 //----------------------------------------------------------------------------------------------------------------------
 
 
- /**
- * Compute new values of acoustic velocity in all three dimensions (UxSgx, UySgy, UzSgz).
- *
- * <b>Matlab code:</b> \n
- *
- * \verbatim
-   p_k = fftn(p);
-   ux_sgx = bsxfun(@times, pml_x_sgx, ...
-       bsxfun(@times, pml_x_sgx, ux_sgx) ...
-       - dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) ...
-       );
-   uy_sgy = bsxfun(@times, pml_y_sgy, ...
-       bsxfun(@times, pml_y_sgy, uy_sgy) ...
-       - dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) ...
-       );
-   uz_sgz = bsxfun(@times, pml_z_sgz, ...
-       bsxfun(@times, pml_z_sgz, uz_sgz) ...
-       - dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) ...
-       );
- \endverbatim
+/**
+ * Compute new values of acoustic velocity in all used dimensions (UxSgx, UySgy, UzSgz).
  */
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeVelocity()
@@ -2374,11 +2356,6 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform()
 
 /**
  *  Compute part of the new velocity term - gradient of pressure.
- * <b>Matlab code:</b> \n
- *
- *\verbatim
-    bsxfun(\@times, ddx_k_shift_pos, kappa .* fftn(p))
-  \endverbatim
  */
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computePressureGradient()
@@ -2472,9 +2449,9 @@ void KSpaceFirstOrderSolver::computePressureTermsNonlinear(RealMatrix& densitySu
 } // end of computePressureTermsNonlinear
 //----------------------------------------------------------------------------------------------------------------------
 
- /**
-  * Calculate two temporary sums in the new pressure formula, linear absorbing case.
-  */
+/**
+ * Calculate two temporary sums in the new pressure formula, linear absorbing case.
+ */
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
                                                         RealMatrix& velocityGradientSum)
@@ -2522,9 +2499,9 @@ void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
 //----------------------------------------------------------------------------------------------------------------------
 
 
- /**
-  * Compute absorbing term with abosrbNabla1 and absorbNabla2.
-  */
+/**
+ * Compute absorbing term with abosrbNabla1 and absorbNabla2.
+ */
 void KSpaceFirstOrderSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
                                                    FftwComplexMatrix& fftPart2)
 {
@@ -2545,9 +2522,9 @@ void KSpaceFirstOrderSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
 } // end of computeAbsorbtionTerm
 //----------------------------------------------------------------------------------------------------------------------
 
- /**
-  * @brief Sum sub-terms to calculate new pressure, after FFTs, non-linear case.
-  */
+/**
+ * Sum sub-terms to calculate new pressure, after FFTs, non-linear case.
+ */
 template<bool c0ScalarFlag, bool areTauAndEtaScalars>
 void KSpaceFirstOrderSolver::sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
                                                        const RealMatrix& absorbEtaTerm,
@@ -2584,9 +2561,9 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinear(const RealMatrix& absorbT
 }// end of sumPressureTermsNonlinear
 //----------------------------------------------------------------------------------------------------------------------
 
- /**
-  * Sum sub-terms to calculate new pressure, after FFTs, linear case.
-  */
+/**
+ * Sum sub-terms to calculate new pressure, after FFTs, linear case.
+ */
 template<bool c0ScalarFlag, bool areTauAndEtaScalars>
 void KSpaceFirstOrderSolver::sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
                                                     const RealMatrix& absorbEtaTerm,
@@ -2663,9 +2640,9 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
 }// end of sumPressureTermsNonlinearLossless
 //----------------------------------------------------------------------------------------------------------------------
 
- /**
-  * Sum sub-terms for new pressure, linear lossless case.
-  */
+/**
+ * Sum sub-terms for new pressure, linear lossless case.
+ */
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::sumPressureTermsLinearLossless()
 {
@@ -2703,7 +2680,6 @@ void KSpaceFirstOrderSolver::sumPressureTermsLinearLossless()
 
 /**
  * Calculated shifted velocities.
- *
  */
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeShiftedVelocity()
