@@ -2,5 +2,5 @@
 <area shape="rect" id="node3" href="$class_complex_matrix.html" title="The class for complex matrices. " alt="" coords="17,152,121,177"/>
 <area shape="rect" id="node5" href="$class_real_matrix.html" title="The class for real matrices. " alt="" coords="145,152,227,177"/>
 <area shape="rect" id="node2" href="$class_base_matrix.html" title="Abstract base class. The common ancestor defining the common interface and allowing derived classes t..." alt="" coords="86,5,169,31"/>
-<area shape="rect" id="node4" href="$class_fftw_complex_matrix.html" title="Class implementing 3D and 1D Real&#45;To&#45;Complex and Complex&#45;To&#45;Real transforms using FFTW interface..." alt="" coords="5,225,132,251"/>
+<area shape="rect" id="node4" href="$class_fftw_complex_matrix.html" title="Class implementing ND and 1D Real&#45;To&#45;Complex and Complex&#45;To&#45;Real transforms using FFTW interface..." alt="" coords="5,225,132,251"/>
 </map>

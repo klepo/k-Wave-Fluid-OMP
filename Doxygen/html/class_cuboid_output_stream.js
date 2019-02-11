@@ -2,7 +2,7 @@ var class_cuboid_output_stream =
 [
     [ "CuboidInfo", "struct_cuboid_output_stream_1_1_cuboid_info.html", "struct_cuboid_output_stream_1_1_cuboid_info" ],
     [ "CuboidOutputStream", "class_cuboid_output_stream.html#a41f1ce2ae0d5428304a06ee049bd1f61", null ],
-    [ "CuboidOutputStream", "class_cuboid_output_stream.html#abbf5808b6a6413578bb9cdedfae808ab", null ],
+    [ "CuboidOutputStream", "class_cuboid_output_stream.html#a8f3d9dc69c388fa7f40b8b0af9b4c0f4", null ],
     [ "CuboidOutputStream", "class_cuboid_output_stream.html#a80d6726d72fdcc8746d6f4786601d1b6", null ],
     [ "~CuboidOutputStream", "class_cuboid_output_stream.html#aec96de71acd4e70a442e70a5a715cc19", null ],
     [ "checkpoint", "class_cuboid_output_stream.html#a67b7139e6de7d449a266ac193be74ef9", null ],

@@ -1,16 +1,16 @@
 <map id="MatrixClasses/FftwComplexMatrix.cpp" name="MatrixClasses/FftwComplexMatrix.cpp">
-<area shape="rect" id="node3" href="$_fftw_complex_matrix_8h.html" title="The header file containing the class that implements 3D FFT using the FFTW interface. " alt="" coords="201,92,375,131"/>
-<area shape="rect" id="node17" href="$_real_matrix_8h.html" title="The header file containing the class for real matrices. " alt="" coords="41,252,212,277"/>
-<area shape="rect" id="node18" href="$_parameters_8h.html" title="The header file containing the parameters of the simulation. " alt="" coords="397,325,558,351"/>
+<area shape="rect" id="node3" href="$_fftw_complex_matrix_8h.html" title="The header file containing the class that implements various FFT using the FFTW interface. " alt="" coords="201,92,375,131"/>
+<area shape="rect" id="node17" href="$_real_matrix_8h.html" title="The header file containing the class for real matrices. " alt="" coords="49,252,220,277"/>
+<area shape="rect" id="node18" href="$_parameters_8h.html" title="The header file containing the parameters of the simulation. " alt="" coords="457,325,618,351"/>
 <area shape="rect" id="node21" href="$_logger_8h.html" title="The header file containing a class responsible for printing out info and error messages (stdout..." alt="" coords="575,99,689,124"/>
 <area shape="rect" id="node5" href="$_complex_matrix_8h.html" title="The header file with the class for complex matrices. " alt="" coords="237,179,432,204"/>
-<area shape="rect" id="node7" href="$_base_float_matrix_8h.html" title="The header file containing the base class for single precisions floating point numbers (floats)..." alt="" coords="61,325,261,351"/>
-<area shape="rect" id="node9" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes. " alt="" coords="146,545,294,571"/>
-<area shape="rect" id="node8" href="$_base_matrix_8h.html" title="The header file of the common ancestor of all matrix classes. A pure abstract class. " alt="" coords="100,399,273,424"/>
-<area shape="rect" id="node11" href="$_hdf5_file_8h.html" title="The header file containing the HDF5 related classes. " alt="" coords="449,472,556,497"/>
-<area shape="rect" id="node16" href="$_matrix_names_8h.html" title="The header file storing names of all variables. " alt="" coords="496,545,627,571"/>
-<area shape="rect" id="node19" href="$_command_line_parameters_8h.html" title="The header file containing the command line parameters. " alt="" coords="732,472,975,497"/>
-<area shape="rect" id="node20" href="$_hdf5_file_header_8h.html" title="The header file containing the class processing file headers. Detail about the file header are descri..." alt="" coords="509,399,657,424"/>
+<area shape="rect" id="node7" href="$_base_float_matrix_8h.html" title="The header file containing the base class for single precisions floating point numbers (floats)..." alt="" coords="72,325,272,351"/>
+<area shape="rect" id="node9" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes. " alt="" coords="155,545,303,571"/>
+<area shape="rect" id="node8" href="$_base_matrix_8h.html" title="The header file of the common ancestor of all matrix classes. A pure abstract class. " alt="" coords="111,399,284,424"/>
+<area shape="rect" id="node11" href="$_hdf5_file_8h.html" title="The header file containing the HDF5 related classes. " alt="" coords="460,472,567,497"/>
+<area shape="rect" id="node16" href="$_matrix_names_8h.html" title="The header file storing names of all variables. " alt="" coords="507,545,637,571"/>
+<area shape="rect" id="node19" href="$_command_line_parameters_8h.html" title="The header file containing the command line parameters. " alt="" coords="743,472,985,497"/>
+<area shape="rect" id="node20" href="$_hdf5_file_header_8h.html" title="The header file containing the class processing file headers. Detail about the file header are descri..." alt="" coords="519,399,667,424"/>
 <area shape="rect" id="node24" href="$_output_messages_8h.html" title="The header file including output messages based on the operating system. " alt="" coords="691,179,858,204"/>
 <area shape="rect" id="node25" href="$_error_messages_8h.html" title="The header file containing routines for error messages and error messages common for both linux and w..." alt="" coords="883,179,1040,204"/>
 </map>

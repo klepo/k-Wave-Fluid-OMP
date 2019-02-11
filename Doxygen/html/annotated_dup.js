@@ -13,7 +13,7 @@ var annotated_dup =
     [ "Hdf5FileHeader", "class_hdf5_file_header.html", "class_hdf5_file_header" ],
     [ "IndexMatrix", "class_index_matrix.html", "class_index_matrix" ],
     [ "IndexOutputStream", "class_index_output_stream.html", "class_index_output_stream" ],
-    [ "KSpaceFirstOrder3DSolver", "class_k_space_first_order3_d_solver.html", "class_k_space_first_order3_d_solver" ],
+    [ "KSpaceFirstOrderSolver", "class_k_space_first_order_solver.html", "class_k_space_first_order_solver" ],
     [ "Logger", "class_logger.html", "class_logger" ],
     [ "MatrixContainer", "class_matrix_container.html", "class_matrix_container" ],
     [ "MatrixRecord", "struct_matrix_record.html", "struct_matrix_record" ],

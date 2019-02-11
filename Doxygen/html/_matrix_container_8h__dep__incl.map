@@ -1,6 +1,6 @@
 <map id="Containers/MatrixContainer.h" name="Containers/MatrixContainer.h">
-<area shape="rect" id="node2" href="$_k_space_first_order3_d_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="5,152,175,191"/>
-<area shape="rect" id="node4" href="$_k_space_first_order3_d_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="140,239,309,277"/>
+<area shape="rect" id="node2" href="$_k_space_first_order_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="5,152,175,191"/>
+<area shape="rect" id="node4" href="$_k_space_first_order_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="140,239,309,277"/>
 <area shape="rect" id="node5" href="$_output_stream_container_8h.html" title="The header file defining the output stream container. " alt="" coords="250,79,474,104"/>
 <area shape="rect" id="node7" href="$_matrix_container_8cpp.html" title="The implementation file containing the matrix container. " alt="" coords="498,79,693,104"/>
 <area shape="rect" id="node3" href="$main_8cpp.html" title="The main file of kspaceFirstOrder3D&#45;OMP. " alt="" coords="43,245,115,271"/>

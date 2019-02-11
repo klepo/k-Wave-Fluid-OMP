@@ -4,6 +4,6 @@
 <area shape="rect" id="node6" href="$class_base_index_matrix.html" title="Abstract base class for index based matrices defining basic interface. Higher dimensional matrices st..." alt="" coords="136,104,249,129"/>
 <area shape="rect" id="node3" href="$class_complex_matrix.html" title="The class for complex matrices. " alt="" coords="297,5,401,31"/>
 <area shape="rect" id="node5" href="$class_real_matrix.html" title="The class for real matrices. " alt="" coords="309,55,390,80"/>
-<area shape="rect" id="node4" href="$class_fftw_complex_matrix.html" title="Class implementing 3D and 1D Real&#45;To&#45;Complex and Complex&#45;To&#45;Real transforms using FFTW interface..." alt="" coords="449,5,576,31"/>
+<area shape="rect" id="node4" href="$class_fftw_complex_matrix.html" title="Class implementing ND and 1D Real&#45;To&#45;Complex and Complex&#45;To&#45;Real transforms using FFTW interface..." alt="" coords="449,5,576,31"/>
 <area shape="rect" id="node7" href="$class_index_matrix.html" title="The class for 64b unsigned integers (indices). It is used for linear and cuboid corners masks to get ..." alt="" coords="307,104,392,129"/>
 </map>

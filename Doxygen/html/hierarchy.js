@@ -21,7 +21,7 @@ var hierarchy =
     [ "DimensionSizes", "struct_dimension_sizes.html", null ],
     [ "Hdf5File", "class_hdf5_file.html", null ],
     [ "Hdf5FileHeader", "class_hdf5_file_header.html", null ],
-    [ "KSpaceFirstOrder3DSolver", "class_k_space_first_order3_d_solver.html", null ],
+    [ "KSpaceFirstOrderSolver", "class_k_space_first_order_solver.html", null ],
     [ "Logger", "class_logger.html", null ],
     [ "MatrixContainer", "class_matrix_container.html", null ],
     [ "MatrixRecord", "struct_matrix_record.html", null ],
