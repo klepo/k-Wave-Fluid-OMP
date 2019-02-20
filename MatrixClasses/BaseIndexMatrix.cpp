@@ -8,10 +8,10 @@
  *
  * @brief     The implementation file containing the base class for index matrices (based on the size_t datatype).
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      26 July      2011, 14:17 (created) \n
- *            09 January   2019, 10:58 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

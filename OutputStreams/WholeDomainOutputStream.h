@@ -8,10 +8,10 @@
  *
  * @brief     The header file of the class saving whole RealMatrix into the output HDF5 file, e.g. p_max_all.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      26 August    2017, 16:55 (created) \n
- *            07 January   2019, 18:39 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

@@ -40,7 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Containers/OutputStreamContainer.o \
 	${OBJECTDIR}/Hdf5/Hdf5File.o \
 	${OBJECTDIR}/Hdf5/Hdf5FileHeader.o \
-	${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o \
+	${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrderSolver.o \
 	${OBJECTDIR}/Logger/Logger.o \
 	${OBJECTDIR}/MatrixClasses/BaseFloatMatrix.o \
 	${OBJECTDIR}/MatrixClasses/BaseIndexMatrix.o \
@@ -118,10 +118,10 @@ ${OBJECTDIR}/Hdf5/Hdf5FileHeader.o: Hdf5/Hdf5FileHeader.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hdf5/Hdf5FileHeader.o Hdf5/Hdf5FileHeader.cpp
 
-${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o: KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
+${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrderSolver.o: KSpaceSolver/KSpaceFirstOrderSolver.cpp
 	${MKDIR} -p ${OBJECTDIR}/KSpaceSolver
 	${RM} "$@.d"
-	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrder3DSolver.o KSpaceSolver/KSpaceFirstOrder3DSolver.cpp
+	$(COMPILE.cc) -Wall -I./ -I${EBROOTHDF5}/include -I${EBROOTFFTW}/include -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/KSpaceSolver/KSpaceFirstOrderSolver.o KSpaceSolver/KSpaceFirstOrderSolver.cpp
 
 ${OBJECTDIR}/Logger/Logger.o: Logger/Logger.cpp
 	${MKDIR} -p ${OBJECTDIR}/Logger

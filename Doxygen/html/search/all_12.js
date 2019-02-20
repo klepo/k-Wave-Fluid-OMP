@@ -11,7 +11,7 @@ var searchData=
   ['writehyperslab',['writeHyperSlab',['../class_hdf5_file.html#a6967bff33507f44a57e1a397acf3bbcb',1,'Hdf5File']]],
   ['writematrixdatatype',['writeMatrixDataType',['../class_hdf5_file.html#a9e1f04c286dba6a6afe9821a402e7243',1,'Hdf5File']]],
   ['writematrixdomaintype',['writeMatrixDomainType',['../class_hdf5_file.html#a2719b646df65c46962bc101954d23371',1,'Hdf5File']]],
-  ['writeoutputdatainfo',['writeOutputDataInfo',['../class_k_space_first_order3_d_solver.html#a60746fc685099351ac780e6593855943',1,'KSpaceFirstOrder3DSolver']]],
+  ['writeoutputdatainfo',['writeOutputDataInfo',['../class_k_space_first_order_solver.html#afb708f7330a5b5b64a6456cb8bfc92fc',1,'KSpaceFirstOrderSolver']]],
   ['writescalarvalue',['writeScalarValue',['../class_hdf5_file.html#acb2a105dfb942edf47c9dfaa9f9736ae',1,'Hdf5File']]],
   ['writesensorbymasktohyperslab',['writeSensorByMaskToHyperSlab',['../class_hdf5_file.html#a667746624294c81046bc04ee3971d423',1,'Hdf5File']]],
   ['writestringattribute',['writeStringAttribute',['../class_hdf5_file.html#a0bf4466acb32565bcc8935a228544cb6',1,'Hdf5File']]]

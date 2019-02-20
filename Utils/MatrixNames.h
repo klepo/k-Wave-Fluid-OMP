@@ -8,10 +8,10 @@
  *
  * @brief     The header file storing names of all variables.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      14 September  2012, 14:33 (created) \n
- *            13 January    2019, 19:21 (revised)
+ *            20 February   2019, 14:54 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -321,12 +321,12 @@ MatrixName kUyFinalName = "uy_final";
 /// uz_final variable name
 MatrixName kUzFinalName = "uz_final";
 
-/// Temp_1_RS3D variable name
-MatrixName kTemp1Real3DName = "Temp_1_RS3D";
-/// Temp_2_RS3D variable name
-MatrixName kTemp2Real3DName = "Temp_2_RS3D";
-/// Temp_3_RS3D variable name
-MatrixName kTemp3Real3DName = "Temp_3_RS3D";
+/// Temp_1_RSND variable name
+MatrixName kTemp1RealNDName = "Temp_1_RSND";
+/// Temp_2_RSND variable name
+MatrixName kTemp2RealNDName = "Temp_2_RSND";
+/// Temp_3_RSND variable name
+MatrixName kTemp3RealNDName = "Temp_3_RSND";
 
 /// FFTW_shift_temp variable name
 MatrixName kFftwShiftTempName = "FFTW_shift_temp";

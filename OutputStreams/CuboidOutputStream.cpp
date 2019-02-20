@@ -9,10 +9,10 @@
  * @brief     The implementation file of classes responsible for storing output quantities based
  *            on the cuboid sensor mask into the output HDF5 file.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      26 August    2017, 17:03 (created) \n
- *            07 January   2019, 18:37 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

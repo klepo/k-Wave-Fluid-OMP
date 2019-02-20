@@ -1,6 +1,8 @@
 var _output_messages_linux_8h =
 [
     [ "OutputMessage", "_output_messages_linux_8h.html#afb86c1ae07fe484f97713a779f5098df", null ],
+    [ "kOutFmt2DDomainSizeFormat", "_output_messages_linux_8h.html#af51f7393a98cc6f5ddf78fc435424ebe", null ],
+    [ "kOutFmt3DDomainSizeFormat", "_output_messages_linux_8h.html#a80e084aa020ee86a31cf5c88b5afee7b", null ],
     [ "kOutFmtAVX", "_output_messages_linux_8h.html#aee0f9c82dbe8145707319cece7b09db9", null ],
     [ "kOutFmtAVX2", "_output_messages_linux_8h.html#ac4cf7096917f67c9056b031fa6b41f63", null ],
     [ "kOutFmtBenchmarkTimeStep", "_output_messages_linux_8h.html#ae23173e661c5685ca2d24588bf7cb5fb", null ],
@@ -18,7 +20,6 @@ var _output_messages_linux_8h =
     [ "kOutFmtCurrentMemory", "_output_messages_linux_8h.html#ac5b5bd92da7c083136fe5912c9b4562e", null ],
     [ "kOutFmtDataLoading", "_output_messages_linux_8h.html#ae752cabddf77badb65239d0bb9a78dd5", null ],
     [ "kOutFmtDomainSize", "_output_messages_linux_8h.html#af5843a73ebf40601a9ba3067ec457b4d", null ],
-    [ "kOutFmtDomainSizeFormat", "_output_messages_linux_8h.html#a6baecee0d210a06621670520571e6bc5", null ],
     [ "kOutFmtDone", "_output_messages_linux_8h.html#acb0327268fe7c7573807397ba704023b", null ],
     [ "kOutFmtElapsedTime", "_output_messages_linux_8h.html#a6a72327c0a0fdfd22e7a8c027e73911a", null ],
     [ "kOutFmtEndOfSimulation", "_output_messages_linux_8h.html#a57ba428a4555c1fef4bb1cd4beb47016", null ],

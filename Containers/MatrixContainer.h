@@ -8,10 +8,10 @@
  *
  * @brief     The header file containing the matrix container.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      14 September 2012, 14:33 (created) \n
- *            13 January   2019, 19:15 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -51,7 +51,7 @@ class MatrixContainer
   public:
     /**
      * @enum  MatrixIdx
-     * @brief Matrix identifers of all matrices in the k-space code.
+     * @brief Matrix identifers of all matrices in the 2D and 3D fluid k-space code.
      */
     enum class MatrixIdx
     {
@@ -183,12 +183,12 @@ class MatrixContainer
       /// Negative shift for non-staggered velocity in z.
       kZShiftNegR,
 
-      /// 3D temporary matrix.
-      kTemp1Real3D,
-      /// 3D temporary matrix.
-      kTemp2Real3D,
-      /// 3D temporary matrix.
-      kTemp3Real3D,
+      /// 2D or 3D temporary matrix.
+      kTemp1RealND,
+      /// 2D or 3D temporary matrix.
+      kTemp2RealND,
+      /// 2D or 3D temporary matrix.
+      kTemp3RealND,
       /// Temporary matrix for 1D fft in x.
       kTempFftwX,
       /// Temporary matrix for 1D fft in y.
@@ -249,6 +249,9 @@ class MatrixContainer
       return static_cast<T&> (*(mContainer[matrixIdx].matrixPtr));
     };
 
+    /// Populate the container with matrices based on the simulation type.
+    void init();
+
     /**
      * @brief Create all matrix objects in the container.
      * @throw std::bad_alloc        - Usually due to out of memory.
@@ -256,8 +259,6 @@ class MatrixContainer
      * @throw std::invalid_argument - If matrix type is unknown.
      */
     void createMatrices();
-    /// Populate the container based on the simulation type.
-    void addMatrices();
     /// Destroy and free all matrices.
     void freeMatrices();
 

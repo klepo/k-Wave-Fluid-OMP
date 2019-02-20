@@ -9,10 +9,10 @@
  * @brief     The header file containing the class processing file headers.
  *            Detail about the file header are described below.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            09 January   2019, 11:25 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @section   Hdf5FileHeader HDF5 File Header Structure
  *
@@ -94,7 +94,6 @@ class Hdf5FileHeader
      * @enum    FileHeaderItems
      * @brief   List of all header items.
      * @details List of all header items.
-     * @todo    In the future, we should add number of GPUs, peak GPU memory.
      */
     enum class FileHeaderItems
     {

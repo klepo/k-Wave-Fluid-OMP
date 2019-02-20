@@ -8,10 +8,10 @@
  *
  * @brief     The header file containing the parameters of the simulation.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      08 December  2011, 16:34 (created) \n
- *            13 January   2019, 17:44 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -66,8 +66,8 @@ class Parameters
 
     /**
      * @enum    SourceMode
-     * @brief   Source mode (dirichlet, additive, additive-no-correction
-     * @details The enum is based on the matlab definition
+     * @brief   Source mode (dirichlet, additive, additive-no-correction.
+     * @details The enum is based on the matlab definition.
      */
     enum class SourceMode
     {
@@ -78,6 +78,20 @@ class Parameters
       /// Additive source condition
       kAdditive = 2
     };
+
+    /**
+     * @enum    SimulationDimension
+     * @brief   What is the simulation dimensionality.
+     * @details What is the simulation dimensionality.
+     */
+    enum class SimulationDimension
+    {
+      /// 2D simulation
+      k2D,
+      /// 3D simulation
+      k3D
+    };
+
 
     /// Copy constructor not allowed.
     Parameters(const Parameters&) = delete;
@@ -204,12 +218,30 @@ class Parameters
      * @return Dimension sizes of 3D real matrices.
      */
     DimensionSizes getFullDimensionSizes()    const { return mFullDimensionSizes;  };
-    ///
     /**
      * @brief  Get reduced dimension sizes of the simulation (complex classes).
      * @return Dimension sizes of reduced complex 3D matrices.
      */
     DimensionSizes getReducedDimensionSizes() const { return mReducedDimensionSizes; };
+
+    /**
+     * @brief  Is the simulation executed in 2 dimensions?
+     * @return True if the simulation space is 2D.
+     */
+    bool isSimulation2D()                     const { return mFullDimensionSizes.is2D(); };
+    /**
+     * @brief  Is the simulation executed in 3 dimensions.
+     * @return True if the simulation space is 3D.
+     */
+    bool isSimulation3D()                     const { return !isSimulation2D(); }
+    /**
+     * @brief Return the number of dimensions for the current simulations
+     * @return number of dimensions
+     */
+    SimulationDimension getSimulationDimension() const
+    {
+      return (isSimulation3D()) ? SimulationDimension::k3D : SimulationDimension::k2D;
+    };
 
     /**
      * @brief  Get total number of time steps.

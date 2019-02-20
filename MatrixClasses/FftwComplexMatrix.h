@@ -6,12 +6,12 @@
  *            Brno University of Technology \n
  *            jarosjir@fit.vutbr.cz
  *
- * @brief     The header file containing the class that implements 3D FFT using the FFTW interface
+ * @brief     The header file containing the class that implements various FFT using the FFTW interface
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      09 August    2011, 13:10 (created) \n
- *            09 January   2019, 10:55 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -38,9 +38,12 @@
 #include <MatrixClasses/ComplexMatrix.h>
 
 /**
- * @class FftwComplexMatrix
- * @brief   Class implementing 3D and 1D Real-To-Complex and Complex-To-Real transforms using FFTW interface.
- * @details Class implementing 3D and 1D Real-To-Complex and Complex-To-Real transforms using FFTW interface.
+ * @class   FftwComplexMatrix
+ * @brief   Class implementing ND and 1D Real-To-Complex and Complex-To-Real transforms using FFTW interface.
+ * @details Class implementing a single ND (3D, 2D) and many 1D Real-To-Complex and Complex-To-Real transforms
+ *          using FFTW interface.
+ * \li If the matrix is 3D the ND transform is 2D and the batch of 1D goes over the second and third domain.
+ * \li If the matrix is 2D the ND transform is ND and the batch of 1D goes over the second domain.
  *
  */
 class FftwComplexMatrix : public ComplexMatrix
@@ -62,29 +65,30 @@ class FftwComplexMatrix : public ComplexMatrix
     /// Operator = not allowed for public.
     FftwComplexMatrix & operator = (const FftwComplexMatrix& src);
 
-
     /**
-     * @brief Create FFTW plan for 3D Real-to-Complex.
+     * @brief Create FFTW plan for ND (2D/3D) Real-to-Complex.
      * @param [in] inMatrix      - Input matrix serving as scratch place for planning.
      * @throw std::runtime_error - If the plan can't be created.
      *
      * @warning Unless FFTW_ESTIMATE flag is specified, the content of the inMatrix is destroyed!
      */
-    void createR2CFftPlan3D(RealMatrix& inMatrix);
+    void createR2CFftPlanND(RealMatrix& inMatrix);
     /**
-     * @brief Create FFTW plan for 3D Complex-to-Real.
+     * @brief Create FFTW plan for ND (2D/3D) Complex-to-Real.
      * @param [in] outMatrix     - Output matrix serving as scratch place for planning.
      * @throw std::runtime_error - If the plan can't be created.
      *
      * @warning Unless FFTW_ESTIMATE flag is specified, the content of the outMatrix is destroyed!
      */
-    void createC2RFftPlan3D(RealMatrix& outMatrix);
+    void createC2RFftPlanND(RealMatrix& outMatrix);
 
     /**
      * @brief Create an FFTW plan for 1D Real-to-Complex in the x dimension.
      *
-     * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build! \n
+     * There are two versions of this routine for GCC + FFTW and ICPC + MKL, otherwise it will not build! \n
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can be used for both 2D and 3D simulations.
      *
      * @param [in,out] inMatrix  - RealMatrix of which to create the plan.
      * @throw std::runtime_error - If the plan can't be created.
@@ -95,8 +99,10 @@ class FftwComplexMatrix : public ComplexMatrix
     /**
      * @brief Create an FFTW plan for 1D Real-to-Complex in the y dimension.
      *
-     * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build! \n
+     * There are two versions of this routine for GCC + FFTW and ICPC + MKL, otherwise it will not build! \n
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can be used for both 2D and 3D simulations.
      *
      * @param   [in,out] inMatrix  - RealMatrix of which to create the plan.
      * @throw   std::runtime_error - If the plan can't be created.
@@ -109,8 +115,10 @@ class FftwComplexMatrix : public ComplexMatrix
     /**
      * @brief Create an FFTW plan for 1D Real-to-Complex in the z dimension.
      *
-     * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build! \n
+     * There are two versions of this routine for GCC + FFTW and ICPC + MKL, otherwise it will not build! \n
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can only be used for both 3D simulations.
      *
      * @param   [in,out] inMatrix  - RealMatrix of which to create the plan.
      * @throw   std::runtime_error - If the plan can't be created.
@@ -124,8 +132,10 @@ class FftwComplexMatrix : public ComplexMatrix
     /**
      * @brief Create FFTW plan for Complex-to-Real in the x dimension.
      *
-     * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build! \n
+     * There are two versions of this routine for GCC + FFTW and ICPC + MKL, otherwise it will not build! \n
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can be used for both 2D and 3D simulations.
      *
      * @param [in, out] outMatrix - RealMatrix of which to create the plan.
      * @throw std::runtime_error  - If the plan can't be created.
@@ -136,8 +146,10 @@ class FftwComplexMatrix : public ComplexMatrix
     /**
      * @brief Create FFTW plan for Complex-to-Real in the y dimension.
      *
-     * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build! \n
+     * There are two versions of this routine for GCC + FFTW and ICPC + MKL, otherwise it will not build! \n
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can be used for both 2D and 3D simulations.
      *
      * @param [in, out] outMatrix - RealMatrix of which to create the plan.
      * @throw std::runtime_error  - If the plan can't be created.
@@ -148,8 +160,10 @@ class FftwComplexMatrix : public ComplexMatrix
     /**
      * @brief Create FFTW plan for Complex-to-Real in the z dimension.
      *
-     * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build! \n
+     * There are two versions of this routine for GCC + FFTW and ICPC + MKL, otherwise it will not build! \n
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can only be used for both 3D simulations.
      *
      * @param [in, out] outMatrix - RealMatrix of which to create the plan.
      * @throw std::runtime_error  - If the plan can't be created.
@@ -161,25 +175,27 @@ class FftwComplexMatrix : public ComplexMatrix
 
 
     /**
-     * @brief Compute forward out-of-place 3D Real-to-Complex FFT.
+     * @brief Compute forward out-of-place ND (2D/3D) Real-to-Complex FFT.
      *
      * @param [in] inMatrix      - Input data for the forward FFT.
      * @throw std::runtime_error - If the plan is not valid.
      */
-    void computeR2CFft3D(RealMatrix& inMatrix);
+    void computeR2CFftND(RealMatrix& inMatrix);
     /**
-     * @brief Compute forward out-of-place 3D Complex-to-Real FFT.
+     * @brief Compute forward out-of-place ND (2D/3D) Complex-to-Real FFT.
      *
      * @param [out] outMatrix    - Output of the inverse FFT.
      * @throw std::runtime_error - If the plan is not valid.
      */
-    void computeC2RFft3D(RealMatrix& outMatrix);
+    void computeC2RFftND(RealMatrix& outMatrix);
 
     /**
      * @brief Compute 1D out-of-place Real-to-Complex FFT in the x dimension.
      *
      * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can be used for both 2D and 3D simulations.
      *
      * @param [in] inMatrix      - Input matrix
      * @throw std::runtime_error - If the plan is not valid.
@@ -191,6 +207,8 @@ class FftwComplexMatrix : public ComplexMatrix
      * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
      *
+     * This routine can be used for both 2D and 3D simulations.
+     *
      * @param [in] inMatrix      - Input matrix
      * @throw std::runtime_error - If the plan is not valid.
      */
@@ -200,6 +218,8 @@ class FftwComplexMatrix : public ComplexMatrix
      *
      * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can ony be used for 3D simulations.
      *
      * @param [in] inMatrix      - Input matrix
      * @throw std::runtime_error - If the plan is not valid.
@@ -212,6 +232,8 @@ class FftwComplexMatrix : public ComplexMatrix
      * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
      *
+     * This routine can be used for both 2D and 3D simulations.
+     *
      * @param [out] outMatrix    - Output matrix
      * @throw std::runtime_error - If the plan is not valid.
      */
@@ -222,6 +244,8 @@ class FftwComplexMatrix : public ComplexMatrix
      * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
      *
+     * This routine can be used for both 2D and 3D simulations.
+     *
      * @param [out] outMatrix    - Output matrix
      * @throw std::runtime_error - If the plan is not valid.
      */
@@ -231,6 +255,8 @@ class FftwComplexMatrix : public ComplexMatrix
      *
      * There are two versions of this routine for GCC+FFTW and ICPC + MKL, otherwise it will not build!
      * The FFTW version processes the whole matrix at one while the MKL slab by slab.
+     *
+     * This routine can only be used for 3D simulations.
      *
      * @param [out] outMatrix      Output matrix
      * @throw std::runtime_error - If the plan is not valid.
@@ -269,22 +295,22 @@ protected:
     static const std::string kFftWisdomFileExtension;// = "FFTW_Wisdom";
 
     /// FFTW plan for the 3D Real-to-Complex transform.
-    fftwf_plan mR2CFftPlan3D;
+    fftwf_plan mR2CFftPlanND;
     /// FFTW plan for the 3D Complex-to-Real transform.
-    fftwf_plan mC2RFftPlan3D;
+    fftwf_plan mC2RFftPlanND;
 
     /// FFTW plan for the 1D Real-to-Complex transform in the x dimension.
     fftwf_plan mR2CFftPlan1DX;
-    /// FFTW plan for the 3D Real-to-Complex transform in the y dimension.
+    /// FFTW plan for the 1D Real-to-Complex transform in the y dimension.
     fftwf_plan mR2CFftPlan1DY;
-    /// FFTW plan for the 3D Real-to-Complex transform in the z dimension.
+    /// FFTW plan for the 1D Real-to-Complex transform in the z dimension.
     fftwf_plan mR2CFftPlan1DZ;
 
-    /// FFTW plan for the 3D Complex-to-Real transform in the x dimension.
+    /// FFTW plan for the 1D Complex-to-Real transform in the x dimension.
     fftwf_plan mC2RFftPlan1DX;
-    /// FFTW plan for the 3D Complex-to-Real transform in the y dimension.
+    /// FFTW plan for the 1D Complex-to-Real transform in the y dimension.
     fftwf_plan mC2RFftPlan1DY;
-    /// FFTW plan for the 3Z Complex-to-Real transform in the z dimension.
+    /// FFTW plan for the 1D Complex-to-Real transform in the z dimension.
     fftwf_plan mC2RFftPlan1DZ;
 
 private:

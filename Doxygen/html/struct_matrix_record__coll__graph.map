@@ -1,6 +1,6 @@
 <map id="MatrixRecord" name="MatrixRecord">
 <area shape="rect" id="node2" title="STL class. " alt="" coords="27,93,101,119"/>
 <area shape="rect" id="node3" title="STL class. " alt="" coords="5,5,123,44"/>
-<area shape="rect" id="node4" href="$struct_dimension_sizes.html" title="Structure with 4D dimension sizes (3 in space and 1 in time). " alt="" coords="126,93,237,119"/>
+<area shape="rect" id="node4" href="$struct_dimension_sizes.html" title="Structure with 4D dimension sizes (up to 3 in space and 1 in time). " alt="" coords="126,93,237,119"/>
 <area shape="rect" id="node5" href="$class_base_matrix.html" title="Abstract base class. The common ancestor defining the common interface and allowing derived classes t..." alt="" coords="261,93,344,119"/>
 </map>

@@ -8,10 +8,10 @@
  *
  * @brief     The header file containing all linux specific messages going to the standard output.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            09 January   2019, 13:04 (revised)
+ *            20 February  2019, 14:40 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -68,7 +68,7 @@ OutputMessage kOutFmtVerticalLine
 
 /// Output message
 OutputMessage kOutFmtCodeName
-  = "│                  %s                  │\n";
+  = "│                   %s                   │\n";
 /// Output message
 OutputMessage kOutFmtNumberOfThreads
   = "│ Number of CPU threads:                              %9lu │\n";
@@ -136,9 +136,11 @@ OutputMessage kOutFmtReadingConfiguration
 OutputMessage kOutFmtDomainSize
   = "│ Domain dimensions: %42s │\n";
 ///Output message
-OutputMessage kOutFmtDomainSizeFormat
+OutputMessage kOutFmt3DDomainSizeFormat
   = "%lu x %lu x %lu";
-
+///Output message
+OutputMessage kOutFmt2DDomainSizeFormat
+  = "%lu x %lu";
 
 ///Output message
 OutputMessage kOutFmtSimulatoinLenght
@@ -155,7 +157,7 @@ OutputMessage kOutFmtGitHashLeft
 
 ///Output message
 OutputMessage kOutFmtKWaveVersion
-  = "kspaceFirstOrder3D-OMP v1.3";
+  = "kspaceFirstOrder-OMP v1.3";
 
 ///Output message
 OutputMessage kOutFmtFftPlans
@@ -257,7 +259,7 @@ OutputMessage kOutFmtCopySensorMask
 OutputMessage kOutFmtBuildNoDataTime
   = "│                       Build information                       │\n"
     "├───────────────────────────────────────────────────────────────┤\n"
-    "│ Build number:     kspaceFirstOrder3D v2.17                    │\n"
+    "│ Build number:     kspaceFirstOrder v2.17                      │\n"
     "│ Build date:       %*.*s                                 │\n"
     "│ Build time:       %*.*s                                    │\n";
 

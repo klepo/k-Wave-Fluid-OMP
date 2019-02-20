@@ -8,10 +8,10 @@
  *
  * @brief     The implementation file of the class saving RealMatrix data into the output HDF5 file.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      11 July      2012, 10:30 (created) \n
- *            07 January   2019, 18:36 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

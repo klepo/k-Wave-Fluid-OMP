@@ -8,10 +8,10 @@
  *
  * @brief     The implementation file containing the HDF5 related classes.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      27 July      2012, 14:14 (created) \n
- *            09 January   2019, 11:28 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -245,23 +245,13 @@ hid_t Hdf5File::createDataset(const hid_t                    parentGroup,
                               const Hdf5File::MatrixDataType matrixDataType,
                               const size_t                   compressionLevel)
 {
-  const int rank = (dimensionSizes.is3D()) ? 3 : 4;
+  const int rank = (dimensionSizes.is4D()) ? 4 : 3;
 
   hsize_t dims [4];
   hsize_t chunk[4];
 
-  // 3D dataset
-  if (dimensionSizes.is3D())
-  {
-    dims[0] = dimensionSizes.nz;
-    dims[1] = dimensionSizes.ny;
-    dims[2] = dimensionSizes.nx;
-
-    chunk[0] = chunkSizes.nz;
-    chunk[1] = chunkSizes.ny;
-    chunk[2] = chunkSizes.nx;
-  }
-  else // 4D dataset
+  // 4D dataset
+  if (dimensionSizes.is4D())
   {
     dims[0] = dimensionSizes.nt;
     dims[1] = dimensionSizes.nz;
@@ -272,6 +262,16 @@ hid_t Hdf5File::createDataset(const hid_t                    parentGroup,
     chunk[1] = chunkSizes.nz;
     chunk[2] = chunkSizes.ny;
     chunk[3] = chunkSizes.nx;
+  }
+  else
+  { // 3D datasets
+    dims[0] = dimensionSizes.nz;
+    dims[1] = dimensionSizes.ny;
+    dims[2] = dimensionSizes.nx;
+
+    chunk[0] = chunkSizes.nz;
+    chunk[1] = chunkSizes.ny;
+    chunk[2] = chunkSizes.nx;
   }
 
   hid_t  propertyList;

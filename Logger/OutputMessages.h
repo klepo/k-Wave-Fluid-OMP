@@ -8,10 +8,10 @@
  *
  * @brief     The header file including output messages based on the operating system.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            09 January   2019, 11:06 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

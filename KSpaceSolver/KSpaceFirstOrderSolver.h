@@ -1,5 +1,5 @@
 /**
- * @file      KSpaceFirstOrder3DSolver.h
+ * @file      KSpaceFirstOrderSolver.h
  *
  * @author    Jiri Jaros \n
  *            Faculty of Information Technology\n
@@ -8,10 +8,10 @@
  *
  * @brief     The header file containing the main class of the project responsible for the entire simulation.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      12 July      2012, 10:27 (created)\n
- *            13 January   2019, 20:02 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -29,8 +29,8 @@
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
-#ifndef KSPACE_FIRST_ORDER_3D_SOLVER_H
-#define KSPACE_FIRST_ORDER_3D_SOLVER_H
+#ifndef KSPACE_FIRST_ORDER_SOLVER_H
+#define KSPACE_FIRST_ORDER_SOLVER_H
 
 
 #include <Parameters/Parameters.h>
@@ -47,23 +47,23 @@
 #include <Utils/TimeMeasure.h>
 
 /**
- * @class   KSpaceFirstOrder3DSolver
- * @brief   Class responsible for running the k-space first order 3D method.
- * @details Class responsible for running the k-space first order 3D method. This class maintain
+ * @class   KSpaceFirstOrderSolver
+ * @brief   Class responsible for running the k-space first order method in 2D and 3D media.
+ * @details Class responsible for running the k-space first order method in 2D and 3D media. This class maintain
  *          the whole k-wave (implements the time loop).
  *
  */
-class KSpaceFirstOrder3DSolver
+class KSpaceFirstOrderSolver
 {
   public:
     /// Constructor.
-    KSpaceFirstOrder3DSolver();
+    KSpaceFirstOrderSolver();
     /// Copy constructor not allowed for public.
-    KSpaceFirstOrder3DSolver(const KSpaceFirstOrder3DSolver&) = delete;
+    KSpaceFirstOrderSolver(const KSpaceFirstOrderSolver&) = delete;
     /// Destructor.
-    virtual ~KSpaceFirstOrder3DSolver();
+    virtual ~KSpaceFirstOrderSolver();
     /// operator= not allowed for public.
-    KSpaceFirstOrder3DSolver& operator=(const KSpaceFirstOrder3DSolver&) = delete;
+    KSpaceFirstOrderSolver& operator=(const KSpaceFirstOrderSolver&) = delete;
 
     /// Memory allocation.
     virtual void allocateMemory();
@@ -77,10 +77,10 @@ class KSpaceFirstOrder3DSolver
      */
     virtual void loadInputData();
     /**
-     * @brief This method computes k-space First Order 3D simulation.
+     * @brief This method computes k-space First Order 2D/3D simulation.
      *
-     * This method computes k-space First Order 3D simulation. It launches calculation on a given
-     * dataset going through FFT initialization, pre-processing, main loop and post-processing phases.
+     * It launches calculation on a given dataset going through FFT initialization, pre-processing, main loop and
+     * post-processing phases.
      */
     virtual void compute();
 
@@ -164,14 +164,19 @@ class KSpaceFirstOrder3DSolver
     void InitializeFftwPlans();
 
     /**
-     * @brief Compute pre-processing phase.
+     * @brief  Compute pre-processing phase.
+     * @tparam simulationDimension - Dimensionality of the simulation.
      *
      * Initialize all indices, pre-compute constants such as c^2, rho0Sgx * dt  and create kappa,
      * absorbEta, absorbTau, absorbNabla1, absorbNabla2  matrices.
-     *
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void preProcessing();
-    /// Compute the main time loop of the kspaceFirstOrder3D.
+    /**
+     * @brief Compute the main time loop of the kspaceFirstOrder solver.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeMainLoop();
     /// Post processing, and closing the output streams.
     void postProcessing();
@@ -183,41 +188,113 @@ class KSpaceFirstOrder3DSolver
     /// Save checkpoint data and flush aggregated outputs into the output file.
     void saveCheckpointData();
 
+    /**
+     * @brief  Compute new values of acoustic velocity in all used dimensions (UxSgx, UySgy, UzSgz).
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b>Matlab code:</b> \code
+     *  p_k = fftn(p);
+     *  ux_sgx = bsxfun(@times, pml_x_sgx, ...
+     *       bsxfun(@times, pml_x_sgx, ux_sgx) ...
+     *       - dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) ...
+     *       );
+     *  uy_sgy = bsxfun(@times, pml_y_sgy, ...
+     *       bsxfun(@times, pml_y_sgy, uy_sgy) ...
+     *       - dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) ...
+     *       );
+     *  uz_sgz = bsxfun(@times, pml_z_sgz, ...
+     *       bsxfun(@times, pml_z_sgz, uz_sgz) ...
+     *       - dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) ...
+     *       );
+     \endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
+    void computeVelocity();
 
     /**
-     * @brief Compute new values of acoustic velocity in all three dimensions (UxSgx, UySgy, UzSgz).
+     * @brief  Compute new values of acoustic velocity gradients.
+     * @tparam simulationDimension - Dimensionality of the simulation.
      *
-     * <b>Matlab code:</b> \n
-     *
-     * \verbatim
-        p_k = fftn(p);
-        ux_sgx = bsxfun(@times, pml_x_sgx, ...
-             bsxfun(@times, pml_x_sgx, ux_sgx) ...
-             - dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) ...
-             );
-        uy_sgy = bsxfun(@times, pml_y_sgy, ...
-             bsxfun(@times, pml_y_sgy, uy_sgy) ...
-             - dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) ...
-             );
-        uz_sgz = bsxfun(@times, pml_z_sgz, ...
-             bsxfun(@times, pml_z_sgz, uz_sgz) ...
-             - dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) ...
-             );
-     \endverbatim
+     * <b>Matlab code:</b> \code
+     *  duxdx = real(ifftn( bsxfun(@times, ddx_k_shift_neg, kappa .* fftn(ux_sgx)) ));
+     *  duydy = real(ifftn( bsxfun(@times, ddy_k_shift_neg, kappa .* fftn(uy_sgy)) ));
+     *  duzdz = real(ifftn( bsxfun(@times, ddz_k_shift_neg, kappa .* fftn(uz_sgz)) ));
+     * \endcode
      */
-    void computeVelocity();
-    /// Compute new values of acoustic velocity gradients.
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocityGradient();
 
-
-    /// Compute new values of acoustic density for nonlinear case.
+    /**
+     * @brief  Compute new values of acoustic density for nonlinear case.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b>Matlab code:</b> \code
+     *  rho0_plus_rho = 2 .* (rhox + rhoy + rhoz) + rho0;
+     *  rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0_plus_rho .* duxdx);
+     *  rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0_plus_rho .* duydy);
+     *  rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0_plus_rho .* duzdz);
+     * \endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeDensityNonliner();
-    /// Compute new values of acoustic density for linear case.
+
+    /**
+     * @brief  Compute new values of acoustic density for linear case.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b>Matlab code:</b> \code
+     *  rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0 .* duxdx);
+     *  rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0 .* duydy);
+     *  rhoz = bsxfun(@times, pml_z, bsxfun(@times, pml_z, rhoz) - dt .* rho0 .* duzdz);
+     * \endcode
+     *
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeDensityLinear();
 
-    /// Compute acoustic pressure for nonlinear case.
+    /**
+     * @brief  Compute acoustic pressure for nonlinear case.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b>Matlab code:</b> \code
+     *  case 'lossless'
+     *
+     *      % calculate p using a nonlinear adiabatic equation of state
+     *      p = c.^2 .* (rhox + rhoy + rhoz + medium.BonA .* (rhox + rhoy + rhoz).^2 ./ (2 .* rho0));
+     *
+     *  case 'absorbing'
+     *      % calculate p using a nonlinear absorbing equation of state
+     *      p = c.^2 .* (...
+     *          (rhox + rhoy + rhoz) ...
+     *          + absorb_tau .* real(ifftn( absorb_nabla1 .* fftn(rho0 .* (duxdx + duydy + duzdz)) ))...
+     *          - absorb_eta .* real(ifftn( absorb_nabla2 .* fftn(rhox + rhoy + rhoz) ))...
+     *          + medium.BonA .*(rhox + rhoy + rhoz).^2 ./ (2 .* rho0) ...
+     *          );
+     * \endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computePressureNonlinear();
-    /// Compute acoustic pressure for linear case.
+
+    /**
+     * @brief  Compute acoustic pressure for linear case.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b>Matlab code:</b> \code
+     *  case 'lossless'
+     *
+     *      % calculate p using a linear adiabatic equation of state
+     *      p = c.^2 .* (rhox + rhoy + rhoz);
+     *
+     *  case 'absorbing'
+     *      % calculate p using a linear absorbing equation of state
+     *      p = c.^2 .* ( ...
+     *          (rhox + rhoy + rhoz) ...
+     *          + absorb_tau .* real(ifftn( absorb_nabla1 .* fftn(rho0 .* (duxdx + duydy + duzdz)) )) ...
+     *          - absorb_eta .* real(ifftn( absorb_nabla2 .* fftn(rhox + rhoy + rhoz) )) ...
+     *          );
+     *\endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computePressureLinear();
 
 
@@ -229,12 +306,35 @@ class KSpaceFirstOrder3DSolver
       * @param [in] velocitySourceInput - Source input to add.
       * @param [in] velocitySourceIndex - Source geometry index matrix.
       */
-     void computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
-                                    const RealMatrix&  velocitySourceInput,
-                                    const IndexMatrix& velocitySourceIndex);
-    /// Add in pressure source.
+    void computeVelocitySourceTerm(RealMatrix&        velocityMatrix,
+                                   const RealMatrix&  velocitySourceInput,
+                                   const IndexMatrix& velocitySourceIndex);
+
+    /**
+     * @brief  Add in pressure source.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void addPressureSource();
-    /// Calculate initial pressure source.
+    /**
+     * @brief Calculate initial pressure source.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b>Matlab code:</b> \code
+     *  % add the initial pressure to rho as a mass source
+     *  p = source.p0;
+     *  rhox = source.p0 ./ (3 .* c.^2);
+     *  rhoy = source.p0 ./ (3 .* c.^2);
+     *  rhoz = source.p0 ./ (3 .* c.^2);
+     *
+     *  % compute u(t = t1 + dt/2) based on the assumption u(dt/2) = -u(-dt/2)
+     *  % which forces u(t = t1) = 0
+     *  ux_sgx = dt .* rho0_sgx_inv .* real(ifftn( bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)) )) / 2;
+     *  uy_sgy = dt .* rho0_sgy_inv .* real(ifftn( bsxfun(@times, ddy_k_shift_pos, kappa .* fftn(p)) )) / 2;
+     *  uz_sgz = dt .* rho0_sgz_inv .* real(ifftn( bsxfun(@times, ddz_k_shift_pos, kappa .* fftn(p)) )) / 2;
+     * \endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void addInitialPressureSource();
     /// Add transducer data source to velocity x component.
     void addTransducerSource();
@@ -248,119 +348,131 @@ class KSpaceFirstOrder3DSolver
     void generateKappaAndNablas();
     /// Generate absorbTau, absorbEta for heterogenous medium.
     void generateTauAndEta();
-    /// Calculate dt ./ rho0 for nonuniform grids.
+
+    /**
+     * @brief Calculate dt ./ rho0 for nonuniform grids.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void generateInitialDenisty();
     /// Calculate square of velocity
     void computeC2();
 
     /**
-    * @brief Compute velocity for the initial pressure problem, heterogeneous medium, uniform grid.
-    *
-    * <b> Matlab code: </b>
-    *
-    * \verbatim
-        ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
-        uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
-        uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
-     \endverbatim
+     * @brief  Compute velocity for the initial pressure problem, heterogeneous medium, uniform grid.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b> Matlab code: </b> \code
+     *  ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
+     *  uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
+     *  uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
+     * \endcode
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeInitialVelocityHeterogeneous();
-
-   /**
-    * @brief Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
-    *
-    * <b> Matlab code: </b>
-    *
-    * \verbatim
-        ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
-        uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
-        uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
-    \endverbatim
-    *
-    */
-    void computeInitialVelocityHomogeneousUniform();
-
     /**
-    * @brief Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
-    *
-    * <b> Matlab code: </b>
-    *
-    * \verbatim
-        ux_sgx = dt ./ rho0_sgx .* dxudxn_sgx .* ifft(ux_sgx)
-        uy_sgy = dt ./ rho0_sgy .* dyudxn_sgy .* ifft(uy_sgy)
-        uz_sgz = dt ./ rho0_sgz .* dzudzn_sgz .* ifft(uz_sgz)
-    \endverbatim
-    *
-    */
-   void computeInitialVelocityHomogeneousNonuniform();
-
-    /**
-     * @brief Compute acoustic velocity for heterogeneous medium and a uniform grid.
+     * @brief  Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
+     * @tparam simulationDimension - Dimensionality of the simulation.
      *
-     * <b> Matlab code: </b>
-     *
-     * \verbatim
-        ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx) - dt .* rho0_sgx_inv .* real(ifftX)
-        uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) - dt .* rho0_sgy_inv .* real(ifftY)
-        uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz) - dt .* rho0_sgz_inv .* real(ifftZ)
-      \endverbatim
+     * <b> Matlab code: </b> \code
+     *  ux_sgx = dt ./ rho0_sgx .* ifft(ux_sgx).
+     *  uy_sgy = dt ./ rho0_sgy .* ifft(uy_sgy).
+     *  uz_sgz = dt ./ rho0_sgz .* ifft(uz_sgz).
+     * \endcode
      *
      */
+     template<Parameters::SimulationDimension simulationDimension>
+     void computeInitialVelocityHomogeneousUniform();
+    /**
+     * @brief  Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b> Matlab code: </b> \code
+     *  ux_sgx = dt ./ rho0_sgx .* dxudxn_sgx .* ifft(ux_sgx)
+     *  uy_sgy = dt ./ rho0_sgy .* dyudxn_sgy .* ifft(uy_sgy)
+     *  uz_sgz = dt ./ rho0_sgz .* dzudzn_sgz .* ifft(uz_sgz)
+     * \endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
+    void computeInitialVelocityHomogeneousNonuniform();
+
+    /**
+     * @brief  Compute acoustic velocity for heterogeneous medium and a uniform grid.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b> Matlab code: </b> \code
+     *  ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx) - dt .* rho0_sgx_inv .* real(ifftX)
+     *  uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) - dt .* rho0_sgy_inv .* real(ifftY)
+     *  uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz) - dt .* rho0_sgz_inv .* real(ifftZ)
+     * \endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocityHeterogeneous();
 
     /**
-     * @brief Compute acoustic velocity for homogeneous medium and a uniform grid.
+     * @brief  Compute acoustic velocity for homogeneous medium and a uniform grid.
+     * @tparam simulationDimension - Dimensionality of the simulation.
      *
-     * <b> Matlab code: </b>
-     *
-     * \verbatim
-        ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx) - dt .* rho0_sgx_inv .* real(ifftX)
-        uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) - dt .* rho0_sgy_inv .* real(ifftY)
-        uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz) - dt .* rho0_sgz_inv .* real(ifftZ)
-      \endverbatim
-     *
+     * <b> Matlab code: </b> \code
+     *  ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx) - dt .* rho0_sgx_inv .* real(ifftX)
+     *  uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) - dt .* rho0_sgy_inv .* real(ifftY)
+     *  uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz) - dt .* rho0_sgz_inv .* real(ifftZ)
+     *\endcode
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocityHomogeneousUniform();
-
     /**
-     * @brief Compute acoustic velocity for homogenous medium and nonuniform grid.
+     * @brief  Compute acoustic velocity for homogenous medium and nonuniform grid.
+     * @tparam simulationDimension - Dimensionality of the simulation.
      *
-     * <b> Matlab code: </b>
-     *
-     * \verbatim
-        ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx)  ...
-                        - dt .* rho0_sgx_inv .* dxudxnSgx.* real(ifftX))
-        uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) ...
-                        - dt .* rho0_sgy_inv .* dyudynSgy.* real(ifftY)
-        uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz)
-                        - dt .* rho0_sgz_inv .* dzudznSgz.* real(ifftZ)
-      \endverbatim
+     * <b> Matlab code: </b> \code
+     *  ux_sgx = bsxfun(@times, pml_x_sgx, bsxfun(@times, pml_x_sgx, ux_sgx)  ...
+     *                  - dt .* rho0_sgx_inv .* dxudxnSgx.* real(ifftX))
+     *  uy_sgy = bsxfun(@times, pml_y_sgy, bsxfun(@times, pml_y_sgy, uy_sgy) ...
+     *                  - dt .* rho0_sgy_inv .* dyudynSgy.* real(ifftY)
+     *  uz_sgz = bsxfun(@times, pml_z_sgz, bsxfun(@times, pml_z_sgz, uz_sgz)
+     *                  - dt .* rho0_sgz_inv .* dzudznSgz.* real(ifftZ)
+     *\endcode
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeVelocityHomogeneousNonuniform();
 
-
-
-    /// Compute part of the new velocity term - gradient of pressure.
+    /**
+     * @brief  Compute part of the new velocity term - gradient of pressure.
+     * @tparam simulationDimension - Dimensionality of the simulation.*
+     *
+     * <b>Matlab code:</b> \code
+     *  bsxfun(\@times, ddx_k_shift_pos, kappa .* fftn(p))
+     * \endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computePressureGradient();
     /**
      * @brief Calculate three temporary sums in the new pressure formula before taking the FFT,
      *        nonlinear absorbing case.
+     *
+     * @tparam simulationDimension      - Dimensionality of the simulation.
      * @tparam bOnAScalarFlag           - is nonlinearity homogenous?
      * @tparam rho0ScalarFlag           - is density homogeneous?
      * @param [out] densitySum          - rhoX + rhoY + rhoZ
      * @param [out] nonlinearTerm       - BOnA + densitySum ^2 / 2 * rho0
      * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
      */
-    template<bool bOnAScalarFlag, bool rho0ScalarFlag>
+    template<Parameters::SimulationDimension simulationDimension,
+             bool bOnAScalarFlag,
+             bool rho0ScalarFlag>
     void computePressureTermsNonlinear(RealMatrix& densitySum,
                                        RealMatrix& nonlinearTerm,
                                        RealMatrix& velocityGradientSum);
     /**
      * @brief Calculate two temporary sums in the new pressure formula before taking the FFT,
      *        linear absorbing case.
+     *
+     * @tparam simulationDimension      - Dimensionality of the simulation.
      * @param [out] densitySum          - rhoxSgx + rhoySgy + rhozSgz
      * @param [out] velocityGradientSum - rho0* (duxdx + duydy + duzdz)
      */
+    template<Parameters::SimulationDimension simulationDimension>
     void computePressureTermsLinear(RealMatrix& densitySum,
                                     RealMatrix& velocityGradientSum);
 
@@ -402,16 +514,36 @@ class KSpaceFirstOrder3DSolver
 
     /**
      * @brief Sum sub-terms for new pressure, linear lossless case.
-     * @tparam c0ScalarFlag   - is sound speed homogeneous?
-     * @tparam nonlinearFlag  - is nonlinearity homogeneous?
-     * @tparam rho0ScalarFlag - is density homogeneous?
+     *
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     * @tparam c0ScalarFlag        - is sound speed homogeneous?
+     * @tparam nonlinearFlag       - is nonlinearity homogeneous?
+     * @tparam rho0ScalarFlag      - is density homogeneous?
      */
-    template<bool c0ScalarFlag, bool nonlinearFlag, bool rho0ScalarFlag>
+    template<Parameters::SimulationDimension simulationDimension,
+             bool c0ScalarFlag,
+             bool nonlinearFlag,
+             bool rho0ScalarFlag>
     void sumPressureTermsNonlinearLossless();
-    /// Sum sub-terms for new pressure, linear lossless case.
+
+    /**
+     * @brief Sum sub-terms for new pressure, linear lossless case.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void sumPressureTermsLinearLossless();
 
-    /// compute shifted velocity for --u_non_staggered flag.
+    /**
+     * @brief Compute shifted velocity for --u_non_staggered flag.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     *
+     * <b>Matlab code:</b> \code
+     *  ux_shifted = real(ifft(bsxfun(\@times, x_shift_neg, fft(ux_sgx, [], 1)), [], 1));
+     *  uy_shifted = real(ifft(bsxfun(\@times, y_shift_neg, fft(uy_sgy, [], 2)), [], 2));
+     *  uz_shifted = real(ifft(bsxfun(\@times, z_shift_neg, fft(uz_sgz, [], 3)), [], 3));
+     * \endcode
+     */
+    template<Parameters::SimulationDimension simulationDimension>
     void computeShiftedVelocity();
 
     /// Print progress statistics.
@@ -450,7 +582,6 @@ class KSpaceFirstOrder3DSolver
      * @param [in] dimensionSizes - Size of the matrix.
      * @return
      */
-
     size_t get1DIndex(const size_t          z,
                       const size_t          y,
                       const size_t          x,
@@ -942,28 +1073,29 @@ class KSpaceFirstOrder3DSolver
 
     //--------------------------------------------- Temporary matrices -----------------------------------------------//
     /**
-     * @brief  Get first real 3D temporary matrix.
-     * @return Temporary real 3D matrix.
+     * @brief  Get first real 2D/3D temporary matrix.
+     * @return Temporary real 2D/3D matrix.
      */
-    RealMatrix& getTemp1Real3D()
+    RealMatrix& getTemp1RealND()
     {
-      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp1Real3D);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp1RealND);
     };
     /**
-     * @brief  Get second real 3D temporary matrix.
-     * @return Temporary real 3D matrix.
+     * @brief  Get second real 2D/3D temporary matrix.
+     * @return Temporary real 2D/3D matrix.
      */
-    RealMatrix& getTemp2Real3D()
+    RealMatrix& getTemp2RealND()
     {
-      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp2Real3D);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp2RealND);
     };
     /**
-     * @brief  Get third real 3D temporary matrix.
+     * @brief  Get third real 3D temporary matrix.T
+     * This matrix is only present for 3D simulations,
      * @return Temporary real 3D matrix.
      */
-    RealMatrix& getTemp3Real3D()
+    RealMatrix& getTemp3RealND()
     {
-      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp3Real3D);
+      return mMatrixContainer.getMatrix<RealMatrix>(MatrixContainer::MatrixIdx::kTemp3RealND);
     };
 
     /**
@@ -1024,8 +1156,8 @@ class KSpaceFirstOrder3DSolver
     /// Iteration time of the simulation.
     TimeMeasure mIterationTime;
 
-};// end of KSpaceFirstOrder3DSolver
+};// end of KSpaceFirstOrderSolver
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* KSPACE_FIRST_ORDER_3D_SOLVER_H */
+#endif	/* KSPACE_FIRST_ORDER_SOLVER_H */
 

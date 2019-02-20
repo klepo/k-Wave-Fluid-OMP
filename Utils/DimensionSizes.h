@@ -6,12 +6,12 @@
  *            Brno University of Technology \n
  *            jarosjir@fit.vutbr.cz
  *
- * @brief     The header file containing the structure with 3D dimension sizes.
+ * @brief     The header file containing the structure with dimension sizes.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      09 August     2011, 12:34 (created) \n
- *            07 January    2019, 18:15 (revised)
+ *            20 February   2019, 14:54 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -35,70 +35,85 @@
 
 #include <cstdlib>
 
-#ifdef __AVX2__
+#if (defined(__AVX2__)) || (defined(__AVX__))
 /**
- * @var kDataAlignment
- * @brief memory alignment for AVX2 (32B)
+ * @var   kDataAlignment
+ * @brief Memory alignment for AVX and AVX2 (32B).
  */
 constexpr int kDataAlignment  = 32;
-#elif __AVX__
+#elif ((defined(__SSE4_2__)) || (defined(__SSE4_1__)) || (defined(__SSE3__))  || (defined(__SSE2__)))
 /**
- * @var kDataAlignment
- * @brief memory alignment for AVX (32B)
- */
-constexpr int kDataAlignment  = 32;
-#else
-
-/**
- * @var kDataAlignment
- * @brief memory alignment for SSE, SSE2, SSE3, SSE4 (16B)
+ * @var   kDataAlignment
+ * @brief Memory alignment for SSE2, SSE3, SSE4 (16B).
  */
 constexpr int kDataAlignment  = 16;
+#else
+  /**
+   * @var     kDataAlignment
+   * @brief   Default memory alignment.
+   * @details Default memory alignment is oriented on new, yet unknown, architectures with wider SIMD units, possible
+   *          512b.
+   */
+  constexpr int kDataAlignment  = 64;
 #endif
 
 /**
  * @struct  DimensionSizes
- * @brief   Structure with 4D dimension sizes (3 in space and 1 in time).
- * @details Structure with 4D dimension sizes (3 in space and 1 in time).
- * The structure can be used for 3D (the time is then set to 1). \n
+ * @brief   Structure with 4D dimension sizes (up to 3 in space and 1 in time).
+ * @details Structure containing dimension sizes. \n
+ *   \li 4D objects (Nx, Ny, Nz, Nt).
+ *   \li 3D objects (Nx, Ny, Nz, 0) - Nt must be 0. If we don't sample in time we make 3D datasets, otherwise 4D.
+ *   \li 2D objects (Nx, Ny,  1, 0) - Nt must be 1 and Nz must be 1 since all datasets are stored internally as 3D.
+ *
  * The structure contains only POD, so no C++ stuff is necessary.
  */
 struct DimensionSizes
 {
-  /// Default constructor.
+  /// Default constructor sets the.
   DimensionSizes() : nx(0), ny(0), nz(0), nt(0) {};
+
+  /// Default constructor.
+  ~DimensionSizes() = default;
 
   /**
    * @brief   Constructor.
    * @details Constructor.
    * @param [in] x, y, z, t - Three spatial dimensions and time.
    */
-  DimensionSizes(size_t x, size_t y, size_t z, size_t t = 0)
+  DimensionSizes(size_t x, size_t y, size_t z = 1, size_t t = 0)
     : nx(x), ny(y), nz(z), nt(t)
   {};
 
-
   /**
-   * @brief Get the number of elements, in 3D only spatial domain, in 4D with time.
-   * @details Get element count, in 3D only spatial domain, in 4D with time.
+   * @brief Get the number of elements in all dimensions.
+   * @details Get the number of elements in used dimension sizes,
    * @return the number of elements the domain holds.
    */
   inline size_t nElements() const
   {
-    return (is3D()) ? nx * ny * nz : nx * ny * nz * nt;
+    return (!is4D()) ? (nx * ny * nz) : (nx * ny * nz * nt);
   };
 
   /**
-   * @brief  Does the object include spatial dimensions only?
+   * @brief  Does the object only include 2 dimensions?
+   * @return true if the dimensions are 2D.
+   */
+  inline bool is2D() const
+  {
+    return ((nz == 1) && (nt == 0));
+  };
+
+  /**
+   * @brief  Does the object only include 3 spatial dimensions?
    * @return true if the dimensions are 3D.
    */
   inline bool is3D() const
   {
-    return (nt == 0);
+    return (nz > 1) && (nt == 0);
   };
 
   /**
-   * @brief  Does the object include spatial and temporal dimensions?
+   * @brief  Does the object include all spatial and temporal dimensions?
    * @return true if the dimensions are 4D.
    */
   inline bool is4D() const
@@ -139,7 +154,7 @@ struct DimensionSizes
                                          const DimensionSizes& op2)
   {
     // +1 because of planes (10.10.1 - 60.40.1)
-    if (op1.is3D() && op2.is3D())
+    if (!op1.is4D() && !op2.is4D())
     {
       return DimensionSizes(op1.nx - op2.nx + 1, op1.ny - op2.ny + 1, op1.nz - op2.nz + 1);
     }

@@ -1,15 +1,15 @@
 <map id="Parameters/Parameters.h" name="Parameters/Parameters.h">
-<area shape="rect" id="node2" href="$_k_space_first_order3_d_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="29,79,198,117"/>
+<area shape="rect" id="node2" href="$_k_space_first_order_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="29,79,198,117"/>
 <area shape="rect" id="node5" href="$_matrix_container_8cpp.html" title="The implementation file containing the matrix container. " alt="" coords="223,85,417,111"/>
 <area shape="rect" id="node6" href="$_output_stream_container_8cpp.html" title="The implementation file for the output stream container. " alt="" coords="441,85,679,111"/>
 <area shape="rect" id="node7" href="$_hdf5_file_8cpp.html" title="The implementation file containing the HDF5 related classes. " alt="" coords="703,85,823,111"/>
 <area shape="rect" id="node8" href="$_hdf5_file_header_8cpp.html" title="The implementation of the class responsible for working with file headers. " alt="" coords="847,85,1009,111"/>
-<area shape="rect" id="node9" href="$_fftw_complex_matrix_8cpp.html" title="The implementation file containing the class that implements 3D FFT using the FFTW interface..." alt="" coords="1033,79,1207,117"/>
+<area shape="rect" id="node9" href="$_fftw_complex_matrix_8cpp.html" title="The implementation file containing the class that implements various FFT using the FFTW interface..." alt="" coords="1033,79,1207,117"/>
 <area shape="rect" id="node10" href="$_base_output_stream_8cpp.html" title="The implementation file of the class saving RealMatrix data into the output HDF5 file. " alt="" coords="1231,79,1401,117"/>
 <area shape="rect" id="node11" href="$_cuboid_output_stream_8cpp.html" title="The implementation file of classes responsible for storing output quantities based on the cuboid sens..." alt="" coords="1426,79,1609,117"/>
 <area shape="rect" id="node12" href="$_index_output_stream_8cpp.html" title="The implementation file of the class saving data based on index senor mask into the output HDF5 file..." alt="" coords="1633,79,1805,117"/>
 <area shape="rect" id="node13" href="$_whole_domain_output_stream_8cpp.html" title="The implementation file of the class saving RealMatrix data into the output HDF5 file, e.g. p_max_all. " alt="" coords="1829,79,2013,117"/>
 <area shape="rect" id="node14" href="$_parameters_8cpp.html" title="The implementation file containing parameters of the simulation. " alt="" coords="2038,85,2213,111"/>
 <area shape="rect" id="node3" href="$main_8cpp.html" title="The main file of kspaceFirstOrder3D&#45;OMP. " alt="" coords="5,172,77,197"/>
-<area shape="rect" id="node4" href="$_k_space_first_order3_d_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="102,165,271,204"/>
+<area shape="rect" id="node4" href="$_k_space_first_order_solver_8cpp.html" title="The implementation file containing the main class of the project responsible for the entire simulatio..." alt="" coords="102,165,271,204"/>
 </map>

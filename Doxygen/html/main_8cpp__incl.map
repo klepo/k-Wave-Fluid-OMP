@@ -1,14 +1,14 @@
 <map id="main.cpp" name="main.cpp">
-<area shape="rect" id="node4" href="$_k_space_first_order3_d_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="1186,79,1355,117"/>
-<area shape="rect" id="node31" href="$_logger_8h.html" title="The header file containing a class responsible for printing out info and error messages (stdout..." alt="" coords="189,85,302,111"/>
+<area shape="rect" id="node4" href="$_k_space_first_order_solver_8h.html" title="The header file containing the main class of the project responsible for the entire simulation..." alt="" coords="1194,79,1363,117"/>
+<area shape="rect" id="node31" href="$_logger_8h.html" title="The header file containing a class responsible for printing out info and error messages (stdout..." alt="" coords="213,85,326,111"/>
 <area shape="rect" id="node5" href="$_parameters_8h.html" title="The header file containing the parameters of the simulation. " alt="" coords="323,412,485,437"/>
 <area shape="rect" id="node16" href="$_matrix_container_8h.html" title="The header file containing the matrix container. " alt="" coords="930,339,1113,364"/>
-<area shape="rect" id="node19" href="$_output_stream_container_8h.html" title="The header file defining the output stream container. " alt="" coords="841,172,1065,197"/>
-<area shape="rect" id="node20" href="$_base_output_stream_8h.html" title="The header file of the class saving RealMatrix data into the output HDF5 file. " alt="" coords="1140,252,1311,291"/>
+<area shape="rect" id="node19" href="$_output_stream_container_8h.html" title="The header file defining the output stream container. " alt="" coords="837,172,1061,197"/>
+<area shape="rect" id="node20" href="$_base_output_stream_8h.html" title="The header file of the class saving RealMatrix data into the output HDF5 file. " alt="" coords="1136,252,1307,291"/>
 <area shape="rect" id="node21" href="$_real_matrix_8h.html" title="The header file containing the class for real matrices. " alt="" coords="1429,339,1600,364"/>
 <area shape="rect" id="node23" href="$_index_matrix_8h.html" title="The header file containing the class for 64b integer matrices. " alt="" coords="1209,339,1383,364"/>
 <area shape="rect" id="node25" href="$_complex_matrix_8h.html" title="The header file with the class for complex matrices. " alt="" coords="1665,259,1860,284"/>
-<area shape="rect" id="node27" href="$_fftw_complex_matrix_8h.html" title="The header file containing the class that implements 3D FFT using the FFTW interface. " alt="" coords="1552,165,1725,204"/>
+<area shape="rect" id="node27" href="$_fftw_complex_matrix_8h.html" title="The header file containing the class that implements various FFT using the FFTW interface. " alt="" coords="1552,165,1725,204"/>
 <area shape="rect" id="node29" href="$_time_measure_8h.html" title="The header file containing the class measuring elapsed time. " alt="" coords="1342,172,1477,197"/>
 <area shape="rect" id="node7" href="$_command_line_parameters_8h.html" title="The header file containing the command line parameters. " alt="" coords="105,559,348,584"/>
 <area shape="rect" id="node8" href="$_dimension_sizes_8h.html" title="The header file containing the structure with 3D dimension sizes. " alt="" coords="1197,632,1345,657"/>
