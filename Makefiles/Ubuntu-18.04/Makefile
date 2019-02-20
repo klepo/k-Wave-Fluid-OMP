@@ -6,9 +6,9 @@
 # * @Email       jarosjir@fit.vutbr.cz
 # * @Comments    Linux makefile for Ubuntu 18:04
 # * 
-# * @Tool        kspaceFirstOrder3D 2.17
+# * @Tool        kspaceFirstOrder 2.17
 # * @Created     04 September 2017, 12:50 
-# * @LastModif   07 February  2019, 20:38
+# * @LastModif   20 February  2019, 14:31
 #
 # * @License: 
 # * This file is part of the C++ extension of the k-Wave Toolbox 
@@ -32,9 +32,9 @@
 ################################################################################
 #                                                                              #
 #   The source codes can be compiled ONLY under Linux x64                      #
-#   by GNU g++ 5.0 and newer OR Intel Compiler icpc 2015 and newer             #
+#   by GNU g++ 5.0 and newer OR Intel Compiler icpc 2016 and newer             #
 #   The newer compiler, the more advanced instruction set can be used          #
-#   We recomend compilation with g++ 5.3/5.4 or icpc 16/17                     #
+#   We recomend compilation with g++ 7.3 or icpc 2018                          #
 #                                                                              #
 #   The code uses GNU compiler and STATIC linking by default                   #
 #                                                                              #
@@ -122,14 +122,14 @@ ifeq ($(COMPILER),GNU)
 
 
   # Set compiler flags and header files directories
-  CXXFLAGS = $(CPU_FLAGS) -O3 -std=c++11  -fopenmp  \
+  CXXFLAGS = $(CPU_FLAGS)  -O3 -std=c++11  -fopenmp  \
                           -ffast-math -fassociative-math -Wall \
 	     -I$(HDF5_DIR)/include -I$(FFT_DIR)/include -I. \
              -D__KWAVE_GIT_HASH__=\"$(KWAVE_GIT_HASH)\"
   
   ifeq ($(LINKING),STATIC)
 	# Static link
-	LDFLAGS  = $(CPU_FLAGS)  -fopenmp               \
+	LDFLAGS  = $(CPU_FLAGS)  -fopenmp                \
                    -L$(HDF5_DIR)/lib -L$(FFT_DIR)/lib -static
 
 
@@ -205,7 +205,7 @@ endif
 
 ################################# Compile #####################################
 
-TARGET		= kspaceFirstOrder3D-OMP
+TARGET		= kspaceFirstOrder-OMP
 
 all:		$(TARGET)	
 

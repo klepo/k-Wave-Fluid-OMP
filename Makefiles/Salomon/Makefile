@@ -6,9 +6,9 @@
 # * @Email       jarosjir@fit.vutbr.cz
 # * @Comments    Linux makefile for Salomon supercomputer
 # * 
-# * @Tool        kspaceFirstOrder3D 2.17
+# * @Tool        kspaceFirstOrder 2.17
 # * @Created     04 September 2017, 12:50 
-# * @LastModif   07 February  2009, 20:37
+# * @LastModif   20 February  2009, 14:33
 #
 # * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
 # *
@@ -34,9 +34,9 @@
 ################################################################################
 #                                                                              #
 #   The source codes can be compiled ONLY under Linux x64                      #
-#   by GNU g++ 5.0 and newer OR Intel Compiler icpc 2015 and newer             #
+#   by GNU g++ 5.0 and newer OR Intel Compiler icpc 2016 and newer             #
 #   The newer compiler, the more advanced instruction set can be used          #
-#   We recomend compilation with g++ 5.3/5.4 or icpc 16/17                     #
+#   We recomend compilation with g++ 7.3 or icpc 2018                          #
 #                                                                              #
 #   The code uses GNU compiler and STATIC linking by default                   #
 #                                                                              #
@@ -168,7 +168,7 @@ endif
 ################################# Compile #####################################
 
 
-TARGET		= kspaceFirstOrder3D-OMP
+TARGET		= kspaceFirstOrder-OMP
 
 all:		$(TARGET)	
 
