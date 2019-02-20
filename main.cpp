@@ -8,14 +8,14 @@
  *
  * @brief    The main file of kspaceFirstOrder3D-OMP.
  *
- * @version  kspaceFirstOrder3D 2.17
+ * @version  kspaceFirstOrder 2.17
  *
  * @date     11 July      2012, 10:57 (created) \n
- *           11 February  2019, 20:19 (revised)
+ *           20 February  2019, 14:45 (revised)
  *
  * @mainpage kspaceFirstOrder-OMP
  *
- * @section Overview 1 Overview
+ * @section  Overview 1 Overview
  *
  * k-Wave is an open source MATLAB toolbox designed for the time-domain simulation of propagating acoustic waves in 1D,
  * 2D, or 3D. The toolbox has a wide range of functionality, but at its heart is an advanced numerical model that can
@@ -265,7 +265,7 @@
  *
 \verbatim
 ┌───────────────────────────────────────────────────────────────┐
-│                  kspaceFirstOrder3D-OMP v1.3                  │
+│                   kspaceFirstOrder-OMP v1.3                   │
 ├───────────────────────────────────────────────────────────────┤
 │                             Usage                             │
 ├───────────────────────────────────────────────────────────────┤
@@ -787,7 +787,7 @@ using std::string;
 
 
 /**
- * The main function of the ksppaceFirstOrder3D-OMP.
+ * The main function of the ksppaceFirstOrder-OMP.
  *
  * @param [in] argc
  * @param [in] argv

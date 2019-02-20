@@ -8,10 +8,10 @@
  *
  * @brief     The header file containing the matrix container.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      14 September 2012, 14:33 (created) \n
- *            16 February  2019, 16:09 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

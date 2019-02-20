@@ -8,10 +8,10 @@
  *
  * @brief     The header file containing the HDF5 related classes.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder2.17
  *
  * @date      27 July      2012, 14:14 (created) \n
- *            11 February  2019, 15:16 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  *
  *

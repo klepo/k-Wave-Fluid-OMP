@@ -10,10 +10,10 @@
  *            windows version. The specific error messages are in separate files ErrorMessagesLinux.h
  *            and ErrorMessagesWindows.h
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            19 January   2019, 23:07 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -213,20 +213,20 @@ ErrorMessage kErrFmtBadPressureSourceMode
 
 
 //-------------------------------------------- KSpaceFirstOrder3DSolver ----------------------------------------------//
-/// KSpaceFirstOrder3DSolver error message
+/// KSpaceFirstOrderSolver error message
 ErrorMessage kErrFmtBadCheckpointFileFormat
   = "Error: Incorrect checkpoint file \"%s\" format.";
 
-/// KSpaceFirstOrder3DSolver error message
+/// KSpaceFirstOrderSolver error message
 ErrorMessage kErrFmtBadOutputFileFormat
   = "Error: Incorrect output file \"%s\" format.";
 
-/// KSpaceFirstOrder3DSolver error message
+/// KSpaceFirstOrderSolver error message
 ErrorMessage kErrFmtCheckpointDimensionsMismatch
   = "Error: The dimensions [%ld, %ld, %ld] of the checkpoint file don't match the simulation "
     "dimensions [%ld, %ld, %ld].";
 
-/// KSpaceFirstOrder3DSolver error message
+/// KSpaceFirstOrderSolver error message
 ErrorMessage kErrFmtOutputDimensionsMismatch
   = "Error: The dimensions [%ld, %ld, %ld] of the output file don't match the simulation "
     "dimensions [%ld, %ld, %ld].";

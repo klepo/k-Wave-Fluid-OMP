@@ -8,10 +8,10 @@
  *
  * @brief     The header file containing the class that implements various FFT using the FFTW interface
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      09 August    2011, 13:10 (created) \n
- *            20 January   2019, 21:00 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -301,16 +301,16 @@ protected:
 
     /// FFTW plan for the 1D Real-to-Complex transform in the x dimension.
     fftwf_plan mR2CFftPlan1DX;
-    /// FFTW plan for the 3D Real-to-Complex transform in the y dimension.
+    /// FFTW plan for the 1D Real-to-Complex transform in the y dimension.
     fftwf_plan mR2CFftPlan1DY;
-    /// FFTW plan for the 3D Real-to-Complex transform in the z dimension.
+    /// FFTW plan for the 1D Real-to-Complex transform in the z dimension.
     fftwf_plan mR2CFftPlan1DZ;
 
-    /// FFTW plan for the 3D Complex-to-Real transform in the x dimension.
+    /// FFTW plan for the 1D Complex-to-Real transform in the x dimension.
     fftwf_plan mC2RFftPlan1DX;
-    /// FFTW plan for the 3D Complex-to-Real transform in the y dimension.
+    /// FFTW plan for the 1D Complex-to-Real transform in the y dimension.
     fftwf_plan mC2RFftPlan1DY;
-    /// FFTW plan for the 3Z Complex-to-Real transform in the z dimension.
+    /// FFTW plan for the 1D Complex-to-Real transform in the z dimension.
     fftwf_plan mC2RFftPlan1DZ;
 
 private:

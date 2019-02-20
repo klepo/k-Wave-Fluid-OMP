@@ -9,10 +9,10 @@
  * @brief     The header file containing the class processing file headers.
  *            Detail about the file header are described below.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      24 August    2017, 09:51 (created) \n
- *            11 February  2019, 15:34 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @section   Hdf5FileHeader HDF5 File Header Structure
  *

@@ -8,10 +8,10 @@
  *
  * @brief     The implementation file containing parameters of the simulation.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      09 August    2012, 13:39 (created) \n
- *            19 January   2019, 14:09 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

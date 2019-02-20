@@ -8,10 +8,10 @@
  *
  * @brief     The header file storing names of all variables.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      14 September  2012, 14:33 (created) \n
- *            06 February   2019, 15:35 (revised)
+ *            20 February   2019, 14:54 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

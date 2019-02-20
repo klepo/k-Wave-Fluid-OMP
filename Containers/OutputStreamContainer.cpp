@@ -8,10 +8,10 @@
  *
  * @brief     The implementation file for the output stream container.
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      27 August    2017, 08:59 (created) \n
- *            06 February  2019, 18:52 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *

@@ -9,10 +9,10 @@
  * @brief     The header file containing a class responsible for printing out info and error messages
  *            (stdout, and stderr).
  *
- * @version   kspaceFirstOrder3D 2.17
+ * @version   kspaceFirstOrder 2.17
  *
  * @date      30 April     2017, 11:03 (created) \n
- *            09 January   2019, 11:06 (revised)
+ *            20 February  2019, 14:45 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
