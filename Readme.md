@@ -7,9 +7,10 @@ for both linear or nonlinear wave propagation, an arbitrary distribution of
 weakly heterogeneous material parameters, and power law acoustic  absorption, 
 see the http://www.k-wave.org.
 
-This project is a part of the k-Wave toolbox accelerating 3D simulations using 
-an optimized C++ implementation to run moderate to big grid sizes (64x64x64 to 
-512x512x512).
+This project is a part of the k-Wave toolbox accelerating 2D/3D simulations 
+using an optimized C++ implementation to run moderate to big grid sizes (128x128
+to 10,000x10,000) or (64x64x64 to 512x512x512).
+
 
 ## Repository structure
 
@@ -37,12 +38,12 @@ an optimized C++ implementation to run moderate to big grid sizes (64x64x64 to
 
 ## Compilation
 
-The source codes of `kpsaceFirstOrder3D-OMP` are written using the C++-11 
-standard, the OpenMP 4.0 library, FFTW 3.3.6 or MKL 11 and HDF5 1.8.x library
+The source codes of `kpsaceFirstOrder-OMP` are written using the C++-11 
+standard, the OpenMP 4.0 library, FFTW 3.3.8 or MKL 11 and HDF5 1.8.x library
 
 There are variety of different C++ compilers that can be used to compile the 
 source codes. We recommend using either the GNU C++ compiler (gcc/g++) version 
-5.0 and higher, or the Intel C++ compiler version 2015 and higher. Please note
+7.3 and higher, or the Intel C++ compiler version 2018 and higher. Please note
 that Visual Studio compilers do not support OpenMP 4.0 standard and cannot be 
 used thus. Be also aware of Intel compilers 2017 and their MKL bug producing 
 incorrect results when AVX2 is enabled. The codes can be compiled on 64-bit 
@@ -148,7 +149,7 @@ or Intel Compiler and Intel MKL.
 ### Compiling the C++ code on Linux
 
 After the libraries and the compiler have been installed, you are ready to 
-compile the `kspaceFirstOrder3D-OMP` code.
+compile the `kspaceFirstOrder-OMP` code.
 
  1. Select the most appropriate makefile. 
     We recommend `Makefiles/Release/Makefile`
@@ -208,5 +209,5 @@ The C++ codes offers a lot of parameters and output flags to be used. For more
 information, please type:
 
 ```bash
-./kspaceFirstOrder3D-OMP --help
+./kspaceFirstOrder-OMP --help
 ```
