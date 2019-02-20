@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder3D 2.17
  *
  * @date      09 August     2011, 12:34 (created) \n
- *            19 January    2019, 21:21 (revised)
+ *            20 February   2019, 12:48 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -108,7 +108,7 @@ struct DimensionSizes
    */
   inline bool is3D() const
   {
-    return (nt == 0);
+    return (nz > 1) && (nt == 0);
   };
 
   /**
