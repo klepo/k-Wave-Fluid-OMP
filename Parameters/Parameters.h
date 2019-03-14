@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      08 December  2011, 16:34 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            14 March     2019, 11:02 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -37,6 +37,7 @@
 
 #include <Parameters/CommandLineParameters.h>
 #include <Utils/DimensionSizes.h>
+#include <Utils/TimeMeasure.h>
 #include <Hdf5/Hdf5File.h>
 #include <Hdf5/Hdf5FileHeader.h>
 
@@ -167,6 +168,14 @@ class Parameters
      * @return true if checkpointing is enabled.
      */
     bool   isCheckpointEnabled()        const { return mCommandLineParameters.isCheckpointEnabled(); };
+
+    /**
+     * @brief  Is time to checkpoint?
+     * @param  [in] timer - a copy of timer measuring elapsed time from the beginning
+     * @return true if the elapsed time in this leg has exceeded the specified interval, or the simulation has executed
+     *         a predefined number of time steps.
+     */
+     bool isTimeToCheckpoint(TimeMeasure timer) const;
     /**
      * @brief  Get checkpoint interval.
      * @return Checkpoint interval in seconds.
@@ -258,8 +267,8 @@ class Parameters
      * @param [in] timeIndex - Actual time step.
      */
     void setTimeIndex(const size_t timeIndex)       { mTimeIndex = timeIndex; };
-    /// Increment simulation time step.
-    void incrementTimeIndex()                       { mTimeIndex++; };
+    /// Increment simulation time step and decrement steps to checkpoint.
+    void incrementTimeIndex();
 
     //----------------------------------------------- Grid parameters ------------------------------------------------//
     /**
@@ -660,6 +669,9 @@ class Parameters
     size_t  mNt;
     /// Actual time index (time step of the simulation).
     size_t  mTimeIndex;
+    /// How many timesteps to interruption. This index set after the simulation starts and decrements every timestep.
+    size_t  mTimeStepsToCheckpoint;
+
 
     /// Time step size.
     float mDt;

@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            15 March     2019, 12:36 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -284,7 +284,7 @@ void KSpaceFirstOrderSolver::compute()
     if (isCheckpointInterruption())
     { // Checkpoint
       Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime());
-      Logger::log(Logger::LogLevel::kBasic, kOutFmtCheckpointTimeSteps, mParameters.getTimeIndex());
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtCheckpointCompletedTimeSteps, mParameters.getTimeIndex());
       Logger::log(Logger::LogLevel::kBasic, kOutFmtCheckpointHeader);
       Logger::log(Logger::LogLevel::kBasic, kOutFmtCreatingCheckpoint);
       Logger::flush(Logger::LogLevel::kBasic);
@@ -656,7 +656,9 @@ void KSpaceFirstOrderSolver::computeMainLoop()
 
   mIterationTime.start();
 
-  while ((mParameters.getTimeIndex() < mParameters.getNt()) && (!isTimeToCheckpoint()))
+  // execute main loop
+  while ((mParameters.getTimeIndex() < mParameters.getNt()) &&
+         (!mParameters.isTimeToCheckpoint(mTotalTime)))
   {
     const size_t timeIndex = mParameters.getTimeIndex();
 
@@ -2805,20 +2807,6 @@ void KSpaceFirstOrderSolver::printStatistics()
     Logger::flush(Logger::LogLevel::kBasic);
   }
 }// end of printStatistics
-//----------------------------------------------------------------------------------------------------------------------
-
-/**
- * Is time to checkpoint?
- */
-bool KSpaceFirstOrderSolver::isTimeToCheckpoint()
-{
-  if (!mParameters.isCheckpointEnabled()) return false;
-
-  mTotalTime.stop();
-
-  return (mTotalTime.getElapsedTime() > static_cast<float>(mParameters.getCheckpointInterval()));
-
-}// end of isTimeToCheckpoint
 //----------------------------------------------------------------------------------------------------------------------
 
 /**

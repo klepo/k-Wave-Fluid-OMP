@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      09 August    2012, 13:39 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            14 March     2019, 12:44 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -35,6 +35,7 @@
 
 #include <exception>
 #include <stdexcept>
+#include <limits>
 
 #include <Parameters/Parameters.h>
 
@@ -125,6 +126,12 @@ void Parameters::init(int argc, char** argv)
       (mCommandLineParameters.getSamplingStartTimeIndex() < 0))
   {
     throw std::invalid_argument(Logger::formatMessage(kErrFmtIllegalSamplingStartTimeStep, 1l, mNt));
+  }
+
+  // Checkpoint by number of time steps
+  if (mCommandLineParameters.getCheckpointTimeSteps() > 0)
+  {
+    mTimeStepsToCheckpoint = mCommandLineParameters.getCheckpointTimeSteps();
   }
 
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
@@ -545,6 +552,34 @@ string Parameters::getGitHash() const
 }// end of getGitHash
 //----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Is time to checkpoint?
+ */
+bool Parameters::isTimeToCheckpoint(TimeMeasure timer) const
+{
+  timer.stop();
+
+  const auto checkpointInterval = mCommandLineParameters.getCheckpointInterval();
+
+  return (isCheckpointEnabled() &&
+          ((mTimeStepsToCheckpoint == 0) ||
+           (( checkpointInterval > 0) && (timer.getElapsedTime() > float(checkpointInterval)))
+          )
+         );
+}// end of isTimeToCheckpoint
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Increment simulation time step and decrement steps to checkpoint.
+ */
+void Parameters::incrementTimeIndex()
+{
+  mTimeIndex++;
+  mTimeStepsToCheckpoint--;
+ } // end of incrementTimeIndex
+//----------------------------------------------------------------------------------------------------------------------
+
+
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------ Protected methods -------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
@@ -557,7 +592,7 @@ Parameters::Parameters() :
     mCommandLineParameters(),
     mInputFile(), mOutputFile(), mCheckpointFile(), mFileHeader(),
     mFullDimensionSizes(0,0,0), mReducedDimensionSizes(0,0,0),
-    mNt(0), mTimeIndex(0),
+    mNt(0), mTimeIndex(0), mTimeStepsToCheckpoint(std::numeric_limits<size_t>::max()),
     mDt(0.0f), mDx(0.0f), mDy(0.0f), mDz(0.0f),
     mCRef(0.0f), mC0ScalarFlag(false),   mC0Scalar(0.0f),
     mRho0ScalarFlag(false), mRho0Scalar(0.0f),
