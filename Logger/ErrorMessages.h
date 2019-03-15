@@ -13,7 +13,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            12 March     2019, 11:15 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -175,6 +175,12 @@ ErrorMessage kErrFmtNoCheckpointFile
 /// Command line parameters error message
 ErrorMessage kErrFmtNoCheckpointInterval
   = "Error: The checkpoint interval was not specified.";
+/// Command line parameters error message
+ErrorMessage kErrFmtNoCheckpointTimeSteps
+  = "Error: The checkpoint time steps were not specified.";
+/// Command line parameters error message
+ErrorMessage kErrFmtNoCheckpointIntervalOrTimeSteps
+  = "Error: Neither checkpoint interval in seconds nor in time steps was specified.";
 /// Command line parameter error message
 ErrorMessage kErrFmtUnknownParameter
   = "Error: Unknown command line parameter.";
