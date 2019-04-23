@@ -36,6 +36,7 @@
 
 // Windows build
 #ifdef _WIN64
+  #define _CRT_SECURE_NO_WARNINGS
   #define _USE_MATH_DEFINES
   #include <Windows.h>
   #include <Psapi.h>
@@ -180,7 +181,7 @@ void KSpaceFirstOrderSolver::loadInputData()
     // Read necessary matrices from the checkpoint file
     mMatrixContainer.loadDataFromCheckpointFile();
 
-    checkpointFile.close();
+
     Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
 
     //--------------------------------------- Read data from the output file -----------------------------------------//
@@ -198,6 +199,7 @@ void KSpaceFirstOrderSolver::loadInputData()
 
     mOutputStreamContainer.reopenStreams();
     Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
+    checkpointFile.close();
   }
   else
   { //------------------------------------ First round of multi-leg simulation ---------------------------------------//
@@ -528,7 +530,7 @@ void KSpaceFirstOrderSolver::InitializeFftwPlans()
   // if necessary, create 1D shift plans.
   // in this case, the matrix has a bit bigger dimensions to be able to store
   // shifted matrices.
-  if (Parameters::getInstance().getStoreVelocityNonStaggeredRawFlag())
+  if (Parameters::getInstance().getStoreVelocityNonStaggeredRawFlag() || Parameters::getInstance().getStoreVelocityNonStaggeredCFlag())
   {
     // X shifts
     getTempFftwShift().createR2CFftPlan1DX(getUxShifted());
@@ -764,7 +766,7 @@ void KSpaceFirstOrderSolver::storeSensorData()
   // Unless the time for sampling has come, exit
   if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex())
   {
-    if (mParameters.getStoreVelocityNonStaggeredRawFlag())
+    if (mParameters.getStoreVelocityNonStaggeredRawFlag() || mParameters.getStoreVelocityNonStaggeredCFlag())
     {
       if (mParameters.isSimulation3D())
       {
@@ -871,8 +873,6 @@ void KSpaceFirstOrderSolver::saveCheckpointData()
 
   fileHeader.writeHeaderToCheckpointFile(checkpointFile);
 
-  // Close the checkpoint file
-  checkpointFile.close();
   Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
 
   // checkpoint output streams only if necessary (t_index > start_index) - here we're at  step + 1
@@ -886,6 +886,8 @@ void KSpaceFirstOrderSolver::saveCheckpointData()
     Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
   }
   mOutputStreamContainer.closeStreams();
+  // Close the checkpoint file
+  checkpointFile.close();
 }// end of saveCheckpointData
 //----------------------------------------------------------------------------------------------------------------------
 
