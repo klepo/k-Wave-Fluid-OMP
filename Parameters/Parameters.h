@@ -41,6 +41,8 @@
 #include <Hdf5/Hdf5File.h>
 #include <Hdf5/Hdf5FileHeader.h>
 
+#include <Compression/CompressHelper.h>
+
 /**
  * @class   Parameters
  * @brief   Class storing all parameters of the simulation.
@@ -559,6 +561,11 @@ class Parameters
      */
     bool getStorePressureRawFlag()         const { return mCommandLineParameters.getStorePressureRawFlag(); };
     /**
+     * @brief  Is --p_c set?
+     * @return True if the flag is set.
+     */
+    bool getStorePressureCFlag()           const { return mCommandLineParameters.getStorePressureCFlag(); };
+    /**
      * @brief  Is --p_rms set?
      * @return True if the flag is set.
      */
@@ -596,12 +603,25 @@ class Parameters
      */
     bool getStoreVelocityRawFlag()         const { return mCommandLineParameters.getStoreVelocityRawFlag(); };
     /**
+     * @brief  Is --u_c set?
+     * @return True if the flag is set.
+     */
+    bool getStoreVelocityCFlag()           const { return mCommandLineParameters.getStoreVelocityCFlag(); };
+    /**
      * @brief  Is --u_non_staggered_raw set?
      * @return True if the flag is set.
      */
     bool getStoreVelocityNonStaggeredRawFlag () const
     {
       return mCommandLineParameters.getStoreVelocityNonStaggeredRawFlag();
+    };
+    /**
+     * @brief  Is --u_non_staggered_c set?
+     * @return True if the flag is set.
+     */
+    bool getStoreVelocityNonStaggeredCFlag()    const
+    {
+      return mCommandLineParameters.getStoreVelocityNonStaggeredCFlag();
     };
     /**
      * @brief  Is --u_rms set?
@@ -640,8 +660,13 @@ class Parameters
      */
     bool getCopySensorMaskFlag()           const { return mCommandLineParameters.getCopySensorMaskFlag(); };
 
+    DimensionSizes getCompressedDimensionSizes() const;
 
-  protected:
+    CompressHelper *getCompressHelper() const;
+
+    size_t getCompressedSteps() const;
+
+protected:
 
     /// Constructor not allowed for public.
     Parameters();
@@ -664,6 +689,12 @@ class Parameters
     DimensionSizes mFullDimensionSizes;
     /// Reduced 3D dimension sizes.
     DimensionSizes mReducedDimensionSizes;
+
+    /// Compressed 3D dimension sizes.
+    DimensionSizes mCompressedDimensionSizes;
+
+    /// Compressed output steps
+    size_t mCompressedSteps = 0;
 
     /// Total number of time steps.
     size_t  mNt;
