@@ -176,6 +176,7 @@ all:		$(TARGET)
 
 
 $(TARGET):	main.o 					 \
+		Compression/CompressHelper.o             \
 		Containers/MatrixContainer.o             \
 		Containers/MatrixRecord.o                \
 		Containers/OutputStreamContainer.o       \
@@ -198,7 +199,8 @@ $(TARGET):	main.o 					 \
 
 
 	$(CXX) $(LDFLAGS) main.o 			 \
-		Containers/MatrixContainer.o             \
+		Compression/CompressHelper.o             \		
+                Containers/MatrixContainer.o             \
 		Containers/MatrixRecord.o                \
 		Containers/OutputStreamContainer.o       \
 		Hdf5/Hdf5File.o				 \

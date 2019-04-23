@@ -211,6 +211,7 @@ all:		$(TARGET)
 
 
 $(TARGET):	main.o 					 \
+		Compression/CompressHelper.o             \
 	        Containers/MatrixContainer.o             \
 		Containers/MatrixRecord.o                \
 		Containers/OutputStreamContainer.o       \
@@ -233,6 +234,7 @@ $(TARGET):	main.o 					 \
 
 
 	$(CXX) $(LDFLAGS) main.o 			 \
+		Compression/CompressHelper.o             \
 		Containers/MatrixContainer.o             \
 		Containers/MatrixRecord.o                \
 		Containers/OutputStreamContainer.o       \
