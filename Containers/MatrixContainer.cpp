@@ -82,6 +82,7 @@ void MatrixContainer::init()
 
   DimensionSizes fullDims = params.getFullDimensionSizes();
   DimensionSizes reducedDims = params.getReducedDimensionSizes();
+  DimensionSizes compressedDims = params.getCompressedDimensionSizes();
 
   const bool is3DSimulation = params.isSimulation3D();
 
@@ -342,7 +343,7 @@ void MatrixContainer::init()
   }
 
   //-------------------------------------------- Non staggered velocity ----------------------------------------------//
-  if (params.getStoreVelocityNonStaggeredRawFlag())
+  if (params.getStoreVelocityNonStaggeredRawFlag() || params.getStoreVelocityNonStaggeredCFlag())
   {
     DimensionSizes shiftDims = fullDims;
 
