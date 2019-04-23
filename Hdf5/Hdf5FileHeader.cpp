@@ -40,7 +40,8 @@
 
 //Windows 64 build
 #ifdef _WIN64
-  #include<Winsock2.h>
+  #pragma warning(disable:4996)
+  #include<WinSock2.h>
   #pragma comment(lib, "Ws2_32.lib")
 #endif
 
@@ -359,7 +360,7 @@ void Hdf5FileHeader::setHostName()
   #ifdef _WIN64
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
-	  gethostname(hostName, 256);
+    gethostname(hostName, 256);
 
     WSACleanup();
   #endif
