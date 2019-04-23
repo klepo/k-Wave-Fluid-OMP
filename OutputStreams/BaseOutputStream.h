@@ -36,6 +36,8 @@
 #include <MatrixClasses/RealMatrix.h>
 #include <MatrixClasses/IndexMatrix.h>
 #include <Hdf5/Hdf5File.h>
+#include <Compression/CompressHelper.h>
+#include <Logger/Logger.h>
 
 /**
  * @class   BaseOutputStream
@@ -56,7 +58,9 @@ class BaseOutputStream
     {
       /// Store actual data (time series).
       kNone,
-       /// Calculate root mean square.
+      /// Store compressed data (time series).
+      kC,
+      /// Calculate root mean square.
       kRms,
       /// Store maximum.
       kMax,
@@ -132,6 +136,13 @@ class BaseOutputStream
      */
     virtual void freeMemory();
 
+    virtual void allocateMinMaxMemory(hsize_t items);
+    virtual void checkOrSetMinMaxValue(float &minV, float &maxV, float value, hsize_t &minVIndex, hsize_t &maxVIndex, hsize_t index);
+    virtual void loadMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, size_t index = 0, bool checkpoint = false);
+    virtual void storeMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, size_t index = 0, bool checkpoint = false);
+    virtual void loadCheckpointCompressionCoefficients();
+    virtual void storeCheckpointCompressionCoefficients();
+
     /// Handle to HDF5 output file.
     Hdf5File&            mFile;
     /// HDF5 group/dataset in the output file where to store data in.
@@ -148,6 +159,19 @@ class BaseOutputStream
     /// Temporary buffer for store - only if Buffer Reuse = false!
     float* mStoreBuffer;
 
+    /// Compression variables
+    float* mStoreBuffer2 = nullptr;
+    CompressHelper *mCompressHelper = nullptr;
+    hsize_t mStepLocal = 0;
+    bool mSavingFlag = false;
+    bool mOddFrameFlag = false;
+    hsize_t mCompressedTimeStep = 0;
+
+    float* maxValue = nullptr;
+    float* minValue = nullptr;
+    hsize_t* maxValueIndex = nullptr;
+    hsize_t* minValueIndex = nullptr;
+    hsize_t items = 1;
     /// chunk size of 4MB in number of float elements.
     static constexpr size_t kChunkSize4MB = 1048576;
 };// end of BaseOutputStream

@@ -58,7 +58,7 @@ CuboidOutputStream::CuboidOutputStream(Hdf5File&            file,
     mGroup(H5I_BADID),
     mSampledTimeStep(0)
 {
-
+  allocateMinMaxMemory(mSensorMask.getDimensionSizes().ny);
 }// end of CuboidOutputStream
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -68,7 +68,6 @@ CuboidOutputStream::CuboidOutputStream(Hdf5File&            file,
 CuboidOutputStream::~CuboidOutputStream()
 {
   close();
-
   // free memory only if it was allocated
   if (!mBufferReuse) freeMemory();
 }// end ~CuboidOutputStream
@@ -80,13 +79,19 @@ CuboidOutputStream::~CuboidOutputStream()
  */
 void CuboidOutputStream::create()
 {
-  // Create the HDF5 group and open it
-  mGroup = mFile.createGroup(mFile.getRootGroup(), mRootObjectName);
+  // Create and open or only open the HDF5 group
+  if (mFile.groupExists(mFile.getRootGroup(), mRootObjectName))
+  {
+    mGroup = mFile.openGroup(mFile.getRootGroup(), mRootObjectName);
+  }
+  else
+  {
+    mGroup = mFile.createGroup(mFile.getRootGroup(), mRootObjectName);
+  }
 
   // Create all datasets (sizes, chunks, and attributes)
   size_t nCuboids = mSensorMask.getDimensionSizes().ny;
   mCuboidsInfo.reserve(nCuboids);
-
   size_t actualPositionInBuffer = 0;
 
   for (size_t cuboidIdx = 0; cuboidIdx < nCuboids; cuboidIdx++)
@@ -97,16 +102,32 @@ void CuboidOutputStream::create()
     cuboidInfo.startingPossitionInBuffer = actualPositionInBuffer;
     mCuboidsInfo.push_back(cuboidInfo);
 
-    actualPositionInBuffer += (mSensorMask.getBottomRightCorner(cuboidIdx) -
-                               mSensorMask.getTopLeftCorner(cuboidIdx)
-                              ).nElements();
+    if (mReduceOp == ReduceOperator::kC)
+    {
+      actualPositionInBuffer += (mSensorMask.getBottomRightCorner(cuboidIdx) -
+                                 mSensorMask.getTopLeftCorner(cuboidIdx)
+                                ).nElements() * mCompressHelper->getHarmonics() * 2;
+    }
+    else
+    {
+      actualPositionInBuffer += (mSensorMask.getBottomRightCorner(cuboidIdx) -
+                                 mSensorMask.getTopLeftCorner(cuboidIdx)
+                                ).nElements();
+    }
   }
 
-  //we're at the beginning
+  // We're at the beginning
   mSampledTimeStep = 0;
 
-  // Create the memory buffer if necessary and set starting address
-  mBufferSize = mSensorMask.getSizeOfAllCuboids();
+  // Set buffer size
+  if (mReduceOp == ReduceOperator::kC)
+  {
+    mBufferSize = mSensorMask.getSizeOfAllCuboids() * mCompressHelper->getHarmonics() * 2;
+  }
+  else
+  {
+    mBufferSize = mSensorMask.getSizeOfAllCuboids();
+  }
 
   // Allocate memory if needed
   if (!mBufferReuse) allocateMemory();
@@ -122,18 +143,28 @@ void CuboidOutputStream::reopen()
   const Parameters& params = Parameters::getInstance();
 
   mSampledTimeStep = 0;
-  if (mReduceOp == ReduceOperator::kNone) // set correct sampled timestep for raw data series
+  if (mReduceOp == ReduceOperator::kNone || mReduceOp == ReduceOperator::kC) // set correct sampled timestep for raw data series
   {
     mSampledTimeStep = (params.getTimeIndex() < params.getSamplingStartTimeIndex()) ?
                         0 : (params.getTimeIndex() - params.getSamplingStartTimeIndex());
+    if (mReduceOp == ReduceOperator::kC)
+    {
+      mCompressedTimeStep = size_t(std::max(float(floor(float(mSampledTimeStep) / mCompressHelper->getOSize())), 0.0f));
+    }
   }
 
   // Create the memory buffer if necessary and set starting address
-  mBufferSize = mSensorMask.getSizeOfAllCuboids();
+  if (mReduceOp == ReduceOperator::kC)
+  {
+    mBufferSize = mSensorMask.getSizeOfAllCuboids() * mCompressHelper->getHarmonics() * 2;
+  }
+  else
+  {
+    mBufferSize = mSensorMask.getSizeOfAllCuboids();
+  }
 
   // Allocate memory if needed
   if (!mBufferReuse) allocateMemory();
-
 
   // Open all datasets (sizes, chunks, and attributes)
   size_t nCuboids = mSensorMask.getDimensionSizes().ny;
@@ -148,7 +179,7 @@ void CuboidOutputStream::reopen()
     CuboidInfo cuboidInfo;
 
     // Indexed from 1
-    const std::string datasetName = std::to_string(cuboidIdx + 1);
+    const std::string datasetName = (mReduceOp == ReduceOperator::kC) ? std::to_string(cuboidIdx + 1) + "_c" : std::to_string(cuboidIdx + 1);
 
     // open the dataset
     cuboidInfo.cuboidId = mFile.openDataset(mGroup, datasetName);
@@ -158,7 +189,7 @@ void CuboidOutputStream::reopen()
     // read only if there is anything to read
     if (params.getTimeIndex() > params.getSamplingStartTimeIndex())
     {
-      if (mReduceOp != ReduceOperator::kNone)
+      if (mReduceOp != ReduceOperator::kNone && mReduceOp != ReduceOperator::kC)
       { // Reload data
         DimensionSizes cuboidSize((mSensorMask.getBottomRightCorner(cuboidIdx) -
                                    mSensorMask.getTopLeftCorner(cuboidIdx)).nx,
@@ -174,8 +205,33 @@ void CuboidOutputStream::reopen()
       }
     }
     // move the pointer for the next cuboid beginning (this inits the locations)
-    actualPositionInBuffer += (mSensorMask.getBottomRightCorner(cuboidIdx) -
-                               mSensorMask.getTopLeftCorner(cuboidIdx)).nElements();
+    if (mReduceOp == ReduceOperator::kC)
+    {
+      actualPositionInBuffer += (mSensorMask.getBottomRightCorner(cuboidIdx) -
+                                 mSensorMask.getTopLeftCorner(cuboidIdx)
+                                ).nElements() * mCompressHelper->getHarmonics() * 2;
+    }
+    else
+    {
+      actualPositionInBuffer += (mSensorMask.getBottomRightCorner(cuboidIdx) -
+                                 mSensorMask.getTopLeftCorner(cuboidIdx)
+                                ).nElements();
+    }
+  }
+
+  if (params.getTimeIndex() > params.getSamplingStartTimeIndex())
+  {
+    // Reload temp coefficients from checkpoint file
+    loadCheckpointCompressionCoefficients();
+
+    // Reload min and max values
+    for (size_t cuboidIdx = 0; cuboidIdx < mCuboidsInfo.size(); cuboidIdx++)
+    {
+      const std::string datasetName = (mReduceOp == ReduceOperator::kC) ? std::to_string(cuboidIdx + 1) + "_c" : std::to_string(cuboidIdx + 1);
+      //Logger::log(Logger::LogLevel::kBasic, datasetName + " ");
+      //Logger::log(Logger::LogLevel::kBasic, std::to_string(minValue[cuboidIdx]));
+      loadMinMaxValues(mFile, mGroup, datasetName, cuboidIdx);
+    }
   }
 }// end of reopen
 //----------------------------------------------------------------------------------------------------------------------
@@ -190,23 +246,45 @@ void CuboidOutputStream::sample()
     case ReduceOperator::kNone :
     {
       /* We use here direct HDF5 offload using MEMSPACE - seems to be faster for bigger datasets*/
-      DimensionSizes datasetPosition(0, 0, 0, 0); //4D position in the dataset
+      DimensionSizes datasetPosition(0, 0, 0, 0); // 4D position in the dataset
       DimensionSizes cuboidSize(0, 0, 0, 0);      // Size of the cuboid
 
       datasetPosition.nt = mSampledTimeStep;
 
+      const size_t slabSize = mSourceMatrix.getDimensionSizes().ny * mSourceMatrix.getDimensionSizes().nx;
+      const size_t rowSize  = mSourceMatrix.getDimensionSizes().nx;
+      const float *sourceData = mSourceMatrix.getData();
+
       // iterate over all cuboid to be sampled
       for (size_t cuboidIdx = 0; cuboidIdx < mCuboidsInfo.size(); cuboidIdx++)
       {
-        cuboidSize    = mSensorMask.getBottomRightCorner(cuboidIdx) - mSensorMask.getTopLeftCorner(cuboidIdx);
+        const DimensionSizes topLeftCorner     = mSensorMask.getTopLeftCorner(cuboidIdx);
+        const DimensionSizes bottomRightCorner = mSensorMask.getBottomRightCorner(cuboidIdx);
+
+        cuboidSize    = bottomRightCorner - topLeftCorner;
         cuboidSize.nt = 1;
 
         mFile.writeCuboidToHyperSlab(mCuboidsInfo[cuboidIdx].cuboidId,
                                      datasetPosition,
-                                     mSensorMask.getTopLeftCorner(cuboidIdx), // position in the SourceMatrix
+                                     topLeftCorner, // position in the SourceMatrix
                                      cuboidSize,
                                      mSourceMatrix.getDimensionSizes(),
                                      mSourceMatrix.getData());
+
+        size_t storeBufferIndex = 0;
+        for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++)
+        {
+          for (size_t y = topLeftCorner.ny; y <= bottomRightCorner.ny; y++)
+          {
+            for (size_t x = topLeftCorner.nx; x <= bottomRightCorner.nx; x++)
+            {
+              const size_t sourceIndex = z * slabSize + y * rowSize + x;
+              checkOrSetMinMaxValue(minValue[cuboidIdx], maxValue[cuboidIdx], sourceData[sourceIndex], minValueIndex[cuboidIdx], maxValueIndex[cuboidIdx], cuboidSize.nElements() * mSampledTimeStep + storeBufferIndex);
+              storeBufferIndex++;
+            }
+          }
+        }
+
       }
       mSampledTimeStep++;   // Move forward in time
 
@@ -215,7 +293,11 @@ void CuboidOutputStream::sample()
      // At the time being, this version using manual data lining up seems to be slower, and is not used.
      // sampleAggregated<ReduceOperator::kNone>();
     }// case kNone
-
+    case ReduceOperator::kC:
+    {
+      sampleAggregated<ReduceOperator::kC>();
+      break;
+    }
     case ReduceOperator::kRms:
     {
       sampleAggregated<ReduceOperator::kRms>();
@@ -242,8 +324,21 @@ void CuboidOutputStream::postProcess()
 {
   // run inherited method
   BaseOutputStream::postProcess();
+
   // When no reduction operator is applied, the data is flushed after every time step
-  if (mReduceOp != ReduceOperator::kNone) flushBufferToFile();
+  if (mReduceOp != ReduceOperator::kNone && mReduceOp != ReduceOperator::kC)
+  {
+    flushBufferToFile();
+  }
+
+  // Store min and max values
+  for (size_t cuboidIdx = 0; cuboidIdx < mCuboidsInfo.size(); cuboidIdx++)
+  {
+    const std::string datasetName = (mReduceOp == ReduceOperator::kC) ? std::to_string(cuboidIdx + 1) + "_c" : std::to_string(cuboidIdx + 1);
+    //Logger::log(Logger::LogLevel::kBasic, datasetName + " ");
+    //Logger::log(Logger::LogLevel::kBasic, std::to_string(minValue[cuboidIdx]));
+    storeMinMaxValues(mFile, mGroup, datasetName, cuboidIdx);
+  }
 }// end of postProcess
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -253,7 +348,20 @@ void CuboidOutputStream::postProcess()
 void CuboidOutputStream::checkpoint()
 {
   // raw data has already been flushed, others has to be flushed here
-  if (mReduceOp != ReduceOperator::kNone) flushBufferToFile();
+  if (mReduceOp != ReduceOperator::kNone && mReduceOp != ReduceOperator::kC)
+  {
+    flushBufferToFile();
+  }
+  storeCheckpointCompressionCoefficients();
+
+  // Store min and max values
+  for (size_t cuboidIdx = 0; cuboidIdx < mCuboidsInfo.size(); cuboidIdx++)
+  {
+    const std::string datasetName = (mReduceOp == ReduceOperator::kC) ? std::to_string(cuboidIdx + 1) + "_c" : std::to_string(cuboidIdx + 1);
+    //Logger::log(Logger::LogLevel::kBasic, datasetName + " ");
+    //Logger::log(Logger::LogLevel::kBasic, std::to_string(minValue[cuboidIdx]));
+    storeMinMaxValues(mFile, mGroup, datasetName, cuboidIdx);
+  }
 }// end of checkpoint
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -288,17 +396,27 @@ void CuboidOutputStream::close()
  */
 hid_t CuboidOutputStream::createCuboidDataset(const size_t cuboidIdx)
 {
-  Parameters& params = Parameters::getInstance();
+  const Parameters& params = Parameters::getInstance();
 
   // if time series then Number of steps else 1
   size_t nSampledTimeSteps = (mReduceOp == ReduceOperator::kNone)
-                                ? params.getNt() - params.getSamplingStartTimeIndex()
-                                : 0; // will be a 3D dataset
+                             ? params.getNt() - params.getSamplingStartTimeIndex()
+                             : 0; // will be a 3D dataset
+
   // Set cuboid dimensions (subtract two corners (add 1) and use the appropriate component)
   DimensionSizes cuboidSize((mSensorMask.getBottomRightCorner(cuboidIdx) - mSensorMask.getTopLeftCorner(cuboidIdx)).nx,
                             (mSensorMask.getBottomRightCorner(cuboidIdx) - mSensorMask.getTopLeftCorner(cuboidIdx)).ny,
                             (mSensorMask.getBottomRightCorner(cuboidIdx) - mSensorMask.getTopLeftCorner(cuboidIdx)).nz,
                              nSampledTimeSteps);
+
+  if (mReduceOp == ReduceOperator::kC)
+  {
+    size_t steps = params.getNt() - params.getSamplingStartTimeIndex();
+    nSampledTimeSteps = size_t(std::max(float(floor(float(steps) / mCompressHelper->getOSize())) - 1, 1.0f));
+
+    cuboidSize.nt = nSampledTimeSteps;
+    cuboidSize.nx *= mCompressHelper->getHarmonics() * 2;
+  }
 
   // Set chunk size
   // If the size of the cuboid is bigger than 32 MB per timestep, set the chunk to approx 4MB
@@ -306,7 +424,7 @@ hid_t CuboidOutputStream::createCuboidDataset(const size_t cuboidIdx)
   DimensionSizes cuboidChunkSize(cuboidSize.nx,
                                  cuboidSize.ny,
                                  cuboidSize.nz,
-                                 (mReduceOp == ReduceOperator::kNone) ? 1 : 0);
+                                 (mReduceOp == ReduceOperator::kNone || mReduceOp == ReduceOperator::kC) ? 1 : 0);
 
   if (cuboidChunkSize.nElements() > (kChunkSize4MB * 8))
   {
@@ -315,7 +433,7 @@ hid_t CuboidOutputStream::createCuboidDataset(const size_t cuboidIdx)
   }
 
   // Indexed from 1
-  const std::string datasetName = std::to_string(cuboidIdx + 1);
+  const std::string datasetName = (mReduceOp == ReduceOperator::kC) ? std::to_string(cuboidIdx + 1) + "_c" : std::to_string(cuboidIdx + 1);
 
   hid_t dataset = mFile.createDataset(mGroup,
                                      datasetName,
@@ -327,6 +445,16 @@ hid_t CuboidOutputStream::createCuboidDataset(const size_t cuboidIdx)
   // Write dataset parameters
   mFile.writeMatrixDomainType(mGroup, datasetName, Hdf5File::MatrixDomainType::kReal);
   mFile.writeMatrixDataType  (mGroup, datasetName, Hdf5File::MatrixDataType::kFloat);
+
+  // Write compression parameters as attributes
+  if (mReduceOp == ReduceOperator::kC)
+  {
+    mFile.writeLongLongAttribute(mGroup, datasetName, "c_harmonics", ssize_t(mCompressHelper->getHarmonics()));
+    mFile.writeStringAttribute(mGroup, datasetName, "c_type", "c");
+    mFile.writeFloatAttribute(mGroup, datasetName, "c_period", mCompressHelper->getPeriod());
+    mFile.writeLongLongAttribute(mGroup, datasetName, "c_mos", ssize_t(mCompressHelper->getMos()));
+    mFile.writeStringAttribute(mGroup, datasetName, "src_dataset_name", "/" + mRootObjectName + "/" + std::to_string(cuboidIdx + 1));
+  }
 
   return dataset;
 }//end of createCuboidDataset
@@ -341,9 +469,20 @@ void CuboidOutputStream::sampleAggregated()
   const size_t slabSize = mSourceMatrix.getDimensionSizes().ny * mSourceMatrix.getDimensionSizes().nx;
   const size_t rowSize  = mSourceMatrix.getDimensionSizes().nx;
 
+  DimensionSizes cuboidSize(0, 0, 0, 0);      // Size of the cuboid
+
   const float* sourceData = mSourceMatrix.getData();
 
   size_t cuboidInBufferStart = 0;
+
+  if (reduceOp == ReduceOperator::kC)
+  {
+    // Compression
+    // Compute local index and flags
+    mStepLocal = mSampledTimeStep % (mCompressHelper->getBSize() - 1);
+    mSavingFlag = ((mStepLocal + 1) % mCompressHelper->getOSize() == 0) ? true : false;
+    mOddFrameFlag = ((mCompressedTimeStep + 1) % 2 == 0) ? true : false;
+  }
 
   // Parallelise within the cuboid - Since a typical number of cuboids is 1, than we have to paralelise inside
   #pragma omp parallel
@@ -353,8 +492,11 @@ void CuboidOutputStream::sampleAggregated()
     const DimensionSizes bottomRightCorner = mSensorMask.getBottomRightCorner(cuboidIdx);
 
     size_t cuboidSlabSize = (bottomRightCorner.ny - topLeftCorner.ny + 1) *
-                            (bottomRightCorner.nx - topLeftCorner.nx + 1);
-    size_t cuboidRowSize  = (bottomRightCorner.nx - topLeftCorner.nx + 1);
+                            ((reduceOp == ReduceOperator::kC) ? ((bottomRightCorner.nx - topLeftCorner.nx + 1) * mCompressHelper->getHarmonics()) : (bottomRightCorner.nx - topLeftCorner.nx + 1));
+    size_t cuboidRowSize  = ((reduceOp == ReduceOperator::kC) ? ((bottomRightCorner.nx - topLeftCorner.nx + 1) * mCompressHelper->getHarmonics()) : (bottomRightCorner.nx - topLeftCorner.nx + 1));
+
+    cuboidSize    = bottomRightCorner - topLeftCorner;
+    cuboidSize.nt = 1;
 
     #pragma omp for collapse(3)
     for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++)
@@ -364,7 +506,7 @@ void CuboidOutputStream::sampleAggregated()
           const size_t storeBufferIndex = cuboidInBufferStart +
                                           (z - topLeftCorner.nz) * cuboidSlabSize +
                                           (y - topLeftCorner.ny) * cuboidRowSize  +
-                                          (x - topLeftCorner.nx);
+                                          ((reduceOp == ReduceOperator::kC) ? ((x - topLeftCorner.nx) * mCompressHelper->getHarmonics()) : (x - topLeftCorner.nx));
 
           const size_t sourceIndex = z * slabSize + y * rowSize + x;
 
@@ -374,6 +516,24 @@ void CuboidOutputStream::sampleAggregated()
             case ReduceOperator::kNone:
             {
               mStoreBuffer[storeBufferIndex] = sourceData[sourceIndex];
+              checkOrSetMinMaxValue(minValue[cuboidIdx], maxValue[cuboidIdx], mStoreBuffer[storeBufferIndex], minValueIndex[cuboidIdx], maxValueIndex[cuboidIdx], cuboidSize.nElements() * mSampledTimeStep + storeBufferIndex);
+
+              break;
+            }
+            case ReduceOperator::kC:
+            {
+              checkOrSetMinMaxValue(minValue[cuboidIdx], maxValue[cuboidIdx], sourceData[sourceIndex], minValueIndex[cuboidIdx], maxValueIndex[cuboidIdx], cuboidSize.nElements() * mSampledTimeStep + (storeBufferIndex / mCompressHelper->getHarmonics()));
+
+              //For every harmonics
+              for (size_t ih = 0; ih < mCompressHelper->getHarmonics(); ih++)
+              {
+                size_t pH = storeBufferIndex + ih;
+                size_t bIndex = ih * mCompressHelper->getBSize() + mStepLocal;
+
+                // Correlation step
+                reinterpret_cast<floatC *>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sourceIndex];
+                reinterpret_cast<floatC *>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sourceIndex];
+              }
               break;
             }
             case ReduceOperator::kRms:
@@ -396,34 +556,65 @@ void CuboidOutputStream::sampleAggregated()
      // must be done only once
      #pragma omp single
      {
-       cuboidInBufferStart += (bottomRightCorner - topLeftCorner).nElements();
+       if (mReduceOp == ReduceOperator::kC)
+         cuboidInBufferStart += (bottomRightCorner - topLeftCorner).nElements() * mCompressHelper->getHarmonics();
+       else
+         cuboidInBufferStart += (bottomRightCorner - topLeftCorner).nElements();
      }
   }
+
+  if (reduceOp == ReduceOperator::kC)
+  {
+    if (mSavingFlag)
+    {
+      // Select accumulated value
+      float *data = mOddFrameFlag ? mStoreBuffer : mStoreBuffer2;
+
+      // Store selected buffer
+      if (mCompressedTimeStep > 0)
+      {
+        flushBufferToFile(data);
+      }
+
+      // Set zeros for next accumulation
+      //memset(data, 0, mBufferSize * sizeof(float));
+      #pragma omp parallel for simd schedule(static)
+      for (size_t i = 0; i < mBufferSize; i++)
+      {
+        data[i] = 0.0f;
+      }
+      mCompressedTimeStep++;
+    }
+    mSampledTimeStep++;
+  }
+
 }// end of sampleAggregated
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Flush the buffer to the file (to multiple datasets if necessary).
  */
-void CuboidOutputStream::flushBufferToFile()
+void CuboidOutputStream::flushBufferToFile(float *bufferToFlush)
 {
   DimensionSizes position (0, 0, 0, 0);
   DimensionSizes blockSize(0, 0, 0, 0);
 
   if (mReduceOp == ReduceOperator::kNone) position.nt = mSampledTimeStep;
+  if (mReduceOp == ReduceOperator::kC) position.nt = mCompressedTimeStep - 1;
 
   for (size_t cuboidIdx = 0; cuboidIdx < mCuboidsInfo.size(); cuboidIdx++)
   {
-    blockSize    = mSensorMask.getBottomRightCorner(cuboidIdx) - mSensorMask.getTopLeftCorner(cuboidIdx);
+    blockSize = mSensorMask.getBottomRightCorner(cuboidIdx) - mSensorMask.getTopLeftCorner(cuboidIdx);
+    if (mReduceOp == ReduceOperator::kC) blockSize.nx *= mCompressHelper->getHarmonics() * 2;
     blockSize.nt = 1;
 
     mFile.writeHyperSlab(mCuboidsInfo[cuboidIdx].cuboidId,
                          position,
                          blockSize,
-                         mStoreBuffer + mCuboidsInfo[cuboidIdx].startingPossitionInBuffer);
+                         ((bufferToFlush != nullptr) ? bufferToFlush : mStoreBuffer) + mCuboidsInfo[cuboidIdx].startingPossitionInBuffer);
   }
 
-  mSampledTimeStep++;
+  if (mReduceOp != ReduceOperator::kC) mSampledTimeStep++;
 }// end of flushBufferToFile
 //----------------------------------------------------------------------------------------------------------------------
 
