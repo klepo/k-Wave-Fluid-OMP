@@ -160,18 +160,19 @@ class BaseOutputStream
     float* mStoreBuffer;
 
     /// Compression variables
-    float* mStoreBuffer2 = nullptr;
-    CompressHelper *mCompressHelper = nullptr;
-    hsize_t mStepLocal = 0;
-    bool mSavingFlag = false;
-    bool mOddFrameFlag = false;
-    hsize_t mCompressedTimeStep = 0;
+    float*          mStoreBuffer2 = nullptr;
+    CompressHelper* mCompressHelper = nullptr;
+    hsize_t         mStepLocal = 0;
+    bool            mSavingFlag = false;
+    bool            mOddFrameFlag = false;
+    hsize_t         mCompressedTimeStep = 0;
 
-    float* maxValue = nullptr;
-    float* minValue = nullptr;
-    hsize_t* maxValueIndex = nullptr;
-    hsize_t* minValueIndex = nullptr;
-    hsize_t items = 1;
+    float*    maxValue = nullptr;
+    float*    minValue = nullptr;
+    hsize_t*  maxValueIndex = nullptr;
+    hsize_t*  minValueIndex = nullptr;
+    hsize_t   items = 1;
+
     /// chunk size of 4MB in number of float elements.
     static constexpr size_t kChunkSize4MB = 1048576;
 };// end of BaseOutputStream

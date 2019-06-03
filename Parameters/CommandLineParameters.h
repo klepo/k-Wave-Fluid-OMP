@@ -511,9 +511,9 @@ class CommandLineParameters
     size_t mSamplingStartTimeStep;
 
     /// Period for compression.
-    float mPeriod = 0;
+    float mPeriod = 0.0f;
     /// Frequency for compression.
-    float mFrequency = 0;
+    float mFrequency = 0.0f;
     /// Multiple of overlap size for compression.
     size_t mMOS = 1;
     /// Number of harmonics for compression.

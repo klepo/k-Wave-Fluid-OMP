@@ -68,7 +68,7 @@ BaseOutputStream::BaseOutputStream(Hdf5File&            file,
     // Set compression helper
     mCompressHelper = &CompressHelper::getInstance();
   }
-};
+}
 //----------------------------------------------------------------------------------------------------------------------
 
 /**

@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      8  September 2016, 12:00 (created) \n
- *            28 March     2019, 17:05 (revised)
+ *            2  April     2019, 15:11 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -50,11 +50,11 @@
 //#include <hdf5.h>  // HDF5
 
 /// Float complex datatype
-typedef std::complex<float> floatC;
+using floatC = std::complex<float>;
 /// Unsigned long long datatype
-typedef unsigned long long hsize_t;
+using hsize_t = unsigned long long;
 /// Long long datatype
-typedef long long hssize_t;
+using hssize_t = long long;
 
 /**
  * @brief The CompressHelper class represents wrapper for the ultrasound signals compression
@@ -66,11 +66,11 @@ public:
   ~CompressHelper();
   static CompressHelper& getInstance();
 
-  static float findPeriod(const float *dataSrc, hsize_t length);
-  float computeTimeStep(const float *cC, const float *lC, hsize_t stepLocal) const;
+  static float findPeriod(const float* dataSrc, hsize_t length);
+  float computeTimeStep(const float* cC, const float* lC, hsize_t stepLocal) const;
 
-  const floatC *getBE() const;
-  const floatC *getBE_1() const;
+  const floatC* getBE() const;
+  const floatC* getBE_1() const;
   hsize_t getOSize() const;
   hsize_t getBSize() const;
   float getPeriod() const;
@@ -83,49 +83,49 @@ private:
   CompressHelper(const CompressHelper &);
   CompressHelper &operator=(const CompressHelper &);
 
-  static void xcorr(const float *dataSrc1, const float *dataSrc2, float *dataDst, hsize_t lengthSrc1, hsize_t lengthSrc2);
-  static void conv(const float *dataSrc1, const float *dataSrc2, float *dataDst, hsize_t lengthSrc1, hsize_t lengthSrc2);
-  static void findPeaks(const float *dataSrc, float *locsDst, float *peaksDst, hsize_t length, hsize_t &lengthDst);
-  static void diff(const float *dataSrc, float *dataDst, hsize_t length);
-  static void diff(const hsize_t *dataSrc, hsize_t *dataDst, hsize_t length);
-  static float mean(const float *dataSrc, hsize_t length);
-  static hsize_t mean(const hsize_t *dataSrc, hsize_t length);
-  static float median(const float *dataSrc, hsize_t length);
-  static hsize_t median(const hsize_t *dataSrc, hsize_t length);
+  static void xcorr(const float* dataSrc1, const float* dataSrc2, float* dataDst, hsize_t lengthSrc1, hsize_t lengthSrc2);
+  static void conv(const float* dataSrc1, const float* dataSrc2, float* dataDst, hsize_t lengthSrc1, hsize_t lengthSrc2);
+  static void findPeaks(const float* dataSrc, float* locsDst, float* peaksDst, hsize_t length, hsize_t &lengthDst);
+  static void diff(const float* dataSrc, float* dataDst, hsize_t length);
+  static void diff(const hsize_t* dataSrc, hsize_t* dataDst, hsize_t length);
+  static float mean(const float* dataSrc, hsize_t length);
+  static hsize_t mean(const hsize_t* dataSrc, hsize_t length);
+  static float median(const float* dataSrc, hsize_t length);
+  static hsize_t median(const hsize_t* dataSrc, hsize_t length);
 
-  void generateFunctions(hsize_t bSize, hsize_t oSize, float period, hsize_t harmonics, float *b, floatC *e, floatC *bE, floatC *bE_1, bool normalize = false) const;
-  void triangular(hsize_t oSize, float *w) const;
-  void hann(hsize_t oSize, float *w) const;
-  void generateE(float period, hsize_t ih, hsize_t h, hsize_t bSize, floatC *e) const;
-  void generateBE(hsize_t ih, hsize_t bSize, hsize_t oSize, const float *b, const floatC *e, floatC *bE, floatC *bE_1, bool normalize = false) const;
+  void generateFunctions(hsize_t bSize, hsize_t oSize, float period, hsize_t harmonics, float* b, floatC* e, floatC* bE, floatC* bE_1, bool normalize = false) const;
+  void triangular(hsize_t oSize, float* w) const;
+  void hann(hsize_t oSize, float* w) const;
+  void generateE(float period, hsize_t ih, hsize_t h, hsize_t bSize, floatC* e) const;
+  void generateBE(hsize_t ih, hsize_t bSize, hsize_t oSize, const float* b, const floatC* e, floatC* bE, floatC* bE_1, bool normalize = false) const;
 
   /// Overlap size
-  hsize_t oSize = 0;
+  hsize_t mOSize = 0;
   /// Base size
-  hsize_t bSize = 0;
+  hsize_t mBSize = 0;
   /// Period
-  float period = 0;
+  float mPeriod = 0.0f;
   /// Multiple of overlap size
-  hsize_t mos = 1;
+  hsize_t mMos = 1;
   /// Number of harmonics
-  hsize_t harmonics = 1;
+  hsize_t mHarmonics = 1;
   /// Coeficients stride
-  hsize_t stride = 2;
+  hsize_t mStride = 2;
 
   // Memory for helper functions data, 2D arrays for harmonics
   /// Window basis
-  float *b = nullptr;
+  float* mB = nullptr;
   /// Complex exponencial basis
-  floatC *e = nullptr;
+  floatC* mE = nullptr;
   /// Complex exponencial window basis
-  floatC *bE = nullptr;
+  floatC* mBE = nullptr;
   /// Inverted complex exponencial window basis
-  floatC *bE_1 = nullptr;
+  floatC* mBE_1 = nullptr;
 
   /// Singleton flag
-  static bool instanceFlag;
+  static bool sCompressHelperInstanceFlag;
   /// Singleton instance
-  static CompressHelper* instance;
+  static CompressHelper* sCompressHelperInstance;
 };
 
 #endif // COMPRESSHELPER_H

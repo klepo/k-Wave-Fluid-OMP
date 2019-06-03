@@ -473,12 +473,12 @@ void Parameters::readScalarsFromInputFile()
       }
       catch (...)*/
       {
-        mCommandLineParameters.mPeriod = 0;
+        mCommandLineParameters.mPeriod = 0.0f;
         DimensionSizes size = mInputFile.getDatasetDimensionSizes(rootGroup, kPressureSourceInputName);
         hsize_t length = 0;
         hsize_t limit = 500;
         length = size.ny > limit ? limit : size.ny;
-        float *data = static_cast<float *>(_mm_malloc(length * sizeof(float), kDataAlignment));
+        float* data = static_cast<float*>(_mm_malloc(length * sizeof(float), kDataAlignment));
         // Read only part of the dataset
         hid_t dataset = mInputFile.openDataset(rootGroup, kPressureSourceInputName);
         mInputFile.readHyperSlab(dataset, DimensionSizes(size.nx / 2, size.ny - length, 0), DimensionSizes(1, length, 1), data);
@@ -490,12 +490,12 @@ void Parameters::readScalarsFromInputFile()
       }
     }
 
-    if (!(mCommandLineParameters.getPeriod() > 0))
+    if (!(mCommandLineParameters.getPeriod() > 0.0f))
     {
       throw ios::failure(Logger::formatMessage(kErrFmtMissingPeriodValue));
     }
 
-    if (!(mCommandLineParameters.getFrequency() > 0))
+    if (!(mCommandLineParameters.getFrequency() > 0.0f))
     {
       mCommandLineParameters.mFrequency = 1.0f / (mCommandLineParameters.getPeriod() * mDt);
     }

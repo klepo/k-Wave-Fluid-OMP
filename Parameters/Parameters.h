@@ -662,8 +662,6 @@ class Parameters
 
     DimensionSizes getCompressedDimensionSizes() const;
 
-    CompressHelper *getCompressHelper() const;
-
     size_t getCompressedSteps() const;
 
 protected:

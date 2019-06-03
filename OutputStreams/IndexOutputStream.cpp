@@ -54,7 +54,7 @@ IndexOutputStream::IndexOutputStream(Hdf5File&            file,
                                      const RealMatrix&    sourceMatrix,
                                      const IndexMatrix&   sensorMask,
                                      const ReduceOperator reduceOp,
-                                     float *              bufferToReuse)
+                                     float*               bufferToReuse)
   : BaseOutputStream(file, datasetName, sourceMatrix, reduceOp, bufferToReuse),
     sensorMask(sensorMask),
     mDataset(H5I_BADID),
@@ -261,15 +261,15 @@ void IndexOutputStream::sample()
           size_t bIndex = ih * mCompressHelper->getBSize() + mStepLocal;
 
           // Correlation step
-          reinterpret_cast<floatC *>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sensorData[i]];
-          reinterpret_cast<floatC *>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sensorData[i]];
+          reinterpret_cast<floatC*>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sensorData[i]];
+          reinterpret_cast<floatC*>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sensorData[i]];
         }
       }
 
       if (mSavingFlag)
       {
         // Select accumulated value
-        float *data = mOddFrameFlag ? mStoreBuffer : mStoreBuffer2;
+        float* data = mOddFrameFlag ? mStoreBuffer : mStoreBuffer2;
 
         // Store selected buffer
         if (mCompressedTimeStep > 0)
@@ -385,7 +385,7 @@ void IndexOutputStream::close()
 /**
  * Flush the buffer down to the file at the actual position.
  */
-void IndexOutputStream::flushBufferToFile(float *bufferToFlush)
+void IndexOutputStream::flushBufferToFile(float* bufferToFlush)
 {
   mFile.writeHyperSlab(mDataset,
                        DimensionSizes(0, (mReduceOp == ReduceOperator::kC) ? mCompressedTimeStep - 1 : mSampledTimeStep, 0),

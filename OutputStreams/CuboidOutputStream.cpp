@@ -253,7 +253,7 @@ void CuboidOutputStream::sample()
 
       const size_t slabSize = mSourceMatrix.getDimensionSizes().ny * mSourceMatrix.getDimensionSizes().nx;
       const size_t rowSize  = mSourceMatrix.getDimensionSizes().nx;
-      const float *sourceData = mSourceMatrix.getData();
+      const float* sourceData = mSourceMatrix.getData();
 
       // iterate over all cuboid to be sampled
       for (size_t cuboidIdx = 0; cuboidIdx < mCuboidsInfo.size(); cuboidIdx++)
@@ -531,8 +531,8 @@ void CuboidOutputStream::sampleAggregated()
                 size_t bIndex = ih * mCompressHelper->getBSize() + mStepLocal;
 
                 // Correlation step
-                reinterpret_cast<floatC *>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sourceIndex];
-                reinterpret_cast<floatC *>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sourceIndex];
+                reinterpret_cast<floatC*>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sourceIndex];
+                reinterpret_cast<floatC*>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sourceIndex];
               }
               break;
             }
@@ -568,7 +568,7 @@ void CuboidOutputStream::sampleAggregated()
     if (mSavingFlag)
     {
       // Select accumulated value
-      float *data = mOddFrameFlag ? mStoreBuffer : mStoreBuffer2;
+      float* data = mOddFrameFlag ? mStoreBuffer : mStoreBuffer2;
 
       // Store selected buffer
       if (mCompressedTimeStep > 0)
@@ -594,7 +594,7 @@ void CuboidOutputStream::sampleAggregated()
 /**
  * Flush the buffer to the file (to multiple datasets if necessary).
  */
-void CuboidOutputStream::flushBufferToFile(float *bufferToFlush)
+void CuboidOutputStream::flushBufferToFile(float* bufferToFlush)
 {
   DimensionSizes position (0, 0, 0, 0);
   DimensionSizes blockSize(0, 0, 0, 0);
