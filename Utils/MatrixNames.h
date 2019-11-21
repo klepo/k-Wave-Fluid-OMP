@@ -32,6 +32,8 @@
 #ifndef MATRIX_NAMES_H
 #define MATRIX_NAMES_H
 
+#include <string>
+
 /**
  * @brief   Datatype for matrix names.
  * @details Datatype for matrix names.
@@ -213,6 +215,15 @@ MatrixName kUyNonStaggeredName = "uy_non_staggered";
 /// uz_non_staggered variable name
 MatrixName kUzNonStaggeredName = "uz_non_staggered";
 
+/// Ix_avg variable name
+MatrixName kIxAvgName  = "Ix_avg";
+/// Iy_avg variable name
+MatrixName kIyAvgName  = "Iy_avg";
+/// Iz_avg variable name
+MatrixName kIzAvgName  = "Iz_avg";
+/// Q_term variable name
+MatrixName kQTermName  = "Q_term";
+
 /// duxdx variable name
 MatrixName kDuxdxName          = "duxdx";
 /// duydy variable name
@@ -330,6 +341,8 @@ MatrixName kTemp3RealNDName = "Temp_3_RSND";
 
 /// FFTW_shift_temp variable name
 MatrixName kFftwShiftTempName = "FFTW_shift_temp";
+/// FFTW_shift_temp variable name
+MatrixName kFftwTimeShiftTempName = "FFTW_time_shift_temp";
 /// FFTW_X_temp variable name
 MatrixName kFftwXTempName     = "FFTW_X_temp";
 /// FFTW_Y_temp variable name

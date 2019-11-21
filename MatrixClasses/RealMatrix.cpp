@@ -130,6 +130,13 @@ void RealMatrix::writeData(Hdf5File&    file,
   // Write data and domain type
   file.writeMatrixDataType  (file.getRootGroup(), matrixName, Hdf5File::MatrixDataType::kFloat);
   file.writeMatrixDomainType(file.getRootGroup(), matrixName, Hdf5File::MatrixDomainType::kReal);
+}
+
+void RealMatrix::resize(const DimensionSizes &dimensionSizes)
+{
+  freeMemory();
+  initDimensions(dimensionSizes);
+  allocateMemory();
 }// end of writeData
 //----------------------------------------------------------------------------------------------------------------------
 

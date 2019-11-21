@@ -121,6 +121,8 @@ class RealMatrix : public BaseFloatMatrix
       return mData[z * mSlabSize + y * mRowSize +  x];
     };
 
+    void resize(const DimensionSizes& dimensionSizes);
+
   protected:
 
   private:
