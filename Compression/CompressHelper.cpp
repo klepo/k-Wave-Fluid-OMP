@@ -53,11 +53,15 @@ void CompressHelper::init(float period, hsize_t mos, hsize_t harmonics, bool nor
   mHarmonics = harmonics;
   mStride = harmonics * 2;
   mB = new float[mBSize]();
-  mE = new floatC[harmonics * mBSize]();
-  mBE = new floatC[harmonics * mBSize]();
-  mBE_1 = new floatC[harmonics * mBSize]();
+  mE = new FloatComplex[harmonics * mBSize]();
+  mEShifted = new FloatComplex[harmonics * mBSize]();
+  mBE = new FloatComplex[harmonics * mBSize]();
+  mBEShifted = new FloatComplex[harmonics * mBSize]();
+  mBE_1 = new FloatComplex[harmonics * mBSize]();
+  mBE_1Shifted = new FloatComplex[harmonics * mBSize]();
 
   generateFunctions(mBSize, mOSize, period, harmonics, mB, mE, mBE, mBE_1, normalize);
+  generateFunctions(mBSize, mOSize, period, harmonics, mB, mEShifted, mBEShifted, mBE_1Shifted, normalize, true);
 }
 
 /**
@@ -77,17 +81,35 @@ CompressHelper::~CompressHelper()
   }
   mE = nullptr;
 
+  if (mEShifted)
+  {
+    delete[] mEShifted;
+  }
+  mEShifted = nullptr;
+
   if (mBE)
   {
     delete[] mBE;
   }
   mBE = nullptr;
 
+  if (mBEShifted)
+  {
+    delete[] mBEShifted;
+  }
+  mBEShifted = nullptr;
+
   if (mBE_1)
   {
     delete[] mBE_1;
   }
   mBE_1 = nullptr;
+
+  if (mBE_1Shifted)
+  {
+    delete[] mBE_1Shifted;
+  }
+  mBE_1Shifted = nullptr;
 
   sCompressHelperInstanceFlag = false;
   if (sCompressHelperInstance)
@@ -206,8 +228,8 @@ float CompressHelper::computeTimeStep(const float* cC, const float* lC, hsize_t 
   hsize_t sH = stepLocal;
   for (hsize_t h = 0; h < mHarmonics; h++)
   {
-    stepValue += real(conj(reinterpret_cast<const floatC*>(cC)[h]) * getBE()[sH]) +
-                 real(conj(reinterpret_cast<const floatC*>(lC)[h]) * getBE_1()[sH]);
+    stepValue += real(conj(reinterpret_cast<const FloatComplex*>(cC)[h]) * getBE()[sH]) +
+                 real(conj(reinterpret_cast<const FloatComplex*>(lC)[h]) * getBE_1()[sH]);
     sH += mBSize;
   }
   return stepValue;
@@ -217,18 +239,36 @@ float CompressHelper::computeTimeStep(const float* cC, const float* lC, hsize_t 
  * @brief Returns complex exponencial window basis
  * @return Complex exponencial window basis
  */
-const floatC* CompressHelper::getBE() const
+const FloatComplex* CompressHelper::getBE() const
 {
   return mBE;
+}
+
+/**
+ * @brief Returns shifted complex exponencial window basis
+ * @return Shifted complex exponencial window basis
+ */
+const FloatComplex *CompressHelper::getBEShifted() const
+{
+  return mBEShifted;
 }
 
 /**
  * @brief Returns inverted complex exponencial window basis
  * @return Inverted complex exponencial window basis
  */
-const floatC* CompressHelper::getBE_1() const
+const FloatComplex* CompressHelper::getBE_1() const
 {
   return mBE_1;
+}
+
+/**
+ * @brief Returns inverted shifted complex exponencial window basis
+ * @return Inverted shifted complex exponencial window basis
+ */
+const FloatComplex *CompressHelper::getBE_1Shifted() const
+{
+  return mBE_1Shifted;
 }
 
 /**
@@ -485,7 +525,7 @@ hsize_t CompressHelper::median(const hsize_t* dataSrc, hsize_t length)
  * @param[out] bE_1 Inverted complex exponencial window basis
  * @param[in] normalize Normalization flag (optional)
  */
-void CompressHelper::generateFunctions(hsize_t bSize, hsize_t oSize, float period, hsize_t harmonics, float* b, floatC* e, floatC* bE, floatC* bE_1, bool normalize) const
+void CompressHelper::generateFunctions(hsize_t bSize, hsize_t oSize, float period, hsize_t harmonics, float* b, FloatComplex* e, FloatComplex* bE, FloatComplex* bE_1, bool normalize, bool shift) const
 {
   // Generate basis function (window)
   triangular(oSize, b);  // Triangular window
@@ -494,7 +534,7 @@ void CompressHelper::generateFunctions(hsize_t bSize, hsize_t oSize, float perio
   // Generate complex exponential window basis functions
   for (hsize_t ih = 0; ih < harmonics; ih++)
   {
-    generateE(period, ih, ih + 1, bSize, e);
+    generateE(period, ih, ih + 1, bSize, e, shift);
     generateBE(ih, bSize, oSize, b, e, bE, bE_1, normalize);
   }
 }
@@ -525,7 +565,7 @@ void CompressHelper::hann(hsize_t oSize, float* w) const
 {
   for (hsize_t x = 0; x < 2 * oSize + 1; x++)
   {
-    w[x] = float(pow(sin(M_PI * x / (2.0f * oSize)), 2));
+    w[x] = float(pow(sin(float(M_PI) * x / (2.0f * oSize)), 2));
   }
 }
 
@@ -537,13 +577,16 @@ void CompressHelper::hann(hsize_t oSize, float* w) const
  * @param[in] bSize Base size
  * @param[out] e Exponencial basis
  */
-void CompressHelper::generateE(float period, hsize_t ih, hsize_t h, hsize_t bSize, floatC* e) const
+void CompressHelper::generateE(float period, hsize_t ih, hsize_t h, hsize_t bSize, FloatComplex* e, bool shift) const
 {
-  floatC i(0.0f, -1.0f);
+  FloatComplex i(0.0f, -1.0f);
   for (hsize_t x = 0; x < bSize; x++)
   {
     hsize_t hx = ih * bSize + x;
     e[hx] = std::exp(i * (2.0f * float(M_PI) / (period / float(h))) * float(x));
+    if (shift) {
+      e[hx] *= std::exp(-i * float(M_PI) / (period / float(h)));
+    }
   }
 }
 
@@ -558,9 +601,9 @@ void CompressHelper::generateE(float period, hsize_t ih, hsize_t h, hsize_t bSiz
  * @param[out] bE_1 Inverted complex exponencial window basis
  * @param[in] normalize Normalization flag (optional)
  */
-void CompressHelper::generateBE(hsize_t ih, hsize_t bSize, hsize_t oSize, const float* b, const floatC* e, floatC* bE, floatC* bE_1, bool normalize) const
+void CompressHelper::generateBE(hsize_t ih, hsize_t bSize, hsize_t oSize, const float* b, const FloatComplex* e, FloatComplex* bE, FloatComplex* bE_1, bool normalize) const
 {
-  for (hsize_t x = 0; x < hsize_t(bSize); x++)
+  for (hsize_t x = 0; x < bSize; x++)
   {
     hsize_t hx = ih * bSize + x;
     bE[hx] = b[x] * e[hx];

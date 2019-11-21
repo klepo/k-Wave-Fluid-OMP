@@ -261,8 +261,8 @@ void IndexOutputStream::sample()
           size_t bIndex = ih * mCompressHelper->getBSize() + mStepLocal;
 
           // Correlation step
-          reinterpret_cast<floatC*>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sensorData[i]];
-          reinterpret_cast<floatC*>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sensorData[i]];
+          reinterpret_cast<FloatComplex*>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sensorData[i]];
+          reinterpret_cast<FloatComplex*>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sensorData[i]];
         }
       }
 

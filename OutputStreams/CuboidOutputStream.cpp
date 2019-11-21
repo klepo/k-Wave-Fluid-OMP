@@ -531,8 +531,8 @@ void CuboidOutputStream::sampleAggregated()
                 size_t bIndex = ih * mCompressHelper->getBSize() + mStepLocal;
 
                 // Correlation step
-                reinterpret_cast<floatC*>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sourceIndex];
-                reinterpret_cast<floatC*>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sourceIndex];
+                reinterpret_cast<FloatComplex*>(mStoreBuffer)[pH] += mCompressHelper->getBE()[bIndex] * sourceData[sourceIndex];
+                reinterpret_cast<FloatComplex*>(mStoreBuffer2)[pH] += mCompressHelper->getBE_1()[bIndex] * sourceData[sourceIndex];
               }
               break;
             }

@@ -47,14 +47,14 @@
 #include <complex>
 #include <omp.h>
 
-//#include <hdf5.h>  // HDF5
-
 /// Float complex datatype
-using floatC = std::complex<float>;
+using FloatComplex = std::complex<float>;
 /// Unsigned long long datatype
 using hsize_t = unsigned long long;
 /// Long long datatype
 using hssize_t = long long;
+
+const std::string kCompressSuffix = "_c";
 
 /**
  * @brief The CompressHelper class represents wrapper for the ultrasound signals compression
@@ -69,8 +69,10 @@ public:
   static float findPeriod(const float* dataSrc, hsize_t length);
   float computeTimeStep(const float* cC, const float* lC, hsize_t stepLocal) const;
 
-  const floatC* getBE() const;
-  const floatC* getBE_1() const;
+  const FloatComplex* getBE() const;
+  const FloatComplex* getBEShifted() const;
+  const FloatComplex* getBE_1() const;
+  const FloatComplex* getBE_1Shifted() const;
   hsize_t getOSize() const;
   hsize_t getBSize() const;
   float getPeriod() const;
@@ -93,11 +95,11 @@ private:
   static float median(const float* dataSrc, hsize_t length);
   static hsize_t median(const hsize_t* dataSrc, hsize_t length);
 
-  void generateFunctions(hsize_t bSize, hsize_t oSize, float period, hsize_t harmonics, float* b, floatC* e, floatC* bE, floatC* bE_1, bool normalize = false) const;
+  void generateFunctions(hsize_t bSize, hsize_t oSize, float period, hsize_t harmonics, float* b, FloatComplex* e, FloatComplex* bE, FloatComplex* bE_1, bool normalize = false, bool shift = false) const;
   void triangular(hsize_t oSize, float* w) const;
   void hann(hsize_t oSize, float* w) const;
-  void generateE(float period, hsize_t ih, hsize_t h, hsize_t bSize, floatC* e) const;
-  void generateBE(hsize_t ih, hsize_t bSize, hsize_t oSize, const float* b, const floatC* e, floatC* bE, floatC* bE_1, bool normalize = false) const;
+  void generateE(float period, hsize_t ih, hsize_t h, hsize_t bSize, FloatComplex* e, bool shift = false) const;
+  void generateBE(hsize_t ih, hsize_t bSize, hsize_t oSize, const float* b, const FloatComplex* e, FloatComplex* bE, FloatComplex* bE_1, bool normalize = false) const;
 
   /// Overlap size
   hsize_t mOSize = 0;
@@ -116,11 +118,17 @@ private:
   /// Window basis
   float* mB = nullptr;
   /// Complex exponencial basis
-  floatC* mE = nullptr;
+  FloatComplex* mE = nullptr;
+  /// Shifted complex exponencial basis
+  FloatComplex* mEShifted = nullptr;
   /// Complex exponencial window basis
-  floatC* mBE = nullptr;
+  FloatComplex* mBE = nullptr;
+  /// Shifted Complex exponencial window basis
+  FloatComplex* mBEShifted = nullptr;
   /// Inverted complex exponencial window basis
-  floatC* mBE_1 = nullptr;
+  FloatComplex* mBE_1 = nullptr;
+  /// Inverted shifted complex exponencial window basis
+  FloatComplex* mBE_1Shifted = nullptr;
 
   /// Singleton flag
   static bool sCompressHelperInstanceFlag;
