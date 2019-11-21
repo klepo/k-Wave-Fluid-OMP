@@ -226,7 +226,7 @@ $(TARGET).o : $(TARGET).cpp
 
 
 clean:
-	rm -f *.o Hdf5/*.o KSpaceSolver/*.o MatrixClasses/*.o Parameters/*.o \
+	rm -f *.o Compression/*.o Hdf5/*.o KSpaceSolver/*.o MatrixClasses/*.o Parameters/*.o \
 	       Containers/*.o  OutputStreams/*.o Logger/*.o $(TARGET)
 
 

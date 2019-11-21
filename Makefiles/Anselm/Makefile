@@ -199,8 +199,8 @@ $(TARGET):	main.o 					 \
 
 
 	$(CXX) $(LDFLAGS) main.o 			 \
-		Compression/CompressHelper.o             \		
-                Containers/MatrixContainer.o             \
+		Compression/CompressHelper.o             \
+		Containers/MatrixContainer.o             \
 		Containers/MatrixRecord.o                \
 		Containers/OutputStreamContainer.o       \
 		Hdf5/Hdf5File.o				 \
@@ -228,6 +228,6 @@ $(TARGET).o : $(TARGET).cpp
 
 
 clean:
-	rm -f Hdf5/*.o KSpaceSolver/*.o MatrixClasses/*.o Parameters/*.o Containers/*.o  OutputStreams/*.o Logger/*.o  $(TARGET)
+	rm -f Compression/*.o Hdf5/*.o KSpaceSolver/*.o MatrixClasses/*.o Parameters/*.o Containers/*.o  OutputStreams/*.o Logger/*.o  $(TARGET)
 
 
