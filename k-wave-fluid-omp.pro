@@ -19,14 +19,21 @@ win32:QMAKE_LFLAGS += /ignore:4099
 
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
+INCLUDEPATH += $$(MKLROOT)\include\
 INCLUDEPATH += $$(MKLROOT)\include\fftw
 DEPENDPATH += $$(MKLROOT)\include\fftw
 
-#LIBS += -L$$(MKLROOT)\lib\intel64
+LIBS += -L$$(MKLROOT)\lib\intel64 \
+    -lmkl_intel_ilp64 \
+    -lmkl_intel_thread \
+    -lmkl_core \
+    -llibiomp5md \
 
 win32 {
-    QMAKE_CXXFLAGS += /Qmkl=parallel
-    QMAKE_CFLAGS += /Qmkl=parallel
+    QMAKE_CXXFLAGS += /DMKL_ILP64
+    QMAKE_CFLAGS += /DMKL_ILP64
+#    QMAKE_CXXFLAGS += /Qmkl:parallel
+#    QMAKE_CFLAGS += /Qmkl:parallel
     DEFINES -= _UNICODE
 }
 
@@ -42,10 +49,6 @@ lessThan(QT_VERSION, 4.8): error(Qt version is too old)
 include($$PWD/qtproject/hdf5.pri)
 
 # OpenMP library
-#win32 {
-#    QMAKE_CXXFLAGS += /Qopenmp
-#    QMAKE_CFLAGS += /Qopenmp
-#}
 include($$PWD/qtproject/openmp.pri)
 
 SOURCES += \
@@ -106,8 +109,8 @@ HEADERS += \
     Utils/MatrixNames.h \
     Utils/TimeMeasure.h \
 
-QMAKE_POST_LINK += $${QMAKE_COPY} \"$$(ROOT)\redist\intel64_win\mkl\mkl_avx2.dll\" \"$$OUT_PWD/\" &
-QMAKE_POST_LINK += $${QMAKE_COPY} \"$$(ROOT)\redist\intel64_win\mkl\mkl_core.dll\" \"$$OUT_PWD/\" &
-QMAKE_POST_LINK += $${QMAKE_COPY} \"$$(ROOT)\redist\intel64_win\mkl\mkl_def.dll\" \"$$OUT_PWD/\" &
-QMAKE_POST_LINK += $${QMAKE_COPY} \"$$(ROOT)\redist\intel64_win\mkl\mkl_intel_thread.dll\" \"$$OUT_PWD/\"
+#QMAKE_POST_LINK += $${QMAKE_COPY} \"$$(ROOT)\redist\intel64_win\mkl\mkl_avx2.dll\" \"$$OUT_PWD/\" &
+#QMAKE_POST_LINK += $${QMAKE_COPY} \"$$(ROOT)\redist\intel64_win\mkl\mkl_core.dll\" \"$$OUT_PWD/\" &
+#QMAKE_POST_LINK += $${QMAKE_COPY} \"$$(ROOT)\redist\intel64_win\mkl\mkl_def.dll\" \"$$OUT_PWD/\" &
+#QMAKE_POST_LINK += $${QMAKE_COPY} \"$$(ROOT)\redist\intel64_win\mkl\mkl_intel_thread.dll\" \"$$OUT_PWD/\"
 

@@ -1,6 +1,9 @@
 win32 {
-    QMAKE_CXXFLAGS += -openmp
-    QMAKE_CFLAGS += -openmp
+    #QMAKE_CXXFLAGS += -openmp
+    #QMAKE_CFLAGS += -openmp
+    QMAKE_CXXFLAGS += /openmp
+    QMAKE_CFLAGS += /openmp
+    DEFINES += _OPENMP
 }
 
 unix {
