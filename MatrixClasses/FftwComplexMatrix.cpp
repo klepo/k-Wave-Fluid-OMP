@@ -666,7 +666,8 @@ void FftwComplexMatrix::computeR2CFft1DX(RealMatrix& inMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    //const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    const DimensionSizes dims = inMatrix.getDimensionSizes();
       for (size_t slab_id = 0; slab_id < dims.nz; slab_id++)
       {
         fftwf_execute_dft_r2c(mR2CFftPlan1DX,
@@ -699,8 +700,9 @@ void FftwComplexMatrix::computeR2CFft1DY(RealMatrix& inMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
-      for (size_t slab_id = 0; slab_id < dims.nz; slab_id++)
+    //const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    const DimensionSizes dims = inMatrix.getDimensionSizes();
+    for (size_t slab_id = 0; slab_id < dims.nz; slab_id++)
       {
         fftwf_execute_dft_r2c(mR2CFftPlan1DY,
                               &inMatrix.getData()[slab_id * dims.nx * dims.ny],
@@ -732,8 +734,9 @@ void FftwComplexMatrix::computeR2CFft1DZ(RealMatrix& inMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
-      for (size_t slab_id = 0; slab_id < dims.ny; slab_id++)
+    //const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    const DimensionSizes dims = inMatrix.getDimensionSizes();
+    for (size_t slab_id = 0; slab_id < dims.ny; slab_id++)
       {
         fftwf_execute_dft_r2c(mR2CFftPlan1DZ,
                               &inMatrix.getData()[slab_id * dims.nx],
@@ -765,8 +768,9 @@ void FftwComplexMatrix::computeC2RFft1DX(RealMatrix& outMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
-      for (size_t slab_id = 0; slab_id < dims.nz; slab_id++)
+    //const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    const DimensionSizes dims = outMatrix.getDimensionSizes();
+    for (size_t slab_id = 0; slab_id < dims.nz; slab_id++)
       {
         fftwf_execute_dft_c2r(mC2RFftPlan1DX,
                               (fftwf_complex *) &mData[slab_id * 2 * (dims.nx / 2 + 1) * dims.ny],
@@ -798,7 +802,8 @@ void FftwComplexMatrix::computeC2RFft1DY(RealMatrix& outMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    //const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    const DimensionSizes dims = outMatrix.getDimensionSizes();
       for (size_t slab_id = 0; slab_id < dims.nz; slab_id++)
       {
         fftwf_execute_dft_c2r(mC2RFftPlan1DY,
@@ -831,7 +836,8 @@ void FftwComplexMatrix::computeC2RFft1DZ(RealMatrix& outMatrix)
 
     // Intel Compiler + MKL
     #if (defined(__INTEL_COMPILER))
-      const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    //const DimensionSizes dims = Parameters::getInstance().getFullDimensionSizes();
+    const DimensionSizes dims = outMatrix.getDimensionSizes();
       for (size_t slab_id = 0; slab_id < dims.ny; slab_id++)
       {
         fftwf_execute_dft_c2r(mC2RFftPlan1DZ,

@@ -55,6 +55,8 @@ class MatrixContainer
      */
     enum class MatrixIdx
     {
+      /// Undefined matrix
+      kUndefined = -1,
       /// Kappa matrix.
       kKappa,
       /// Kappa for source scaling.
@@ -196,7 +198,9 @@ class MatrixContainer
       /// Temporary matrix for 1D fft in z.
       kTempFftwZ,
       /// Temporary matrix for fft shift.
-      kTempFftwShift
+      kTempFftwShift,
+      /// Temporary matrix for fft shift in time.
+      kTempFftwTimeShift,
     }; // end of MatrixIdx
 
         /// Constructor.
