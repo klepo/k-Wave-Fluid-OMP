@@ -386,6 +386,11 @@ void Hdf5File::readHyperSlab(const hid_t           dataset,
                              const DimensionSizes& size,
                              T*              data)
 {
+  size_t n = H5Iget_name(dataset, NULL, 0);
+  char buffer[n];
+  H5Iget_name(dataset, buffer, n + 1);
+  std::string name = buffer;
+
   herr_t status;
   hid_t filespace, memspace;
 
@@ -425,7 +430,7 @@ void Hdf5File::readHyperSlab(const hid_t           dataset,
   status = H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offset, NULL, nElement, NULL);
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, name.c_str()));
   }
 
   // assign memspace
@@ -446,7 +451,7 @@ void Hdf5File::readHyperSlab(const hid_t           dataset,
 
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, name.c_str()));
   }
 
   H5Sclose(memspace);
@@ -482,6 +487,11 @@ void Hdf5File::writeHyperSlab(const hid_t           dataset,
                               const DimensionSizes& size,
                               const T*              data)
 {
+  size_t n = H5Iget_name(dataset, NULL, 0);
+  char buffer[n];
+  H5Iget_name(dataset, buffer, n + 1);
+  std::string name = buffer;
+
   herr_t status;
   hid_t filespace, memspace;
 
@@ -521,7 +531,7 @@ void Hdf5File::writeHyperSlab(const hid_t           dataset,
   status = H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offset, NULL, nElement, NULL);
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, name.c_str()));
   }
 
   // assign memspace
@@ -542,7 +552,7 @@ void Hdf5File::writeHyperSlab(const hid_t           dataset,
 
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, name.c_str()));
   }
 
   H5Sclose(memspace);
@@ -580,6 +590,11 @@ void Hdf5File::writeCuboidToHyperSlab(const hid_t dataset,
                                       const DimensionSizes& matrixDimensions,
                                       const float*           matrixData)
 {
+  size_t n = H5Iget_name(dataset, NULL, 0);
+  char buffer[n];
+  H5Iget_name(dataset, buffer, n + 1);
+  std::string name = buffer;
+
   herr_t status;
   hid_t  filespace, memspace;
 
@@ -601,7 +616,7 @@ void Hdf5File::writeCuboidToHyperSlab(const hid_t dataset,
   status = H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offsetInDataset, NULL, slabSize, NULL);
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, name.c_str()));
   }
 
 
@@ -615,14 +630,14 @@ void Hdf5File::writeCuboidToHyperSlab(const hid_t dataset,
                                NULL);
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, name.c_str()));
   }
 
   // Write the data
   status = H5Dwrite(dataset, H5T_NATIVE_FLOAT, memspace, filespace, H5P_DEFAULT, matrixData);
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, name.c_str()));
   }
 
   // close memspace and filespace
@@ -641,6 +656,11 @@ void Hdf5File::writeSensorByMaskToHyperSlab(const hid_t           dataset,
                                             const DimensionSizes& matrixDimensions,
                                             const float*          matrixData)
 {
+  size_t n = H5Iget_name(dataset, NULL, 0);
+  char buffer[n];
+  H5Iget_name(dataset, buffer, n + 1);
+  std::string name = buffer;
+
   herr_t status;
   hid_t  filespace, memspace;
 
@@ -665,7 +685,7 @@ void Hdf5File::writeSensorByMaskToHyperSlab(const hid_t           dataset,
                                NULL);
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, name.c_str()));
   }
 
   // assign 1D memspace and select the elements within the array
@@ -676,7 +696,7 @@ void Hdf5File::writeSensorByMaskToHyperSlab(const hid_t           dataset,
                                ( hsize_t *) (indexSensorData));
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, name.c_str()));
   }
 
   // Write the data
@@ -688,7 +708,7 @@ void Hdf5File::writeSensorByMaskToHyperSlab(const hid_t           dataset,
                     matrixData);
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, ""));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotWriteDataset, name.c_str()));
   }
 
   // close memspace and filespace
@@ -920,7 +940,7 @@ size_t Hdf5File::getDatasetNumberOfDimensions(const hid_t parentGroup,
 size_t Hdf5File::getDatasetSize(const hid_t parentGroup,
                                 MatrixName& datasetName)
 {
-  hsize_t dims[3] = {0, 0, 0};
+  hsize_t dims[4] = {1, 1, 1, 1};
 
   herr_t status = H5LTget_dataset_info(parentGroup, datasetName.c_str(), dims, NULL, NULL);
   if (status < 0)
@@ -928,7 +948,7 @@ size_t Hdf5File::getDatasetSize(const hid_t parentGroup,
     throw ios::failure(Logger::formatMessage(kErrFmtCannotReadDataset, datasetName.c_str()));
   }
 
-  return dims[0] * dims[1] * dims[2];
+  return dims[0] * dims[1] * dims[2] * dims[3];
 }// end of getDatasetSize
 //----------------------------------------------------------------------------------------------------------------------
 

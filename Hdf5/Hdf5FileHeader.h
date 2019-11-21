@@ -201,7 +201,7 @@ class Hdf5FileHeader
     /**
      * @brief Write header into the output file.
      *
-     * @param [in,out] outputFile - Output file handle.
+     * @param [in, out] outputFile - Output file handle.
      * @throw ios:failure          - If error happens.
      */
     void writeHeaderToOutputFile(Hdf5File& outputFile);
