@@ -310,7 +310,14 @@ void KSpaceFirstOrderSolver::compute()
       Logger::log(Logger::LogLevel::kBasic, kOutFmtPostProcessing);
       Logger::flush(Logger::LogLevel::kBasic);
 
-      postProcessing();
+      if (mParameters.isSimulation3D())
+      {
+        postProcessing<SD::k3D>();
+      }
+      else
+      {
+        postProcessing<SD::k2D>();
+      }
 
       // if checkpointing is enabled and the checkpoint file was created in the past, delete it
       if (mParameters.isCheckpointEnabled())
@@ -416,7 +423,7 @@ void KSpaceFirstOrderSolver::printFullCodeNameAndLicense() const
     Logger::log(Logger::LogLevel::kBasic, kOutFmtIntelCompiler, __INTEL_COMPILER);
   #endif
   #ifdef _MSC_VER
-	Logger::log(Logger::LogLevel::kBasic, kOutFmtVisualStudioCompiler, _MSC_VER);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtVisualStudioCompiler, _MSC_VER);
   #endif
 
      // instruction set
@@ -530,7 +537,12 @@ void KSpaceFirstOrderSolver::InitializeFftwPlans()
   // if necessary, create 1D shift plans.
   // in this case, the matrix has a bit bigger dimensions to be able to store
   // shifted matrices.
-  if (Parameters::getInstance().getStoreVelocityNonStaggeredRawFlag() || Parameters::getInstance().getStoreVelocityNonStaggeredCFlag())
+  if (Parameters::getInstance().getStoreVelocityNonStaggeredRawFlag()
+      || Parameters::getInstance().getStoreVelocityNonStaggeredCFlag()
+      || Parameters::getInstance().getStoreIntensityAvgFlag()
+      || Parameters::getInstance().getStoreQTermFlag()
+      || Parameters::getInstance().getStoreIntensityAvgCFlag()
+      || Parameters::getInstance().getStoreQTermCFlag())
   {
     // X shifts
     getTempFftwShift().createR2CFftPlan1DX(getUxShifted());
@@ -547,6 +559,13 @@ void KSpaceFirstOrderSolver::InitializeFftwPlans()
       getTempFftwShift().createC2RFftPlan1DZ(getUzShifted());
     }
   }// end u_non_staggered
+
+  if (Parameters::getInstance().getStoreIntensityAvgFlag()
+      || Parameters::getInstance().getStoreQTermFlag())
+  {
+    //getTempFftwTimeShift().createR2CFftPlan1DY(getTempRealTimeShift());
+    //getTempFftwTimeShift().createC2RFftPlan1DY(getTempRealTimeShift());
+  }
 
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
 }// end of InitializeFftwPlans
@@ -663,7 +682,6 @@ void KSpaceFirstOrderSolver::computeMainLoop()
          (!mParameters.isTimeToCheckpoint(mTotalTime)))
   {
     const size_t timeIndex = mParameters.getTimeIndex();
-
     // compute velocity
     computeVelocity<simulationDimension>();
     // add in the velocity source term
@@ -717,6 +735,7 @@ void KSpaceFirstOrderSolver::computeMainLoop()
 /**
  * Post processing the quantities, closing the output streams and storing the sensor mask.
  */
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::postProcessing()
 {
   if (mParameters.getStorePressureFinalAllFlag())
@@ -734,10 +753,38 @@ void KSpaceFirstOrderSolver::postProcessing()
     }
   }// u_final
 
-  // Apply post-processing and close
-  mOutputStreamContainer.postProcessStreams();
-  mOutputStreamContainer.closeStreams();
+  // Compute average intensity without compression
+  if (mParameters.getStoreQTermFlag() || mParameters.getStoreIntensityAvgFlag())
+  {
+    computeAverageIntensities<simulationDimension>();
+  }
 
+  // Apply post-processing
+  mOutputStreamContainer.postProcessStreams();
+
+  // Compute and store Q term (volume rate of heat deposition) from average intensity
+  if (mParameters.getStoreQTermFlag())
+  {
+    computeQTerm<simulationDimension>(OutputStreamContainer::OutputStreamIdx::kIntensityXAvg,
+                                      OutputStreamContainer::OutputStreamIdx::kIntensityYAvg,
+                                      OutputStreamContainer::OutputStreamIdx::kIntensityZAvg,
+                                      OutputStreamContainer::OutputStreamIdx::kQTerm);
+  }
+
+  // Compute and store Q term (volume rate of heat deposition) from average intensity computed using compression
+  if (mParameters.getStoreQTermCFlag())
+  {
+    computeQTerm<simulationDimension>(OutputStreamContainer::OutputStreamIdx::kIntensityXAvgC,
+                                      OutputStreamContainer::OutputStreamIdx::kIntensityYAvgC,
+                                      OutputStreamContainer::OutputStreamIdx::kIntensityZAvgC,
+                                      OutputStreamContainer::OutputStreamIdx::kQTermC);
+  }
+
+  // Apply post-processing 2
+  mOutputStreamContainer.postProcessStreams2();
+
+  // Close
+  mOutputStreamContainer.closeStreams();
 
   // store sensor mask if wanted
   if (mParameters.getCopySensorMaskFlag())
@@ -766,7 +813,12 @@ void KSpaceFirstOrderSolver::storeSensorData()
   // Unless the time for sampling has come, exit
   if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex())
   {
-    if (mParameters.getStoreVelocityNonStaggeredRawFlag() || mParameters.getStoreVelocityNonStaggeredCFlag())
+    if (mParameters.getStoreVelocityNonStaggeredRawFlag()
+        || mParameters.getStoreVelocityNonStaggeredCFlag()
+        || mParameters.getStoreIntensityAvgFlag()
+        || mParameters.getStoreQTermFlag()
+        || mParameters.getStoreIntensityAvgCFlag()
+        || mParameters.getStoreQTermCFlag())
     {
       if (mParameters.isSimulation3D())
       {
@@ -880,9 +932,7 @@ void KSpaceFirstOrderSolver::saveCheckpointData()
   {
     Logger::log(Logger::LogLevel::kFull,kOutFmtStoringSensorData);
     Logger::flush(Logger::LogLevel::kFull);
-
     mOutputStreamContainer.checkpointStreams();
-
     Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
   }
   mOutputStreamContainer.closeStreams();
@@ -891,6 +941,495 @@ void KSpaceFirstOrderSolver::saveCheckpointData()
 }// end of saveCheckpointData
 //----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Compute average intensities.
+ */
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computeAverageIntensities()
+{
+  float* intensityXAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvg].getCurrentStoreBuffer();
+  float* intensityYAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvg].getCurrentStoreBuffer();
+  float* intensityZAvgData = (simulationDimension == SD::k3D) ? mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvg].getCurrentStoreBuffer() : nullptr;
+  const size_t steps = mParameters.getNt() - mParameters.getSamplingStartTimeIndex();
+
+  // Compute shifts
+  const float pi2 = static_cast<float>(M_PI) * 2.0f;
+  const size_t stepsComplex = steps / 2 + 1;
+  FloatComplex* kx = reinterpret_cast<FloatComplex*>(_mm_malloc(stepsComplex * sizeof(FloatComplex), kDataAlignment));
+  //#pragma omp simd - Intel exp bug
+  for (size_t i = 0; i < stepsComplex; i++)
+  {
+    const ssize_t shift = ssize_t((i + (steps / 2)) % steps - (steps / 2));
+    kx[i] = exp(FloatComplex(0.0f, 1.0f) * (pi2 * 0.5f) * (float(shift) / float(steps)));
+  }
+
+  size_t sensorMaskSize = 0;
+  size_t numberOfDatasets = 1;
+
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
+    sensorMaskSize = getSensorMaskIndex().capacity();
+  }
+  else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
+    sensorMaskSize = getSensorMaskCorners().getSizeOfAllCuboids();
+    numberOfDatasets = getSensorMaskCorners().getDimensionSizes().ny;
+  }
+
+  hid_t datasetP = 0;
+  hid_t datasetUx = 0;
+  hid_t datasetUy = 0;
+  hid_t datasetUz = 0;
+
+  // For every dataset
+  // TODO test with more cuboids
+  for (size_t indexOfDataset = 1; indexOfDataset <= numberOfDatasets; indexOfDataset++)
+  {
+    size_t datasetSize = 0;
+    DimensionSizes datasetDimensionSizes;
+    size_t sliceSize = 0;
+    // Block size for reading
+    size_t blockSize = getTempFftwTimeShift().getDimensionSizes().nx;
+    DimensionSizes datasetBlockSizes;
+
+    // Open datasets
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+    {
+      datasetP = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName);
+      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName);
+      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName);
+      if (simulationDimension == SD::k3D)
+      {
+        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName);
+      }
+      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName) / steps;
+      // Maximum size is datasetSize
+      if (blockSize > datasetSize)
+      {
+        blockSize = datasetSize;
+      }
+      datasetBlockSizes = DimensionSizes(blockSize, steps, 1);
+    }
+    else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+    {
+      datasetP = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset));
+      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName + "/" + std::to_string(indexOfDataset));
+      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName + "/" + std::to_string(indexOfDataset));
+      if (simulationDimension == SD::k3D)
+      {
+        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName + "/" + std::to_string(indexOfDataset));
+      }
+      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset)) / steps;
+      datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset));
+      sliceSize = datasetDimensionSizes.nx * datasetDimensionSizes.ny;
+      // Maximum size is datasetSize
+      if (blockSize > datasetSize)
+      {
+        blockSize = datasetSize;
+      }
+      float blockCount = datasetSize / float(blockSize);
+      size_t zCount = datasetDimensionSizes.nz / blockCount;
+      blockSize = sliceSize * zCount;
+      datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
+    }
+
+    RealMatrix dataP(DimensionSizes(blockSize, steps, 1));
+    RealMatrix dataUx(DimensionSizes(blockSize, steps, 1));
+    RealMatrix dataUy(DimensionSizes(blockSize, steps, 1));
+    RealMatrix dataUz(DimensionSizes(blockSize, steps, 1));
+    getTempFftwTimeShift().createR2CFftPlan1DY(dataP);
+    getTempFftwTimeShift().createC2RFftPlan1DY(dataP);
+
+    for (size_t i = 0; i < datasetSize; i += blockSize)
+    {
+      // Read block by sensor mask type
+      if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+      {
+        if (i + blockSize > datasetSize)
+        {
+          blockSize = datasetSize - i;
+          datasetBlockSizes = DimensionSizes(blockSize, steps, 1);
+          dataP.resize(DimensionSizes(blockSize, steps, 1));
+          dataUx.resize(DimensionSizes(blockSize, steps, 1));
+          dataUy.resize(DimensionSizes(blockSize, steps, 1));
+          dataUz.resize(DimensionSizes(blockSize, steps, 1));
+          getTempFftwTimeShift().createR2CFftPlan1DY(dataP);
+          getTempFftwTimeShift().createC2RFftPlan1DY(dataP);
+        }
+
+        mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(i, 0, 0), datasetBlockSizes, dataP.getData());
+        mParameters.getOutputFile().readHyperSlab(datasetUx, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUx.getData());
+        mParameters.getOutputFile().readHyperSlab(datasetUy, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUy.getData());
+        if (simulationDimension == SD::k3D)
+        {
+          mParameters.getOutputFile().readHyperSlab(datasetUz, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUz.getData());
+        }
+      }
+      else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+      {
+        if (i + blockSize > datasetSize)
+        {
+          blockSize = datasetSize - i;
+          datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, blockSize / sliceSize, steps);
+          dataP.resize(DimensionSizes(blockSize, steps, 1));
+          dataUx.resize(DimensionSizes(blockSize, steps, 1));
+          dataUy.resize(DimensionSizes(blockSize, steps, 1));
+          dataUz.resize(DimensionSizes(blockSize, steps, 1));
+          getTempFftwTimeShift().createR2CFftPlan1DY(dataP);
+          getTempFftwTimeShift().createC2RFftPlan1DY(dataP);
+        }
+        size_t zOffset = i / sliceSize;
+
+        mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataP.getData());
+        mParameters.getOutputFile().readHyperSlab(datasetUx, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUx.getData());
+        mParameters.getOutputFile().readHyperSlab(datasetUy, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUy.getData());
+        if (simulationDimension == SD::k3D)
+        {
+          mParameters.getOutputFile().readHyperSlab(datasetUz, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUz.getData());
+        }
+      }
+
+      // Phase shifts using FFT
+      const float divider = 1.0f / static_cast<float>(steps);
+      FloatComplex* tempFftTimeShift = getTempFftwTimeShift().getComplexData();
+      getTempFftwTimeShift().computeR2CFft1DY(dataUx);
+      #pragma omp simd
+      for (size_t step = 0; step < stepsComplex; step++)
+      {
+        for (size_t x = 0; x < blockSize; x++)
+        {
+          tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
+        }
+      }
+      getTempFftwTimeShift().computeC2RFft1DY(dataUx);
+      getTempFftwTimeShift().computeR2CFft1DY(dataUy);
+      #pragma omp simd
+      for (size_t step = 0; step < stepsComplex; step++)
+      {
+        for (size_t x = 0; x < blockSize; x++)
+        {
+          tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
+        }
+      }
+      getTempFftwTimeShift().computeC2RFft1DY(dataUy);
+      if (simulationDimension == SD::k3D)
+      {
+        getTempFftwTimeShift().computeR2CFft1DY(dataUz);
+        #pragma omp simd
+        for (size_t step = 0; step < stepsComplex; step++)
+        {
+          for (size_t x = 0; x < blockSize; x++)
+          {
+            tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
+          }
+        }
+        getTempFftwTimeShift().computeC2RFft1DY(dataUz);
+      }
+
+      // Compute intensity
+      for (size_t step = 0; step < steps; step++)
+      {
+        for (size_t x = 0; x < blockSize; x++)
+        {
+          intensityXAvgData[i + x] += dataUx[step * blockSize + x] * dataP[step * blockSize + x];
+          intensityYAvgData[i + x] += dataUy[step * blockSize + x] * dataP[step * blockSize + x];
+          if (simulationDimension == SD::k3D)
+          {
+            intensityZAvgData[i + x] += dataUz[step * blockSize + x] * dataP[step * blockSize + x];
+          }
+        }
+      }
+
+      // Compute average of intensity
+      for (size_t x = 0; x < blockSize; x++)
+      {
+        intensityXAvgData[i + x] /= steps;
+        intensityYAvgData[i + x] /= steps;
+        if (simulationDimension == SD::k3D)
+        {
+          intensityZAvgData[i + x] /= steps;
+        }
+      }
+    }
+
+    mParameters.getOutputFile().closeDataset(datasetP);
+    mParameters.getOutputFile().closeDataset(datasetUx);
+    mParameters.getOutputFile().closeDataset(datasetUy);
+    if (simulationDimension == SD::k3D)
+    {
+      mParameters.getOutputFile().closeDataset(datasetUz);
+    }
+  }
+  _mm_free(kx);
+}// end of computeAverageIntensities
+//----------------------------------------------------------------------------------------------------------------------
+
+
+/**
+ * Compute Q term (volume rate of heat deposition) from average intensities.
+ */
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx intensityXAvgStreamIndex,
+                                          OutputStreamContainer::OutputStreamIdx intensityYAvgStreamIndex,
+                                          OutputStreamContainer::OutputStreamIdx intensityZAvgStreamIndex,
+                                          OutputStreamContainer::OutputStreamIdx qTermStreamIdx)
+{
+  float* intensityXAvgData = mOutputStreamContainer[intensityXAvgStreamIndex].getCurrentStoreBuffer();
+  float* intensityYAvgData = mOutputStreamContainer[intensityYAvgStreamIndex].getCurrentStoreBuffer();
+  float* intensityZAvgData = (simulationDimension == SD::k3D) ? mOutputStreamContainer[intensityZAvgStreamIndex].getCurrentStoreBuffer() : nullptr;
+
+  // Full sized matrices for intensities
+  RealMatrix intensityXAvg(mParameters.getFullDimensionSizes());
+  RealMatrix intensityYAvg(mParameters.getFullDimensionSizes());
+  RealMatrix intensityZAvg(mParameters.getFullDimensionSizes());
+
+  const DimensionSizes& fullDimensionSizes = mParameters.getFullDimensionSizes();
+
+  // Copy values from store buffer to positions defined by sensor mask indices
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
+    const size_t sensorMaskSize = getSensorMaskIndex().capacity();
+    #pragma omp parallel for simd schedule(static)
+    for (size_t i = 0; i < sensorMaskSize; i++)
+    {
+      intensityXAvg[getSensorMaskIndex()[i]] = intensityXAvgData[i];
+      intensityYAvg[getSensorMaskIndex()[i]] = intensityYAvgData[i];
+      if (simulationDimension == SD::k3D) {
+        intensityZAvg[getSensorMaskIndex()[i]] = intensityZAvgData[i];
+      }
+    }
+  }
+
+  // Copy values from store buffer to positions defined by sensor mask corners
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
+    const size_t slabSize = fullDimensionSizes.ny * fullDimensionSizes.nx;
+    const size_t rowSize  = fullDimensionSizes.nx;
+    const size_t nCuboids = getSensorMaskCorners().getDimensionSizes().ny;
+    size_t cuboidInBufferStart = 0;
+
+    #pragma omp parallel
+    for (size_t cuboidIdx = 0; cuboidIdx < nCuboids; cuboidIdx++)
+    {
+      const DimensionSizes topLeftCorner     = getSensorMaskCorners().getTopLeftCorner(cuboidIdx);
+      const DimensionSizes bottomRightCorner = getSensorMaskCorners().getBottomRightCorner(cuboidIdx);
+
+      size_t cuboidSlabSize = (bottomRightCorner.ny - topLeftCorner.ny + 1) *
+                              (bottomRightCorner.nx - topLeftCorner.nx + 1);
+      size_t cuboidRowSize  = (bottomRightCorner.nx - topLeftCorner.nx + 1);
+
+      #pragma omp for collapse(3)
+      for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++)
+      {
+        for (size_t y = topLeftCorner.ny; y <= bottomRightCorner.ny; y++)
+        {
+          for (size_t x = topLeftCorner.nx; x <= bottomRightCorner.nx; x++)
+          {
+            const size_t storeBufferIndex = cuboidInBufferStart +
+                                            (z - topLeftCorner.nz) * cuboidSlabSize +
+                                            (y - topLeftCorner.ny) * cuboidRowSize  +
+                                            (x - topLeftCorner.nx);
+
+            const size_t sourceIndex = z * slabSize + y * rowSize + x;
+            intensityXAvg[sourceIndex] = intensityXAvgData[storeBufferIndex];
+            intensityYAvg[sourceIndex] = intensityYAvgData[storeBufferIndex];
+            if (simulationDimension == SD::k3D) {
+              intensityZAvg[sourceIndex] = intensityZAvgData[storeBufferIndex];
+            }
+          }
+        }
+      }
+      // must be done only once
+      #pragma omp single
+      {
+        cuboidInBufferStart += (bottomRightCorner - topLeftCorner).nElements();
+      }
+    }
+  }
+
+  // Helper complex memory
+  FloatComplex* tempFftShift = getTempFftwShift().getComplexData();
+
+  const float pi2 = static_cast<float>(M_PI) * 2.0f;
+
+  // Normalization constants for FFT
+  const float dividerX = 1.0f / static_cast<float>(fullDimensionSizes.nx);
+  const float dividerY = 1.0f / static_cast<float>(fullDimensionSizes.ny);
+  const float dividerZ = 1.0f / static_cast<float>(fullDimensionSizes.nz);
+  // Helper values
+  const size_t nx = fullDimensionSizes.nx;
+  const size_t ny = fullDimensionSizes.ny;
+  const size_t nz = fullDimensionSizes.nz;
+  const float dx  = mParameters.getDx();
+  const float dy  = mParameters.getDy();
+  const float dz  = mParameters.getDz();
+
+  DimensionSizes xShiftDims = mParameters.getFullDimensionSizes();
+  xShiftDims.nx = xShiftDims.nx / 2 + 1;
+  DimensionSizes yShiftDims = mParameters.getFullDimensionSizes();
+  yShiftDims.ny = yShiftDims.ny / 2 + 1;
+  DimensionSizes zShiftDims = mParameters.getFullDimensionSizes();
+  zShiftDims.nz = zShiftDims.nz / 2 + 1;
+
+  // Helper memory for shifts
+  FloatComplex* kx = reinterpret_cast<FloatComplex*>(_mm_malloc(xShiftDims.nx * sizeof(FloatComplex), kDataAlignment));
+  FloatComplex* ky = reinterpret_cast<FloatComplex*>(_mm_malloc(yShiftDims.ny * sizeof(FloatComplex), kDataAlignment));
+  FloatComplex* kz = (simulationDimension == SD::k3D) ? reinterpret_cast<FloatComplex*>(_mm_malloc(zShiftDims.nz * sizeof(FloatComplex), kDataAlignment)) : nullptr;
+
+  // Compute shifts for x gradient
+  #pragma omp simd
+  for (size_t i = 0; i < xShiftDims.nx; i++)
+  {
+    const ssize_t shift = ssize_t((i + (nx / 2)) % nx - (nx / 2));
+    kx[i] = FloatComplex(0.0f, 1.0f) * (pi2 / dx) * (float(shift) / float(nx));
+  }
+  // Compute shifts for y gradient
+  #pragma omp simd
+  for (size_t i = 0; i < yShiftDims.ny; i++)
+  {
+    const ssize_t shift = ssize_t((i + (ny / 2)) % ny - (ny / 2));
+    ky[i] = FloatComplex(0.0f, 1.0f) * (pi2 / dy) * (float(shift) / float(ny));
+  }
+  if (simulationDimension == SD::k3D)
+  {
+    // Compute shifts for z gradient
+    #pragma omp simd
+    for (size_t i = 0; i < zShiftDims.nz; i++)
+    {
+      const ssize_t shift = ssize_t((i + (nz / 2)) % nz - (nz / 2));
+      kz[i] = FloatComplex(0.0f, 1.0f) * (pi2 / dz) * (float(shift) / float(nz));
+    }
+  }
+
+  getTempFftwShift().computeR2CFft1DX(intensityXAvg);
+  #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
+  for (size_t z = 0; z < xShiftDims.nz; z++)
+  {
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
+    for (size_t y = 0; y < xShiftDims.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < xShiftDims.nx;  x++)
+      {
+        const size_t i = get1DIndex(z, y, x, xShiftDims);
+        tempFftShift[i] *= dividerX * kx[x];
+      } // x
+    } // y
+  } // z
+  getTempFftwShift().computeC2RFft1DX(intensityXAvg);
+
+  getTempFftwShift().computeR2CFft1DY(intensityYAvg);
+  #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
+  for (size_t z = 0; z < yShiftDims.nz; z++)
+  {
+    #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
+    for (size_t y = 0; y < yShiftDims.ny; y++)
+    {
+      #pragma omp simd
+      for (size_t x = 0; x < yShiftDims.nx;  x++)
+      {
+        const size_t i = get1DIndex(z, y, x, yShiftDims);
+        tempFftShift[i] *= dividerY * ky[y];
+      } // x
+    } // y
+  } // z
+  getTempFftwShift().computeC2RFft1DY(intensityYAvg);
+
+  if (simulationDimension == SD::k3D)
+  {
+    getTempFftwShift().computeR2CFft1DZ(intensityZAvg);
+    #pragma omp parallel for schedule(static)
+    for (size_t z = 0; z < zShiftDims.nz; z++)
+    {
+      #pragma omp parallel for schedule(static)
+      for (size_t y = 0; y < zShiftDims.ny; y++)
+      {
+        #pragma omp simd
+        for (size_t x = 0; x < zShiftDims.nx;  x++)
+        {
+          const size_t i = get1DIndex(z, y, x, zShiftDims);
+          tempFftShift[i] *= dividerZ * kz[z];
+        } // x
+      } // y
+    } // z
+    getTempFftwShift().computeC2RFft1DZ(intensityZAvg);
+  }
+
+  _mm_free(kx);
+  _mm_free(ky);
+  _mm_free(kz);
+
+  #pragma omp simd
+  for (size_t i = 0; i < fullDimensionSizes.nElements(); i++)
+  {
+    if (simulationDimension == SD::k3D)
+    {
+      intensityXAvg[i] = -(intensityXAvg[i] + intensityYAvg[i] + intensityZAvg[i]);
+    }
+    else
+    {
+      intensityXAvg[i] = -(intensityXAvg[i] + intensityYAvg[i]);
+    }
+  }
+
+  float* qTermData = mOutputStreamContainer[qTermStreamIdx].getCurrentStoreBuffer();
+
+  // Copy values from positions defined by sensor mask indices to store buffer
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
+    const size_t sensorMaskSize = getSensorMaskIndex().capacity();
+    #pragma omp parallel for simd schedule(static)
+    for (size_t i = 0; i < sensorMaskSize; i++)
+    {
+      qTermData[i] = intensityXAvg[getSensorMaskIndex()[i]];
+    }
+  }
+
+  // Copy values from positions defined by sensor mask corners to store buffer
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
+    const size_t slabSize = fullDimensionSizes.ny * fullDimensionSizes.nx;
+    const size_t rowSize  = fullDimensionSizes.nx;
+    const size_t nCuboids = getSensorMaskCorners().getDimensionSizes().ny;
+    size_t cuboidInBufferStart = 0;
+
+    #pragma omp parallel
+    for (size_t cuboidIdx = 0; cuboidIdx < nCuboids; cuboidIdx++)
+    {
+      const DimensionSizes topLeftCorner     = getSensorMaskCorners().getTopLeftCorner(cuboidIdx);
+      const DimensionSizes bottomRightCorner = getSensorMaskCorners().getBottomRightCorner(cuboidIdx);
+
+      size_t cuboidSlabSize = (bottomRightCorner.ny - topLeftCorner.ny + 1) *
+                              (bottomRightCorner.nx - topLeftCorner.nx + 1);
+      size_t cuboidRowSize  = (bottomRightCorner.nx - topLeftCorner.nx + 1);
+
+
+      #pragma omp for collapse(3)
+      for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++)
+      {
+        for (size_t y = topLeftCorner.ny; y <= bottomRightCorner.ny; y++)
+        {
+          for (size_t x = topLeftCorner.nx; x <= bottomRightCorner.nx; x++)
+          {
+            const size_t storeBufferIndex = cuboidInBufferStart +
+                                            (z - topLeftCorner.nz) * cuboidSlabSize +
+                                            (y - topLeftCorner.ny) * cuboidRowSize  +
+                                            (x - topLeftCorner.nx);
+
+            const size_t sourceIndex = z * slabSize + y * rowSize + x;
+            qTermData[storeBufferIndex] = intensityXAvg[sourceIndex];
+          }
+        }
+      }
+      // must be done only once
+      #pragma omp single
+      {
+        cuboidInBufferStart += (bottomRightCorner - topLeftCorner).nElements();
+      }
+    }
+  }
+}// end of computeQTerm
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute new values of acoustic velocity in all used dimensions (UxSgx, UySgy, UzSgz).
@@ -1975,9 +2514,10 @@ void KSpaceFirstOrderSolver::computeC2()
   if (!mParameters.getC0ScalarFlag())
   {
     float* c2 =  getC2().getData();
+    const size_t size = getC2().size();
 
     #pragma omp parallel for simd schedule(static) aligned(c2)
-    for (size_t i=0; i < getC2().size(); i++)
+    for (size_t i=0; i < size; i++)
     {
       c2[i] = c2[i] * c2[i];
     }
@@ -2961,4 +3501,3 @@ inline size_t KSpaceFirstOrderSolver::get1DIndex(const size_t          z,
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Private methods --------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
-

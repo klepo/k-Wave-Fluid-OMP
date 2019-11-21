@@ -54,11 +54,13 @@ class WholeDomainOutputStream : public BaseOutputStream
       * @param [in] reductionOp   - Reduction operator
       * @param [in] bufferToReuse - If there is a memory space to be reused, provide a pointer
       */
-    WholeDomainOutputStream(Hdf5File&            file,
-                            MatrixName&          datasetName,
-                            const RealMatrix&    sourceMatrix,
-                            const ReduceOperator reductionOp,
-                            float*               bufferToReuse=nullptr);
+    WholeDomainOutputStream(Hdf5File&               file,
+                            MatrixName&             datasetName,
+                            const RealMatrix&       sourceMatrix,
+                            const ReduceOperator    reductionOp,
+                            float*                  bufferToReuse = nullptr,
+                            OutputStreamContainer*  outputStreamContainer = nullptr,
+                            bool                    doNotSaveFlag = false);
 
     /// Copy constructor not allowed.
     WholeDomainOutputStream(const WholeDomainOutputStream&) = delete;
@@ -77,6 +79,9 @@ class WholeDomainOutputStream : public BaseOutputStream
 
     /// Sample data into buffer and apply reduction, or flush to disk (no sensor mask here).
     virtual void sample();
+
+    /// Post sampling step, can work with other filled stream buffers
+    virtual void postSample();
 
     /// Apply post-processing on the buffer and flush it to the file.
     virtual void postProcess();

@@ -62,12 +62,14 @@ class CuboidOutputStream : public BaseOutputStream
      * @param [in] reduceOp      - Reduction operator.
      * @param [in] bufferToReuse - If there is a memory space to be reused, provide a pointer.
      */
-    CuboidOutputStream(Hdf5File&            file,
-                       MatrixName&          groupName,
-                       const RealMatrix&    sourceMatrix,
-                       const IndexMatrix&   sensorMask,
-                       const ReduceOperator reduceOp,
-                       float*               bufferToReuse = nullptr);
+    CuboidOutputStream(Hdf5File&              file,
+                       MatrixName&            groupName,
+                       const RealMatrix&      sourceMatrix,
+                       const IndexMatrix&     sensorMask,
+                       const ReduceOperator   reduceOp,
+                       float*                 bufferToReuse = nullptr,
+                       OutputStreamContainer* outputStreamContainer = nullptr,
+                       bool                   doNotSaveFlag = false);
 
     /// Copy constructor is not allowed.
     CuboidOutputStream(const CuboidOutputStream&) = delete;
@@ -92,8 +94,14 @@ class CuboidOutputStream : public BaseOutputStream
     /// Sample data into buffer and apply reduction, or flush to disk - based on a sensor mask.
     virtual void sample();
 
+    /// Post sampling step, can work with other filled stream buffers
+    virtual void postSample();
+
     /// Apply post-processing on the buffer and flush it to the file.
     virtual void postProcess();
+
+    /// Apply post-processing 2 on the buffer and flush it to the file.
+    virtual void postProcess2();
 
     /// Checkpoint the stream and close.
     virtual void checkpoint();
@@ -112,6 +120,10 @@ class CuboidOutputStream : public BaseOutputStream
       hid_t  cuboidId;
       /// Having a single buffer for all cuboids, where this one starts.
       size_t startingPossitionInBuffer;
+      /// Maximal value
+      ReducedValue maxValue;
+      /// Minimal value
+      ReducedValue minValue;
     };
 
     /**

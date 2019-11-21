@@ -57,7 +57,7 @@ class OutputStreamContainer
       */
     enum class OutputStreamIdx
     {
-        /// Pressure time series.
+      /// Pressure time series.
       kPressureRaw,
       /// Compressed pressure time series.
       kPressureC,
@@ -128,6 +128,24 @@ class OutputStreamContainer
       kVelocityYMinAll,
       /// Min of velocity z over all domain.
       kVelocityZMinAll,
+
+      /// Average intensity x over sensor mask
+      kIntensityXAvg,
+      /// Average intensity y over sensor mask
+      kIntensityYAvg,
+      /// Average intensity z over sensor mask
+      kIntensityZAvg,
+      /// Average intensity x over sensor mask using compression
+      kIntensityXAvgC,
+      /// Average intensity y over sensor mask using compression
+      kIntensityYAvgC,
+      /// Average intensity z over sensor mask using compression
+      kIntensityZAvgC,
+
+      /// Q term (volume rate of heat deposition)
+      kQTerm,
+      /// Q term (volume rate of heat deposition) using compression
+      kQTermC,
     };// end of OutputStreamIdx
 
 
@@ -187,6 +205,8 @@ class OutputStreamContainer
     void sampleStreams();
     /// Post-process all streams and flush them to the file.
     void postProcessStreams();
+    /// Post-process 2 all streams and flush them to the file.
+    void postProcessStreams2();
     /// Checkpoint streams.
     void checkpointStreams();
 
@@ -210,7 +230,8 @@ class OutputStreamContainer
                                          const MatrixContainer::MatrixIdx       sampledMatrixIdx,
                                          const MatrixName&                      fileObjectName,
                                          const BaseOutputStream::ReduceOperator reduceOp,
-                                         float*                                 bufferToReuse = nullptr);
+                                         float*                                 bufferToReuse = nullptr,
+                                         bool                                   doNotSaveFlag = false);
 
   private:
     /// Map with output streams.

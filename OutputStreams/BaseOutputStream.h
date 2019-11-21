@@ -39,6 +39,8 @@
 #include <Compression/CompressHelper.h>
 #include <Logger/Logger.h>
 
+class OutputStreamContainer;
+
 /**
  * @class   BaseOutputStream
  * @brief   Abstract base class for output data streams (sampled data).
@@ -65,7 +67,15 @@ class BaseOutputStream
       /// Store maximum.
       kMax,
       /// Store minimum.
-      kMin
+      kMin,
+      /// Store average intensity
+      kIAvg,
+      /// Store average intensity using compression
+      kIAvgC,
+      /// Store Q term
+      kQTerm,
+      /// Store Q term using compression
+      kQTermC
     };
 
     /// Default constructor not allowed.
@@ -85,11 +95,13 @@ class BaseOutputStream
      * @param [in] reduceOp       - Reduction operator.
      * @param [in] bufferToReuse  - An external buffer can be used to line up the grid points.
      */
-    BaseOutputStream(Hdf5File&            file,
-                     MatrixName&          rootObjectName,
-                     const RealMatrix&    sourceMatrix,
-                     const ReduceOperator reduceOp,
-                     float*               bufferToReuse = nullptr);
+    BaseOutputStream(Hdf5File&              file,
+                     MatrixName&            rootObjectName,
+                     const RealMatrix&      sourceMatrix,
+                     const ReduceOperator   reduceOp,
+                     float*                 bufferToReuse = nullptr,
+                     OutputStreamContainer* outputStreamContainer = nullptr,
+                     bool                   doNotSaveFlag = false);
 
     /// Copy constructor not allowed.
     BaseOutputStream(const BaseOutputStream& src);
@@ -113,8 +125,17 @@ class BaseOutputStream
     /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask.
     virtual void sample() = 0;
 
+    /// Post sampling step, can work with other filled stream buffers.
+    virtual void postSample();
+
+    /// Post sampling step 2, can work with other filled stream buffers.
+    virtual void postSample2();
+
     /// Apply post-processing on the buffer and flush it to the file.
     virtual void postProcess();
+
+    /// Apply post-processing 2 on the buffer and flush it to the file.
+    virtual void postProcess2();
 
     /// Checkpoint the stream.
     virtual void checkpoint() = 0;
@@ -122,7 +143,21 @@ class BaseOutputStream
     /// Close stream (apply post-processing if necessary, flush data and close).
     virtual void close() = 0;
 
+    /// Get current store buffer.
+    float* getCurrentStoreBuffer();
+
   protected:
+    /**
+     * @struct ReducedValue
+     * @brief  This structure is for minimal and maximal value and their indices.
+     */
+    struct ReducedValue
+    {
+      /// Min or max value.
+      float  value;
+      /// 1D index.
+      hsize_t index;
+    };
 
     /**
      * @brief    Allocate memory using proper memory alignment.
@@ -136,11 +171,47 @@ class BaseOutputStream
      */
     virtual void freeMemory();
 
-    virtual void allocateMinMaxMemory(hsize_t items);
-    virtual void checkOrSetMinMaxValue(float &minV, float &maxV, float value, hsize_t &minVIndex, hsize_t &maxVIndex, hsize_t index);
-    virtual void loadMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, size_t index = 0, bool checkpoint = false);
-    virtual void storeMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, size_t index = 0, bool checkpoint = false);
+    /**
+     * @brief Check or set local minimal and maximal value and their indices.
+     * @param [out] minValue - Minimal reduced local value
+     * @param [out] maxValue - Maximal reduced local value
+     * @param [in] value     - Value to check
+     * @param [in] index     - Index of value
+     */
+    virtual void checkOrSetMinMaxValue(ReducedValue &minValue, ReducedValue &maxValue, float value, hsize_t index);
+    /**
+     * @brief Check or set global (#pragma omp critical) minimal and maximal value and their indices.
+     * @param [out] minValue     - Minimal reduced global value
+     * @param [out] maxValue     - Maximal reduced global value
+     * @param [in] minValueLocal - Minimal reduced local value
+     * @param [in] maxValueLocal - Maximal reduced local value
+     */
+    virtual void checkOrSetMinMaxValueGlobal(ReducedValue &minValue, ReducedValue &maxValue, ReducedValue minValueLocal, ReducedValue maxValueLocal);
+    /**
+     * @brief Load minimal and maximal values from dataset attributes.
+     * @param [in, out] file   - File handle.
+     * @param [in] group       - Group id
+     * @param [in] datasetName - Dataset name
+     * @param [out] minValue   - Minimal reduced value
+     * @param [out] maxValue   - Maximal reduced value
+     */
+    virtual void loadMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, ReducedValue &minValue, ReducedValue &maxValue);
+    /**
+     * @brief Store minimal and maximal values as dataset attributes.
+     * @param [in, out] file   - File handle.
+     * @param [in] group       - Group id
+     * @param [in] datasetName - Dataset name
+     * @param [in] minValue    - Minimal reduced value
+     * @param [in] maxValue    - Maximal reduced value
+     */
+    virtual void storeMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, ReducedValue minValue, ReducedValue maxValue);
+    /**
+     * @brief Load checkpoint compression coefficients and average intensity.
+     */
     virtual void loadCheckpointCompressionCoefficients();
+    /**
+     * @brief Store checkpoint compression coefficients and average intensity.
+     */
     virtual void storeCheckpointCompressionCoefficients();
 
     /// Handle to HDF5 output file.
@@ -159,19 +230,27 @@ class BaseOutputStream
     /// Temporary buffer for store - only if Buffer Reuse = false!
     float* mStoreBuffer;
 
-    /// Compression variables
-    float*          mStoreBuffer2 = nullptr;
-    CompressHelper* mCompressHelper = nullptr;
-    hsize_t         mStepLocal = 0;
-    bool            mSavingFlag = false;
-    bool            mOddFrameFlag = false;
-    hsize_t         mCompressedTimeStep = 0;
-
-    float*    maxValue = nullptr;
-    float*    minValue = nullptr;
-    hsize_t*  maxValueIndex = nullptr;
-    hsize_t*  minValueIndex = nullptr;
-    hsize_t   items = 1;
+    /// Compression helper variables
+    /// Output stream container for getting pressure compression coefficients
+    /// from velocity output streams.
+    OutputStreamContainer*  mOutputStreamContainer = nullptr;
+    /// Flag for not saving of compression coefficients or average intensity,
+    /// if we want save e.g. only Q term.
+    bool                    mDoNotSaveFlag = false;
+    /// Second store buffer for compression coefficients.
+    float*                  mStoreBuffer2 = nullptr;
+    /// Odd or even buffer with compression coefficients.
+    float*                  mCurrentStoreBuffer = nullptr;
+    /// Compression helper object.
+    CompressHelper*         mCompressHelper = nullptr;
+    /// Local step index.
+    hsize_t                 mStepLocal = 0;
+    /// Saving flag.
+    bool                    mSavingFlag = false;
+    /// Odd frame flag.
+    bool                    mOddFrameFlag = false;
+    /// Number of compressed coefficients.
+    hsize_t                 mCompressedTimeStep = 0;
 
     /// chunk size of 4MB in number of float elements.
     static constexpr size_t kChunkSize4MB = 1048576;

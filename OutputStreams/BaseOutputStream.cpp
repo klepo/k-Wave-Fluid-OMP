@@ -36,6 +36,7 @@
 
 #include <OutputStreams/BaseOutputStream.h>
 #include <Parameters/Parameters.h>
+#include <Containers/OutputStreamContainer.h>
 
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -49,26 +50,56 @@
 /**
  * Constructor - there is no sensor mask by default!
  */
-BaseOutputStream::BaseOutputStream(Hdf5File&            file,
-                                   MatrixName&          rootObjectName,
-                                   const RealMatrix&    sourceMatrix,
-                                   const ReduceOperator reduceOp,
-                                   float*               bufferToReuse)
+BaseOutputStream::BaseOutputStream(Hdf5File&              file,
+                                   MatrixName&            rootObjectName,
+                                   const RealMatrix&      sourceMatrix,
+                                   const ReduceOperator   reduceOp,
+                                   float*                 bufferToReuse,
+                                   OutputStreamContainer* outputStreamContainer,
+                                   bool                   doNotSaveFlag)
   : mFile(file),
     mRootObjectName(rootObjectName),
     mSourceMatrix(sourceMatrix),
     mReduceOp(reduceOp),
     mBufferReuse(bufferToReuse != nullptr),
+    mOutputStreamContainer(outputStreamContainer),
+    mDoNotSaveFlag(doNotSaveFlag),
     mBufferSize(0),
     mStoreBuffer(bufferToReuse)
 {
   // Set compression variables
-  if (mReduceOp == ReduceOperator::kC)
+  if (mReduceOp == ReduceOperator::kC || mReduceOp == ReduceOperator::kIAvgC)
   {
     // Set compression helper
     mCompressHelper = &CompressHelper::getInstance();
   }
 }
+
+/**
+ * Post sampling step, can work with other filled stream buffers.
+ */
+void BaseOutputStream::postSample()
+{
+}// end of postSample
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Post sampling step 2, can work with other filled stream buffers.
+ */
+void BaseOutputStream::postSample2()
+{
+  // Compression stuff
+  if (mSavingFlag && mCurrentStoreBuffer)
+  {
+    // Set zeros for next accumulation
+    #pragma omp parallel for simd schedule(static)
+    for (size_t i = 0; i < mBufferSize; i++)
+    {
+      mCurrentStoreBuffer[i] = 0.0f;
+    }
+    mCurrentStoreBuffer = nullptr;
+  }
+}// end of postSample2
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -84,6 +115,26 @@ void BaseOutputStream::postProcess()
       break;
     }
     case ReduceOperator::kC:
+    {
+      // do nothing
+      break;
+    }
+    case ReduceOperator::kIAvg:
+    {
+      // do nothing
+      break;
+    }
+    case ReduceOperator::kIAvgC:
+    {
+      // do nothing
+      break;
+    }
+    case ReduceOperator::kQTerm:
+    {
+      // do nothing
+      break;
+    }
+    case ReduceOperator::kQTermC:
     {
       // do nothing
       break;
@@ -115,7 +166,23 @@ void BaseOutputStream::postProcess()
 }// end of postProcess
 //----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Apply post-processing 2 on the buffer.
+ */
+void BaseOutputStream::postProcess2()
+{
+}// end of postProcess2
+//----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Get current store buffer.
+ * @return Current store buffer.
+ */
+float *BaseOutputStream::getCurrentStoreBuffer()
+{
+  return mCurrentStoreBuffer;
+}// end of getCurrentStoreBuffer
+//----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------ Protected methods -------------------------------------------------//
@@ -165,6 +232,50 @@ void BaseOutputStream::allocateMemory()
       {
         mStoreBuffer[i] = 0.0f;
         mStoreBuffer2[i] = 0.0f;
+      }
+      break;
+    }
+
+    case ReduceOperator::kIAvg:
+    {
+      // zero the matrix
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
+      {
+        mStoreBuffer[i] = 0.0f;
+      }
+      break;
+    }
+
+    case ReduceOperator::kIAvgC:
+    {
+      // zero the matrix
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
+      {
+        mStoreBuffer[i] = 0.0f;
+      }
+      break;
+    }
+
+    case ReduceOperator::kQTerm:
+    {
+      // zero the matrix
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
+      {
+        mStoreBuffer[i] = 0.0f;
+      }
+      break;
+    }
+
+    case ReduceOperator::kQTermC:
+    {
+      // zero the matrix
+      #pragma omp parallel for simd
+      for (size_t i = 0; i < mBufferSize; i++)
+      {
+        mStoreBuffer[i] = 0.0f;
       }
       break;
     }
@@ -220,102 +331,88 @@ void BaseOutputStream::freeMemory()
     _mm_free(mStoreBuffer2);
     mStoreBuffer2 = nullptr;
   }
-  if (minValue)
-  {
-    _mm_free(minValue);
-    minValue = nullptr;
-  }
-  if (maxValue)
-  {
-    _mm_free(maxValue);
-    maxValue = nullptr;
-  }
-  if (minValueIndex)
-  {
-    _mm_free(minValueIndex);
-    minValueIndex = nullptr;
-  }
-  if (maxValueIndex)
-  {
-    _mm_free(maxValueIndex);
-    maxValueIndex = nullptr;
-  }
 }// end of freeMemory
 //----------------------------------------------------------------------------------------------------------------------
 
-void BaseOutputStream::checkOrSetMinMaxValue(float &minV, float &maxV, float value, hsize_t &minVIndex, hsize_t &maxVIndex, hsize_t index)
+/**
+ * Check or set local minimal and maximal value and their indices.
+ */
+void BaseOutputStream::checkOrSetMinMaxValue(ReducedValue &minValue, ReducedValue &maxValue, float value, hsize_t index)
 {
-  if (minV > value)
-  { // TODO: think about this
-    #pragma omp critical
-    {
-      if (minV > value)
-      {
-        minV = value;
-        minVIndex = index;
-      }
-    }
-  }
-
-  if (maxV < value)
-  { // TODO: think about this
-    #pragma omp critical
-    {
-      if (maxV < value)
-      {
-        maxV = value;
-        maxVIndex = index;
-      }
-    }
-  }
-}
-
-void BaseOutputStream::allocateMinMaxMemory(hsize_t items)
-{
-  this->items = items;
-  maxValue = (float*) _mm_malloc(items * sizeof(float), kDataAlignment);
-  minValue = (float*) _mm_malloc(items * sizeof(float), kDataAlignment);
-  maxValueIndex = (hsize_t*) _mm_malloc(items * sizeof(hsize_t), kDataAlignment);
-  minValueIndex = (hsize_t*) _mm_malloc(items * sizeof(hsize_t), kDataAlignment);
-
-  for (size_t i = 0; i < items; i++)
+  if (minValue.value > value)
   {
-    maxValue[i] = std::numeric_limits<float>::min();
-    minValue[i] = std::numeric_limits<float>::max();
-    maxValueIndex[i] = 0;
-    minValueIndex[i] = 0;
+    minValue.value = value;
+    minValue.index = index;
   }
-}
+  if (maxValue.value < value)
+  {
+    maxValue.value = value;
+    maxValue.index = index;
+  }
+}// end of checkOrSetMinMaxValue
+//----------------------------------------------------------------------------------------------------------------------
 
-void BaseOutputStream::loadMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, size_t index, bool checkpoint)
+/**
+ * Check or set global (#pragma omp critical) minimal and maximal value and their indices.
+ */
+void BaseOutputStream::checkOrSetMinMaxValueGlobal(ReducedValue &minValue, ReducedValue &maxValue, ReducedValue minValueLocal, ReducedValue maxValueLocal)
 {
-  std::string suffix = checkpoint ? "_" + std::to_string(index) : "";
+  #pragma omp critical
+  {
+    if (minValue.value > minValueLocal.value)
+    {
+      minValue.value = minValueLocal.value;
+      minValue.index = minValueLocal.index;
+    }
+  }
+  #pragma omp critical
+  {
+    if (maxValue.value < maxValueLocal.value)
+    {
+      maxValue.value = maxValueLocal.value;
+      maxValue.index = maxValueLocal.index;
+    }
+  }
+}// end of checkOrSetMinMaxValueGlobal
+//----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Load minimal and maximal values from dataset attributes.
+ */
+void BaseOutputStream::loadMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, ReducedValue &minValue, ReducedValue &maxValue)
+{
   // Reload min and max values
   if (mReduceOp == ReduceOperator::kNone || mReduceOp == ReduceOperator::kC)
   {
     //try {
-      minValue[index] = file.readFloatAttribute(group, datasetName, "min" + suffix);
-      maxValue[index] = file.readFloatAttribute(group, datasetName, "max" + suffix);
-      minValueIndex[index] = hsize_t(file.readLongLongAttribute(group, datasetName, "min_index" + suffix));
-      maxValueIndex[index] = hsize_t(file.readLongLongAttribute(group, datasetName, "max_index" + suffix));
+      minValue.value = file.readFloatAttribute(group, datasetName, "min");
+      maxValue.value = file.readFloatAttribute(group, datasetName, "max");
+      minValue.index = hsize_t(file.readLongLongAttribute(group, datasetName, "min_index"));
+      maxValue.index = hsize_t(file.readLongLongAttribute(group, datasetName, "max_index"));
     //} catch (std::exception &) {
     //}
   }
-}
+}// end of loadMinMaxValues
+//----------------------------------------------------------------------------------------------------------------------
 
-void BaseOutputStream::storeMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, size_t index, bool checkpoint)
+/**
+ * Store minimal and maximal values as dataset attributes.
+ */
+void BaseOutputStream::storeMinMaxValues(Hdf5File &file, hid_t group, std::string datasetName, ReducedValue minValue, ReducedValue maxValue)
 {
-  std::string suffix = checkpoint ? "_" + std::to_string(index) : "";
   if (mReduceOp == ReduceOperator::kNone || mReduceOp == ReduceOperator::kC)
   {
-    file.writeFloatAttribute(group, datasetName, "min" + suffix, minValue[index]);
-    file.writeFloatAttribute(group, datasetName, "max" + suffix, maxValue[index]);
-    file.writeLongLongAttribute(group, datasetName, "min_index" + suffix, ssize_t(minValueIndex[index]));
-    file.writeLongLongAttribute(group, datasetName, "max_index" + suffix, ssize_t(maxValueIndex[index]));
+    file.writeFloatAttribute(group, datasetName, "min", minValue.value);
+    file.writeFloatAttribute(group, datasetName, "max", maxValue.value);
+    file.writeLongLongAttribute(group, datasetName, "min_index", ssize_t(minValue.index));
+    file.writeLongLongAttribute(group, datasetName, "max_index", ssize_t(maxValue.index));
   }
-}
+}// end of storeMinMaxValues
+//----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Load checkpoint compression coefficients and average intensity.
+ */
 void BaseOutputStream::loadCheckpointCompressionCoefficients()
 {
   if (mReduceOp == ReduceOperator::kC)
@@ -330,8 +427,20 @@ void BaseOutputStream::loadCheckpointCompressionCoefficients()
                                        DimensionSizes(mBufferSize, 1, 1),
                                        mStoreBuffer2);
   }
-}
+  if (mReduceOp == ReduceOperator::kIAvgC)
+  {
+    Hdf5File& checkpointFile = Parameters::getInstance().getCheckpointFile();
+    checkpointFile.readCompleteDataset(checkpointFile.getRootGroup(),
+                                       "Temp_" + mRootObjectName,
+                                       DimensionSizes(mBufferSize, 1, 1),
+                                       mStoreBuffer);
+  }
+}// end of loadCheckpointCompressionCoefficients
+//----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Store checkpoint compression coefficients and average intensity.
+ */
 void BaseOutputStream::storeCheckpointCompressionCoefficients()
 {
   // Store temp compression coefficients
@@ -364,7 +473,25 @@ void BaseOutputStream::storeCheckpointCompressionCoefficients()
     checkpointFile.writeMatrixDataType  (checkpointFile.getRootGroup(), "Temp_" + mRootObjectName + "_2", Hdf5File::MatrixDataType::kFloat);
     checkpointFile.writeMatrixDomainType(checkpointFile.getRootGroup(), "Temp_" + mRootObjectName + "_2", Hdf5File::MatrixDomainType::kReal);
   }
-}
+  // Store temp compression average intensity
+  if (mReduceOp == ReduceOperator::kIAvgC)
+  {
+    Hdf5File& checkpointFile = Parameters::getInstance().getCheckpointFile();
+    hid_t dataset1 = checkpointFile.createDataset(checkpointFile.getRootGroup(),
+                                                  "Temp_" + mRootObjectName,
+                                                  DimensionSizes(mBufferSize, 1, 1),
+                                                  DimensionSizes(mBufferSize, 1, 1),
+                                                  Hdf5File::MatrixDataType::kFloat,
+                                                  Parameters::getInstance().getCompressionLevel());
+
+    checkpointFile.writeHyperSlab(dataset1, DimensionSizes(0, 0, 0), DimensionSizes(mBufferSize, 1, 1), mStoreBuffer);
+    checkpointFile.closeDataset(dataset1);
+    // Write data and domain type
+    checkpointFile.writeMatrixDataType  (checkpointFile.getRootGroup(), "Temp_" + mRootObjectName, Hdf5File::MatrixDataType::kFloat);
+    checkpointFile.writeMatrixDomainType(checkpointFile.getRootGroup(), "Temp_" + mRootObjectName, Hdf5File::MatrixDomainType::kReal);
+  }
+}// end of storeCheckpointCompressionCoefficients
+//----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Private methods --------------------------------------------------//

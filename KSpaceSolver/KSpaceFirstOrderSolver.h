@@ -179,6 +179,7 @@ class KSpaceFirstOrderSolver
     template<Parameters::SimulationDimension simulationDimension>
     void computeMainLoop();
     /// Post processing, and closing the output streams.
+    template<Parameters::SimulationDimension simulationDimension>
     void postProcessing();
 
     /// Store sensor data.
@@ -187,6 +188,27 @@ class KSpaceFirstOrderSolver
     void writeOutputDataInfo();
     /// Save checkpoint data and flush aggregated outputs into the output file.
     void saveCheckpointData();
+
+    /**
+     * @brief Compute average intensities.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
+    void computeAverageIntensities();
+
+    /**
+     * @brief Compute Q term (volume rate of heat deposition) from average intensities.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     * @param intensityXAvgStreamIndex - Average intensity x stream index.
+     * @param intensityYAvgStreamIndex - Average intensity y stream index.
+     * @param intensityZAvgStreamIndex - Average intensity z stream index.
+     * @param qTermStreamIdx - Q term stream index.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
+    void computeQTerm(OutputStreamContainer::OutputStreamIdx intensityXAvgStreamIndex,
+                      OutputStreamContainer::OutputStreamIdx intensityYAvgStreamIndex,
+                      OutputStreamContainer::OutputStreamIdx intensityZAvgStreamIndex,
+                      OutputStreamContainer::OutputStreamIdx qTermStreamIdx);
 
     /**
      * @brief  Compute new values of acoustic velocity in all used dimensions (UxSgx, UySgy, UzSgz).
@@ -1124,6 +1146,14 @@ class KSpaceFirstOrderSolver
     FftwComplexMatrix& getTempFftwShift()
     {
       return mMatrixContainer.getMatrix<FftwComplexMatrix>(MatrixContainer::MatrixIdx::kTempFftwShift);
+    };
+    /**
+     * @brief  Get temporary matrix for fft shift.
+     * @return Temporary complex 3D matrix.
+     */
+    FftwComplexMatrix& getTempFftwTimeShift()
+    {
+      return mMatrixContainer.getMatrix<FftwComplexMatrix>(MatrixContainer::MatrixIdx::kTempFftwTimeShift);
     };
 
   private:

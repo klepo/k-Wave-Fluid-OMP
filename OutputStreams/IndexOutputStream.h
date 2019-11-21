@@ -61,12 +61,14 @@ class IndexOutputStream : public BaseOutputStream
      * @param [in] reduceOp      - Reduction operator.
      * @param [in] bufferToReuse - An external buffer can be used to line up the grid points.
      */
-    IndexOutputStream(Hdf5File&            file,
-                      MatrixName&          datasetName,
-                      const RealMatrix&    sourceMatrix,
-                      const IndexMatrix&   sensorMask,
-                      const ReduceOperator reduceOp,
-                      float*               bufferToReuse = nullptr);
+    IndexOutputStream(Hdf5File&               file,
+                      MatrixName&             datasetName,
+                      const RealMatrix&       sourceMatrix,
+                      const IndexMatrix&      sensorMask,
+                      const ReduceOperator    reduceOp,
+                      float*                  bufferToReuse = nullptr,
+                      OutputStreamContainer*  outputStreamContainer = nullptr,
+                      bool                    doNotSaveFlag = false);
 
     /// Copy constructor not allowed.
     IndexOutputStream(const IndexOutputStream&) = delete;
@@ -88,8 +90,14 @@ class IndexOutputStream : public BaseOutputStream
     /// Sample data into buffer, apply reduction or flush to disk - based on a sensor mask.
     virtual void sample();
 
+    /// Post sampling step, can work with other filled stream buffers
+    virtual void postSample();
+
     /// Apply post-processing on the buffer and flush it to the file.
     virtual void postProcess();
+
+    /// Apply post-processing 2 on the buffer and flush it to the file.
+    virtual void postProcess2();
 
     /// Checkpoint the stream.
     virtual void checkpoint();
@@ -98,7 +106,6 @@ class IndexOutputStream : public BaseOutputStream
     virtual void close();
 
   protected:
-
     /// Flush the buffer to the file.
     virtual void flushBufferToFile(float *bufferToFlush = nullptr);
 
@@ -109,6 +116,11 @@ class IndexOutputStream : public BaseOutputStream
 
     /// Time step to store (N/A for aggregated).
     size_t mSampledTimeStep;
+
+    /// Maximal value
+    ReducedValue    mMaxValue;
+    /// Minimal value
+    ReducedValue    mMinValue;
 
 }; // end of IndexOutputStream
 //----------------------------------------------------------------------------------------------------------------------

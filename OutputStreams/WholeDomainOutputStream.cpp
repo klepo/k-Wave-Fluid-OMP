@@ -52,12 +52,14 @@
  * @param [in] reductionOp   - Reduction operator
  * @param [in] bufferToReuse - If there is a memory space to be reused, provide a pointer
  */
-WholeDomainOutputStream::WholeDomainOutputStream(Hdf5File&            file,
-                                                 MatrixName&          datasetName,
-                                                 const RealMatrix&    sourceMatrix,
-                                                 const ReduceOperator reductionOp,
-                                                 float*               bufferToReuse)
-  : BaseOutputStream(file, datasetName, sourceMatrix, reductionOp, bufferToReuse),
+WholeDomainOutputStream::WholeDomainOutputStream(Hdf5File&              file,
+                                                 MatrixName&            datasetName,
+                                                 const RealMatrix&      sourceMatrix,
+                                                 const ReduceOperator   reductionOp,
+                                                 float*                 bufferToReuse,
+                                                 OutputStreamContainer* outputStreamContainer,
+                                                 bool                   doNotSaveFlag)
+  : BaseOutputStream(file, datasetName, sourceMatrix, reductionOp, bufferToReuse, outputStreamContainer, doNotSaveFlag),
     mDataset(H5I_BADID),
     mSampledTimeStep(0)
 {
@@ -204,6 +206,15 @@ void WholeDomainOutputStream::sample()
     } //case kMin
   }// switch
 }// end of sample
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Post sampling step, can work with other filled stream buffers
+ */
+void WholeDomainOutputStream::postSample()
+{
+
+}// end of postSample
 //----------------------------------------------------------------------------------------------------------------------
 
 /**

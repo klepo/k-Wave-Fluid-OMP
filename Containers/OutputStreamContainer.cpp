@@ -255,6 +255,91 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
                                           RO::kMin);
     }
   }
+
+  if (params.getStoreQTermFlag() || params.getStoreIntensityAvgFlag())
+  {
+    if (!params.getStorePressureRawFlag())
+    {
+      mContainer[OI::kPressureRaw] = createOutputStream(matrixContainer, MI::kP, kPressureRawName, RO::kNone, tempBuffX);
+    }
+
+    if (!params.getStoreVelocityNonStaggeredRawFlag())
+    {
+      mContainer[OI::kVelocityXNonStaggeredRaw] = createOutputStream(matrixContainer, MI::kUxShifted, kUxNonStaggeredName, RO::kNone, tempBuffX);
+      mContainer[OI::kVelocityYNonStaggeredRaw] = createOutputStream(matrixContainer, MI::kUyShifted, kUyNonStaggeredName, RO::kNone, tempBuffY);
+      if (is3DSimulation)
+      {
+        mContainer[OI::kVelocityZNonStaggeredRaw] = createOutputStream(matrixContainer, MI::kUzShifted, kUzNonStaggeredName, RO::kNone, tempBuffZ);
+      }
+    }
+
+    if (!params.getStoreIntensityAvgFlag())
+    {
+      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIxAvgName, RO::kIAvg, nullptr, true);
+      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIyAvgName, RO::kIAvg, nullptr, true);
+      if (is3DSimulation)
+      {
+        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIzAvgName, RO::kIAvg, nullptr, true);
+      }
+    }
+    else
+    {
+      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIxAvgName, RO::kIAvg);
+      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIyAvgName, RO::kIAvg);
+      if (is3DSimulation)
+      {
+        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIzAvgName, RO::kIAvg);
+      }
+    }
+
+    if (params.getStoreQTermFlag())
+    {
+      mContainer[OI::kQTerm] = createOutputStream(matrixContainer, MI::kUndefined, kQTermName, RO::kQTerm);
+    }
+  }
+
+  if (params.getStoreQTermCFlag() || params.getStoreIntensityAvgCFlag())
+  {
+    if (!params.getStorePressureCFlag())
+    {
+      mContainer[OI::kPressureC] = createOutputStream(matrixContainer, MI::kP, kPressureRawName, RO::kC, nullptr, true);
+    }
+
+    if (!params.getStoreVelocityNonStaggeredCFlag())
+    {
+      mContainer[OI::kVelocityXNonStaggeredC] = createOutputStream(matrixContainer, MI::kUxShifted, kUxNonStaggeredName, RO::kC, nullptr, true);
+      mContainer[OI::kVelocityYNonStaggeredC] = createOutputStream(matrixContainer, MI::kUyShifted, kUyNonStaggeredName, RO::kC, nullptr, true);
+      if (is3DSimulation)
+      {
+        mContainer[OI::kVelocityZNonStaggeredC] = createOutputStream(matrixContainer, MI::kUzShifted, kUzNonStaggeredName, RO::kC, nullptr, true);
+      }
+    }
+
+    if (!params.getStoreIntensityAvgCFlag())
+    {
+      mContainer[OI::kIntensityXAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIxAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
+      mContainer[OI::kIntensityYAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIyAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
+      if (is3DSimulation)
+      {
+        mContainer[OI::kIntensityZAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIzAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
+      }
+    }
+    else
+    {
+      mContainer[OI::kIntensityXAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIxAvgName + kCompressSuffix, RO::kIAvgC);
+      mContainer[OI::kIntensityYAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIyAvgName + kCompressSuffix, RO::kIAvgC);
+      if (is3DSimulation)
+      {
+        mContainer[OI::kIntensityZAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIzAvgName + kCompressSuffix, RO::kIAvgC);
+      }
+    }
+
+    if (params.getStoreQTermCFlag())
+    {
+      mContainer[OI::kQTermC] = createOutputStream(matrixContainer, MI::kUndefined, kQTermName + kCompressSuffix, RO::kQTermC);
+    }
+  }
+
 }// end of init
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -300,6 +385,20 @@ void OutputStreamContainer::sampleStreams()
       it.second->sample();
     }
   }
+  for (const auto& it : mContainer)
+  {
+    if (it.second)
+    {
+      it.second->postSample();
+    }
+  }
+  for (const auto& it : mContainer)
+  {
+    if (it.second)
+    {
+      it.second->postSample2();
+    }
+  }
 }// end of sampleStreams
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -328,6 +427,21 @@ void OutputStreamContainer::postProcessStreams()
     if (it.second)
     {
       it.second->postProcess();
+    }
+  }
+}// end of postProcessStreams
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Post-process all streams and flush them to the file.
+ */
+void OutputStreamContainer::postProcessStreams2()
+{
+  for (const auto& it : mContainer)
+  {
+    if (it.second)
+    {
+      it.second->postProcess2();
     }
   }
 }// end of postProcessStreams
@@ -373,10 +487,11 @@ void OutputStreamContainer::freeStreams()
  * Create a new output stream.
  */
 BaseOutputStream * OutputStreamContainer::createOutputStream(MatrixContainer&                       matrixContainer,
-                                                             const MatrixContainer::MatrixIdx       sampledMatrixIdx,
-                                                             const MatrixName&                      fileObjectName,
-                                                             const BaseOutputStream::ReduceOperator reduceOp,
-                                                             float*                                 bufferToReuse)
+                                                            const MatrixContainer::MatrixIdx        sampledMatrixIdx,
+                                                            const MatrixName&                       fileObjectName,
+                                                            const BaseOutputStream::ReduceOperator  reduceOp,
+                                                            float*                                  bufferToReuse,
+                                                            bool                                    doNotSaveFlag)
 {
   using MatrixIdx = MatrixContainer::MatrixIdx;
 
@@ -391,7 +506,9 @@ BaseOutputStream * OutputStreamContainer::createOutputStream(MatrixContainer&   
                                    matrixContainer.getMatrix<RealMatrix>(sampledMatrixIdx),
                                    matrixContainer.getMatrix<IndexMatrix>(MatrixIdx::kSensorMaskIndex),
                                    reduceOp,
-                                   bufferToReuse);
+                                   bufferToReuse,
+                                   this,
+                                   doNotSaveFlag);
   }
   else
   {
@@ -400,7 +517,9 @@ BaseOutputStream * OutputStreamContainer::createOutputStream(MatrixContainer&   
                                     matrixContainer.getMatrix<RealMatrix>(sampledMatrixIdx),
                                     matrixContainer.getMatrix<IndexMatrix>(MatrixIdx::kSensorMaskCorners),
                                     reduceOp,
-                                    bufferToReuse);
+                                    bufferToReuse,
+                                    this,
+                                    doNotSaveFlag);
   }
 
   return stream;
