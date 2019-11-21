@@ -236,6 +236,22 @@ class Parameters
     DimensionSizes getReducedDimensionSizes() const { return mReducedDimensionSizes; };
 
     /**
+     * @brief  Get compressed dimension sizes.
+     * @return Dimension sizes of compressed time series data.
+     */
+    DimensionSizes getCompressedDimensionSizes()  const { return mCompressedDimensionSizes; }
+    /**
+     * @brief  Get number of steps of compressed data.
+     * @return Number of steps of compressed data.
+     */
+    size_t getCompressedSteps()               const { return mCompressedSteps; }
+    /**
+     * @brief  Get maximum block size for dataset reading (computing average intensity).
+     * @return Block size for dataset reading.
+     */
+    size_t getBlockSize()                     const { return mCommandLineParameters.getBlockSize(); }
+
+    /**
      * @brief  Is the simulation executed in 2 dimensions?
      * @return True if the simulation space is 2D.
      */
@@ -627,42 +643,57 @@ class Parameters
      * @brief  Is --u_rms set?
      * @return True if the flag is set.
      */
-    bool getStoreVelocityRmsFlag()         const { return mCommandLineParameters.getStoreVelocityRmsFlag(); };
+    bool getStoreVelocityRmsFlag()        const { return mCommandLineParameters.getStoreVelocityRmsFlag(); };
     /**
      * @brief  Is --u_max set?
      * @return True if the flag is set.
      */
-    bool getStoreVelocityMaxFlag()         const { return mCommandLineParameters.getStoreVelocityMaxFlag(); }
+    bool getStoreVelocityMaxFlag()        const { return mCommandLineParameters.getStoreVelocityMaxFlag(); };
     /**
      * @brief  Is --u_min set?
      * @return True if the flag is set.
      */
-    bool getStoreVelocityMinFlag()         const { return mCommandLineParameters.getStoreVelocityMinFlag(); };
+    bool getStoreVelocityMinFlag()        const { return mCommandLineParameters.getStoreVelocityMinFlag(); };
     /**
      * @brief  Is --u_max_all set?
      * @return True if the flag is set.
      */
-    bool getStoreVelocityMaxAllFlag()      const { return mCommandLineParameters.getStoreVelocityMaxAllFlag(); };
+    bool getStoreVelocityMaxAllFlag()     const { return mCommandLineParameters.getStoreVelocityMaxAllFlag(); };
     /**
      * @brief  Is --u_min set?
      * @return True if the flag is set.
      */
-    bool getStoreVelocityMinAllFlag()      const { return mCommandLineParameters.getStoreVelocityMinAllFlag(); };
+    bool getStoreVelocityMinAllFlag()     const { return mCommandLineParameters.getStoreVelocityMinAllFlag(); };
     /**
      * @brief  Is --u_final set?
      * @return True if the flag is set.
      */
-    bool getStoreVelocityFinalAllFlag()    const { return mCommandLineParameters.getStoreVelocityFinalAllFlag(); };
-
+    bool getStoreVelocityFinalAllFlag()   const { return mCommandLineParameters.getStoreVelocityFinalAllFlag(); };
+    /**
+     * @brief  Is --I_avg set?
+     * @return True if the flag is set.
+     */
+    bool getStoreIntensityAvgFlag()       const { return mCommandLineParameters.getStoreIntensityAvgFlag(); };
+    /**
+     * @brief  Is --I_avg_c set?
+     * @return True if the flag is set.
+     */
+    bool getStoreIntensityAvgCFlag()      const { return mCommandLineParameters.getStoreIntensityAvgCFlag(); };
+    /**
+     * @brief  Is --Q_term set?
+     * @return True if the flag is set.
+     */
+    bool getStoreQTermFlag()              const { return mCommandLineParameters.getStoreQTermFlag(); };
+    /**
+     * @brief  Is --Q_term_c set?
+     * @return True if the flag is set.
+     */
+    bool getStoreQTermCFlag()             const { return mCommandLineParameters.getStoreQTermCFlag(); };
     /**
      * @brief  Is --copy_mask set set?
      * @return True if the flag is set.
      */
-    bool getCopySensorMaskFlag()           const { return mCommandLineParameters.getCopySensorMaskFlag(); };
-
-    DimensionSizes getCompressedDimensionSizes() const;
-
-    size_t getCompressedSteps() const;
+    bool getCopySensorMaskFlag()          const { return mCommandLineParameters.getCopySensorMaskFlag(); };
 
 protected:
 

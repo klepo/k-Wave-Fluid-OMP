@@ -171,6 +171,19 @@
 │ --u_min_all                   │ Store min of ux, uy, uz       │
 │                               │   (whole domain)              │
 │ --u_final                     │ Store final acoustic velocity │
+├───────────────────────────────┼───────────────────────────────┤
+│ --I_avg                       │ Store average intensity       │
+│ --I_avg_c                     │ Store average intensity       │
+│                               │   computed using compression  │
+│ --Q_term                      │ Store Q term (volume rate of  │
+│                               │   heat deposition)            │
+│ --Q_term_c                    │ Store Q term (volume rate of  │
+│                               │   heat deposition) computed   │
+│                               │   using compression           │
+│ --block_size                  │ Maximum block size for        │
+│                               │   dataset reading (computing  │
+│                               │   average intensity without   │
+│                               │   compression)                │
 ├───────────────────────────────┴───────────────────────────────┤
 │                Time series compression flags                  │
 ├───────────────────────────────┬───────────────────────────────┤
@@ -402,17 +415,66 @@ class CommandLineParameters
      */
     bool   getStoreVelocityFinalAllFlag()        const { return mStoreVelocityFinalAllFlag; };
     /**
+     * @brief  Is --I_avg set?
+     * @return true if the flag is set.
+     */
+    bool   getStoreIntensityAvgFlag()     const { return mStoreIntensityAvgFlag; };
+    /**
+     * @brief  Is --I_avg_c set?
+     * @return true if the flag is set.
+     */
+    bool   getStoreIntensityAvgCFlag()    const { return mStoreIntensityAvgCFlag; };
+    /**
+     * @brief  Is --Q_term set?
+     * @return true if the flag is set.
+     */
+    bool   getStoreQTermFlag()            const { return mStoreQTermFlag; };
+    /**
+     * @brief  Is --Q_term_c set?
+     * @return true if the flag is set.
+     */
+    bool   getStoreQTermCFlag()           const { return mStoreQTermCFlag; };
+    /**
      * @brief  Is --copy_mask set set?
      * @return true if the flag is set.
      */
-    bool   getCopySensorMaskFlag()               const { return mCopySensorMaskFlag; };
+    bool   getCopySensorMaskFlag()        const { return mCopySensorMaskFlag; };
 
     /**
      * @brief  Get start time index when sensor data collection begins.
      * @return When to start sampling data.
      */
-    size_t getSamplingStartTimeIndex()           const { return mSamplingStartTimeStep; };
+    size_t getSamplingStartTimeIndex()    const { return mSamplingStartTimeStep; };
 
+    /**
+     * @brief  Get compression frequency.
+     * @return Compression frequency.
+     */
+    float getFrequency()                  const { return mFrequency; }
+
+    /**
+     * @brief  Get compression period.
+     * @return Compression period.
+     */
+    float getPeriod()                     const { return mPeriod; }
+
+    /**
+     * @brief  Get Multiple of overlap size for compression.
+     * @return Compression multiple of overlap size.
+     */
+    size_t getMOS()                       const { return mMOS; }
+
+    /**
+     * @brief  Get number of harmonics for compression.
+     * @return Number of harmonics for compression.
+     */
+    size_t getHarmonics()                 const { return mHarmonics; }
+
+    /**
+     * @brief  Get maximum block size for dataset reading (computing average intensity).
+     * @return Block size for dataset reading.
+     */
+    size_t getBlockSize()                 const { return mBlockSize; }
 
     /// Print usage of the code
     void printUsage();
@@ -427,13 +489,6 @@ class CommandLineParameters
      * @throw call exit when error in commandline.
      */
     void parseCommandLine(int argc, char** argv);
-
-    float getFrequency() const;
-    float getPeriod() const;
-
-    size_t getMOS() const;
-
-    size_t getHarmonics() const;
 
   protected:
     /// Default constructor - only friend class can create an instance.
@@ -505,6 +560,15 @@ class CommandLineParameters
     /// Store velocity in the final time step over the whole domain?
     bool mStoreVelocityFinalAllFlag;
 
+    /// Store average intensity?
+    bool mStoreIntensityAvgFlag;
+    /// Store average intensity using compression?
+    bool mStoreIntensityAvgCFlag;
+    /// Store Q term (volume rate of heat deposition)?
+    bool mStoreQTermFlag;
+    /// Store Q term (volume rate of heat deposition) using compression?
+    bool mStoreQTermCFlag;
+
     /// Copy sensor mask to the output file.
     bool   mCopySensorMaskFlag;
     /// StartTimeStep value.
@@ -518,6 +582,10 @@ class CommandLineParameters
     size_t mMOS = 1;
     /// Number of harmonics for compression.
     size_t mHarmonics = 1;
+
+    /// Maximum block size for dataset reading (computing average intensity).
+    /// Default value is computed according to free RAM memory.
+    size_t mBlockSize = 0;
 
     /// Default compression level.
     static constexpr size_t kDefaultCompressionLevel      = 0;

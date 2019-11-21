@@ -115,12 +115,17 @@ void CommandLineParameters::printComandlineParamers()
 
   Logger::log(Logger::LogLevel::kFull,     kOutFmtPrintProgressIntrerval, mProgressPrintInterval);
 
+  if ((mStoreIntensityAvgFlag || mStoreQTermFlag) && mBlockSize > 0)
+  {
+    Logger::log(Logger::LogLevel::kFull, kOutFmtBlockSize, mBlockSize);
+  }
+
   if (mBenchmarkFlag)
   {
     Logger::log(Logger::LogLevel::kFull, kOutFmtBenchmarkTimeStep, mBenchmarkTimeStepCount);
   }
 
-  if (mStorePressureCFlag || mStoreVelocityCFlag || mStoreVelocityNonStaggeredCFlag)
+  if (mStorePressureCFlag || mStoreVelocityCFlag || mStoreVelocityNonStaggeredCFlag || mStoreIntensityAvgCFlag || mStoreQTermCFlag)
   {
     Logger::log(Logger::LogLevel::kAdvanced, kOutFmtSeparator);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtCompressionSettings, mFrequency, mPeriod, mMOS, mHarmonics);
@@ -207,6 +212,22 @@ void CommandLineParameters::printComandlineParamers()
   {
     sampledQuantitiesList += "u_non_staggered_c, ";
   }
+  if (mStoreIntensityAvgFlag)
+  {
+    sampledQuantitiesList += "I_avg, ";
+  }
+  if (mStoreIntensityAvgCFlag)
+  {
+    sampledQuantitiesList += "I_avg_c, ";
+  }
+  if (mStoreQTermFlag)
+  {
+    sampledQuantitiesList += "Q_term, ";
+  }
+  if (mStoreQTermCFlag)
+  {
+    sampledQuantitiesList += "Q_term_c, ";
+  }
 
   // remove comma and space symbols
   if (sampledQuantitiesList.length() > 0)
@@ -283,6 +304,12 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
     { "u_non_staggered_raw",  no_argument, nullptr, 26 },
     { "u_c",                  no_argument, nullptr, 27 },
     { "u_non_staggered_c",    no_argument, nullptr, 28 },
+    { "I_avg",                no_argument, nullptr, 29 },
+    { "I_avg_c",              no_argument, nullptr, 30 },
+    { "Q_term",               no_argument, nullptr, 31 },
+    { "Q_term_c",             no_argument, nullptr, 32 },
+
+    { "block_size",           required_argument, nullptr, 33 },
 
     { nullptr,                no_argument, nullptr, 0  }
   };
@@ -698,6 +725,48 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
         break;
       }
 
+      case 29: // I_avg
+      {
+        mStoreIntensityAvgFlag = true;
+        break;
+      }
+
+      case 30: // I_avg_c
+      {
+        mStoreIntensityAvgCFlag = true;
+        break;
+      }
+
+      case 31: // Q_term
+      {
+        mStoreQTermFlag = true;
+        break;
+      }
+
+      case 32: // Q_term_c
+      {
+        mStoreQTermCFlag = true;
+        break;
+      }
+
+      case 33: // block_size
+      {
+        try
+        {
+          if (std::stoll(optarg) < 1)
+          {
+            throw std::invalid_argument("--block_size");
+          }
+          mBlockSize = std::stoull(optarg);
+        }
+        catch (...)
+        {
+          printUsage();
+          Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtInvalidBlockSize, " ", errorLineIndent));
+        }
+        break;
+      }
+
       // unknown parameter or a missing mandatory argument
       case ':':
       case '?':
@@ -837,7 +906,8 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
         mStoreVelocityRawFlag    || mStoreVelocityCFlag      ||
         mStoreVelocityNonStaggeredCFlag || mStoreVelocityNonStaggeredRawFlag ||
         mStoreVelocityRmsFlag    || mStoreVelocityMaxFlag    || mStoreVelocityMinFlag             ||
-        mStoreVelocityMaxAllFlag || mStoreVelocityMinAllFlag || mStoreVelocityFinalAllFlag ))
+        mStoreVelocityMaxAllFlag || mStoreVelocityMinAllFlag || mStoreVelocityFinalAllFlag        ||
+        mStoreIntensityAvgFlag   || mStoreIntensityAvgCFlag  || mStoreQTermFlag || mStoreQTermCFlag))
   {
     mStorePressureRawFlag = true;
   }
@@ -873,29 +943,9 @@ CommandLineParameters::CommandLineParameters() :
         mStoreVelocityNonStaggeredRawFlag(false), mStoreVelocityNonStaggeredCFlag(false),
         mStoreVelocityRmsFlag(false), mStoreVelocityMaxFlag(false), mStoreVelocityMinFlag(false),
         mStoreVelocityMaxAllFlag(false), mStoreVelocityMinAllFlag(false), mStoreVelocityFinalAllFlag(false),
-        mCopySensorMaskFlag(false),
+        mStoreIntensityAvgFlag(false), mStoreIntensityAvgCFlag(false), mStoreQTermFlag(false), mStoreQTermCFlag(false), mCopySensorMaskFlag(false),
         mSamplingStartTimeStep(0)
 {
 
 }// end of constructor
 //----------------------------------------------------------------------------------------------------------------------
-
-size_t CommandLineParameters::getHarmonics() const
-{
-  return mHarmonics;
-}
-
-size_t CommandLineParameters::getMOS() const
-{
-  return mMOS;
-}
-
-float CommandLineParameters::getFrequency() const
-{
-  return mFrequency;
-}
-
-float CommandLineParameters::getPeriod() const
-{
-  return mPeriod;
-}

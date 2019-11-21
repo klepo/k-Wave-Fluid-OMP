@@ -214,6 +214,10 @@ ErrorMessage kErrFmtCannotComputePeriodValue
   = "Error: Cannot compute period from frequency, missing dt dataset.";
 
 /// Command line parameters error message
+ErrorMessage kErrFmtInvalidBlockSize
+  = "Error: Invalid reading block size value.";
+
+/// Command line parameters error message
 ErrorMessage kErrFmtIllegalAlphaPowerValue
   = "Error: Illegal value of alpha_power (must not equal to 1.0).";
 /// Command line parameters error message

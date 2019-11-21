@@ -245,6 +245,10 @@ OutputMessage kOutFmtBenchmarkTimeStep
   = "│ Benchmark time steps:                                %8lu │\n";
 
 ///Output message
+OutputMessage kOutFmtBlockSize
+  = "│ Reading block size:                              %12lu │\n";
+
+///Output message
 OutputMessage kOutFmtCompressionSettings
   = "│ Compression frequency:                        %12.4f Hz │\n"
     "│             period:                           %9.4f steps │\n"
@@ -395,6 +399,19 @@ OutputMessage kOutFmtUsagePart2
     "│ --u_min_all                   │ Store min of ux, uy, uz       │\n"
     "│                               │   (whole domain)              │\n"
     "│ --u_final                     │ Store final acoustic velocity │\n"
+    "├───────────────────────────────┼───────────────────────────────┤\n"
+    "│ --I_avg                       │ Store average intensity       │\n"
+    "│ --I_avg_c                     │ Store average intensity       │\n"
+    "│                               │   computed using compression  │\n"
+    "│ --Q_term                      │ Store Q term (volume rate of  │\n"
+    "│                               │   heat deposition)            │\n"
+    "│ --Q_term_c                    │ Store Q term (volume rate of  │\n"
+    "│                               │   heat deposition) computed   │\n"
+    "│                               │   using compression           │\n"
+    "│ --block_size                  │ Maximum block size for        │\n"
+    "│                               │   dataset reading (computing  │\n"
+    "│                               │   average intensity without   │\n"
+    "│                               │   compression)                │\n"
     "├───────────────────────────────┴───────────────────────────────┤\n"
     "│                Time series compression flags                  │\n"
     "├───────────────────────────────┬───────────────────────────────┤\n"

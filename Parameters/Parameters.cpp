@@ -36,6 +36,7 @@
 #include <exception>
 #include <stdexcept>
 #include <limits>
+#include <immintrin.h>
 
 #include <Parameters/Parameters.h>
 
@@ -253,7 +254,12 @@ void Parameters::readScalarsFromInputFile()
     mSensorMaskIndexSize = mInputFile.getDatasetSize(rootGroup, kSensorMaskIndexName);
 
     //if -u_non_staggered_raw enabled, throw an error - not supported
-    if (getStoreVelocityNonStaggeredRawFlag() || getStoreVelocityNonStaggeredCFlag())
+    if (getStoreVelocityNonStaggeredRawFlag()
+        || getStoreVelocityNonStaggeredCFlag()
+        || getStoreIntensityAvgFlag()
+        || getStoreQTermFlag()
+        || getStoreIntensityAvgCFlag()
+        || getStoreQTermCFlag())
     {
       throw ios::failure(kErrFmtNonStaggeredVelocityNotSupportedFileVersion);
     }
@@ -445,7 +451,11 @@ void Parameters::readScalarsFromInputFile()
   }
 
   // Init compression stuff
-  if (mCommandLineParameters.getStorePressureCFlag() || mCommandLineParameters.getStoreVelocityCFlag() || mCommandLineParameters.getStoreVelocityNonStaggeredCFlag())
+  if (mCommandLineParameters.getStorePressureCFlag()
+      || mCommandLineParameters.getStoreVelocityCFlag()
+      || mCommandLineParameters.getStoreVelocityNonStaggeredCFlag()
+      || mCommandLineParameters.getStoreIntensityAvgCFlag()
+      || mCommandLineParameters.getStoreQTermCFlag())
   {
     if (mCommandLineParameters.getPeriod() > 0 && mCommandLineParameters.getFrequency() > 0)
     {
@@ -698,16 +708,6 @@ Parameters::Parameters() :
 
 }// end of Parameters
 //----------------------------------------------------------------------------------------------------------------------
-
-size_t Parameters::getCompressedSteps() const
-{
-    return mCompressedSteps;
-}
-
-DimensionSizes Parameters::getCompressedDimensionSizes() const
-{
-    return mCompressedDimensionSizes;
-}
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Private methods --------------------------------------------------//

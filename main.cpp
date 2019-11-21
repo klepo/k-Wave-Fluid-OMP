@@ -105,11 +105,11 @@
  * strongly recommend to use the AVX and AVX2 support.
  * 3. Make the FFTW library by typing:
 \verbatim
-	make -j
+  make -j
 \endverbatim
  * 4. Install the FFTW library by typing:
 \verbatim
-	make install
+  make install
 \endverbatim
 
  * <b> 2.3 The Intel Compiler and MKL installation procedure </b>
@@ -119,7 +119,7 @@
  *
  * 2. Run the installation script and follow the procedure by typing:
 \verbatim
-	./install.sh
+  ./install.sh
 \endverbatim
  *
  *
@@ -135,15 +135,15 @@
  * 2. Open the <tt>Makefile</tt> file.  The Makefile supports code compilation under GNU compiler and FFTW, or Intel
  * compiler with MKL. Uncomment the desired compiler by removing character `<tt>#</tt>'.
 \verbatim
-	#COMPILER = GNU
-	#COMPILER = Intel
+  #COMPILER = GNU
+  #COMPILER = Intel
 \endverbatim
  *
  * 3. Select how to link the libraries. Static linking is preferred as it may be a bit faster, however, on some systems
  * (HPC clusters) it may be better to use dynamic linking and use the system specific libraries at runtime.
 \verbatim
-	#LINKING = STATIC
-	#LINKING = DYNAMIC
+  #LINKING = STATIC
+  #LINKING = DYNAMIC
 \endverbatim
  *
  * 4. Select the instruction set and the CPU architecture.
@@ -340,6 +340,19 @@
 │ --u_min_all                   │ Store min of ux, uy, uz       │
 │                               │   (whole domain)              │
 │ --u_final                     │ Store final acoustic velocity │
+├───────────────────────────────┼───────────────────────────────┤
+│ --I_avg                       │ Store average intensity       │
+│ --I_avg_c                     │ Store average intensity       │
+│                               │   computed using compression  │
+│ --Q_term                      │ Store Q term (volume rate of  │
+│                               │   heat deposition)            │
+│ --Q_term_c                    │ Store Q term (volume rate of  │
+│                               │   heat deposition) computed   │
+│                               │   using compression           │
+│ --block_size                  │ Maximum block size for        │
+│                               │   dataset reading (computing  │
+│                               │   average intensity without   │
+│                               │   compression)                │
 ├───────────────────────────────┴───────────────────────────────┤
 │                Time series compression flags                  │
 ├───────────────────────────────┬───────────────────────────────┤
