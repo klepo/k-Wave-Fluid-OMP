@@ -1056,7 +1056,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
 
-    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps), (blockSize * steps * 4) / 1000000);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) / 1000000);
 
     RealMatrix dataP(DimensionSizes(blockSize, steps, 1));
     RealMatrix dataUx(DimensionSizes(blockSize, steps, 1));
