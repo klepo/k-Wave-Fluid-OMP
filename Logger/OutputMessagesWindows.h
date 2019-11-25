@@ -245,6 +245,19 @@ OutputMessage kOutFmtBenchmarkTimeStep
 ///Output message
 OutputMessage kOutFmtBlockSize
   = "| Reading block size:                              %12lu |\n";
+///Output message
+OutputMessage kOutFmtComputingAverageIntensity
+  = "| + Computing average intensity:                                |\n";
+///Output message
+OutputMessage kOutFmtBlockSizePostProcessing
+  = "| ++ Reading block size: %38s |\n"
+    "|                                           %10lu MB (x 4) |\n";
+OutputMessage kOutFmtComputingQTerm
+  = "| + Computing Q term:                                    ";
+
+///Output message
+OutputMessage kOutFmtEmpty
+  = "|                                                        ";
 
 ///Output message
 OutputMessage kOutFmtCompressionSettings

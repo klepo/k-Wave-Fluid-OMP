@@ -753,10 +753,21 @@ void KSpaceFirstOrderSolver::postProcessing()
     }
   }// u_final
 
+  if (mParameters.getStoreQTermFlag() ||
+      mParameters.getStoreIntensityAvgFlag() ||
+      mParameters.getStoreQTermFlag() ||
+      mParameters.getStoreQTermCFlag())
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
+  }
+
   // Compute average intensity without compression
   if (mParameters.getStoreQTermFlag() || mParameters.getStoreIntensityAvgFlag())
   {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtComputingAverageIntensity);
     computeAverageIntensities<simulationDimension>();
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
   }
 
   // Apply post-processing
@@ -765,19 +776,31 @@ void KSpaceFirstOrderSolver::postProcessing()
   // Compute and store Q term (volume rate of heat deposition) from average intensity
   if (mParameters.getStoreQTermFlag())
   {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtComputingQTerm);
     computeQTerm<simulationDimension>(OutputStreamContainer::OutputStreamIdx::kIntensityXAvg,
                                       OutputStreamContainer::OutputStreamIdx::kIntensityYAvg,
                                       OutputStreamContainer::OutputStreamIdx::kIntensityZAvg,
                                       OutputStreamContainer::OutputStreamIdx::kQTerm);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
   }
 
   // Compute and store Q term (volume rate of heat deposition) from average intensity computed using compression
   if (mParameters.getStoreQTermCFlag())
   {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtComputingQTerm);
     computeQTerm<simulationDimension>(OutputStreamContainer::OutputStreamIdx::kIntensityXAvgC,
                                       OutputStreamContainer::OutputStreamIdx::kIntensityYAvgC,
                                       OutputStreamContainer::OutputStreamIdx::kIntensityZAvgC,
                                       OutputStreamContainer::OutputStreamIdx::kQTermC);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
+  }
+
+  if (mParameters.getStoreQTermFlag() ||
+      mParameters.getStoreIntensityAvgFlag() ||
+      mParameters.getStoreQTermFlag() ||
+      mParameters.getStoreQTermCFlag())
+  {
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
   }
 
   // Apply post-processing 2
@@ -1032,6 +1055,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
       blockSize = sliceSize * zCount;
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
+
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps), (blockSize * steps * 4) / 1000000);
 
     RealMatrix dataP(DimensionSizes(blockSize, steps, 1));
     RealMatrix dataUx(DimensionSizes(blockSize, steps, 1));
