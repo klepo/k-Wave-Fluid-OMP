@@ -31,14 +31,6 @@
 
 #include <stdexcept>
 
-#ifdef __unix
-#include <unistd.h>
-#endif
-
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-
 #include <Containers/MatrixContainer.h>
 #include <Parameters/Parameters.h>
 #include <Logger/Logger.h>
@@ -90,7 +82,6 @@ void MatrixContainer::init()
 
   DimensionSizes fullDims = params.getFullDimensionSizes();
   DimensionSizes reducedDims = params.getReducedDimensionSizes();
-  DimensionSizes compressedDims = params.getCompressedDimensionSizes();
 
   const bool is3DSimulation = params.isSimulation3D();
 
@@ -426,73 +417,6 @@ void MatrixContainer::init()
   {
     mContainer[MI::kTempFftwZ]  .set(MT::kFftw, reducedDims, kNoLoad, kNoCheckpoint, kFftwZTempName);
   }
-
-  //--------------------------------------- Temporary matrix for time shift-------------------------------------------//
-  if (params.getStoreIntensityAvgFlag() || params.getStoreQTermFlag())
-  {
-    size_t steps = params.getNt() - params.getSamplingStartTimeIndex();
-    size_t maxBlockSize = params.getBlockSize();
-
-    // Compute max block size for dataset reading
-    if (maxBlockSize == 0)
-    {
-      size_t memory = 0;
-    #ifdef __unix
-      long pages = sysconf(_SC_AVPHYS_PAGES);
-      long page_size = sysconf(_SC_PAGE_SIZE);
-      memory = pages * page_size;
-    #endif
-    #ifdef _WIN32
-      MEMORYSTATUSEX status;
-      status.dwLength = sizeof(status);
-      GlobalMemoryStatusEx(&status);
-      memory = size_t(status.ullAvailPhys);
-    #endif
-      size_t matricesSize = 0;
-      using MatrixType = MatrixRecord::MatrixType;
-      for (auto& it : mContainer)
-      {
-        switch (it.second.matrixType)
-        {
-          case MatrixType::kReal:
-          {
-            matricesSize += it.second.dimensionSizes.nElements() * 4;
-            break;
-          }
-
-          case MatrixType::kComplex:
-          {
-            matricesSize += it.second.dimensionSizes.nElements() * 4 * 2;
-            break;
-          }
-
-          case MatrixType::kIndex:
-          {
-            matricesSize += it.second.dimensionSizes.nElements() * 8;
-            break;
-          }
-
-          case MatrixType::kFftw:
-          {
-            matricesSize += it.second.dimensionSizes.nElements() * 4 * 2;
-            break;
-          }
-        }
-      }
-      maxBlockSize = size_t((float(memory - matricesSize) / 8 * 0.8f));
-    }
-
-    size_t sliceSize = fullDims.nx * fullDims.ny;
-    size_t fullSize = fullDims.nx * fullDims.ny * fullDims.nz;
-    size_t blockSize = maxBlockSize / steps;
-    // Minimal size is sliceSize
-    blockSize = blockSize < sliceSize ? sliceSize : blockSize;
-    // Maximal size is fullSize
-    blockSize = blockSize > fullSize ? fullSize : blockSize;
-    DimensionSizes shiftDims(blockSize, steps / 2 + 1, 1);
-    mContainer[MI::kTempFftwTimeShift].set(MT::kFftw, shiftDims, kNoLoad, kNoCheckpoint, kFftwTimeShiftTempName);
-  }
-
 }// end of init
 //----------------------------------------------------------------------------------------------------------------------
 

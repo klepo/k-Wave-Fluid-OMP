@@ -90,6 +90,9 @@ ErrorMessage kErrFmtNotHdf5File
 ErrorMessage kErrFmtCannotOpenDataset
   = "Error: File \"%s\" could not open dataset \"%s\".";
 /// HDF5 error message
+ErrorMessage kErrFmtCannotCreateDataset
+  = "Error: File \"%s\" could not create dataset \"%s\".";
+/// HDF5 error message
 ErrorMessage kErrFmtCannotSetCompression
   = "Error: File \"%s\", dataset \"%s\" could set compression level [%ld].";
 /// HDF5 error message

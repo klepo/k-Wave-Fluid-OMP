@@ -120,17 +120,24 @@ void IndexOutputStream::create()
 
     const std::string objectName = (mReduceOp == ReduceOperator::kC) ? mRootObjectName + kCompressSuffix : mRootObjectName;
 
-    // Create a dataset under the root group
-    mDataset = mFile.createDataset(mFile.getRootGroup(),
-                                   objectName,
-                                   datasetSize,
-                                   chunkSize,
-                                   Hdf5File::MatrixDataType::kFloat,
-                                   params.getCompressionLevel());
+    if (mFile.datasetExists(mFile.getRootGroup(), objectName))
+    {
+      mDataset = mFile.openDataset(mFile.getRootGroup(), objectName);
+    }
+    else
+    {
+      // Create a dataset under the root group
+      mDataset = mFile.createDataset(mFile.getRootGroup(),
+                                     objectName,
+                                     datasetSize,
+                                     chunkSize,
+                                     Hdf5File::MatrixDataType::kFloat,
+                                     params.getCompressionLevel());
 
-    // Write dataset parameters
-    mFile.writeMatrixDomainType(mFile.getRootGroup(), objectName, Hdf5File::MatrixDomainType::kReal);
-    mFile.writeMatrixDataType  (mFile.getRootGroup(), objectName, Hdf5File::MatrixDataType::kFloat);
+      // Write dataset parameters
+      mFile.writeMatrixDomainType(mFile.getRootGroup(), objectName, Hdf5File::MatrixDomainType::kReal);
+      mFile.writeMatrixDataType  (mFile.getRootGroup(), objectName, Hdf5File::MatrixDataType::kFloat);
+    }
 
     // Write compression parameters as attributes
     if (mReduceOp == ReduceOperator::kC)
@@ -448,7 +455,7 @@ void IndexOutputStream::postProcess()
     flushBufferToFile();
   }
 
-  if (!mDoNotSaveFlag)
+  if (!mDoNotSaveFlag && !Parameters::getInstance().getOnlyPostProcessingFlag())
   {
     // Store min and max values
     const std::string datasetName = (mReduceOp == ReduceOperator::kC) ? mRootObjectName + kCompressSuffix : mRootObjectName;

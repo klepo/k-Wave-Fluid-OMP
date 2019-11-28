@@ -341,8 +341,6 @@ MatrixName kTemp3RealNDName = "Temp_3_RSND";
 
 /// FFTW_shift_temp variable name
 MatrixName kFftwShiftTempName = "FFTW_shift_temp";
-/// FFTW_shift_temp variable name
-MatrixName kFftwTimeShiftTempName = "FFTW_time_shift_temp";
 /// FFTW_X_temp variable name
 MatrixName kFftwXTempName     = "FFTW_X_temp";
 /// FFTW_Y_temp variable name

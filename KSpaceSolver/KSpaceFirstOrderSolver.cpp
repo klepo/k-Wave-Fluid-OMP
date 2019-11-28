@@ -202,14 +202,25 @@ void KSpaceFirstOrderSolver::loadInputData()
     checkpointFile.close();
   }
   else
-  { //------------------------------------ First round of multi-leg simulation ---------------------------------------//
-    // Create the output file
-    Logger::log(Logger::LogLevel::kFull, kOutFmtCreatingOutputFile);
-    Logger::flush(Logger::LogLevel::kFull);
+  {
+    if (mParameters.getOnlyPostProcessingFlag() &&
+        (mParameters.getStoreIntensityAvgFlag() || mParameters.getStoreQTermFlag()) &&
+        Hdf5File::canAccess(mParameters.getOutputFileName()))
+    {
+      // Open output file
+      // TODO check existing datasets and their sizes (streams)
+      outputFile.open(mParameters.getOutputFileName(), H5F_ACC_RDWR);
+    }
+    else
+    {
+      //------------------------------------ First round of multi-leg simulation ---------------------------------------//
+      // Create the output file
+      Logger::log(Logger::LogLevel::kFull, kOutFmtCreatingOutputFile);
+      Logger::flush(Logger::LogLevel::kFull);
 
-    outputFile.create(mParameters.getOutputFileName());
-    Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
-
+      outputFile.create(mParameters.getOutputFileName());
+      Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
+    }
     // Create the steams, link them with the sampled matrices, however DO NOT allocate memory!
     mOutputStreamContainer.createStreams();
   }
@@ -259,31 +270,34 @@ void KSpaceFirstOrderSolver::compute()
   Logger::log(Logger::LogLevel::kBasic, kOutFmtCurrentMemory,   getMemoryUsage());
 
   // Main loop
-  try
+  if (!mParameters.getOnlyPostProcessingFlag())
   {
-    mSimulationTime.start();
+    try
+    {
+      mSimulationTime.start();
 
-    if (mParameters.isSimulation3D())
-      computeMainLoop<Parameters::SimulationDimension::k3D>();
-    else
-      computeMainLoop<Parameters::SimulationDimension::k2D>();
+      if (mParameters.isSimulation3D())
+        computeMainLoop<Parameters::SimulationDimension::k3D>();
+      else
+        computeMainLoop<Parameters::SimulationDimension::k2D>();
 
 
-    mSimulationTime.stop();
+      mSimulationTime.stop();
 
-    Logger::log(Logger::LogLevel::kBasic,kOutFmtSimulationEndSeparator);
-  }
-  catch (const std::exception& e)
-  {
-    Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulatoinFinalSeparator);
-    Logger::errorAndTerminate(Logger::wordWrapString(e.what(),kErrFmtPathDelimiters, 9));
+      Logger::log(Logger::LogLevel::kBasic,kOutFmtSimulationEndSeparator);
+    }
+    catch (const std::exception& e)
+    {
+      Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulatoinFinalSeparator);
+      Logger::errorAndTerminate(Logger::wordWrapString(e.what(),kErrFmtPathDelimiters, 9));
+    }
   }
 
   // Post processing region
   mPostProcessingTime.start();
   try
   {
-    if (isCheckpointInterruption())
+    if (!mParameters.getOnlyPostProcessingFlag() && isCheckpointInterruption())
     { // Checkpoint
       Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime());
       Logger::log(Logger::LogLevel::kBasic, kOutFmtCheckpointCompletedTimeSteps, mParameters.getTimeIndex());
@@ -343,7 +357,7 @@ void KSpaceFirstOrderSolver::compute()
     mParameters.getOutputFile().close();
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mPostProcessingTime.getElapsedTime());
-    }
+  }
   catch (const std::exception &e)
   {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
@@ -560,13 +574,6 @@ void KSpaceFirstOrderSolver::InitializeFftwPlans()
     }
   }// end u_non_staggered
 
-  if (Parameters::getInstance().getStoreIntensityAvgFlag()
-      || Parameters::getInstance().getStoreQTermFlag())
-  {
-    //getTempFftwTimeShift().createR2CFftPlan1DY(getTempRealTimeShift());
-    //getTempFftwTimeShift().createC2RFftPlan1DY(getTempRealTimeShift());
-  }
-
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
 }// end of InitializeFftwPlans
 //----------------------------------------------------------------------------------------------------------------------
@@ -766,7 +773,6 @@ void KSpaceFirstOrderSolver::postProcessing()
   {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtComputingAverageIntensity);
     computeAverageIntensities<simulationDimension>();
-    Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
   }
 
@@ -973,7 +979,16 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
   float* intensityXAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvg].getCurrentStoreBuffer();
   float* intensityYAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvg].getCurrentStoreBuffer();
   float* intensityZAvgData = (simulationDimension == SD::k3D) ? mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvg].getCurrentStoreBuffer() : nullptr;
-  const size_t steps = mParameters.getNt() - mParameters.getSamplingStartTimeIndex();
+  //const size_t steps = mParameters.getNt() - mParameters.getSamplingStartTimeIndex();
+  size_t steps = 0;
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
+    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName).nt;
+  }
+  else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
+    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + "/1").nt;
+  }
 
   // Compute shifts
   const float pi2 = static_cast<float>(M_PI) * 2.0f;
@@ -1004,6 +1019,39 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
   hid_t datasetUy = 0;
   hid_t datasetUz = 0;
 
+  // Compute max block size for dataset reading
+  size_t maxBlockSize = mParameters.getBlockSize();
+  DimensionSizes fullDims = mParameters.getFullDimensionSizes();
+
+  // Compute max block size for dataset reading
+  if (maxBlockSize == 0)
+  {
+    size_t memory = 0;
+    #ifdef __unix
+      long pages = sysconf(_SC_AVPHYS_PAGES);
+      long page_size = sysconf(_SC_PAGE_SIZE);
+      memory = pages * page_size;
+    #endif
+    #ifdef _WIN32
+      MEMORYSTATUSEX status;
+      status.dwLength = sizeof(status);
+      GlobalMemoryStatusEx(&status);
+      memory = size_t(status.ullAvailPhys);
+    #endif
+    // dataP, dataUx, dataUy, dataUz, fftwTimeShiftMatrix -> 5 matrices x 4 (size of float)
+    maxBlockSize = size_t(float(memory) / 20 * 0.9f);
+  }
+  size_t sliceSize = fullDims.nx * fullDims.ny;
+  size_t fullSize = fullDims.nx * fullDims.ny * fullDims.nz;
+  size_t blockSize = maxBlockSize / steps;
+  // Minimal size is sliceSize
+  blockSize = blockSize < sliceSize ? sliceSize : blockSize;
+  // Maximal size is fullSize
+  blockSize = blockSize > fullSize ? fullSize : blockSize;
+  DimensionSizes shiftDims(blockSize, steps / 2 + 1, 1);
+  // Temporary matrix for time shift
+  FftwComplexMatrix fftwTimeShiftMatrix = FftwComplexMatrix(shiftDims);
+
   // For every dataset
   // TODO test with more cuboids
   for (size_t indexOfDataset = 1; indexOfDataset <= numberOfDatasets; indexOfDataset++)
@@ -1011,8 +1059,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
     size_t datasetSize = 0;
     DimensionSizes datasetDimensionSizes;
     size_t sliceSize = 0;
-    // Block size for reading
-    size_t blockSize = getTempFftwTimeShift().getDimensionSizes().nx;
+    // Block size for given dataset
+    size_t blockSize = fftwTimeShiftMatrix.getDimensionSizes().nx;
     DimensionSizes datasetBlockSizes;
 
     // Open datasets
@@ -1056,14 +1104,16 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
 
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) / 1000000);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
 
     RealMatrix dataP(DimensionSizes(blockSize, steps, 1));
     RealMatrix dataUx(DimensionSizes(blockSize, steps, 1));
     RealMatrix dataUy(DimensionSizes(blockSize, steps, 1));
     RealMatrix dataUz(DimensionSizes(blockSize, steps, 1));
-    getTempFftwTimeShift().createR2CFftPlan1DY(dataP);
-    getTempFftwTimeShift().createC2RFftPlan1DY(dataP);
+    fftwTimeShiftMatrix.createR2CFftPlan1DY(dataP);
+    fftwTimeShiftMatrix.createC2RFftPlan1DY(dataP);
 
     for (size_t i = 0; i < datasetSize; i += blockSize)
     {
@@ -1078,8 +1128,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
           dataUy.resize(DimensionSizes(blockSize, steps, 1));
           dataUz.resize(DimensionSizes(blockSize, steps, 1));
-          getTempFftwTimeShift().createR2CFftPlan1DY(dataP);
-          getTempFftwTimeShift().createC2RFftPlan1DY(dataP);
+          fftwTimeShiftMatrix.createR2CFftPlan1DY(dataP);
+          fftwTimeShiftMatrix.createC2RFftPlan1DY(dataP);
         }
 
         mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(i, 0, 0), datasetBlockSizes, dataP.getData());
@@ -1100,8 +1150,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
           dataUy.resize(DimensionSizes(blockSize, steps, 1));
           dataUz.resize(DimensionSizes(blockSize, steps, 1));
-          getTempFftwTimeShift().createR2CFftPlan1DY(dataP);
-          getTempFftwTimeShift().createC2RFftPlan1DY(dataP);
+          fftwTimeShiftMatrix.createR2CFftPlan1DY(dataP);
+          fftwTimeShiftMatrix.createC2RFftPlan1DY(dataP);
         }
         size_t zOffset = i / sliceSize;
 
@@ -1116,8 +1166,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
 
       // Phase shifts using FFT
       const float divider = 1.0f / static_cast<float>(steps);
-      FloatComplex* tempFftTimeShift = getTempFftwTimeShift().getComplexData();
-      getTempFftwTimeShift().computeR2CFft1DY(dataUx);
+      FloatComplex* tempFftTimeShift = fftwTimeShiftMatrix.getComplexData();
+      fftwTimeShiftMatrix.computeR2CFft1DY(dataUx);
       #pragma omp simd
       for (size_t step = 0; step < stepsComplex; step++)
       {
@@ -1126,8 +1176,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
         }
       }
-      getTempFftwTimeShift().computeC2RFft1DY(dataUx);
-      getTempFftwTimeShift().computeR2CFft1DY(dataUy);
+      fftwTimeShiftMatrix.computeC2RFft1DY(dataUx);
+      fftwTimeShiftMatrix.computeR2CFft1DY(dataUy);
       #pragma omp simd
       for (size_t step = 0; step < stepsComplex; step++)
       {
@@ -1136,10 +1186,10 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
         }
       }
-      getTempFftwTimeShift().computeC2RFft1DY(dataUy);
+      fftwTimeShiftMatrix.computeC2RFft1DY(dataUy);
       if (simulationDimension == SD::k3D)
       {
-        getTempFftwTimeShift().computeR2CFft1DY(dataUz);
+        fftwTimeShiftMatrix.computeR2CFft1DY(dataUz);
         #pragma omp simd
         for (size_t step = 0; step < stepsComplex; step++)
         {
@@ -1148,7 +1198,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
             tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
           }
         }
-        getTempFftwTimeShift().computeC2RFft1DY(dataUz);
+        fftwTimeShiftMatrix.computeC2RFft1DY(dataUz);
       }
 
       // Compute intensity

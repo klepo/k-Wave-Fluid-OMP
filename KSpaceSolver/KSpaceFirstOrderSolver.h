@@ -32,6 +32,13 @@
 #ifndef KSPACE_FIRST_ORDER_SOLVER_H
 #define KSPACE_FIRST_ORDER_SOLVER_H
 
+#ifdef __unix
+#include <unistd.h>
+#endif
+
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 #include <Parameters/Parameters.h>
 
@@ -1146,14 +1153,6 @@ class KSpaceFirstOrderSolver
     FftwComplexMatrix& getTempFftwShift()
     {
       return mMatrixContainer.getMatrix<FftwComplexMatrix>(MatrixContainer::MatrixIdx::kTempFftwShift);
-    };
-    /**
-     * @brief  Get temporary matrix for fft shift.
-     * @return Temporary complex 3D matrix.
-     */
-    FftwComplexMatrix& getTempFftwTimeShift()
-    {
-      return mMatrixContainer.getMatrix<FftwComplexMatrix>(MatrixContainer::MatrixIdx::kTempFftwTimeShift);
     };
 
   private:

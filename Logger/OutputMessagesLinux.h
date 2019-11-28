@@ -249,7 +249,7 @@ OutputMessage kOutFmtBlockSize
   = "│ Reading block size:                              %12lu │\n";
 ///Output message
 OutputMessage kOutFmtComputingAverageIntensity
-  = "│ + Computing average intensity:                                │\n";
+  = "│ + Computing average intensity:                         ";
 ///Output message
 OutputMessage kOutFmtBlockSizePostProcessing
   = "│ ++ Reading block size: %38s │\n"

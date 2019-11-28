@@ -436,7 +436,7 @@ void CuboidOutputStream::postProcess()
     flushBufferToFile();
   }
 
-  if (!mDoNotSaveFlag)
+  if (!mDoNotSaveFlag && !Parameters::getInstance().getOnlyPostProcessingFlag())
   {
     // Store min and max values
     for (size_t cuboidIdx = 0; cuboidIdx < mCuboidsInfo.size(); cuboidIdx++)
@@ -565,16 +565,23 @@ hid_t CuboidOutputStream::createCuboidDataset(const size_t cuboidIdx)
   // Indexed from 1
   const std::string datasetName = (mReduceOp == ReduceOperator::kC) ? std::to_string(cuboidIdx + 1) + kCompressSuffix : std::to_string(cuboidIdx + 1);
 
-  hid_t dataset = mFile.createDataset(mGroup,
-                                     datasetName,
-                                     cuboidSize,
-                                     cuboidChunkSize,
-                                     Hdf5File::MatrixDataType::kFloat,
-                                     params.getCompressionLevel());
-
-  // Write dataset parameters
-  mFile.writeMatrixDomainType(mGroup, datasetName, Hdf5File::MatrixDomainType::kReal);
-  mFile.writeMatrixDataType  (mGroup, datasetName, Hdf5File::MatrixDataType::kFloat);
+  hid_t dataset;
+  if (mFile.datasetExists(mGroup, datasetName))
+  {
+    dataset = mFile.openDataset(mGroup, datasetName);
+  }
+  else
+  {
+    dataset = mFile.createDataset(mGroup,
+                                  datasetName,
+                                  cuboidSize,
+                                  cuboidChunkSize,
+                                  Hdf5File::MatrixDataType::kFloat,
+                                  params.getCompressionLevel());
+    // Write dataset parameters
+    mFile.writeMatrixDomainType(mGroup, datasetName, Hdf5File::MatrixDomainType::kReal);
+    mFile.writeMatrixDataType  (mGroup, datasetName, Hdf5File::MatrixDataType::kFloat);
+  }
 
   // Write compression parameters as attributes
   if (mReduceOp == ReduceOperator::kC)

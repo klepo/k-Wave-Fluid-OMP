@@ -435,6 +435,11 @@ class CommandLineParameters
      */
     bool   getStoreQTermCFlag()           const { return mStoreQTermCFlag; };
     /**
+     * @brief  Is --post set?
+     * @return true if the flag is set.
+     */
+    bool   getOnlyPostProcessingFlag()    const { return mOnlyPostProcessingFlag; };
+    /**
      * @brief  Is --copy_mask set set?
      * @return true if the flag is set.
      */
@@ -568,6 +573,9 @@ class CommandLineParameters
     bool mStoreQTermFlag;
     /// Store Q term (volume rate of heat deposition) using compression?
     bool mStoreQTermCFlag;
+
+    /// Do not simulate, do only post-processing (Compute I_avg and Q_term)
+    bool mOnlyPostProcessingFlag;
 
     /// Copy sensor mask to the output file.
     bool   mCopySensorMaskFlag;

@@ -334,7 +334,7 @@ hid_t Hdf5File::createDataset(const hid_t                    parentGroup,
   status = H5Pset_chunk(propertyList, rank, chunk);
   if (status < 0)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotOpenDataset, mFileName.c_str(), datasetName.c_str()));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotCreateDataset, mFileName.c_str(), datasetName.c_str()));
   }
 
   // set compression level
@@ -360,7 +360,7 @@ hid_t Hdf5File::createDataset(const hid_t                    parentGroup,
 
   if (dataset == H5I_INVALID_HID)
   {
-    throw ios::failure(Logger::formatMessage(kErrFmtCannotOpenDataset, mFileName.c_str(), datasetName.c_str()));
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotCreateDataset, mFileName.c_str(), datasetName.c_str()));
   }
 
   H5Pclose(propertyList);

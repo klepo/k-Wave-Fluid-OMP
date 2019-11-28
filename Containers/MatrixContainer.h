@@ -199,8 +199,6 @@ class MatrixContainer
       kTempFftwZ,
       /// Temporary matrix for fft shift.
       kTempFftwShift,
-      /// Temporary matrix for fft shift in time.
-      kTempFftwTimeShift,
     }; // end of MatrixIdx
 
         /// Constructor.

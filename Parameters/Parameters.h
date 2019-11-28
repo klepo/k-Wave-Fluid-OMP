@@ -690,6 +690,11 @@ class Parameters
      */
     bool getStoreQTermCFlag()             const { return mCommandLineParameters.getStoreQTermCFlag(); };
     /**
+     * @brief  Is --post set?
+     * @return True if the flag is set.
+     */
+    bool getOnlyPostProcessingFlag()      const { return mCommandLineParameters.getOnlyPostProcessingFlag(); };
+    /**
      * @brief  Is --copy_mask set set?
      * @return True if the flag is set.
      */

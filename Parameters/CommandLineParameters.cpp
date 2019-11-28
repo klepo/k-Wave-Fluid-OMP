@@ -228,6 +228,10 @@ void CommandLineParameters::printComandlineParamers()
   {
     sampledQuantitiesList += "Q_term_c, ";
   }
+  if (mOnlyPostProcessingFlag)
+  {
+    sampledQuantitiesList += "post, ";
+  }
 
   // remove comma and space symbols
   if (sampledQuantitiesList.length() > 0)
@@ -309,7 +313,9 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
     { "Q_term",               no_argument, nullptr, 31 },
     { "Q_term_c",             no_argument, nullptr, 32 },
 
-    { "block_size",           required_argument, nullptr, 33 },
+    { "post",                 no_argument, nullptr, 33 },
+
+    { "block_size",           required_argument, nullptr, 34 },
 
     { nullptr,                no_argument, nullptr, 0  }
   };
@@ -749,7 +755,13 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
         break;
       }
 
-      case 33: // block_size
+      case 33: // post
+      {
+        mOnlyPostProcessingFlag = true;
+        break;
+      }
+
+      case 34: // block_size
       {
         try
         {
@@ -907,7 +919,7 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
         mStoreVelocityNonStaggeredCFlag || mStoreVelocityNonStaggeredRawFlag ||
         mStoreVelocityRmsFlag    || mStoreVelocityMaxFlag    || mStoreVelocityMinFlag             ||
         mStoreVelocityMaxAllFlag || mStoreVelocityMinAllFlag || mStoreVelocityFinalAllFlag        ||
-        mStoreIntensityAvgFlag   || mStoreIntensityAvgCFlag  || mStoreQTermFlag || mStoreQTermCFlag))
+        mStoreIntensityAvgFlag   || mStoreIntensityAvgCFlag  || mStoreQTermFlag || mStoreQTermCFlag || mOnlyPostProcessingFlag))
   {
     mStorePressureRawFlag = true;
   }
@@ -943,8 +955,8 @@ CommandLineParameters::CommandLineParameters() :
         mStoreVelocityNonStaggeredRawFlag(false), mStoreVelocityNonStaggeredCFlag(false),
         mStoreVelocityRmsFlag(false), mStoreVelocityMaxFlag(false), mStoreVelocityMinFlag(false),
         mStoreVelocityMaxAllFlag(false), mStoreVelocityMinAllFlag(false), mStoreVelocityFinalAllFlag(false),
-        mStoreIntensityAvgFlag(false), mStoreIntensityAvgCFlag(false), mStoreQTermFlag(false), mStoreQTermCFlag(false), mCopySensorMaskFlag(false),
-        mSamplingStartTimeStep(0)
+        mStoreIntensityAvgFlag(false), mStoreIntensityAvgCFlag(false), mStoreQTermFlag(false), mStoreQTermCFlag(false), mOnlyPostProcessingFlag(false),
+        mCopySensorMaskFlag(false), mSamplingStartTimeStep(0)
 {
 
 }// end of constructor
