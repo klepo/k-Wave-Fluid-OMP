@@ -457,57 +457,86 @@ void Parameters::readScalarsFromInputFile()
       || mCommandLineParameters.getStoreIntensityAvgCFlag()
       || mCommandLineParameters.getStoreQTermCFlag())
   {
-    if (mCommandLineParameters.getPeriod() > 0 && mCommandLineParameters.getFrequency() > 0)
+    if (!mCommandLineParameters.getOnlyPostProcessingFlag())
     {
-      throw ios::failure(Logger::formatMessage(kErrFmtBadPeriodAndFrequencyValue));
-    }
+      if (mCommandLineParameters.getPeriod() > 0 && mCommandLineParameters.getFrequency() > 0)
+      {
+        throw ios::failure(Logger::formatMessage(kErrFmtBadPeriodAndFrequencyValue));
+      }
 
-    if (mCommandLineParameters.getFrequency() > 0)
+      if (mCommandLineParameters.getFrequency() > 0)
+      {
+        try
+        {
+          mCommandLineParameters.mPeriod = 1.0f / (mCommandLineParameters.getFrequency() * mDt);
+          mInputFile.writeFloatAttribute(rootGroup, kPressureSourceInputName, Hdf5File::kPeriodName, mCommandLineParameters.getPeriod());
+        }
+        catch (...)
+        {
+          throw ios::failure(Logger::formatMessage(kErrFmtCannotComputePeriodValue));
+        }
+      }
+
+      if (!(mCommandLineParameters.getPeriod() > 0) && mPressureSourceFlag)
+      {
+        /*try
+        {
+          mCommandLineParameters.mPeriod = mInputFile.readFloatAttribute(rootGroup, kPressureSourceInputName, Hdf5File::kPeriodName);
+        }
+        catch (...)*/
+        {
+          mCommandLineParameters.mPeriod = 0.0f;
+          DimensionSizes size = mInputFile.getDatasetDimensionSizes(rootGroup, kPressureSourceInputName);
+          hsize_t length = 0;
+          hsize_t limit = 500;
+          length = size.ny > limit ? limit : size.ny;
+          float* data = static_cast<float*>(_mm_malloc(length * sizeof(float), kDataAlignment));
+          // Read only part of the dataset
+          hid_t dataset = mInputFile.openDataset(rootGroup, kPressureSourceInputName);
+          mInputFile.readHyperSlab(dataset, DimensionSizes(size.nx / 2, size.ny - length, 0), DimensionSizes(1, length, 1), data);
+          mInputFile.closeDataset(dataset);
+          // Compute period
+          mCommandLineParameters.mPeriod = CompressHelper::findPeriod(data, length);
+          _mm_free(data);
+          mInputFile.writeFloatAttribute(rootGroup, kPressureSourceInputName, Hdf5File::kPeriodName, mCommandLineParameters.getPeriod());
+        }
+      }
+
+      if (!(mCommandLineParameters.getPeriod() > 0.0f))
+      {
+        throw ios::failure(Logger::formatMessage(kErrFmtMissingPeriodValue));
+      }
+
+      if (!(mCommandLineParameters.getFrequency() > 0.0f))
+      {
+        mCommandLineParameters.mFrequency = 1.0f / (mCommandLineParameters.getPeriod() * mDt);
+      }
+    }
+    else
     {
       try
       {
-        mCommandLineParameters.mPeriod = 1.0f / (mCommandLineParameters.getFrequency() * mDt);
-        mInputFile.writeFloatAttribute(rootGroup, kPressureSourceInputName, Hdf5File::kPeriodName, mCommandLineParameters.getPeriod());
+        Hdf5File outputFile;
+        outputFile.open(mCommandLineParameters.getOutputFileName());
+        std::string datasetName;
+        if (mSensorMaskType == SensorMaskType::kIndex)
+        {
+          datasetName = kPName + kCompressSuffix;
+        }
+        else if (mSensorMaskType == SensorMaskType::kCorners)
+        {
+          datasetName =  kPName + "/1" + kCompressSuffix;
+        }
+        mCommandLineParameters.mPeriod = outputFile.readFloatAttribute(outputFile.getRootGroup(), datasetName, "c_period");
+        mCommandLineParameters.mMOS = outputFile.readLongLongAttribute(outputFile.getRootGroup(), datasetName, "c_mos");
+        mCommandLineParameters.mHarmonics = hsize_t(outputFile.readLongLongAttribute(outputFile.getRootGroup(), datasetName, "c_harmonics"));
+        mCommandLineParameters.mFrequency = 1.0f / (mCommandLineParameters.getPeriod() * mDt);
+        outputFile.close();
       }
-      catch (...)
+      catch (std::exception &)
       {
-        throw ios::failure(Logger::formatMessage(kErrFmtCannotComputePeriodValue));
+        throw ios::failure(Logger::formatMessage(kErrFmtCannotReadCompressionAttributes));
       }
-    }
-
-    if (!(mCommandLineParameters.getPeriod() > 0) && mPressureSourceFlag)
-    {
-      /*try
-      {
-        mCommandLineParameters.mPeriod = mInputFile.readFloatAttribute(rootGroup, kPressureSourceInputName, Hdf5File::kPeriodName);
-      }
-      catch (...)*/
-      {
-        mCommandLineParameters.mPeriod = 0.0f;
-        DimensionSizes size = mInputFile.getDatasetDimensionSizes(rootGroup, kPressureSourceInputName);
-        hsize_t length = 0;
-        hsize_t limit = 500;
-        length = size.ny > limit ? limit : size.ny;
-        float* data = static_cast<float*>(_mm_malloc(length * sizeof(float), kDataAlignment));
-        // Read only part of the dataset
-        hid_t dataset = mInputFile.openDataset(rootGroup, kPressureSourceInputName);
-        mInputFile.readHyperSlab(dataset, DimensionSizes(size.nx / 2, size.ny - length, 0), DimensionSizes(1, length, 1), data);
-        mInputFile.closeDataset(dataset);
-        // Compute period
-        mCommandLineParameters.mPeriod = CompressHelper::findPeriod(data, length);
-        _mm_free(data);
-        mInputFile.writeFloatAttribute(rootGroup, kPressureSourceInputName, Hdf5File::kPeriodName, mCommandLineParameters.getPeriod());
-      }
-    }
-
-    if (!(mCommandLineParameters.getPeriod() > 0.0f))
-    {
-      throw ios::failure(Logger::formatMessage(kErrFmtMissingPeriodValue));
-    }
-
-    if (!(mCommandLineParameters.getFrequency() > 0.0f))
-    {
-      mCommandLineParameters.mFrequency = 1.0f / (mCommandLineParameters.getPeriod() * mDt);
     }
 
     // Create compression helper

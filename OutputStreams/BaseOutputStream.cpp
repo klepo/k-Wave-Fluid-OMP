@@ -389,8 +389,8 @@ void BaseOutputStream::loadMinMaxValues(Hdf5File &file, hid_t group, std::string
       maxValue.value = file.readFloatAttribute(group, datasetName, "max");
       minValue.index = hsize_t(file.readLongLongAttribute(group, datasetName, "min_index"));
       maxValue.index = hsize_t(file.readLongLongAttribute(group, datasetName, "max_index"));
-    //} catch (std::exception &) {
-    //}
+    //} catch (std::exception &)
+    //{}
   }
 }// end of loadMinMaxValues
 //----------------------------------------------------------------------------------------------------------------------

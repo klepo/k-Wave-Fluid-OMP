@@ -911,6 +911,27 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
     }
   }
 
+  // Check mOnlyPostProcessingFlag not compatible flags
+  if (mOnlyPostProcessingFlag
+      && (checkpointFlag              || mStorePressureRawFlag    || mStorePressureCFlag
+          || mStorePressureRmsFlag    || mStorePressureMaxFlag    || mStorePressureMinFlag
+          || mStorePressureMaxAllFlag || mStorePressureMinAllFlag || mStorePressureFinalAllFlag
+          || mStoreVelocityRawFlag    || mStoreVelocityCFlag
+          || mStoreVelocityNonStaggeredCFlag || mStoreVelocityNonStaggeredRawFlag
+          || mStoreVelocityRmsFlag    || mStoreVelocityMaxFlag    || mStoreVelocityMinFlag
+          || mStoreVelocityMaxAllFlag || mStoreVelocityMinAllFlag || mStoreVelocityFinalAllFlag))
+  {
+    printUsage();
+    Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtInvalidPostProcessingFlag, " ", errorLineIndent));
+  }
+
+  if (mOnlyPostProcessingFlag
+      && (!mStoreIntensityAvgFlag && !mStoreIntensityAvgCFlag && !mStoreQTermFlag && !mStoreQTermCFlag))
+  {
+    printUsage();
+    Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtInvalidPostProcessingFlag, " ", errorLineIndent));
+  }
+
   // set a default flag if necessary
   if (!(mStorePressureRawFlag    || mStorePressureCFlag      ||
         mStorePressureRmsFlag    || mStorePressureMaxFlag    || mStorePressureMinFlag             ||

@@ -215,10 +215,18 @@ ErrorMessage kErrFmtBadPeriodAndFrequencyValue
 /// Command line parameters error message
 ErrorMessage kErrFmtCannotComputePeriodValue
   = "Error: Cannot compute period from frequency, missing dt dataset.";
+/// Command line parameters error message
+ErrorMessage kErrFmtCannotReadCompressionAttributes
+  = "Error: Cannot read compression parameters from attributes.";
+
 
 /// Command line parameters error message
 ErrorMessage kErrFmtInvalidBlockSize
   = "Error: Invalid reading block size value.";
+
+/// Command line parameters error message
+ErrorMessage kErrFmtInvalidPostProcessingFlag
+  = "Error: Invalid store flag with combination of the only post-processing flag.";
 
 /// Command line parameters error message
 ErrorMessage kErrFmtIllegalAlphaPowerValue

@@ -249,11 +249,16 @@ OutputMessage kOutFmtBlockSize
 OutputMessage kOutFmtComputingAverageIntensity
   = "| + Computing average intensity:                         ";
 ///Output message
+OutputMessage kOutFmtComputingAverageIntensityC
+  = "| + Computing average intensity from compressed data:    ";
+///Output message
 OutputMessage kOutFmtBlockSizePostProcessing
   = "| ++ Reading block size: %38s |\n"
     "|                                           %10lu MB (x 4) |\n";
 OutputMessage kOutFmtComputingQTerm
   = "| + Computing Q term:                                    ";
+OutputMessage kOutFmtComputingQTermC
+  = "| + Computing Q term from compressed data                ";
 
 ///Output message
 OutputMessage kOutFmtEmpty

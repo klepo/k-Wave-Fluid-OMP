@@ -584,7 +584,8 @@ void CompressHelper::generateE(float period, hsize_t ih, hsize_t h, hsize_t bSiz
   {
     hsize_t hx = ih * bSize + x;
     e[hx] = std::exp(i * (2.0f * float(M_PI) / (period / float(h))) * float(x));
-    if (shift) {
+    if (shift)
+    {
       e[hx] *= std::exp(-i * float(M_PI) / (period / float(h)));
     }
   }

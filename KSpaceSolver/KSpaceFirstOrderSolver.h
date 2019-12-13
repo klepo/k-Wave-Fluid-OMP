@@ -197,11 +197,18 @@ class KSpaceFirstOrderSolver
     void saveCheckpointData();
 
     /**
-     * @brief Compute average intensities.
+     * @brief Compute average intensities from stored p and u without compression.
      * @tparam simulationDimension - Dimensionality of the simulation.
      */
     template<Parameters::SimulationDimension simulationDimension>
     void computeAverageIntensities();
+
+    /**
+     * @brief Compute average intensities from stored p and u compression coefficients.
+     * @tparam simulationDimension - Dimensionality of the simulation.
+     */
+    template<Parameters::SimulationDimension simulationDimension>
+    void computeAverageIntensitiesC();
 
     /**
      * @brief Compute Q term (volume rate of heat deposition) from average intensities.

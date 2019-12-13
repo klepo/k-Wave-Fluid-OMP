@@ -392,23 +392,23 @@ void IndexOutputStream::postSample()
   if (mReduceOp == ReduceOperator::kIAvgC)
   {
     FloatComplex* bufferP = reinterpret_cast<FloatComplex*>((*mOutputStreamContainer)[OutputStreamContainer::OutputStreamIdx::kPressureC].getCurrentStoreBuffer());
-    FloatComplex* bufferI = nullptr;
+    FloatComplex* bufferU = nullptr;
 
     if (mRootObjectName == kIxAvgName + kCompressSuffix)
     {
-      bufferI = reinterpret_cast<FloatComplex*>((*mOutputStreamContainer)[OutputStreamContainer::OutputStreamIdx::kVelocityXNonStaggeredC].getCurrentStoreBuffer());
+      bufferU = reinterpret_cast<FloatComplex*>((*mOutputStreamContainer)[OutputStreamContainer::OutputStreamIdx::kVelocityXNonStaggeredC].getCurrentStoreBuffer());
     }
     else if (mRootObjectName == kIyAvgName + kCompressSuffix)
     {
-      bufferI = reinterpret_cast<FloatComplex*>((*mOutputStreamContainer)[OutputStreamContainer::OutputStreamIdx::kVelocityYNonStaggeredC].getCurrentStoreBuffer());
+      bufferU = reinterpret_cast<FloatComplex*>((*mOutputStreamContainer)[OutputStreamContainer::OutputStreamIdx::kVelocityYNonStaggeredC].getCurrentStoreBuffer());
     }
     else
     {
-      bufferI = reinterpret_cast<FloatComplex*>((*mOutputStreamContainer)[OutputStreamContainer::OutputStreamIdx::kVelocityZNonStaggeredC].getCurrentStoreBuffer());
+      bufferU = reinterpret_cast<FloatComplex*>((*mOutputStreamContainer)[OutputStreamContainer::OutputStreamIdx::kVelocityZNonStaggeredC].getCurrentStoreBuffer());
     }
-    // TODO check the length of bufferP == the length of bufferI
+    // TODO check the length of bufferP == the length of bufferU
 
-    if (bufferP && bufferI)
+    if (bufferP && bufferU)
     {
       #pragma omp parallel for
       for (size_t i = 0; i < mBufferSize; i++)
@@ -418,7 +418,7 @@ void IndexOutputStream::postSample()
         for (size_t ih = 0; ih < mCompressHelper->getHarmonics(); ih++)
         {
           size_t pH = offset + ih;
-          mStoreBuffer[i] += real(bufferP[pH] * conj(bufferI[pH])) / 2.0f;
+          mStoreBuffer[i] += real(bufferP[pH] * conj(bufferU[pH])) / 2.0f;
         }
       }
       mCompressedTimeStep++;
@@ -435,7 +435,7 @@ void IndexOutputStream::postProcess()
   // run inherited method
   BaseOutputStream::postProcess();
 
-  if (mReduceOp == ReduceOperator::kIAvgC)
+  if (mReduceOp == ReduceOperator::kIAvgC && !Parameters::getInstance().getOnlyPostProcessingFlag())
   {
     #pragma omp parallel for simd
     for (size_t i = 0; i < mBufferSize; i++)
