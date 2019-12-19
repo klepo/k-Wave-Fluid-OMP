@@ -834,16 +834,18 @@ void KSpaceFirstOrderSolver::postProcessing()
   // store sensor mask if wanted
   if (mParameters.getCopySensorMaskFlag())
   {
-    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex
+        && !mParameters.getOutputFile().datasetExists(mParameters.getOutputFile().getRootGroup(), kSensorMaskIndexName))
     {
       getSensorMaskIndex().recomputeIndicesToMatlab();
       getSensorMaskIndex().writeData(mParameters.getOutputFile(),kSensorMaskIndexName,
                                      mParameters.getCompressionLevel());
     }
-    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners
+        && !mParameters.getOutputFile().datasetExists(mParameters.getOutputFile().getRootGroup(), kSensorMaskCornersName))
     {
       getSensorMaskCorners().recomputeIndicesToMatlab();
-      getSensorMaskCorners().writeData(mParameters.getOutputFile(),kSensorMaskCornersName,
+      getSensorMaskCorners().writeData(mParameters.getOutputFile(), kSensorMaskCornersName,
                                        mParameters.getCompressionLevel());
     }
   }
