@@ -236,15 +236,20 @@ class Parameters
     DimensionSizes getReducedDimensionSizes() const { return mReducedDimensionSizes; };
 
     /**
-     * @brief  Get compressed dimension sizes.
-     * @return Dimension sizes of compressed time series data.
-     */
-    DimensionSizes getCompressedDimensionSizes()  const { return mCompressedDimensionSizes; }
-    /**
      * @brief  Get number of steps of compressed data.
      * @return Number of steps of compressed data.
      */
     size_t getCompressedSteps()               const { return mCompressedSteps; }
+    /**
+     * @brief  Get compression basis overlapping flag.
+     * @return Compression basis overlapping flag.
+     */
+    size_t getNoCompressionOverlapFlag()      const { return mCommandLineParameters.getNoCompressionOverlapFlag(); }
+    /**
+     * @brief  Get 40-bit compression flag.
+     * @return 40-bit compression flag.
+     */
+    size_t get40bitCompressionFlag()          const { return mCommandLineParameters.get40bitCompressionFlag(); }
     /**
      * @brief  Get maximum block size for dataset reading (computing average intensity).
      * @return Block size for dataset reading.
@@ -723,9 +728,6 @@ protected:
     DimensionSizes mFullDimensionSizes;
     /// Reduced 3D dimension sizes.
     DimensionSizes mReducedDimensionSizes;
-
-    /// Compressed 3D dimension sizes.
-    DimensionSizes mCompressedDimensionSizes;
 
     /// Compressed output steps
     size_t mCompressedSteps = 0;

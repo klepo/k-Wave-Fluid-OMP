@@ -55,8 +55,6 @@ class MatrixContainer
      */
     enum class MatrixIdx
     {
-      /// Undefined matrix
-      kUndefined = -1,
       /// Kappa matrix.
       kKappa,
       /// Kappa for source scaling.

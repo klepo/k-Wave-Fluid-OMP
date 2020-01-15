@@ -30,6 +30,7 @@
  */
 
 #include <Compression/CompressHelper.h>
+#include <immintrin.h>
 
 // Initialization of the singleton instance flag
 bool CompressHelper::sCompressHelperInstanceFlag = false;
@@ -51,7 +52,6 @@ void CompressHelper::init(float period, hsize_t mos, hsize_t harmonics, bool nor
   mPeriod = period;
   mMos = mos;
   mHarmonics = harmonics;
-  mStride = harmonics * 2;
   mB = new float[mBSize]();
   mE = new FloatComplex[harmonics * mBSize]();
   mEShifted = new FloatComplex[harmonics * mBSize]();
@@ -235,6 +235,167 @@ float CompressHelper::computeTimeStep(const float* cC, const float* lC, hsize_t 
   return stepValue;
 }
 
+void CompressHelper::convert40bToFloatC(uint8_t* iValues, FloatComplex& cValue, const int32_t e)
+{
+  // Get mantissas, signs and exponent
+  uint32_t mR = (*reinterpret_cast<uint8_t*>(&iValues[0]) & 0x20U) << 11 | *reinterpret_cast<uint16_t*>(&iValues[1]);
+  uint32_t mI = (*reinterpret_cast<uint8_t*>(&iValues[0]) & 0x10U) << 12 | *reinterpret_cast<uint16_t*>(&iValues[3]);
+  uint32_t sR = *reinterpret_cast<uint8_t*>(&iValues[0]) >> 7;
+  uint32_t sI = (*reinterpret_cast<uint8_t*>(&iValues[0]) & 0x40) >> 6;
+  uint8_t eS = (*reinterpret_cast<uint8_t*>(&iValues[0]) & 0xF);
+  // Add 6 bits, now we have 23 bit mantissas
+  mR <<= 6;
+  mI <<= 6;
+  // Add e constant (138 or 114)
+  int32_t eR = eS + e;
+  int32_t eI = eS + e;
+  // Zero mantissa means zero float number
+  if (mR != 0)
+  {
+    // Find index of most left one bit
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+      int index = 0;
+      index = 31 ^__builtin_clz (mR);
+    #elif defined _WIN32
+      unsigned long index = 0;
+      _BitScanReverse(&index, mR);
+    #else
+      uint32_t index = 0;
+      _BitScanReverse(&index, mR);
+    #endif
+    // Shift left by index
+    mR <<= 23 - index;
+    // Recompute final exponent by index
+    eR -= 22 - index;
+  }
+  else
+  {
+    eR = 0;
+  }
+
+  if (mI != 0)
+  {
+    #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+      int index = 0;
+      index = 31 ^__builtin_clz (mI);
+    #elif defined _WIN32
+      unsigned long index = 0;
+      _BitScanReverse(&index, mI);
+    #else
+      uint32_t index = 0;
+      _BitScanReverse(&index, mI);
+    #endif
+    mI <<= 23 - index;
+    eI -= 22 - index;
+  }
+  else
+  {
+    eI = 0;
+  }
+  uint32_t ccR = (sR << 31) | (eR << 23) | (mR & 0x007fffff);
+  uint32_t ccI = (sI << 31) | (eI << 23) | (mI & 0x007fffff);
+  cValue = FloatComplex(*reinterpret_cast<float*>(&ccR), *reinterpret_cast<float*>(&ccI));
+}
+
+void CompressHelper::convertFloatCTo40b(FloatComplex cValue, uint8_t* iValues, const int32_t e)
+{
+  // Get real and imaginary part
+  float cR = cValue.real();
+  float cI = cValue.imag();
+  uint32_t mR = *reinterpret_cast<uint32_t*>(&cR);
+  uint32_t mI = *reinterpret_cast<uint32_t*>(&cI);
+  // Get 1-bit signs
+  uint8_t sR = mR >> 31;
+  uint8_t sI = mI >> 31;
+  //e = 138 p, max exponent is 2^26 (15 + 138 = 153, 153 - 127 = 26)
+  //p max value is pow(2, 26 - 16) * 0x1FFFF = 134216704
+  //p min value is pow(2, 26 - 16 - 15) * 0x1 = 0.0312500000
+  //e = 114 u, max exponent is 2^2  (15 + 114 = 129, 129 - 127 = 2)
+  //u max value is pow(2, 2 - 16) * 0x1FFFF = 7.99993896484375
+  //u max value is pow(2, 2 - 16 - 15) * 0x1 = 0.000000001862645149230957031250
+  // Get 8-bit exponents, subtracts e, (exponent will have 4 bits, values from 0 to 15)
+  int32_t eRS = ((mR & 0x7f800000) >> 23) - e;
+  int32_t eIS = ((mI & 0x7f800000) >> 23) - e;
+  int32_t eS = eRS;
+  // Get 23-bit mantissas
+  mR = (mR & 0x007fffff);
+  mI = (mI & 0x007fffff);
+  // Right shifts of real and imaginary part, we drop 6 bits, the mantissa will have 16 + 1 bits
+  uint8_t rSR = 6;
+  uint8_t rSI = 6;
+  // Find the higher exponent, smaller part will be shifted to right
+  if (eRS > eIS)
+  {
+    // Add right shift of imaginary part
+    rSI += (eRS - eIS);
+    eS = eRS;
+  }
+  else if (eIS > eRS)
+  {
+    // Add right shift of real part
+    rSR += (eIS - eRS);
+    eS = eIS;
+  }
+  // Crop small values
+  if (eS < 0)
+  {
+    // Shift back to left
+    rSR += -(eS);
+    rSI += -(eS);
+    // Exponent will be 0
+    eS = 0;
+  }
+  // Shift overflow
+  if (rSR > 23)
+  {
+    rSR = 23;
+  }
+  if (rSI > 23)
+  {
+    rSI = 23;
+  }
+  // Shift right
+  mR >>= rSR;
+  mI >>= rSI;
+  // Rounding
+  if (mR > 0)
+  {
+    // Check posibble overflow
+    if (mR != (0x7FFFFFU >> rSR))
+    {
+      mR++;
+    }
+  }
+  if (mI > 0)
+  {
+    if (mI != (0x7FFFFFU >> rSI))
+    {
+      mI++;
+    }
+  }
+  // Set 1 left flag bit
+  mR |= 1UL << (23 - rSR);
+  // Align to 17 bits
+  mR >>= 1;
+  mI |= 1UL << (23 - rSI);
+  mI >>= 1;
+
+  // Exponent overflow, set maximum values
+  if (eS > 0xF)
+  {
+    mR = 0xFFFF;
+    mI = 0xFFFF;
+    eS = 0xF;
+  }
+  // bits: | 1         | 1              | 17            | 17                 | 4                |
+  //       | real sign | imaginary sign | real mantissa | imaginary mantissa | shifted exponent |
+  // Mantissa is composed from: 0-16 zero bits, 1 flag bit, 0-16 data (mantissa or fraction) bits
+  // Number of zero bits means exponent shift from the stored exponent eS
+  iValues[0] = (sR << 7) | (sI << 6) | ((mR & 0x10000) >> 11) | ((mI & 0x10000) >> 12) | (eS & 0xF);
+  *reinterpret_cast<uint16_t*>(&iValues[1]) = mR;
+  *reinterpret_cast<uint16_t*>(&iValues[3]) = mI;
+}
+
 /**
  * @brief Returns complex exponencial window basis
  * @return Complex exponencial window basis
@@ -248,7 +409,7 @@ const FloatComplex* CompressHelper::getBE() const
  * @brief Returns shifted complex exponencial window basis
  * @return Shifted complex exponencial window basis
  */
-const FloatComplex *CompressHelper::getBEShifted() const
+const FloatComplex* CompressHelper::getBEShifted() const
 {
   return mBEShifted;
 }
@@ -266,7 +427,7 @@ const FloatComplex* CompressHelper::getBE_1() const
  * @brief Returns inverted shifted complex exponencial window basis
  * @return Inverted shifted complex exponencial window basis
  */
-const FloatComplex *CompressHelper::getBE_1Shifted() const
+const FloatComplex* CompressHelper::getBE_1Shifted() const
 {
   return mBE_1Shifted;
 }
@@ -314,15 +475,6 @@ hsize_t CompressHelper::getMos() const
 hsize_t CompressHelper::getHarmonics() const
 {
   return mHarmonics;
-}
-
-/**
- * @brief Returns coefficients stride for one step (harmonics * 2;)
- * @return Coefficients stride for one step
- */
-hsize_t CompressHelper::getStride() const
-{
-  return mStride;
 }
 
 /**

@@ -180,10 +180,18 @@
 │ --Q_term_c                    │ Store Q term (volume rate of  │
 │                               │   heat deposition) computed   │
 │                               │   using compression           │
+│ --post                        │ Do not simulate, do only      │
+│                               │   post-processing (Compute    │
+│                               │   I_avg(_c) and Q_term(_c))   │
 │ --block_size                  │ Maximum block size for        │
 │                               │   dataset reading (computing  │
 │                               │   average intensity without   │
 │                               │   compression)                │
+│ --no_overlap                  │ Compression without basis     │
+│                               │   overlapping flag - less RAM │
+│                               │   , more errors               │
+│ --40-bit_complex              │ Compression 64-bit complex    │
+│                               │   floats to 40-bit            │
 ├───────────────────────────────┴───────────────────────────────┤
 │                Time series compression flags                  │
 ├───────────────────────────────┬───────────────────────────────┤
@@ -476,6 +484,18 @@ class CommandLineParameters
     size_t getHarmonics()                 const { return mHarmonics; }
 
     /**
+     * @brief  Get compression basis overlapping flag.
+     * @return Compression basis overlapping flag.
+     */
+    size_t getNoCompressionOverlapFlag()  const { return mNoCompressionOverlapFlag; }
+
+    /**
+     * @brief  Get 40-bit compression flag.
+     * @return 40-bit compression flag.
+     */
+    size_t get40bitCompressionFlag()  const { return m40bitCompressionFlag; }
+
+    /**
      * @brief  Get maximum block size for dataset reading (computing average intensity).
      * @return Block size for dataset reading.
      */
@@ -590,6 +610,10 @@ class CommandLineParameters
     size_t mMOS = 1;
     /// Number of harmonics for compression.
     size_t mHarmonics = 1;
+    /// Compression without basis overlapping flag - less RAM, more errors
+    bool mNoCompressionOverlapFlag = false;
+    /// Compression 64-bit complex floats to 40-bit
+    bool m40bitCompressionFlag = false;
 
     /// Maximum block size for dataset reading (computing average intensity).
     /// Default value is computed according to free RAM memory.

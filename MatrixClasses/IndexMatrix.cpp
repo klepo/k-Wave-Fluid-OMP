@@ -192,16 +192,49 @@ void IndexMatrix::recomputeIndicesToMatlab()
 /**
  * Get total number of elements in all cuboids to be able to allocate output file.
  */
-size_t IndexMatrix::getSizeOfAllCuboids() const
+size_t IndexMatrix::getSizeOfAllCuboids(float sizeMultiplier) const
 {
   size_t elementSum = 0;
   for (size_t cuboidIdx = 0; cuboidIdx < mDimensionSizes.ny; cuboidIdx++)
   {
-    elementSum += (getBottomRightCorner(cuboidIdx) - getTopLeftCorner(cuboidIdx)).nElements();
+    elementSum += getSizeOfCuboid(cuboidIdx, sizeMultiplier);
   }
-
   return elementSum;
 }// end of getSizeOfAllCuboids
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get total number of elements in cuboid with given index.
+ */
+size_t IndexMatrix::getSizeOfCuboid(size_t cuboidIdx, float sizeMultiplier) const
+{
+  if (sizeMultiplier != 1.0f)
+  {
+    return getDimensionSizesOfCuboid(cuboidIdx, sizeMultiplier).nElements();
+  }
+  else
+  {
+    return getDimensionSizesOfCuboid(cuboidIdx).nElements();
+  }
+}// end of getSizeOfCuboid
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get dimension sizes of cuboid with given index.
+ */
+DimensionSizes IndexMatrix::getDimensionSizesOfCuboid(size_t cuboidIdx, float sizeMultiplier) const
+{
+  if (sizeMultiplier != 1.0f)
+  {
+    DimensionSizes dims = getBottomRightCorner(cuboidIdx) - getTopLeftCorner(cuboidIdx);
+    dims.nx = hsize_t(ceilf(dims.nx * sizeMultiplier));
+    return dims;
+  }
+  else
+  {
+    return getBottomRightCorner(cuboidIdx) - getTopLeftCorner(cuboidIdx);
+  }
+}// end of getDimensionSizesOfCuboid
 //----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//

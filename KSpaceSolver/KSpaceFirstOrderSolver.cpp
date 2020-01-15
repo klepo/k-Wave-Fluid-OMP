@@ -51,6 +51,8 @@
 #include <cmath>
 #include <ctime>
 #include <limits>
+#include <string.h>
+#include <fstream>
 
 #include <KSpaceSolver/KSpaceFirstOrderSolver.h>
 #include <Containers/MatrixContainer.h>
@@ -400,6 +402,137 @@ size_t KSpaceFirstOrderSolver::getMemoryUsage() const
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Get available memory.
+ */
+size_t KSpaceFirstOrderSolver::getAvailableMemory() const
+{
+  #ifdef __linux__
+    std::string token;
+    std::ifstream file("/proc/meminfo");
+    while (file >> token)
+    {
+      if (token == "MemAvailable:")
+      {
+        unsigned long mem;
+        if (file >> mem)
+        {
+          return mem / 1000;
+        }
+        else
+        {
+          return 0;
+        }
+      }
+      // ignore rest of the line
+      file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    return 0; // nothing found
+  #endif
+  // This is wrong, probably without cache and other.
+  /*#ifdef __linux__
+      long pages = sysconf(_SC_AVPHYS_PAGES);
+      long page_size = sysconf(_SC_PAGE_SIZE);
+      return pages * page_size / 1000000;
+  #endif*/
+  #ifdef _WIN64
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    return size_t(status.ullAvailPhys) / 1000000;
+  #endif
+}// end of getAvailableMemory
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get peak memory usage.
+ */
+size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const
+{
+  #ifdef __linux__
+    // linux file contains this-process info
+    FILE* file = fopen("/proc/self/status", "r");
+    char buffer[1024] = "";
+    int peakRealMem;
+    //int peakVirtMem;
+    // read the entire file
+    while (fscanf(file, " %1023s", buffer) == 1)
+    {
+      if (strcmp(buffer, "VmHWM:") == 0)
+      { // kilobytes
+        fscanf(file, " %d", &peakRealMem);
+      }
+      /*if (strcmp(buffer, "VmPeak:") == 0)
+      {
+        fscanf(file, " %d", &peakVirtMem);
+      }*/
+    }
+    fclose(file);
+    return size_t(peakRealMem) / 1000;
+    //return size_t(peakVirtMem) / 1000;
+  #endif
+  #ifdef _WIN64
+    PROCESS_MEMORY_COUNTERS pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
+    return size_t(pmc.PeakWorkingSetSize) / 1000000;
+  #endif
+}// end of getPeakMemoryUsage
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get current memory usage.
+ */
+size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const
+{
+  #ifdef __linux__
+    // linux file contains this-process info
+    FILE* file = fopen("/proc/self/status", "r");
+    char buffer[1024] = "";
+    int currRealMem;
+    //int currVirtMem;
+    // read the entire file
+    while (fscanf(file, " %1023s", buffer) == 1)
+    {
+      if (strcmp(buffer, "VmRSS:") == 0)
+      { // kilobytes
+        fscanf(file, " %d", &currRealMem);
+      }
+      /*if (strcmp(buffer, "VmSize:") == 0)
+      {
+        fscanf(file, " %d", &currVirtMem);
+      }*/
+    }
+    fclose(file);
+    return size_t(currRealMem) / 1000;
+    //return size_t(currVirtMem) / 1000;
+  #endif
+  #ifdef _WIN64
+    PROCESS_MEMORY_COUNTERS pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
+    return size_t(pmc.WorkingSetSize) / 1000000;
+  #endif
+}// end of getCurrentMemoryUsage
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Get total memory.
+ */
+size_t KSpaceFirstOrderSolver::getTotalMemory() const
+{
+  #ifdef __linux__
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return pages * page_size / 1000000;
+  #endif
+  #ifdef _WIN64
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    return size_t(status.ullTotalPhys) / 1000000;
+  #endif
+}// end of getTotalMemory
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
  * Get release code version.
  */
 std::string KSpaceFirstOrderSolver::getCodeName() const
@@ -407,7 +540,6 @@ std::string KSpaceFirstOrderSolver::getCodeName() const
   return std::string(kOutFmtKWaveVersion);
 }// end of getCodeName
 //----------------------------------------------------------------------------------------------------------------------
-
 
 /**
  * Print full code name and the license.
@@ -838,7 +970,7 @@ void KSpaceFirstOrderSolver::postProcessing()
         && !mParameters.getOutputFile().datasetExists(mParameters.getOutputFile().getRootGroup(), kSensorMaskIndexName))
     {
       getSensorMaskIndex().recomputeIndicesToMatlab();
-      getSensorMaskIndex().writeData(mParameters.getOutputFile(),kSensorMaskIndexName,
+      getSensorMaskIndex().writeData(mParameters.getOutputFile(), kSensorMaskIndexName,
                                      mParameters.getCompressionLevel());
     }
     if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners
@@ -915,6 +1047,23 @@ void KSpaceFirstOrderSolver::writeOutputDataInfo()
 
   fileHeader.setNumberOfCores();
   fileHeader.writeHeaderToOutputFile(mParameters.getOutputFile());
+
+  // Write some other info
+  hid_t rootGroup = mParameters.getOutputFile().getRootGroup();
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mStoreQTermFlag", std::to_string(mParameters.getStoreQTermFlag()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mStoreQTermCFlag", std::to_string(mParameters.getStoreQTermCFlag()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mStoreIntensityAvgFlag", std::to_string(mParameters.getStoreIntensityAvgFlag()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mStoreIntensityAvgCFlag", std::to_string(mParameters.getStoreIntensityAvgCFlag()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mNoCompressionOverlapFlag", std::to_string(mParameters.getNoCompressionOverlapFlag()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mPeriod", std::to_string((&CompressHelper::getInstance())->getPeriod()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mMOS", std::to_string((&CompressHelper::getInstance())->getMos()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mHarmonics", std::to_string((&CompressHelper::getInstance())->getHarmonics()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mBlockSizeDefault", std::to_string(mBlockSizeDefault));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mBlockSizeDefaultC", std::to_string(mBlockSizeDefaultC));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mSamplingStartTimeStep", std::to_string(mParameters.getSamplingStartTimeIndex()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "output_file_size", std::to_string(mParameters.getOutputFile().getFileSize()));
+
+
 }// end of writeOutputDataInfo
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -1000,7 +1149,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
   size_t steps = 0;
   if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
-    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName).nt;
+    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName).ny;
   }
   else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
@@ -1042,31 +1191,32 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
   // Compute max block size for dataset reading
   if (maxBlockSize == 0)
   {
-    size_t memory = 0;
-    #ifdef __unix
-      long pages = sysconf(_SC_AVPHYS_PAGES);
-      long page_size = sysconf(_SC_PAGE_SIZE);
-      memory = pages * page_size;
-    #endif
-    #ifdef _WIN32
-      MEMORYSTATUSEX status;
-      status.dwLength = sizeof(status);
-      GlobalMemoryStatusEx(&status);
-      memory = size_t(status.ullAvailPhys);
-    #endif
+    size_t memory = getAvailableMemory() * 1000000;
+    //std::cout << std::endl;
+    //std::cout << "getMemoryUsage:        " << getMemoryUsage() << std::endl;
+    //std::cout << "getTotalMemory:        " << getTotalMemory() << std::endl;
+    //std::cout << "getCurrentMemoryUsage: " << getCurrentMemoryUsage() << std::endl;
+    //std::cout << "getPeakMemoryUsage:    " << getPeakMemoryUsage() << std::endl;
+    //std::cout << "getAvailableMemory:    " << getAvailableMemory() << std::endl;
     // dataP, dataUx, dataUy, dataUz, fftwTimeShiftMatrix -> 5 matrices x 4 (size of float)
-    maxBlockSize = size_t(float(memory) / 20 * 0.9f);
+    maxBlockSize = size_t(float(memory) / 20 * 0.98f);
   }
+
   size_t sliceSize = fullDims.nx * fullDims.ny;
   size_t fullSize = fullDims.nx * fullDims.ny * fullDims.nz;
-  size_t blockSizeDefault = maxBlockSize / steps;
+  mBlockSizeDefault = maxBlockSize / steps;
   // Minimal size is sliceSize
-  blockSizeDefault = blockSizeDefault < sliceSize ? sliceSize : blockSizeDefault;
+  mBlockSizeDefault = mBlockSizeDefault < sliceSize ? sliceSize : mBlockSizeDefault;
   // Maximal size is fullSize
-  blockSizeDefault = blockSizeDefault > fullSize ? fullSize : blockSizeDefault;
-  DimensionSizes shiftDims(blockSizeDefault, steps / 2 + 1, 1);
+  mBlockSizeDefault = mBlockSizeDefault > fullSize ? fullSize : mBlockSizeDefault;
+  DimensionSizes shiftDims(mBlockSizeDefault, steps / 2 + 1, 1);
+  mBlockSizeDefault *= steps;
   // Temporary matrix for time shift
-  FftwComplexMatrix fftwTimeShiftMatrix = FftwComplexMatrix(shiftDims);
+  FftwComplexMatrix* fftwTimeShiftMatrix = new FftwComplexMatrix(shiftDims);
+
+  //std::cout << "maxBlockSize:          " << maxBlockSize <<  std::endl;
+  //std::cout << "mBlockSizeDefault:     " << mBlockSizeDefault << std::endl;
+  //std::cout << std::endl;
 
   // For every dataset
   // TODO test with more cuboids
@@ -1076,7 +1226,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
     DimensionSizes datasetDimensionSizes;
     size_t sliceSize = 0;
     // Block size for given dataset
-    size_t blockSize = fftwTimeShiftMatrix.getDimensionSizes().nx;
+    size_t blockSize = fftwTimeShiftMatrix->getDimensionSizes().nx;
     DimensionSizes datasetBlockSizes;
 
     // Open datasets
@@ -1114,8 +1264,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
       {
         blockSize = datasetSize;
       }
-      float blockCount = datasetSize / float(blockSize);
-      size_t zCount = datasetDimensionSizes.nz / blockCount;
+      size_t zCount = blockSize / sliceSize;
       blockSize = sliceSize * zCount;
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
@@ -1128,8 +1277,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
     RealMatrix dataUx(DimensionSizes(blockSize, steps, 1));
     RealMatrix dataUy(DimensionSizes(blockSize, steps, 1));
     RealMatrix dataUz(DimensionSizes(blockSize, steps, 1));
-    fftwTimeShiftMatrix.createR2CFftPlan1DY(dataP);
-    fftwTimeShiftMatrix.createC2RFftPlan1DY(dataP);
+    fftwTimeShiftMatrix->createR2CFftPlan1DY(dataP);
+    fftwTimeShiftMatrix->createC2RFftPlan1DY(dataP);
 
     for (size_t i = 0; i < datasetSize; i += blockSize)
     {
@@ -1144,8 +1293,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
           dataUy.resize(DimensionSizes(blockSize, steps, 1));
           dataUz.resize(DimensionSizes(blockSize, steps, 1));
-          fftwTimeShiftMatrix.createR2CFftPlan1DY(dataP);
-          fftwTimeShiftMatrix.createC2RFftPlan1DY(dataP);
+          fftwTimeShiftMatrix->createR2CFftPlan1DY(dataP);
+          fftwTimeShiftMatrix->createC2RFftPlan1DY(dataP);
         }
 
         mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(i, 0, 0), datasetBlockSizes, dataP.getData());
@@ -1166,8 +1315,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
           dataUy.resize(DimensionSizes(blockSize, steps, 1));
           dataUz.resize(DimensionSizes(blockSize, steps, 1));
-          fftwTimeShiftMatrix.createR2CFftPlan1DY(dataP);
-          fftwTimeShiftMatrix.createC2RFftPlan1DY(dataP);
+          fftwTimeShiftMatrix->createR2CFftPlan1DY(dataP);
+          fftwTimeShiftMatrix->createC2RFftPlan1DY(dataP);
         }
         size_t zOffset = i / sliceSize;
 
@@ -1182,8 +1331,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
 
       // Phase shifts using FFT
       const float divider = 1.0f / static_cast<float>(steps);
-      FloatComplex* tempFftTimeShift = fftwTimeShiftMatrix.getComplexData();
-      fftwTimeShiftMatrix.computeR2CFft1DY(dataUx);
+      FloatComplex* tempFftTimeShift = fftwTimeShiftMatrix->getComplexData();
+      fftwTimeShiftMatrix->computeR2CFft1DY(dataUx);
       #pragma omp simd
       for (size_t step = 0; step < stepsComplex; step++)
       {
@@ -1192,8 +1341,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
         }
       }
-      fftwTimeShiftMatrix.computeC2RFft1DY(dataUx);
-      fftwTimeShiftMatrix.computeR2CFft1DY(dataUy);
+      fftwTimeShiftMatrix->computeC2RFft1DY(dataUx);
+      fftwTimeShiftMatrix->computeR2CFft1DY(dataUy);
       #pragma omp simd
       for (size_t step = 0; step < stepsComplex; step++)
       {
@@ -1202,10 +1351,10 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
         }
       }
-      fftwTimeShiftMatrix.computeC2RFft1DY(dataUy);
+      fftwTimeShiftMatrix->computeC2RFft1DY(dataUy);
       if (simulationDimension == SD::k3D)
       {
-        fftwTimeShiftMatrix.computeR2CFft1DY(dataUz);
+        fftwTimeShiftMatrix->computeR2CFft1DY(dataUz);
         #pragma omp simd
         for (size_t step = 0; step < stepsComplex; step++)
         {
@@ -1214,10 +1363,10 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
             tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
           }
         }
-        fftwTimeShiftMatrix.computeC2RFft1DY(dataUz);
+        fftwTimeShiftMatrix->computeC2RFft1DY(dataUz);
       }
 
-      // Compute intensity
+      // Compute average of intensity
       for (size_t step = 0; step < steps; step++)
       {
         for (size_t x = 0; x < blockSize; x++)
@@ -1228,17 +1377,15 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           {
             intensityZAvgData[i + x] += dataUz[step * blockSize + x] * dataP[step * blockSize + x];
           }
-        }
-      }
-
-      // Compute average of intensity
-      for (size_t x = 0; x < blockSize; x++)
-      {
-        intensityXAvgData[i + x] /= steps;
-        intensityYAvgData[i + x] /= steps;
-        if (simulationDimension == SD::k3D)
-        {
-          intensityZAvgData[i + x] /= steps;
+          if (step == steps - 1)
+          {
+            intensityXAvgData[i + x] /= steps;
+            intensityYAvgData[i + x] /= steps;
+            if (simulationDimension == SD::k3D)
+            {
+              intensityZAvgData[i + x] /= steps;
+            }
+          }
         }
       }
     }
@@ -1252,11 +1399,15 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
     }
   }
   _mm_free(kx);
+  delete fftwTimeShiftMatrix;
+
 }// end of computeAverageIntensities
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute average intensities from stored p and u compression coefficients.
+ *
+ * NOTE does not work with 40-bit complex floats
  */
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
@@ -1264,14 +1415,14 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
   float* intensityXAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvgC].getCurrentStoreBuffer();
   float* intensityYAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvgC].getCurrentStoreBuffer();
   float* intensityZAvgData = (simulationDimension == SD::k3D) ? mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvgC].getCurrentStoreBuffer() : nullptr;
-  size_t steps = 0;
+  size_t steps = 1;
   if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
-    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix).nt;
+    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix).ny;
   }
   else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
-    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + "/1" + kCompressSuffix).nt;
+    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/1").nt;
   }
 
   size_t sensorMaskSize = 0;
@@ -1294,33 +1445,23 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
 
   size_t maxBlockSize = mParameters.getBlockSize();
   DimensionSizes fullDims = mParameters.getFullDimensionSizes();
-  fullDims.nx *= CompressHelper::getInstance().getHarmonics() * 2;
+  fullDims.nx *= CompressHelper::getInstance().getHarmonics() * 2; // TODO size of complex (40-bit complex floats)
 
   // Compute max block size for dataset reading
   if (maxBlockSize == 0)
   {
-    size_t memory = 0;
-#ifdef __unix
-    long pages = sysconf(_SC_AVPHYS_PAGES);
-    long page_size = sysconf(_SC_PAGE_SIZE);
-    memory = pages * page_size;
-#endif
-#ifdef _WIN32
-    MEMORYSTATUSEX status;
-    status.dwLength = sizeof(status);
-    GlobalMemoryStatusEx(&status);
-    memory = size_t(status.ullAvailPhys);
-#endif
+    size_t memory = getAvailableMemory() * 1000000;
     // dataP, dataUx, dataUy, dataUz, fftwTimeShiftMatrix -> 5 matrices x 4 (size of float)
-    maxBlockSize = size_t(float(memory) / 20 * 0.9f);
+    maxBlockSize = size_t(float(memory) / 20 * 0.98f);
   }
   size_t sliceSize = fullDims.nx * fullDims.ny;
   size_t fullSize = fullDims.nx * fullDims.ny * fullDims.nz;
-  size_t blockSizeDefault = maxBlockSize / steps;
+  mBlockSizeDefaultC = maxBlockSize / steps;
   // Minimal size is sliceSize
-  blockSizeDefault = blockSizeDefault < sliceSize ? sliceSize : blockSizeDefault;
+  mBlockSizeDefaultC = mBlockSizeDefaultC < sliceSize ? sliceSize : mBlockSizeDefaultC;
   // Maximal size is fullSize
-  blockSizeDefault = blockSizeDefault > fullSize ? fullSize : blockSizeDefault;
+  mBlockSizeDefaultC = mBlockSizeDefaultC > fullSize ? fullSize : mBlockSizeDefaultC;
+  mBlockSizeDefault *= steps;
 
   // For every dataset
   // TODO test with more cuboids
@@ -1330,7 +1471,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
     DimensionSizes datasetDimensionSizes;
     size_t sliceSize = 0;
     // Block size for given dataset
-    size_t blockSize = blockSizeDefault;
+    size_t blockSize = mBlockSizeDefaultC / steps;
     DimensionSizes datasetBlockSizes;
 
     // Open datasets
@@ -1353,23 +1494,22 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
     }
     else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
     {
-      datasetP = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset) + kCompressSuffix);
-      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName + "/" + std::to_string(indexOfDataset) + kCompressSuffix);
-      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName + "/" + std::to_string(indexOfDataset) + kCompressSuffix);
+      datasetP = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
+      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
+      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
       if (simulationDimension == SD::k3D)
       {
-        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName + "/" + std::to_string(indexOfDataset) + kCompressSuffix);
+        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
       }
-      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset) + kCompressSuffix) / steps;
-      datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset) + kCompressSuffix);
+      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset)) / steps;
+      datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
       sliceSize = datasetDimensionSizes.nx * datasetDimensionSizes.ny;
       // Maximum size is datasetSize
       if (blockSize > datasetSize)
       {
         blockSize = datasetSize;
       }
-      float blockCount = datasetSize / float(blockSize);
-      size_t zCount = datasetDimensionSizes.nz / blockCount;
+      size_t zCount = blockSize / sliceSize;
       blockSize = sliceSize * zCount;
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
@@ -1385,7 +1525,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
 
     for (size_t i = 0; i < datasetSize; i += blockSize)
     {
-      const size_t outputIndex = i / (CompressHelper::getInstance().getHarmonics() * 2);
+      const size_t outputIndex = i / (CompressHelper::getInstance().getHarmonics() * 2); // TODO size of complex (40-bit complex floats)
 
       // Read block by sensor mask type
       if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
@@ -1435,8 +1575,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
       FloatComplex* bufferUy = reinterpret_cast<FloatComplex*>(dataUy.getData());
       FloatComplex* bufferUz = reinterpret_cast<FloatComplex*>(dataUz.getData());
 
-      size_t outputBlockSize = blockSize / (CompressHelper::getInstance().getHarmonics() * 2);
-      // Compute intensity
+      size_t outputBlockSize = blockSize / (CompressHelper::getInstance().getHarmonics() * 2); // TODO size of complex (40-bit complex floats)
+      // Compute average of intensity
       for (size_t step = 0; step < steps; step++)
       {
         for (size_t x = 0; x < outputBlockSize; x++)
@@ -1453,17 +1593,15 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
               intensityZAvgData[outputIndex + x] += real(bufferP[pH] * conj(bufferUz[pH])) / 2.0f;
             }
           }
-        }
-      }
-
-      // Compute average of intensity
-      for (size_t x = 0; x < outputBlockSize; x++)
-      {
-        intensityXAvgData[outputIndex + x] /= steps;
-        intensityYAvgData[outputIndex + x] /= steps;
-        if (simulationDimension == SD::k3D)
-        {
-          intensityZAvgData[outputIndex + x] /= steps;
+          if (step == steps - 1)
+          {
+            intensityXAvgData[outputIndex + x] /= steps;
+            intensityYAvgData[outputIndex + x] /= steps;
+            if (simulationDimension == SD::k3D)
+            {
+              intensityZAvgData[outputIndex + x] /= steps;
+            }
+          }
         }
       }
     }
@@ -1533,6 +1671,10 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
                               (bottomRightCorner.nx - topLeftCorner.nx + 1);
       size_t cuboidRowSize  = (bottomRightCorner.nx - topLeftCorner.nx + 1);
 
+      DimensionSizes cuboidSize(0, 0, 0, 0);      // Size of the cuboid
+      cuboidSize    = bottomRightCorner - topLeftCorner;
+      cuboidSize.nt = 1;
+
       #pragma omp for collapse(3)
       for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++)
       {
@@ -1544,7 +1686,6 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
                                             (z - topLeftCorner.nz) * cuboidSlabSize +
                                             (y - topLeftCorner.ny) * cuboidRowSize  +
                                             (x - topLeftCorner.nx);
-
             const size_t sourceIndex = z * slabSize + y * rowSize + x;
             intensityXAvg[sourceIndex] = intensityXAvgData[storeBufferIndex];
             intensityYAvg[sourceIndex] = intensityYAvgData[storeBufferIndex];
@@ -1558,7 +1699,7 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
       // must be done only once
       #pragma omp single
       {
-        cuboidInBufferStart += (bottomRightCorner - topLeftCorner).nElements();
+        cuboidInBufferStart += cuboidSize.nElements();
       }
     }
   }
@@ -1719,6 +1860,9 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
                               (bottomRightCorner.nx - topLeftCorner.nx + 1);
       size_t cuboidRowSize  = (bottomRightCorner.nx - topLeftCorner.nx + 1);
 
+      DimensionSizes cuboidSize(0, 0, 0, 0);      // Size of the cuboid
+      cuboidSize    = bottomRightCorner - topLeftCorner;
+      cuboidSize.nt = 1;
 
       #pragma omp for collapse(3)
       for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++)
@@ -1731,7 +1875,6 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
                                             (z - topLeftCorner.nz) * cuboidSlabSize +
                                             (y - topLeftCorner.ny) * cuboidRowSize  +
                                             (x - topLeftCorner.nx);
-
             const size_t sourceIndex = z * slabSize + y * rowSize + x;
             qTermData[storeBufferIndex] = intensityXAvg[sourceIndex];
           }
@@ -1740,7 +1883,7 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
       // must be done only once
       #pragma omp single
       {
-        cuboidInBufferStart += (bottomRightCorner - topLeftCorner).nElements();
+        cuboidInBufferStart += cuboidSize.nElements();
       }
     }
   }

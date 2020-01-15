@@ -228,10 +228,6 @@ void CommandLineParameters::printComandlineParamers()
   {
     sampledQuantitiesList += "Q_term_c, ";
   }
-  if (mOnlyPostProcessingFlag)
-  {
-    sampledQuantitiesList += "post, ";
-  }
 
   // remove comma and space symbols
   if (sampledQuantitiesList.length() > 0)
@@ -314,8 +310,9 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
     { "Q_term_c",             no_argument, nullptr, 32 },
 
     { "post",                 no_argument, nullptr, 33 },
-
     { "block_size",           required_argument, nullptr, 34 },
+    { "no_overlap",           no_argument, nullptr, 35 },
+    { "40-bit_complex",       no_argument, nullptr, 36 },
 
     { nullptr,                no_argument, nullptr, 0  }
   };
@@ -776,6 +773,18 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
           printUsage();
           Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtInvalidBlockSize, " ", errorLineIndent));
         }
+        break;
+      }
+
+      case 35: // no_overlap
+      {
+        mNoCompressionOverlapFlag = true;
+        break;
+      }
+
+      case 36: // 40-bit_complex
+      {
+        m40bitCompressionFlag = true;
         break;
       }
 

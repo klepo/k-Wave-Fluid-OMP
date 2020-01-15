@@ -129,6 +129,12 @@ void Parameters::init(int argc, char** argv)
     throw std::invalid_argument(Logger::formatMessage(kErrFmtIllegalSamplingStartTimeStep, 1l, mNt));
   }
 
+  // Too few steps to use overlapping compression
+  if ((&CompressHelper::getInstance())->getPeriod() >= mNt - mCommandLineParameters.getSamplingStartTimeIndex())
+  {
+    mCommandLineParameters.mNoCompressionOverlapFlag = true;
+  }
+
   // Checkpoint by number of time steps
   if (mCommandLineParameters.getCheckpointTimeSteps() > 0)
   {
@@ -518,17 +524,9 @@ void Parameters::readScalarsFromInputFile()
       {
         Hdf5File outputFile;
         outputFile.open(mCommandLineParameters.getOutputFileName());
-        std::string datasetName;
-        if (mSensorMaskType == SensorMaskType::kIndex)
-        {
-          datasetName = kPName + kCompressSuffix;
-        }
-        else if (mSensorMaskType == SensorMaskType::kCorners)
-        {
-          datasetName =  kPName + "/1" + kCompressSuffix;
-        }
+        std::string datasetName = (mSensorMaskType == SensorMaskType::kIndex) ? kPName + kCompressSuffix : kPName + kCompressSuffix + "/1";
         mCommandLineParameters.mPeriod = outputFile.readFloatAttribute(outputFile.getRootGroup(), datasetName, "c_period");
-        mCommandLineParameters.mMOS = outputFile.readLongLongAttribute(outputFile.getRootGroup(), datasetName, "c_mos");
+        mCommandLineParameters.mMOS = hsize_t(outputFile.readLongLongAttribute(outputFile.getRootGroup(), datasetName, "c_mos"));
         mCommandLineParameters.mHarmonics = hsize_t(outputFile.readLongLongAttribute(outputFile.getRootGroup(), datasetName, "c_harmonics"));
         mCommandLineParameters.mFrequency = 1.0f / (mCommandLineParameters.getPeriod() * mDt);
         outputFile.close();
@@ -542,29 +540,6 @@ void Parameters::readScalarsFromInputFile()
     // Create compression helper
     CompressHelper &compressHelper = CompressHelper::getInstance();
     compressHelper.init(mCommandLineParameters.getPeriod(), mCommandLineParameters.getMOS(), mCommandLineParameters.getHarmonics(), true);
-
-    // Set compression sizes for temp buffers
-    // complex number -> * 2
-    if (mSensorMaskType == SensorMaskType::kIndex)
-    {
-      mCompressedDimensionSizes = DimensionSizes(mSensorMaskIndexSize * compressHelper.getHarmonics() * 2, 1, 1);
-    }
-    else if (mSensorMaskType == SensorMaskType::kCorners)
-    {
-      DimensionSizes size = mInputFile.getDatasetDimensionSizes(rootGroup, kSensorMaskCornersName);
-      size_t *data = static_cast<size_t *>(_mm_malloc(size.nElements() * sizeof(size_t), kDataAlignment));
-      mInputFile.readCompleteDataset(rootGroup, kSensorMaskCornersName, size, data);
-      size_t cuboidsSize = 0;
-      for (size_t i = 0; i < mSensorMaskCornersSize; i++)
-      {
-        DimensionSizes corner1(data[i * 6], data[i * 6 + 1], data[i * 6 + 2]);
-        DimensionSizes corner2(data[i * 6 + 3], data[i * 6 + 4], data[i * 6 + 5]);
-        cuboidsSize += (corner2 - corner1).nElements();
-      }
-      _mm_free(data);
-
-      mCompressedDimensionSizes = DimensionSizes(cuboidsSize * compressHelper.getHarmonics() * 2, 1, 1);
-    }
   }
 
 }// end of readScalarsFromInputFile

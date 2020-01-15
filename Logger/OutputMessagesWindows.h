@@ -32,6 +32,8 @@
 #ifndef OUTPUT_MESSAGES_WINDOWS_H
 #define OUTPUT_MESSAGES_WINDOWS_H
 
+#include <string>
+
 /**
  * @brief   Datatype for output messages.
  * @details Datatype for output messages.
@@ -76,7 +78,7 @@ OutputMessage kOutFmtNumberOfThreads
 OutputMessage kOutFmtSimulationDetailsTitle
   = "+---------------------------------------------------------------+\n"
     "|                      Simulation details                       |\n"
-         "+---------------------------------------------------------------+\n";
+    "+---------------------------------------------------------------+\n";
 /// Output message
 OutputMessage kOutFmtInitializationHeader
   = "+---------------------------------------------------------------+\n"
@@ -121,10 +123,10 @@ OutputMessage kOutFmtMemoryUsage
   = "| Peak memory in use:                                %8luMB |\n";
 ///Output message
 OutputMessage kOutFmtTotalExecutionTime
-  = "| Total execution time:                               %8.2fs |\n";
+  = "| Total execution time:                              %9.2fs |\n";
 ///Output message
 OutputMessage kOutFmtLegExecutionTime
-  = "| This leg execution time:                            %8.2fs |\n";
+  = "| This leg execution time:                           %9.2fs |\n";
 
 ///Output message
 OutputMessage kOutFmtReadingConfiguration
@@ -175,7 +177,7 @@ OutputMessage kOutFmtCurrentMemory
   = "| Current host memory in use:                        %8luMB |\n";
 ///Output message
 OutputMessage kOutFmtSimulationProgress
-  ="|    %2li%c   |    %9.3fs  |  %9.3fs  |  %02i/%02i/%02i %02i:%02i:%02i |\n";
+  = "|    %2li%c   |   %10.3fs  | %10.3fs  |  %02i/%02i/%02i %02i:%02i:%02i |\n";
 
 ///Output message
 OutputMessage kOutFmtSimulationEndSeparator
@@ -353,14 +355,14 @@ OutputMessage kOutFmtLicense
 /// Usage massage
 OutputMessage kOutFmtUsagePart1
   = "|                             Usage                             |\n"
-     "+---------------------------------------------------------------+\n"
-     "|                     Mandatory parameters                      |\n"
-     "+---------------------------------------------------------------+\n"
-     "| -i <file_name>                | HDF5 input file               |\n"
-     "| -o <file_name>                | HDF5 output file              |\n"
-     "+-------------------------------+-------------------------------+\n"
-     "|                      Optional parameters                      |\n"
-     "+-------------------------------+-------------------------------+\n";
+    "+---------------------------------------------------------------+\n"
+    "|                     Mandatory parameters                      |\n"
+    "+---------------------------------------------------------------+\n"
+    "| -i <file_name>                | HDF5 input file               |\n"
+    "| -o <file_name>                | HDF5 output file              |\n"
+    "+-------------------------------+-------------------------------+\n"
+    "|                      Optional parameters                      |\n"
+    "+-------------------------------+-------------------------------+\n";
 
 /// Usage massage
 OutputMessage kOutFmtUsagePart2
@@ -425,10 +427,18 @@ OutputMessage kOutFmtUsagePart2
     "| --Q_term_c                    | Store Q term (volume rate of  |\n"
     "|                               |   heat deposition) computed   |\n"
     "|                               |   using compression           |\n"
+    "| --post                        | Do not simulate, do only      |\n"
+    "|                               |   post-processing (Compute    |\n"
+    "|                               |   I_avg(_c) and Q_term(_c))   |\n"
     "| --block_size                  | Maximum block size for        |\n"
     "|                               |   dataset reading (computing  |\n"
     "|                               |   average intensity without   |\n"
     "|                               |   compression)                |\n"
+    "| --no_overlap                  | Compression without basis     |\n"
+    "|                               |   overlapping flag - less RAM |\n"
+    "|                               |   , more errors               |\n"
+    "| --40-bit_complex              | Compression 64-bit complex    |\n"
+    "|                               |   floats to 40-bit            |\n"
     "+-------------------------------+-------------------------------+\n"
     "|                Time series compression flags                  |\n"
     "+-------------------------------+-------------------------------+\n"

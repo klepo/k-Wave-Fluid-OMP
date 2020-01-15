@@ -32,11 +32,11 @@
 #ifndef KSPACE_FIRST_ORDER_SOLVER_H
 #define KSPACE_FIRST_ORDER_SOLVER_H
 
-#ifdef __unix
+#ifdef __linux__
 #include <unistd.h>
 #endif
 
-#ifdef _WIN32
+#ifdef _WIN64
 #include <Windows.h>
 #endif
 
@@ -96,6 +96,26 @@ class KSpaceFirstOrderSolver
      * @return Memory consumed on the host side in MB.
      */
     virtual size_t getMemoryUsage() const;
+    /**
+     * @brief  Get available memory in MB.
+     * @return Available memory in MB.
+     */
+    virtual size_t getAvailableMemory() const;
+    /**
+     * @brief  Get peak memory usage in MB.
+     * @return Peak memory consumed in MB.
+     */
+    virtual size_t getPeakMemoryUsage() const;
+    /**
+     * @brief  Get current memory usage in MB.
+     * @return Current memory usage on in MB.
+     */
+    virtual size_t getCurrentMemoryUsage() const;
+    /**
+     * @brief  Get total RAM memory in MB.
+     * @return Total RAM memory in MB.
+     */
+    virtual size_t getTotalMemory() const;
 
     /**
      * @brief  Get code name - release code version.
@@ -1186,6 +1206,9 @@ class KSpaceFirstOrderSolver
     TimeMeasure mPostProcessingTime;
     /// Iteration time of the simulation.
     TimeMeasure mIterationTime;
+
+    size_t mBlockSizeDefault = 0;
+    size_t mBlockSizeDefaultC = 0;
 
 };// end of KSpaceFirstOrderSolver
 //----------------------------------------------------------------------------------------------------------------------

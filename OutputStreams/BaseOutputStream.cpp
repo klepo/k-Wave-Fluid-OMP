@@ -62,16 +62,51 @@ BaseOutputStream::BaseOutputStream(Hdf5File&              file,
     mSourceMatrix(sourceMatrix),
     mReduceOp(reduceOp),
     mBufferReuse(bufferToReuse != nullptr),
-    mOutputStreamContainer(outputStreamContainer),
-    mDoNotSaveFlag(doNotSaveFlag),
     mBufferSize(0),
-    mStoreBuffer(bufferToReuse)
+    mStoreBuffer(bufferToReuse),
+    mOutputStreamContainer(outputStreamContainer),
+    mDoNotSaveFlag(doNotSaveFlag)
 {
   // Set compression variables
   if (mReduceOp == ReduceOperator::kC || mReduceOp == ReduceOperator::kIAvgC)
   {
     // Set compression helper
     mCompressHelper = &CompressHelper::getInstance();
+
+    if (mRootObjectName == kUxNonStaggeredName + kCompressSuffix
+        || mRootObjectName == kUyNonStaggeredName + kCompressSuffix
+        || mRootObjectName == kUzNonStaggeredName + kCompressSuffix)
+    {
+      // Time shift of velocity
+      mBE = mCompressHelper->getBEShifted();
+      mBE_1 = mCompressHelper->getBE_1Shifted();
+      mShiftFlag = true;
+      mE = CompressHelper::kMaxExpU;
+    }
+    else
+    {
+      mBE = mCompressHelper->getBE();
+      mBE_1 = mCompressHelper->getBE_1();
+      mE = CompressHelper::kMaxExpP;
+    }
+
+    if (mRootObjectName == kIxAvgName + kCompressSuffix)
+    {
+      mVelocityOutputStreamIdx = static_cast<int>(OutputStreamContainer::OutputStreamIdx::kVelocityXNonStaggeredC);
+    }
+    else if (mRootObjectName == kIyAvgName + kCompressSuffix)
+    {
+      mVelocityOutputStreamIdx = static_cast<int>(OutputStreamContainer::OutputStreamIdx::kVelocityYNonStaggeredC);
+    }
+    else if (mRootObjectName == kIzAvgName + kCompressSuffix)
+    {
+      mVelocityOutputStreamIdx = static_cast<int>(OutputStreamContainer::OutputStreamIdx::kVelocityZNonStaggeredC);
+    }
+
+    if (Parameters::getInstance().get40bitCompressionFlag())
+    {
+      mComplexSize = 1.25f;
+    }
   }
 }
 
@@ -89,13 +124,15 @@ void BaseOutputStream::postSample()
 void BaseOutputStream::postSample2()
 {
   // Compression stuff
-  if (mSavingFlag && mCurrentStoreBuffer)
+  if (mReduceOp == ReduceOperator::kC && mSavingFlag && mCurrentStoreBuffer)
   {
     // Set zeros for next accumulation
-    #pragma omp parallel for simd schedule(static)
-    for (size_t i = 0; i < mBufferSize; i++)
     {
-      mCurrentStoreBuffer[i] = 0.0f;
+      #pragma omp parallel for simd schedule(static)
+      for (size_t i = 0; i < mBufferSize; i++)
+      {
+        mCurrentStoreBuffer[i] = 0.0f;
+      }
     }
     mCurrentStoreBuffer = nullptr;
   }
@@ -193,18 +230,30 @@ float *BaseOutputStream::getCurrentStoreBuffer()
  */
 void BaseOutputStream::allocateMemory()
 {
-  mStoreBuffer = (float*) _mm_malloc(mBufferSize * sizeof(float), kDataAlignment);
-
-  if (!mStoreBuffer)
-  {
-    throw std::bad_alloc();
-  }
-
   if (mReduceOp == ReduceOperator::kC)
   {
-    mStoreBuffer2 = (float*) _mm_malloc(mBufferSize * sizeof(float), kDataAlignment);
-
-    if (!mStoreBuffer2)
+    mStoreBuffer = (float*) _mm_malloc((mBufferSize) * sizeof(float), kDataAlignment);
+    if (!mStoreBuffer)
+    {
+      throw std::bad_alloc();
+    }
+    if (Parameters::getInstance().getNoCompressionOverlapFlag())
+    {
+      mStoreBuffer2 = mStoreBuffer;
+    }
+    else
+    {
+      mStoreBuffer2 = (float*) _mm_malloc((mBufferSize) * sizeof(float), kDataAlignment);
+      if (!mStoreBuffer2)
+      {
+        throw std::bad_alloc();
+      }
+    }
+  }
+  else
+  {
+    mStoreBuffer = (float*) _mm_malloc((mBufferSize) * sizeof(float), kDataAlignment);
+    if (!mStoreBuffer)
     {
       throw std::bad_alloc();
     }
@@ -326,7 +375,7 @@ void BaseOutputStream::freeMemory()
     _mm_free(mStoreBuffer);
     mStoreBuffer = nullptr;
   }
-  if (mStoreBuffer2)
+  if (mStoreBuffer2 && !Parameters::getInstance().getNoCompressionOverlapFlag())
   {
     _mm_free(mStoreBuffer2);
     mStoreBuffer2 = nullptr;

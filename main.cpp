@@ -349,10 +349,18 @@
 │ --Q_term_c                    │ Store Q term (volume rate of  │
 │                               │   heat deposition) computed   │
 │                               │   using compression           │
+│ --post                        │ Do not simulate, do only      │
+│                               │   post-processing (Compute    │
+│                               │   I_avg(_c) and Q_term(_c))   │
 │ --block_size                  │ Maximum block size for        │
 │                               │   dataset reading (computing  │
 │                               │   average intensity without   │
 │                               │   compression)                │
+│ --no_overlap                  │ Compression without basis     │
+│                               │   overlapping flag - less RAM │
+│                               │   , more errors               │
+│ --40-bit_complex              │ Compression 64-bit complex    │
+│                               │   floats to 40-bit            │
 ├───────────────────────────────┴───────────────────────────────┤
 │                Time series compression flags                  │
 ├───────────────────────────────┬───────────────────────────────┤

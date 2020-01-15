@@ -1135,6 +1135,21 @@ float Hdf5File::readFloatAttribute(const hid_t parentGroup, MatrixName &datasetN
   return value;
 }// end of readFloatAttribute
 //----------------------------------------------------------------------------------------------------------------------
+/**
+ * @brief Get file size.
+ */
+hsize_t Hdf5File::getFileSize()
+{
+  hsize_t size;
+  herr_t status = H5Fget_filesize(mFile, &size);
+
+  if (status < 0)
+  {
+    throw ios::failure(Logger::formatMessage(kErrFmtCannotGetFileSize, mFileName.c_str()));
+  }
+  return size;
+}// end of getFileSize
+//----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Protected methods ------------------------------------------------//

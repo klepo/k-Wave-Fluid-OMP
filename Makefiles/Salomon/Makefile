@@ -91,9 +91,12 @@ KWAVE_GIT_HASH=$(shell git rev-parse HEAD)
 #Otherwise, use the last official build hash
 
 FFTW3_DIR=
-HDF5_DIR=$(EBROOTHDF5)
-ZLIB_DIR=$(EBROOTZLIB)
-SZIP_DIR=$(EBROOTSZIP)
+HDF5_DIR=/home/iklepa/HDF5-1.10.5-Linux/HDF_Group/HDF5/1.10.5
+#HDF5_DIR=$(EBROOTHDF5)
+ZLIB_DIR=/home/iklepa/HDF5-1.10.5-Linux/HDF_Group/HDF5/1.10.5
+#ZLIB_DIR=$(EBROOTZLIB)
+SZIP_DIR=/home/iklepa/HDF5-1.10.5-Linux/HDF_Group/HDF5/1.10.5
+#SZIP_DIR=$(EBROOTSZIP)
 
 
 #################################################################################
@@ -119,7 +122,7 @@ ifeq ($(COMPILER),GNU)
 	LIBS     = $(FFTW3_DIR)/lib/libfftw3f.a  	\
 		   $(FFTW3_DIR)/lib/libfftw3f_omp.a 	\
    		   $(ZLIB_DIR)/lib/libz.a 		\
-   		   $(SZIP_DIR)/lib/libsz.a		\
+   		   $(SZIP_DIR)/lib/libszip.a		\
  		   -lm -ldl
     else	
 	LDFLAGS  = -fopenmp -O3  -L$(HDF5_DIR)/lib -L$(ZLIB_DIR)/lib \
@@ -138,8 +141,8 @@ ifeq ($(COMPILER),Intel)
 
 
 		
-  CXXFLAGS = -O3 -xhost -ipo -qopenmp -Wall -std=c++11 \
-    	     -I$(HDF5_DIR)/include -I$(MKLROOT)/inlcude \
+  CXXFLAGS = -O3 -xhost -ipo -qopenmp -Wall -std=c++11 -fasm-blocks\
+    	     -I$(HDF5_DIR)/include -I$(MKLROOT)/include \
     	     -I$(MKLROOT)/include/fftw -I./ 
 
 
@@ -150,7 +153,7 @@ ifeq ($(COMPILER),Intel)
 	LIBS = 	$(HDF5_DIR)/lib/libhdf5_hl.a 	\
 		$(HDF5_DIR)/lib/libhdf5.a 	\
 		$(ZLIB_DIR)/lib/libz.a 		\
-		$(SZIP_DIR)/lib/libsz.a		\
+		$(SZIP_DIR)/lib/libszip.a		\
 		-lm -ldl
 
   else	

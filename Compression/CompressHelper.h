@@ -42,6 +42,10 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#ifndef FLT_EPSILON
+#define FLT_EPSILON __FLT_EPSILON__
+#endif
+
 #include <cmath>
 #include <vector>
 #include <complex>
@@ -68,6 +72,8 @@ public:
 
   static float findPeriod(const float* dataSrc, hsize_t length);
   float computeTimeStep(const float* cC, const float* lC, hsize_t stepLocal) const;
+  static void convert40bToFloatC(uint8_t* iValues, FloatComplex& cValue, const int32_t e);
+  static void convertFloatCTo40b(FloatComplex cValue, uint8_t* iValues, const int32_t e);
 
   const FloatComplex* getBE() const;
   const FloatComplex* getBEShifted() const;
@@ -78,7 +84,18 @@ public:
   float getPeriod() const;
   hsize_t getMos() const;
   hsize_t getHarmonics() const;
-  hsize_t getStride() const;
+
+  static const int kMaxExp = 20;
+  static const int kMaxExpP = 138;
+  static const int kMaxExpU = 114;
+
+  static inline int32_t roundf(float value)
+  {
+    int32_t retval;
+    __asm fld value
+    __asm fistp retval
+    return retval;
+  }
 
 private:
   CompressHelper();
@@ -111,8 +128,6 @@ private:
   hsize_t mMos = 1;
   /// Number of harmonics
   hsize_t mHarmonics = 1;
-  /// Coeficients stride
-  hsize_t mStride = 2;
 
   // Memory for helper functions data, 2D arrays for harmonics
   /// Window basis

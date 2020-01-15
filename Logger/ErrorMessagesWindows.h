@@ -33,6 +33,8 @@
 #ifndef ERROR_MESSAGES_WINDOWS_H
 #define ERROR_MESSAGES_WINDOWS_H
 
+#include <string>
+
 /**
  * @brief   Datatype for error messages.
  * @details Datatype for error messages.
@@ -50,7 +52,6 @@ ErrorMessage kErrFmtTail =
   "+---------------------------------------------------------------+\n"
   "|                      Execution terminated                     |\n"
   "+---------------------------------------------------------------+\n";
-
 
 #endif	/* ERROR_MESSAGES_WINDOWS_H */
 

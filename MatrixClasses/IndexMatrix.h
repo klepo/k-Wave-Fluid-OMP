@@ -32,6 +32,7 @@
 #ifndef INDEX_MATRIX_H
 #define INDEX_MATRIX_H
 
+#include <math.h>
 
 #include <MatrixClasses/BaseIndexMatrix.h>
 #include <Utils/DimensionSizes.h>
@@ -119,7 +120,19 @@ class IndexMatrix : public BaseIndexMatrix
     * @brief  Get total number of elements in all cuboids to be able to allocate output file.
     * @return Total sampled grid points
     */
-    size_t getSizeOfAllCuboids() const;
+    size_t getSizeOfAllCuboids(float sizeMultiplier = 1.0f) const;
+
+    /**
+    * @brief  Get total number of elements in cuboid with given index.
+    * @return Total sampled grid points of selected cuboid
+    */
+    size_t getSizeOfCuboid(size_t cuboidIdx, float sizeMultiplier = 1.0f) const;
+
+    /**
+    * @brief  Get dimension sizes of cuboid with given index.
+    * @return Dimension sizes of of selected cuboid
+    */
+    DimensionSizes getDimensionSizesOfCuboid(size_t cuboidIdx, float sizeMultiplier = 1.0f) const;
 
   protected:
 

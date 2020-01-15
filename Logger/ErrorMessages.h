@@ -78,6 +78,9 @@ ErrorMessage kErrFmtCannotWriteDataset
 ErrorMessage kErrFmtCannotReadDataset
   = "Error: Could not read from \"%s\" dataset.";
 /// HDF5 error message
+ErrorMessage kErrFmtCannotGetFileSize
+  =  "Error: Cannot get the size of file \"%s\".";
+/// HDF5 error message
 ErrorMessage kErrFmtBadDimensionSizes
   =  "Error: Dataset \"%s\"  has wrong dimension sizes.";
 /// HDF5 error message

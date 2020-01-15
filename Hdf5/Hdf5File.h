@@ -488,7 +488,7 @@ class Hdf5File
 {
   public:
 
-   /**
+    /**
      * @enum    MatrixDataType
      * @brief   HDF5 matrix data type (float or uint64).
      * @details HDF5 matrix data type (float or uint64).
@@ -846,8 +846,8 @@ class Hdf5File
      * @return Matrix data type.
      * @throw ios::failure     - If error happens.
      */
-    MatrixDataType   readMatrixDataType(const hid_t parentGroup,
-                                        MatrixName& datasetName);
+    MatrixDataType readMatrixDataType(const hid_t parentGroup,
+                                      MatrixName& datasetName);
     /**
      * @brief Read matrix dataset domain type at a specified place in the file tree.
      *
@@ -867,10 +867,10 @@ class Hdf5File
      * @param [in] value         - Data to write.
      * @throw ios::failure       - If error happens.
      */
-    void   writeStringAttribute(const hid_t        parentGroup,
-                                MatrixName&        datasetName,
-                                MatrixName&        attributeName,
-                                const std::string& value);
+    void writeStringAttribute(const hid_t        parentGroup,
+                              MatrixName&        datasetName,
+                              MatrixName&        attributeName,
+                              const std::string& value);
     /**
      * @brief Write long long attribute into the dataset under the root group.
      *
@@ -937,6 +937,14 @@ class Hdf5File
                              MatrixName& datasetName,
                              MatrixName& attributeName);
 
+    /**
+     * @brief Get file size.
+     *
+     * @return File size.
+     * @throw ios::failure     - If error happens.
+     */
+    hsize_t getFileSize();
+
     /// String representation of the period in the compressed dataset.
     static const std::string kCPeriodName;
     /// String representation of the number of harmonics in the compressed dataset.
@@ -945,9 +953,9 @@ class Hdf5File
     static const std::string kCMOSName;
     /// String representation of the period in the HDF5 input file.
     static const std::string kPeriodName;
-  private:
 
-   /// String representation of the Domain type in the HDF5 file.
+  private:
+    /// String representation of the Domain type in the HDF5 file.
     static const std::string kMatrixDomainTypeName;
     /// String representation of the Data type in the HDF5 file.
     static const std::string kMatrixDataTypeName;

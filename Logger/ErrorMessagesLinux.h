@@ -33,6 +33,7 @@
 #ifndef ERROR_MESSAGES_LINUX_H
 #define ERROR_MESSAGES_LINUX_H
 
+#include <string>
 
 /**
  * @brief   Datatype for error messages.

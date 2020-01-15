@@ -97,7 +97,7 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
 
     if (params.getStorePressureCFlag())
     {
-      mContainer[OI::kPressureC] = createOutputStream(matrixContainer, MI::kP, kPressureRawName, RO::kC);
+      mContainer[OI::kPressureC] = createOutputStream(matrixContainer, MI::kP, kPressureRawName + kCompressSuffix, RO::kC);
     }
 
     if (params.getStorePressureRmsFlag())
@@ -144,11 +144,11 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
 
     if (params.getStoreVelocityCFlag())
     {
-      mContainer[OI::kVelocityXC] = createOutputStream(matrixContainer, MI::kUxSgx, kUxName, RO::kC);
-      mContainer[OI::kVelocityYC] = createOutputStream(matrixContainer, MI::kUySgy, kUyName, RO::kC);
+      mContainer[OI::kVelocityXC] = createOutputStream(matrixContainer, MI::kUxSgx, kUxName + kCompressSuffix, RO::kC);
+      mContainer[OI::kVelocityYC] = createOutputStream(matrixContainer, MI::kUySgy, kUyName + kCompressSuffix, RO::kC);
       if (is3DSimulation)
       {
-        mContainer[OI::kVelocityZC] = createOutputStream(matrixContainer, MI::kUzSgz, kUzName, RO::kC);
+        mContainer[OI::kVelocityZC] = createOutputStream(matrixContainer, MI::kUzSgz, kUzName + kCompressSuffix, RO::kC);
       }
     }
 
@@ -176,11 +176,11 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
 
     if (params.getStoreVelocityNonStaggeredCFlag())
     {
-      mContainer[OI::kVelocityXNonStaggeredC] = createOutputStream(matrixContainer, MI::kUxShifted, kUxNonStaggeredName, RO::kC);
-      mContainer[OI::kVelocityYNonStaggeredC] = createOutputStream(matrixContainer, MI::kUyShifted, kUyNonStaggeredName, RO::kC);
+      mContainer[OI::kVelocityXNonStaggeredC] = createOutputStream(matrixContainer, MI::kUxShifted, kUxNonStaggeredName + kCompressSuffix, RO::kC);
+      mContainer[OI::kVelocityYNonStaggeredC] = createOutputStream(matrixContainer, MI::kUyShifted, kUyNonStaggeredName + kCompressSuffix, RO::kC);
       if (is3DSimulation)
       {
-        mContainer[OI::kVelocityZNonStaggeredC] = createOutputStream(matrixContainer, MI::kUzShifted, kUzNonStaggeredName, RO::kC);
+        mContainer[OI::kVelocityZNonStaggeredC] = createOutputStream(matrixContainer, MI::kUzShifted, kUzNonStaggeredName + kCompressSuffix, RO::kC);
       }
     }
 
@@ -281,27 +281,27 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
     {
       //if (!params.getOnlyPostProcessingFlag())
       {
-        mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIxAvgName, RO::kIAvg, tempBuffX, true);
-        mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIyAvgName, RO::kIAvg, tempBuffY, true);
+        mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg, nullptr, true);
+        mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg, nullptr, true);
         if (is3DSimulation)
         {
-          mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIzAvgName, RO::kIAvg, tempBuffZ, true);
+          mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg, nullptr, true);
         }
       }
     }
     else
     {
-      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIxAvgName, RO::kIAvg, tempBuffX);
-      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIyAvgName, RO::kIAvg, tempBuffY);
+      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg, nullptr);
+      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg, nullptr);
       if (is3DSimulation)
       {
-        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kUndefined, kIzAvgName, RO::kIAvg, tempBuffZ);
+        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg, nullptr);
       }
     }
 
     if (params.getStoreQTermFlag())
     {
-      mContainer[OI::kQTerm] = createOutputStream(matrixContainer, MI::kUndefined, kQTermName, RO::kQTerm, tempBuffX);
+      mContainer[OI::kQTerm] = createOutputStream(matrixContainer, MI::kP, kQTermName, RO::kQTerm, nullptr);
     }
   }
 
@@ -309,16 +309,16 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
   {
     if (!params.getStorePressureCFlag() && !params.getOnlyPostProcessingFlag())
     {
-      mContainer[OI::kPressureC] = createOutputStream(matrixContainer, MI::kP, kPressureRawName, RO::kC, nullptr, true);
+      mContainer[OI::kPressureC] = createOutputStream(matrixContainer, MI::kP, kPressureRawName + kCompressSuffix, RO::kC, nullptr, true);
     }
 
     if (!params.getStoreVelocityNonStaggeredCFlag() && !params.getOnlyPostProcessingFlag())
     {
-      mContainer[OI::kVelocityXNonStaggeredC] = createOutputStream(matrixContainer, MI::kUxShifted, kUxNonStaggeredName, RO::kC, nullptr, true);
-      mContainer[OI::kVelocityYNonStaggeredC] = createOutputStream(matrixContainer, MI::kUyShifted, kUyNonStaggeredName, RO::kC, nullptr, true);
+      mContainer[OI::kVelocityXNonStaggeredC] = createOutputStream(matrixContainer, MI::kUxShifted, kUxNonStaggeredName + kCompressSuffix, RO::kC, nullptr, true);
+      mContainer[OI::kVelocityYNonStaggeredC] = createOutputStream(matrixContainer, MI::kUyShifted, kUyNonStaggeredName + kCompressSuffix, RO::kC, nullptr, true);
       if (is3DSimulation)
       {
-        mContainer[OI::kVelocityZNonStaggeredC] = createOutputStream(matrixContainer, MI::kUzShifted, kUzNonStaggeredName, RO::kC, nullptr, true);
+        mContainer[OI::kVelocityZNonStaggeredC] = createOutputStream(matrixContainer, MI::kUzShifted, kUzNonStaggeredName + kCompressSuffix, RO::kC, nullptr, true);
       }
     }
 
@@ -326,27 +326,27 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
     {
       //if (!params.getOnlyPostProcessingFlag())
       {
-        mContainer[OI::kIntensityXAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIxAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
-        mContainer[OI::kIntensityYAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIyAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
+        mContainer[OI::kIntensityXAvgC] = createOutputStream(matrixContainer, MI::kP, kIxAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
+        mContainer[OI::kIntensityYAvgC] = createOutputStream(matrixContainer, MI::kP, kIyAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
         if (is3DSimulation)
         {
-          mContainer[OI::kIntensityZAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIzAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
+          mContainer[OI::kIntensityZAvgC] = createOutputStream(matrixContainer, MI::kP, kIzAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
         }
       }
     }
     else
     {
-      mContainer[OI::kIntensityXAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIxAvgName + kCompressSuffix, RO::kIAvgC);
-      mContainer[OI::kIntensityYAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIyAvgName + kCompressSuffix, RO::kIAvgC);
+      mContainer[OI::kIntensityXAvgC] = createOutputStream(matrixContainer, MI::kP, kIxAvgName + kCompressSuffix, RO::kIAvgC);
+      mContainer[OI::kIntensityYAvgC] = createOutputStream(matrixContainer, MI::kP, kIyAvgName + kCompressSuffix, RO::kIAvgC);
       if (is3DSimulation)
       {
-        mContainer[OI::kIntensityZAvgC] = createOutputStream(matrixContainer, MI::kUndefined, kIzAvgName + kCompressSuffix, RO::kIAvgC);
+        mContainer[OI::kIntensityZAvgC] = createOutputStream(matrixContainer, MI::kP, kIzAvgName + kCompressSuffix, RO::kIAvgC);
       }
     }
 
     if (params.getStoreQTermCFlag())
     {
-      mContainer[OI::kQTermC] = createOutputStream(matrixContainer, MI::kUndefined, kQTermName + kCompressSuffix, RO::kQTermC, tempBuffX);
+      mContainer[OI::kQTermC] = createOutputStream(matrixContainer, MI::kP, kQTermName + kCompressSuffix, RO::kQTermC, tempBuffX);
     }
   }
 

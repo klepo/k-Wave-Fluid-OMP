@@ -41,6 +41,7 @@
 
 class OutputStreamContainer;
 
+
 /**
  * @class   BaseOutputStream
  * @brief   Abstract base class for output data streams (sampled data).
@@ -241,6 +242,8 @@ class BaseOutputStream
     float*                  mStoreBuffer2 = nullptr;
     /// Odd or even buffer with compression coefficients.
     float*                  mCurrentStoreBuffer = nullptr;
+    /// Velocity output stream index
+    int                     mVelocityOutputStreamIdx = -1;
     /// Compression helper object.
     CompressHelper*         mCompressHelper = nullptr;
     /// Local step index.
@@ -251,6 +254,18 @@ class BaseOutputStream
     bool                    mOddFrameFlag = false;
     /// Number of compressed coefficients.
     hsize_t                 mCompressedTimeStep = 0;
+    /// Compression complex exponencial window basis
+    const FloatComplex*     mBE = nullptr;
+    /// Compression inverted complex exponencial window basis
+    const FloatComplex*     mBE_1 = nullptr;
+    /// Complex size
+    float                   mComplexSize = 2.0f;
+    /// Max exponent
+    float                   mE = 124.0f;
+    /// Shift flag.
+    bool                    mShiftFlag = false;
+    /// Mirror first "half" frame flag.
+    bool                    mMirrorFirstHalfFrameFlag = false;
 
     /// chunk size of 4MB in number of float elements.
     static constexpr size_t kChunkSize4MB = 1048576;
