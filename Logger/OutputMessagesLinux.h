@@ -179,10 +179,10 @@ OutputMessage kOutFmtCurrentMemory
 
 ///Output message
 OutputMessage kOutFmtSimulationProgress
-  = "│ %6.2f%c  │   %10.3fs  │ %10.3fs  │  %02i/%02i/%02i %02i:%02i:%02i | %10.3fs  | %6lu  |\n";
+  = "│ %6.2f%c  │   %10.3fs  │ %10.3fs  │  %02i/%02i/%02i %02i:%02i:%02i │ %10.3fs  │ %6lu  │\n";
 ///Output message
 OutputMessage kOutFmtSimulationEndSeparator
-  = "├──────────┴────────────────┴──────────────┴────────────────────┴──────────────┴─────────┤\n";
+  = "├──────────┴────────────────┴──────────────┴────────────────────┼──────────────┴─────────┘\n";
 ///Output message
 OutputMessage kOutFmtSimulatoinFinalSeparator
   = "└──────────┴────────────────┴──────────────┴────────────────────┴──────────────┴─────────┘\n";
