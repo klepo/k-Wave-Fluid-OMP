@@ -162,7 +162,7 @@ class Parameters
      * @brief Get progress print interval.
      * @return How often to print progress.
      */
-    size_t getProgressPrintInterval()  const { return mCommandLineParameters.getProgressPrintInterval(); };
+    float getProgressPrintInterval()  const { return mCommandLineParameters.getProgressPrintInterval(); };
 
 
     /**

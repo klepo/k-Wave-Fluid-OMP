@@ -142,10 +142,11 @@ void IndexOutputStream::create()
     {
       mFile.writeLongLongAttribute(mFile.getRootGroup(), mRootObjectName, "c_harmonics", ssize_t(mCompressHelper->getHarmonics()));
       mFile.writeStringAttribute  (mFile.getRootGroup(), mRootObjectName, "c_type", "c");
-      mFile.writeFloatAttribute   (mFile.getRootGroup(), mRootObjectName, "c_period", ssize_t(mCompressHelper->getPeriod()));
+      mFile.writeFloatAttribute   (mFile.getRootGroup(), mRootObjectName, "c_period", mCompressHelper->getPeriod());
       mFile.writeLongLongAttribute(mFile.getRootGroup(), mRootObjectName, "c_mos", ssize_t(mCompressHelper->getMos()));
       mFile.writeLongLongAttribute(mFile.getRootGroup(), mRootObjectName, "c_shift", ssize_t(mShiftFlag));
-      mFile.writeLongLongAttribute(mFile.getRootGroup(), mRootObjectName, "c_complex_size", ssize_t(mComplexSize));
+      mFile.writeFloatAttribute   (mFile.getRootGroup(), mRootObjectName, "c_complex_size", mComplexSize);
+      mFile.writeLongLongAttribute(mFile.getRootGroup(), mRootObjectName, "c_max_exp", mE);
     }
   }
 

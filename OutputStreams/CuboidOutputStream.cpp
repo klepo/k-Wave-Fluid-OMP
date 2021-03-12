@@ -565,6 +565,7 @@ hid_t CuboidOutputStream::createCuboidDataset(const size_t cuboidIdx)
     mFile.writeLongLongAttribute(mGroup, datasetName, "c_mos", ssize_t(mCompressHelper->getMos()));
     mFile.writeLongLongAttribute(mGroup, datasetName, "c_shift", ssize_t(mShiftFlag));
     mFile.writeFloatAttribute   (mGroup, datasetName, "c_complex_size", mComplexSize);
+    mFile.writeLongLongAttribute(mGroup, datasetName, "c_max_exp", mE);
   }
 
   return dataset;

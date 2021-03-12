@@ -254,14 +254,14 @@ class BaseOutputStream
     bool                    mOddFrameFlag = false;
     /// Number of compressed coefficients.
     hsize_t                 mCompressedTimeStep = 0;
-    /// Compression complex exponencial window basis
+    /// Compression complex exponential window basis
     const FloatComplex*     mBE = nullptr;
-    /// Compression inverted complex exponencial window basis
+    /// Compression inverted complex exponential window basis
     const FloatComplex*     mBE_1 = nullptr;
     /// Complex size
     float                   mComplexSize = 2.0f;
     /// Max exponent
-    float                   mE = 124.0f;
+    int                     mE = 124;
     /// Shift flag.
     bool                    mShiftFlag = false;
     /// Mirror first "half" frame flag.

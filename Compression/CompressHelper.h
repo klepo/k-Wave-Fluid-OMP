@@ -85,7 +85,6 @@ public:
   hsize_t getMos() const;
   hsize_t getHarmonics() const;
 
-  static const int kMaxExp = 20;
   static const int kMaxExpP = 138;
   static const int kMaxExpU = 114;
 

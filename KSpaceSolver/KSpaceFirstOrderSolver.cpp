@@ -79,7 +79,7 @@ using SD = Parameters::SimulationDimension;
 KSpaceFirstOrderSolver::KSpaceFirstOrderSolver():
         mMatrixContainer(), mOutputStreamContainer(),
         mParameters(Parameters::getInstance()),
-        mActPercent(0l),
+        mActPercent(0.0f),
         mTotalTime(), mPreProcessingTime(), mDataLoadTime (), mSimulationTime(),
         mPostProcessingTime(), mIterationTime()
 {
@@ -297,7 +297,7 @@ void KSpaceFirstOrderSolver::compute()
       Logger::errorAndTerminate(Logger::wordWrapString(e.what(),kErrFmtPathDelimiters, 9));
     }
 
-    Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime());
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime(), mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs());
   }
 
   // Post processing region
@@ -812,11 +812,11 @@ void KSpaceFirstOrderSolver::preProcessing()
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeMainLoop()
 {
-  mActPercent = 0;
+  mActPercent = 0.0f;
   // set ActPercent to correspond the time index after recovery
   if (mParameters.getTimeIndex() > 0)
   {
-    mActPercent = (100 * mParameters.getTimeIndex()) / mParameters.getNt();
+    mActPercent = float(100.0f * mParameters.getTimeIndex()) / mParameters.getNt();
   }
 
   // Progress header
@@ -3779,14 +3779,13 @@ void KSpaceFirstOrderSolver::computeShiftedVelocity()
  */
 void KSpaceFirstOrderSolver::printStatistics()
 {
-  const size_t nt =  mParameters.getNt();
-  const size_t timeIndex = mParameters.getTimeIndex();
+  const float nt = float(mParameters.getNt());
+  const float timeIndex = float(mParameters.getTimeIndex());
 
 
-  if (timeIndex > (mActPercent * nt * 0.01f))
+  if (timeIndex + 1 > (mActPercent * nt * 0.01f))
   {
     mActPercent += mParameters.getProgressPrintInterval();
-
     mIterationTime.stop();
 
     const double elTime = mIterationTime.getElapsedTime();
@@ -3801,11 +3800,15 @@ void KSpaceFirstOrderSolver::printStatistics()
 
     Logger::log(Logger::LogLevel::kBasic,
                 kOutFmtSimulationProgress,
-                static_cast<size_t>(((timeIndex) / (nt * 0.01f))),'%',
+                (timeIndex + 1) / (nt * 0.01f), '%',
                 elTime, toGo,
                 current->tm_mday, current->tm_mon+1, current->tm_year-100,
-                current->tm_hour, current->tm_min, current->tm_sec);
+                current->tm_hour, current->tm_min, current->tm_sec,
+                mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs(),
+                size_t(timeIndex) + 1);
     Logger::flush(Logger::LogLevel::kBasic);
+
+    mIterationTime.SetElapsedTimeOverPreviousLegs(mIterationTime.getElapsedTime());
   }
 }// end of printStatistics
 //----------------------------------------------------------------------------------------------------------------------

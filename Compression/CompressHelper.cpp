@@ -263,9 +263,9 @@ void CompressHelper::convert40bToFloatC(uint8_t* iValues, FloatComplex& cValue, 
       uint32_t index = 0;
       _BitScanReverse(&index, mR);
     #endif
-    // Shift left by index
+    // Shift left by the index
     mR <<= 23 - index;
-    // Recompute final exponent by index
+    // Recompute final exponent by the index
     eR -= 22 - index;
   }
   else
@@ -360,7 +360,7 @@ void CompressHelper::convertFloatCTo40b(FloatComplex cValue, uint8_t* iValues, c
   // Rounding
   if (mR > 0)
   {
-    // Check posibble overflow
+    // Check possible overflow
     if (mR != (0x7FFFFFU >> rSR))
     {
       mR++;

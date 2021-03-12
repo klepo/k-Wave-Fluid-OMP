@@ -285,7 +285,7 @@ class CommandLineParameters
      * @brief Get progress print interval.
      * @return How often to print progress.
      */
-    size_t getProgressPrintInterval()   const { return mProgressPrintInterval; };
+    float getProgressPrintInterval()   const { return mProgressPrintInterval; };
 
     /**
      * @brief  Get compression level.
@@ -530,7 +530,7 @@ class CommandLineParameters
     /// Number of CPU threads value.
     size_t mNumberOfThreads;
     /// Progress interval value.
-    size_t mProgressPrintInterval;
+    float mProgressPrintInterval;
     /// Compression level value for output and checkpoint files.
     size_t mCompressionLevel;
 
@@ -622,7 +622,7 @@ class CommandLineParameters
     /// Default compression level.
     static constexpr size_t kDefaultCompressionLevel      = 0;
     /// Default progress print interval.
-    static constexpr size_t kDefaultProgressPrintInterval = 5;
+    static constexpr float kDefaultProgressPrintInterval = 0.0f;
 };// end of class CommandLineParameters
 //----------------------------------------------------------------------------------------------------------------------
 

@@ -364,12 +364,12 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
       {
         try
         {
-          int convertedValue = std::stoi(optarg);
-          if ((convertedValue  < 1) || (convertedValue  > 100))
+          float convertedValue = std::stof(optarg);
+          if ((convertedValue  <= 0.0f) || (convertedValue  >= 100.0f))
           {
             throw std::invalid_argument("-r");
           }
-          mProgressPrintInterval = std::stoll(optarg);
+          mProgressPrintInterval = std::stof(optarg);
         }
         catch (...)
         {

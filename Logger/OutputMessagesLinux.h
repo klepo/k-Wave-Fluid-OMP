@@ -94,9 +94,9 @@ OutputMessage kOutFmtCompResourcesHeader
 OutputMessage kOutFmtSimulationHeader
   = "├───────────────────────────────────────────────────────────────┤\n"
     "│                          Simulation                           │\n"
-    "├──────────┬────────────────┬──────────────┬────────────────────┤\n"
-    "│ Progress │  Elapsed time  │  Time to go  │  Est. finish time  │\n"
-    "├──────────┼────────────────┼──────────────┼────────────────────┤\n";
+    "├──────────┬────────────────┬──────────────┬────────────────────┼──────────────┬─────────┐\n"
+    "│ Progress │  Elapsed time  │  Time to go  │  Est. finish time  │  Steps time  │  Steps  │\n"
+    "├──────────┼────────────────┼──────────────┼────────────────────┼──────────────┼─────────┤\n";
 /// Output message
 OutputMessage kOutFmtCheckpointHeader
   = "├───────────────────────────────────────────────────────────────┤\n"
@@ -179,13 +179,13 @@ OutputMessage kOutFmtCurrentMemory
 
 ///Output message
 OutputMessage kOutFmtSimulationProgress
-  = "│    %2li%c   │   %10.3fs  │ %10.3fs  │  %02i/%02i/%02i %02i:%02i:%02i │\n";
+  = "│ %6.2f%c  │   %10.3fs  │ %10.3fs  │  %02i/%02i/%02i %02i:%02i:%02i | %10.3fs  | %6lu  |\n";
 ///Output message
 OutputMessage kOutFmtSimulationEndSeparator
-  = "├──────────┴────────────────┴──────────────┴────────────────────┤\n";
+  = "├──────────┴────────────────┴──────────────┴────────────────────┴──────────────┴─────────┤\n";
 ///Output message
 OutputMessage kOutFmtSimulatoinFinalSeparator
-  = "└──────────┴────────────────┴──────────────┴────────────────────┘\n";
+  = "└──────────┴────────────────┴──────────────┴────────────────────┴──────────────┴─────────┘\n";
 
 ///Output message
 OutputMessage kOutFmtCheckpointCompletedTimeSteps
@@ -241,7 +241,7 @@ OutputMessage kOutFmtCompressionLevel
   = "│ Compression level:                                   %8lu │\n";
 ///Output message
 OutputMessage kOutFmtPrintProgressIntrerval
-  = "│ Print progress interval:                            %8lu%% │\n";
+  = "│ Print progress interval:                            %8.2f%% │\n";
 ///Output message
 OutputMessage kOutFmtBenchmarkTimeStep
   = "│ Benchmark time steps:                                %8lu │\n";

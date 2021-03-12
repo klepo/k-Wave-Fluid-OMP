@@ -1192,7 +1192,7 @@ class KSpaceFirstOrderSolver
     Parameters&           mParameters;
 
     /// Percentage of the simulation done.
-    size_t                mActPercent;
+    float                 mActPercent;
 
     /// Total time of the simulation.
     TimeMeasure mTotalTime;
