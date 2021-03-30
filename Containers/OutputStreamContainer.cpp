@@ -279,20 +279,20 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
 
     if (!params.getStoreIntensityAvgFlag())
     {
-      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg, nullptr, true);
-      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg, nullptr, true);
+      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg, tempBuffX, true);
+      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg, tempBuffY, true);
       if (is3DSimulation)
       {
-        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg, nullptr, true);
+        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg, tempBuffZ, true);
       }
     }
     else
     {
-      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg);
-      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg);
+      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg, tempBuffX);
+      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg, tempBuffY);
       if (is3DSimulation)
       {
-        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg);
+        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg, tempBuffZ);
       }
     }
 

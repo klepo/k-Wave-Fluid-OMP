@@ -1153,9 +1153,13 @@ void KSpaceFirstOrderSolver::saveCheckpointData()
 template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeAverageIntensities()
 {
+  mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvg].zeroCurrentStoreBuffer();
   float* intensityXAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvg].getCurrentStoreBuffer();
+  mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvg].zeroCurrentStoreBuffer();
   float* intensityYAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvg].getCurrentStoreBuffer();
+  if (simulationDimension == SD::k3D) mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvg].zeroCurrentStoreBuffer();
   float* intensityZAvgData = (simulationDimension == SD::k3D) ? mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvg].getCurrentStoreBuffer() : nullptr;
+
   size_t steps = 0;
   if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
   {
@@ -1839,6 +1843,7 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
     }
   }
 
+  mOutputStreamContainer[qTermStreamIdx].zeroCurrentStoreBuffer();
   float* qTermData = mOutputStreamContainer[qTermStreamIdx].getCurrentStoreBuffer();
 
   // Copy values from positions defined by sensor mask indices to store buffer

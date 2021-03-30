@@ -147,6 +147,9 @@ class BaseOutputStream
     /// Get current store buffer.
     float* getCurrentStoreBuffer();
 
+    /// Zero current store buffer.
+    void zeroCurrentStoreBuffer();
+
   protected:
     /**
      * @struct ReducedValue
