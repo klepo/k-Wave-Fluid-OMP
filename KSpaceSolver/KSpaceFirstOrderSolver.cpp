@@ -466,8 +466,8 @@ size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const
     // read the entire file
     while (fscanf(file, " %1023s", buffer) == 1)
     {
-      if (strcmp(buffer, "VmHWM:") == 0)
-      /*{ // kilobytes
+      /*if (strcmp(buffer, "VmHWM:") == 0)
+      { // kilobytes
         fscanf(file, " %d", &peakRealMem);
       }*/
       if (strcmp(buffer, "VmPeak:") == 0)
@@ -501,8 +501,8 @@ size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const
     // read the entire file
     while (fscanf(file, " %1023s", buffer) == 1)
     {
-      if (strcmp(buffer, "VmRSS:") == 0)
-      /*{ // kilobytes
+      /*if (strcmp(buffer, "VmRSS:") == 0)
+      { // kilobytes
         fscanf(file, " %d", &currRealMem);
       }*/
       if (strcmp(buffer, "VmSize:") == 0)
