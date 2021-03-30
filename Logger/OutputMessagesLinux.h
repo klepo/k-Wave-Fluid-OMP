@@ -176,6 +176,10 @@ OutputMessage kOutFmtMemoryAllocation
 ///Output message
 OutputMessage kOutFmtCurrentMemory
   = "│ Current host memory in use:                        %8luMB │\n";
+///Output message
+OutputMessage kOutFmtPeakMemory
+  = "│ Peak host memory in use:                           %8luMB │\n";
+
 
 ///Output message
 OutputMessage kOutFmtSimulationProgress
@@ -258,7 +262,7 @@ OutputMessage kOutFmtComputingAverageIntensityC
 ///Output message
 OutputMessage kOutFmtBlockSizePostProcessing
   = "│ ++ Reading block size: %38s │\n"
-    "│                                           %10lu MB (x 4) │\n";
+    "│                                            %10luMB (x 4) │\n";
 OutputMessage kOutFmtComputingQTerm
   = "│ + Computing Q term:                                    ";
 OutputMessage kOutFmtComputingQTermC
@@ -270,8 +274,8 @@ OutputMessage kOutFmtEmpty
 
 ///Output message
 OutputMessage kOutFmtCompressionSettings
-  = "│ Compression frequency:                        %12.4f Hz │\n"
-    "│             period:                           %9.4f steps │\n"
+  = "│ Compression frequency:                       %14.2fHz │\n"
+    "│             period:                          %11.2fsteps │\n"
     "│             MOS:                                         %4lu │\n"
     "│             harmonics:                                   %4lu │\n";
 
@@ -368,7 +372,7 @@ OutputMessage kOutFmtUsagePart1
 /// Usage massage
 OutputMessage kOutFmtUsagePart2
   = "│ -r <interval_in_%%>            │ Progress print interval       │\n"
-    "│                               │   (default = %2ld%%)             │\n"
+    "│                               │   (default = %5.2f%%)          │\n"
     "│ -c <compression_level>        │ Compression level <0,9>       │\n"
     "│                               │   (default = %1ld)               │\n"
     "│ --benchmark <time_steps>      │ Run only a specified number   │\n"

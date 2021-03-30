@@ -112,6 +112,11 @@ void KSpaceFirstOrderSolver::allocateMemory()
   mMatrixContainer.init();
   mMatrixContainer.createMatrices();
 
+  /*Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtPeakMemory, getMemoryUsage());
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtCurrentMemory, getCurrentMemoryUsage());
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);*/
+
   // add output streams into container
   //@todo Think about moving under LoadInputData routine...
   mOutputStreamContainer.init(mMatrixContainer);
@@ -272,7 +277,8 @@ void KSpaceFirstOrderSolver::compute()
   // Logger header for simulation
   Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mPreProcessingTime.getElapsedTime());
   Logger::log(Logger::LogLevel::kBasic, kOutFmtCompResourcesHeader);
-  Logger::log(Logger::LogLevel::kBasic, kOutFmtCurrentMemory,   getMemoryUsage());
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtPeakMemory, getMemoryUsage());
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtCurrentMemory, getCurrentMemoryUsage());
 
   // Main loop
   if (!mParameters.getOnlyPostProcessingFlag())
@@ -299,6 +305,9 @@ void KSpaceFirstOrderSolver::compute()
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime(), mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs());
   }
+  mSimulationPeakMemoryConsumption = getMemoryUsage();
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtPeakMemory, getMemoryUsage());
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtCurrentMemory, getCurrentMemoryUsage());
 
   // Post processing region
   mPostProcessingTime.start();
@@ -416,7 +425,7 @@ size_t KSpaceFirstOrderSolver::getAvailableMemory() const
         unsigned long mem;
         if (file >> mem)
         {
-          return mem / 1000;
+          return mem >> 10;
         }
         else
         {
@@ -432,13 +441,13 @@ size_t KSpaceFirstOrderSolver::getAvailableMemory() const
   /*#ifdef __linux__
       long pages = sysconf(_SC_AVPHYS_PAGES);
       long page_size = sysconf(_SC_PAGE_SIZE);
-      return pages * page_size / 1000000;
+      return pages * page_size >> 20;
   #endif*/
   #ifdef _WIN64
     MEMORYSTATUSEX status;
     status.dwLength = sizeof(status);
     GlobalMemoryStatusEx(&status);
-    return size_t(status.ullAvailPhys) / 1000000;
+    return size_t(status.ullAvailPhys) >> 20;
   #endif
 }// end of getAvailableMemory
 //----------------------------------------------------------------------------------------------------------------------
@@ -452,28 +461,28 @@ size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const
     // linux file contains this-process info
     FILE* file = fopen("/proc/self/status", "r");
     char buffer[1024] = "";
-    int peakRealMem;
-    //int peakVirtMem;
+    //int peakRealMem;
+    int peakVirtMem;
     // read the entire file
     while (fscanf(file, " %1023s", buffer) == 1)
     {
       if (strcmp(buffer, "VmHWM:") == 0)
-      { // kilobytes
+      /*{ // kilobytes
         fscanf(file, " %d", &peakRealMem);
-      }
-      /*if (strcmp(buffer, "VmPeak:") == 0)
+      }*/
+      if (strcmp(buffer, "VmPeak:") == 0)
       {
         fscanf(file, " %d", &peakVirtMem);
-      }*/
+      }
     }
     fclose(file);
-    return size_t(peakRealMem) / 1000;
-    //return size_t(peakVirtMem) / 1000;
+    //return size_t(peakRealMem) >> 10;
+    return size_t(peakVirtMem) >> 10;
   #endif
   #ifdef _WIN64
     PROCESS_MEMORY_COUNTERS pmc;
     GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
-    return size_t(pmc.PeakWorkingSetSize) / 1000000;
+    return size_t(pmc.PeakWorkingSetSize) >> 20;
   #endif
 }// end of getPeakMemoryUsage
 //----------------------------------------------------------------------------------------------------------------------
@@ -487,28 +496,28 @@ size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const
     // linux file contains this-process info
     FILE* file = fopen("/proc/self/status", "r");
     char buffer[1024] = "";
-    int currRealMem;
-    //int currVirtMem;
+    //int currRealMem;
+    int currVirtMem;
     // read the entire file
     while (fscanf(file, " %1023s", buffer) == 1)
     {
       if (strcmp(buffer, "VmRSS:") == 0)
-      { // kilobytes
+      /*{ // kilobytes
         fscanf(file, " %d", &currRealMem);
-      }
-      /*if (strcmp(buffer, "VmSize:") == 0)
+      }*/
+      if (strcmp(buffer, "VmSize:") == 0)
       {
         fscanf(file, " %d", &currVirtMem);
-      }*/
+      }
     }
     fclose(file);
-    return size_t(currRealMem) / 1000;
-    //return size_t(currVirtMem) / 1000;
+    //return size_t(currRealMem) >> 10;
+    return size_t(currVirtMem) >> 10;
   #endif
   #ifdef _WIN64
     PROCESS_MEMORY_COUNTERS pmc;
     GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
-    return size_t(pmc.WorkingSetSize) / 1000000;
+    return size_t(pmc.WorkingSetSize) >> 20;
   #endif
 }// end of getCurrentMemoryUsage
 //----------------------------------------------------------------------------------------------------------------------
@@ -521,13 +530,13 @@ size_t KSpaceFirstOrderSolver::getTotalMemory() const
   #ifdef __linux__
     long pages = sysconf(_SC_PHYS_PAGES);
     long page_size = sysconf(_SC_PAGE_SIZE);
-    return pages * page_size / 1000000;
+    return pages * page_size >> 20;
   #endif
   #ifdef _WIN64
     MEMORYSTATUSEX status;
     status.dwLength = sizeof(status);
     GlobalMemoryStatusEx(&status);
-    return size_t(status.ullTotalPhys) / 1000000;
+    return size_t(status.ullTotalPhys) >> 20;
   #endif
 }// end of getTotalMemory
 //----------------------------------------------------------------------------------------------------------------------
@@ -1062,6 +1071,7 @@ void KSpaceFirstOrderSolver::writeOutputDataInfo()
   mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mBlockSizeDefaultC", std::to_string(mBlockSizeDefaultC));
   mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "mSamplingStartTimeStep", std::to_string(mParameters.getSamplingStartTimeIndex()));
   mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "output_file_size", std::to_string(mParameters.getOutputFile().getFileSize()));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup,  "/", "simulation_peak_memory_in_use", std::to_string(mSimulationPeakMemoryConsumption));
 
 
 }// end of writeOutputDataInfo
@@ -1191,7 +1201,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
   // Compute max block size for dataset reading
   if (maxBlockSize == 0)
   {
-    size_t memory = getAvailableMemory() * 1000000;
+    size_t memory = getAvailableMemory() << 20;
     //std::cout << std::endl;
     //std::cout << "getMemoryUsage:        " << getMemoryUsage() << std::endl;
     //std::cout << "getTotalMemory:        " << getTotalMemory() << std::endl;
@@ -1270,7 +1280,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
     }
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
-    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) / 1000000);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) >> 20);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
 
     RealMatrix dataP(DimensionSizes(blockSize, steps, 1));
@@ -1450,7 +1460,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
   // Compute max block size for dataset reading
   if (maxBlockSize == 0)
   {
-    size_t memory = getAvailableMemory() * 1000000;
+    size_t memory = getAvailableMemory() << 20;
     // dataP, dataUx, dataUy, dataUz, fftwTimeShiftMatrix -> 5 matrices x 4 (size of float)
     maxBlockSize = size_t(float(memory) / 20 * 0.98f);
   }
@@ -1515,7 +1525,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
     }
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
-    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) / 1000000);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) >> 20);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
 
     RealMatrix dataP(DimensionSizes(blockSize, steps, 1));

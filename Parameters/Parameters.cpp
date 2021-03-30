@@ -123,7 +123,7 @@ void Parameters::init(int argc, char** argv)
     mNt = mCommandLineParameters.getBenchmarkTimeStepsCount();
   }
 
-  if ((mCommandLineParameters.getSamplingStartTimeIndex() >= mNt) ||
+  if ((mCommandLineParameters.getSamplingStartTimeIndex() > mNt) ||
       (mCommandLineParameters.getSamplingStartTimeIndex() < 0))
   {
     throw std::invalid_argument(Logger::formatMessage(kErrFmtIllegalSamplingStartTimeStep, 1l, mNt));

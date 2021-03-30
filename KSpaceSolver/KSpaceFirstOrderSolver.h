@@ -1207,6 +1207,7 @@ class KSpaceFirstOrderSolver
     /// Iteration time of the simulation.
     TimeMeasure mIterationTime;
 
+    size_t mSimulationPeakMemoryConsumption = 0;
     size_t mBlockSizeDefault = 0;
     size_t mBlockSizeDefaultC = 0;
 

@@ -951,7 +951,7 @@ void CommandLineParameters::parseCommandLine(int argc, char** argv)
         mStoreVelocityMaxAllFlag || mStoreVelocityMinAllFlag || mStoreVelocityFinalAllFlag        ||
         mStoreIntensityAvgFlag   || mStoreIntensityAvgCFlag  || mStoreQTermFlag || mStoreQTermCFlag || mOnlyPostProcessingFlag))
   {
-    mStorePressureRawFlag = true;
+    mStorePressureRawFlag = false;//true;
   }
 }// end of parseCommandLine
 //----------------------------------------------------------------------------------------------------------------------
