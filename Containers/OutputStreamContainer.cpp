@@ -279,29 +279,26 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
 
     if (!params.getStoreIntensityAvgFlag())
     {
-      //if (!params.getOnlyPostProcessingFlag())
+      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg, nullptr, true);
+      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg, nullptr, true);
+      if (is3DSimulation)
       {
-        mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg, nullptr, true);
-        mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg, nullptr, true);
-        if (is3DSimulation)
-        {
-          mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg, nullptr, true);
-        }
+        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg, nullptr, true);
       }
     }
     else
     {
-      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg, nullptr);
-      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg, nullptr);
+      mContainer[OI::kIntensityXAvg] = createOutputStream(matrixContainer, MI::kP, kIxAvgName, RO::kIAvg);
+      mContainer[OI::kIntensityYAvg] = createOutputStream(matrixContainer, MI::kP, kIyAvgName, RO::kIAvg);
       if (is3DSimulation)
       {
-        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg, nullptr);
+        mContainer[OI::kIntensityZAvg] = createOutputStream(matrixContainer, MI::kP, kIzAvgName, RO::kIAvg);
       }
     }
 
     if (params.getStoreQTermFlag())
     {
-      mContainer[OI::kQTerm] = createOutputStream(matrixContainer, MI::kP, kQTermName, RO::kQTerm, nullptr);
+      mContainer[OI::kQTerm] = createOutputStream(matrixContainer, MI::kP, kQTermName, RO::kQTerm, tempBuffX);
     }
   }
 
@@ -324,14 +321,11 @@ void OutputStreamContainer::init(MatrixContainer& matrixContainer)
 
     if (!params.getStoreIntensityAvgCFlag())
     {
-      //if (!params.getOnlyPostProcessingFlag())
+      mContainer[OI::kIntensityXAvgC] = createOutputStream(matrixContainer, MI::kP, kIxAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
+      mContainer[OI::kIntensityYAvgC] = createOutputStream(matrixContainer, MI::kP, kIyAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
+      if (is3DSimulation)
       {
-        mContainer[OI::kIntensityXAvgC] = createOutputStream(matrixContainer, MI::kP, kIxAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
-        mContainer[OI::kIntensityYAvgC] = createOutputStream(matrixContainer, MI::kP, kIyAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
-        if (is3DSimulation)
-        {
-          mContainer[OI::kIntensityZAvgC] = createOutputStream(matrixContainer, MI::kP, kIzAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
-        }
+        mContainer[OI::kIntensityZAvgC] = createOutputStream(matrixContainer, MI::kP, kIzAvgName + kCompressSuffix, RO::kIAvgC, nullptr, true);
       }
     }
     else

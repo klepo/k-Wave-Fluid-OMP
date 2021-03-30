@@ -461,23 +461,23 @@ size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const
     // linux file contains this-process info
     FILE* file = fopen("/proc/self/status", "r");
     char buffer[1024] = "";
-    //int peakRealMem;
-    int peakVirtMem;
+    int peakRealMem;
+    //int peakVirtMem;
     // read the entire file
     while (fscanf(file, " %1023s", buffer) == 1)
     {
-      /*if (strcmp(buffer, "VmHWM:") == 0)
+      if (strcmp(buffer, "VmHWM:") == 0)
       { // kilobytes
         fscanf(file, " %d", &peakRealMem);
-      }*/
-      if (strcmp(buffer, "VmPeak:") == 0)
+      }
+      /*if (strcmp(buffer, "VmPeak:") == 0)
       {
         fscanf(file, " %d", &peakVirtMem);
-      }
+      }*/
     }
     fclose(file);
-    //return size_t(peakRealMem) >> 10;
-    return size_t(peakVirtMem) >> 10;
+    return size_t(peakRealMem) >> 10;
+    //return size_t(peakVirtMem) >> 10;
   #endif
   #ifdef _WIN64
     PROCESS_MEMORY_COUNTERS pmc;
@@ -496,23 +496,23 @@ size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const
     // linux file contains this-process info
     FILE* file = fopen("/proc/self/status", "r");
     char buffer[1024] = "";
-    //int currRealMem;
-    int currVirtMem;
+    int currRealMem;
+    //int currVirtMem;
     // read the entire file
     while (fscanf(file, " %1023s", buffer) == 1)
     {
-      /*if (strcmp(buffer, "VmRSS:") == 0)
+      if (strcmp(buffer, "VmRSS:") == 0)
       { // kilobytes
         fscanf(file, " %d", &currRealMem);
-      }*/
-      if (strcmp(buffer, "VmSize:") == 0)
+      }
+      /*if (strcmp(buffer, "VmSize:") == 0)
       {
         fscanf(file, " %d", &currVirtMem);
-      }
+      }*/
     }
     fclose(file);
-    //return size_t(currRealMem) >> 10;
-    return size_t(currVirtMem) >> 10;
+    return size_t(currRealMem) >> 10;
+    //return size_t(currVirtMem) >> 10;
   #endif
   #ifdef _WIN64
     PROCESS_MEMORY_COUNTERS pmc;
