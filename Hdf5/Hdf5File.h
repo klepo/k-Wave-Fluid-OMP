@@ -327,7 +327,7 @@
 | 5a. Simulation Results: if sensor_mask_type == 0 (index), or File version == 1.0                                     |
 +----------------------------------------------------------------------------------------------------------------------+
 | p                           (Nsens, Nt - s, 1) float       real           -p or --p_raw                              |
-| p_c                         (Nsens, Nc, 1)     float       complex        --p_c                                      |
+| p_c                         (NsensC, Nc, 1)    float       complex        --p_c                                      |
 | p_rms                       (Nsens, 1, 1)      float       real           --p_rms                                    |
 | p_max                       (Nsens, 1, 1)      float       real           --p_max                                    |
 | p_min                       (Nsens, 1, 1)      float       real           --p_min                                    |
@@ -339,18 +339,18 @@
 | uy                          (Nsens, Nt - s, 1) float       real           -u or --u_raw                              |
 | uz                          (Nsens, Nt - s, 1) float       real           -u or --u_raw and Nz > 1                   |
 |                                                                                                                      |
-| ux_c                        (Nsens, Nc, 1)     float       complex        --u_c                                      |
-| uy_c                        (Nsens, Nc, 1)     float       complex        --u_c                                      |
-| uz_c                        (Nsens, Nc, 1)     float       complex        --u_c       and Nz > 1                     |
+| ux_c                        (NsensC, Nc, 1)    float       complex        --u_c                                      |
+| uy_c                        (NsensC, Nc, 1)    float       complex        --u_c                                      |
+| uz_c                        (NsensC, Nc, 1)    float       complex        --u_c       and Nz > 1                     |
 |                                                                                                                      |
 | ux_non_staggered            (Nsens, Nt - s, 1) float       real           --u_non_staggered_raw (File version ==1.1) |
 | uy_non_staggered            (Nsens, Nt - s, 1) float       real           --u_non_staggered_raw (File version ==1.1) |
 | uz_non_staggered            (Nsens, Nt - s, 1) float       real           --u_non_staggered_raw (File version ==1.1) |
 |                                                                                       and Nz > 1                     |
 |                                                                                                                      |
-| ux_non_staggered_c          (Nsens, Nc, 1)     float       complex        --u_non_staggered_c (File version ==1.1)   |
-| uy_non_staggered_c          (Nsens, Nc, 1)     float       complex        --u_non_staggered_c (File version ==1.1)   |
-| uz_non_staggered_c          (Nsens, Nc, 1)     float       complex        --u_non_staggered_c (File version ==1.1)   |
+| ux_non_staggered_c          (NsensC, Nc, 1)    float       complex        --u_non_staggered_c (File version ==1.1)   |
+| uy_non_staggered_c          (NsensC, Nc, 1)    float       complex        --u_non_staggered_c (File version ==1.1)   |
+| uz_non_staggered_c          (NsensC, Nc, 1)    float       complex        --u_non_staggered_c (File version ==1.1)   |
 |                                                                                       and Nz > 1                     |
 |                                                                                                                      |
 | ux_rms                      (Nsens, 1, 1)      float       real           --u_rms                                    |
@@ -396,8 +396,8 @@
 | /p/2                        (Cx, Cy, Cz, Nt-s) float       real             2nd sampled cuboid, etc.                 |
 |                                                                                                                      |
 | /p_c                        group of datasets, one per cuboid             --p_c                                      |
-| /p_c/1                      (Cx, Cy, Cz, Nc)   float       complex          1st sampled cuboid                       |
-| /p_c/2                      (Cx, Cy, Cz, Nc)   float       complex          2nd sampled cuboid, etc.                 |
+| /p_c/1                      (CxC, Cy, Cz, Nc)  float       complex          1st sampled cuboid                       |
+| /p_c/2                      (CxC, Cy, Cz, Nc)  float       complex          2nd sampled cuboid, etc.                 |
 |                                                                                                                      |
 | /p_rms                      group of datasets, one per cuboid             --p_rms                                    |
 | /p_rms/1                    (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
@@ -421,11 +421,11 @@
 | /uz/1                       (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 |                                                                                                                      |
 | /ux_c                       group of datasets, one per cuboid             --u_c                                      |
-| /ux_c/1                     (Cx, Cy, Cz, Nc) float         complex          1st sampled cuboid                       |
+| /ux_c/1                     (CxC, Cy, Cz, Nc)  float       complex          1st sampled cuboid                       |
 | /uy_c                       group of datasets, one per cuboid             --u_c                                      |
-| /uy_c/1                     (Cx, Cy, Cz, Nc) float         complex          1st sampled cuboid                       |
+| /uy_c/1                     (CxC, Cy, Cz, Nc)  float       complex          1st sampled cuboid                       |
 | /uz_c                       group of datasets, one per cuboid             --u_c                 and Nz > 1           |
-| /uz_c/1                     (Cx, Cy, Cz, Nc) float         complex          1st sampled cuboid                       |
+| /uz_c/1                     (CxC, Cy, Cz, Nc)  float       complex          1st sampled cuboid                       |
 |                                                                                                                      |
 | /ux_non_staggered           group of datasets, one per cuboid             --u_non_staggered_raw                      |
 | /ux_non_staggered/1         (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
@@ -435,11 +435,11 @@
 | /uz_non_staggered/1         (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
 |                                                                                                                      |
 | /ux_non_staggered_c         group of datasets, one per cuboid             --u_non_staggered_c                        |
-| /ux_non_staggered_c/1       (Cx, Cy, Cz, Nc) float         complex          1st sampled cuboid                       |
+| /ux_non_staggered_c/1       (CxC, Cy, Cz, Nc)  float       complex          1st sampled cuboid                       |
 | /uy_non_staggered_c         group of datasets, one per cuboid             --u_non_staggered_c                        |
-| /uy_non_staggered_c/1       (Cx, Cy, Cz, Nc) float         complex          1st sampled cuboid                       |
+| /uy_non_staggered_c/1       (CxC, Cy, Cz, Nc)  float       complex          1st sampled cuboid                       |
 | /uz_non_staggered_c         group of datasets, one per cuboid             --u_non_staggered_c   and Nz > 1           |
-| /uz_non_staggered_c/1       (Cx, Cy, Cz, Nc) float         complex          1st sampled cuboid                       |
+| /uz_non_staggered_c/1       (CxC, Cy, Cz, Nc)  float       complex          1st sampled cuboid                       |
 |                                                                                                                      |
 | /ux_rms                     group of datasets, one per cuboid             --u_rms                                    |
 | /ux_rms/1                   (Cx, Cy, Cz, Nt-s) float       real             1st sampled cuboid                       |
