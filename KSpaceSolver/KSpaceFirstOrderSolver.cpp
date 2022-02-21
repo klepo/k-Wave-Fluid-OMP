@@ -461,7 +461,7 @@ size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const
     // linux file contains this-process info
     FILE* file = fopen("/proc/self/status", "r");
     char buffer[1024] = "";
-    int peakRealMem;
+    int peakRealMem = 0;
     //int peakVirtMem;
     // read the entire file
     while (fscanf(file, " %1023s", buffer) == 1)
@@ -496,7 +496,7 @@ size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const
     // linux file contains this-process info
     FILE* file = fopen("/proc/self/status", "r");
     char buffer[1024] = "";
-    int currRealMem;
+    int currRealMem = 0;
     //int currVirtMem;
     // read the entire file
     while (fscanf(file, " %1023s", buffer) == 1)
@@ -1181,16 +1181,9 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
     kx[i] = exp(FloatComplex(0.0f, 1.0f) * (pi2 * 0.5f) * (float(shift) / float(steps)));
   }
 
-  size_t sensorMaskSize = 0;
   size_t numberOfDatasets = 1;
-
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
-    sensorMaskSize = getSensorMaskIndex().capacity();
-  }
-  else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
-  {
-    sensorMaskSize = getSensorMaskCorners().getSizeOfAllCuboids();
     numberOfDatasets = getSensorMaskCorners().getDimensionSizes().ny;
   }
 
@@ -1238,7 +1231,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
   {
     size_t datasetSize = 0;
     DimensionSizes datasetDimensionSizes;
-    size_t sliceSize = 0;
+    size_t cSliceSize = 0;
     // Block size for given dataset
     size_t blockSize = fftwTimeShiftMatrix->getDimensionSizes().nx;
     DimensionSizes datasetBlockSizes;
@@ -1272,14 +1265,14 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
       }
       datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset)) / steps;
       datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset));
-      sliceSize = datasetDimensionSizes.nx * datasetDimensionSizes.ny;
+      cSliceSize = datasetDimensionSizes.nx * datasetDimensionSizes.ny;
       // Maximum size is datasetSize
       if (blockSize > datasetSize)
       {
         blockSize = datasetSize;
       }
-      size_t zCount = blockSize / sliceSize;
-      blockSize = sliceSize * zCount;
+      size_t zCount = blockSize / cSliceSize;
+      blockSize = cSliceSize * zCount;
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
 
@@ -1324,7 +1317,10 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
         if (i + blockSize > datasetSize)
         {
           blockSize = datasetSize - i;
-          datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, blockSize / sliceSize, steps);
+          datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx,
+                                             datasetDimensionSizes.ny,
+                                             blockSize / cSliceSize,
+                                             steps);
           dataP.resize(DimensionSizes(blockSize, steps, 1));
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
           dataUy.resize(DimensionSizes(blockSize, steps, 1));
@@ -1332,7 +1328,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities()
           fftwTimeShiftMatrix->createR2CFftPlan1DY(dataP);
           fftwTimeShiftMatrix->createC2RFftPlan1DY(dataP);
         }
-        size_t zOffset = i / sliceSize;
+        size_t zOffset = i / cSliceSize;
 
         mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataP.getData());
         mParameters.getOutputFile().readHyperSlab(datasetUx, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUx.getData());
@@ -1439,16 +1435,9 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
     steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/1").nt;
   }
 
-  size_t sensorMaskSize = 0;
   size_t numberOfDatasets = 1;
-
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
   {
-    sensorMaskSize = getSensorMaskIndex().capacity();
-  }
-  else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
-  {
-    sensorMaskSize = getSensorMaskCorners().getSizeOfAllCuboids();
     numberOfDatasets = getSensorMaskCorners().getDimensionSizes().ny;
   }
 
@@ -1483,7 +1472,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
   {
     size_t datasetSize = 0;
     DimensionSizes datasetDimensionSizes;
-    size_t sliceSize = 0;
+    size_t cSliceSize = 0;
     // Block size for given dataset
     size_t blockSize = mBlockSizeDefaultC / steps;
     DimensionSizes datasetBlockSizes;
@@ -1517,14 +1506,14 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
       }
       datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset)) / steps;
       datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
-      sliceSize = datasetDimensionSizes.nx * datasetDimensionSizes.ny;
+      cSliceSize = datasetDimensionSizes.nx * datasetDimensionSizes.ny;
       // Maximum size is datasetSize
       if (blockSize > datasetSize)
       {
         blockSize = datasetSize;
       }
-      size_t zCount = blockSize / sliceSize;
-      blockSize = sliceSize * zCount;
+      size_t zCount = blockSize / cSliceSize;
+      blockSize = cSliceSize * zCount;
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
 
@@ -1567,13 +1556,16 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
         if (i + blockSize > datasetSize)
         {
           blockSize = datasetSize - i;
-          datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, blockSize / sliceSize, steps);
+          datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx,
+                                             datasetDimensionSizes.ny,
+                                             blockSize / cSliceSize,
+                                             steps);
           dataP.resize(DimensionSizes(blockSize, steps, 1));
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
           dataUy.resize(DimensionSizes(blockSize, steps, 1));
           dataUz.resize(DimensionSizes(blockSize, steps, 1));
         }
-        size_t zOffset = i / sliceSize;
+        size_t zOffset = i / cSliceSize;
 
         mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataP.getData());
         mParameters.getOutputFile().readHyperSlab(datasetUx, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUx.getData());

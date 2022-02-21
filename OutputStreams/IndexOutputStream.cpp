@@ -88,7 +88,7 @@ void IndexOutputStream::create()
   // Extend "x" dimension for compression coefficients
   mBufferSize = (mReduceOp == ReduceOperator::kC) ? sensorMask.size() * mCompressHelper->getHarmonics() * mComplexSize : sensorMask.size();
 
-  // Dont create dataset for compression coefficients if only kIAvgC or kQTermC should be stored
+  // Don't create dataset for compression coefficients if only kIAvgC or kQTermC should be stored
   if (!mDoNotSaveFlag)
   {
     const Parameters& params = Parameters::getInstance();

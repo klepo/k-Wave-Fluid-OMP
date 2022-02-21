@@ -523,7 +523,6 @@ hid_t CuboidOutputStream::createCuboidDataset(const size_t cuboidIdx)
 
   // Set chunk size
   // If the size of the cuboid is bigger than 32 MB per timestep, set the chunk to approx 4MB
-  size_t nSlabs = 1; //at least one slab
   DimensionSizes cuboidChunkSize(cuboidSize.nx,
                                  cuboidSize.ny,
                                  cuboidSize.nz,
@@ -531,7 +530,9 @@ hid_t CuboidOutputStream::createCuboidDataset(const size_t cuboidIdx)
 
   if (cuboidChunkSize.nElements() > (kChunkSize4MB * 8))
   {
-    while (nSlabs * cuboidSize.nx * cuboidSize.ny < kChunkSize4MB) nSlabs++;
+    size_t nSlabs = 1; // At least one slab
+    while (nSlabs * cuboidSize.nx * cuboidSize.ny < kChunkSize4MB)
+      nSlabs++;
     cuboidChunkSize.nz = nSlabs;
   }
 

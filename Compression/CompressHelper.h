@@ -71,7 +71,6 @@ public:
   static CompressHelper& getInstance();
 
   static float findPeriod(const float* dataSrc, hsize_t length);
-  float computeTimeStep(const float* cC, const float* lC, hsize_t stepLocal) const;
   static void convert40bToFloatC(uint8_t* iValues, FloatComplex& cValue, const int32_t e);
   static void convertFloatCTo40b(FloatComplex cValue, uint8_t* iValues, const int32_t e);
 
@@ -131,17 +130,17 @@ private:
   // Memory for helper functions data, 2D arrays for harmonics
   /// Window basis
   float* mB = nullptr;
-  /// Complex exponencial basis
+  /// Complex exponential basis
   FloatComplex* mE = nullptr;
-  /// Shifted complex exponencial basis
+  /// Shifted complex exponential basis
   FloatComplex* mEShifted = nullptr;
-  /// Complex exponencial window basis
+  /// Complex exponential window basis
   FloatComplex* mBE = nullptr;
-  /// Shifted Complex exponencial window basis
+  /// Shifted Complex exponential window basis
   FloatComplex* mBEShifted = nullptr;
-  /// Inverted complex exponencial window basis
+  /// Inverted complex exponential window basis
   FloatComplex* mBE_1 = nullptr;
-  /// Inverted shifted complex exponencial window basis
+  /// Inverted shifted complex exponential window basis
   FloatComplex* mBE_1Shifted = nullptr;
 
   /// Singleton flag

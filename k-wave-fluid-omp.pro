@@ -43,7 +43,9 @@ unix {
 }
 
 # Check Qt version
-lessThan(QT_VERSION, 4.8): error(Qt version is too old)
+lessThan(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 2) {
+    error(Qt version is too old)
+}
 
 # HDF5 library
 include($$PWD/qtproject/hdf5.pri)
