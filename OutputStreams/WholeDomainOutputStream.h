@@ -41,67 +41,66 @@
  * Output stream for quantities sampled in the whole domain. The data is stored in a single dataset
  * (aggregated quantities only).
  */
-class WholeDomainOutputStream : public BaseOutputStream
-{
-  public:
-    /// Default constructor not allowed.
-    WholeDomainOutputStream() = delete;
+class WholeDomainOutputStream : public BaseOutputStream {
+public:
+  /// Default constructor not allowed.
+  WholeDomainOutputStream() = delete;
 
-    /** @brief Constructor links the HDF5 File, SourceMatrix, and SensorMask together.
-      * @param [in] file          - HDF5 file to write the output to
-      * @param [in] datasetName   - The name of the HDF5 group. This group contains datasets for particular cuboids
-      * @param [in] sourceMatrix  - Source matrix to be sampled
-      * @param [in] reductionOp   - Reduction operator
-      * @param [in] bufferToReuse - If there is a memory space to be reused, provide a pointer
-      */
-    WholeDomainOutputStream(Hdf5File&               file,
-                            MatrixName&             datasetName,
-                            const RealMatrix&       sourceMatrix,
-                            const ReduceOperator    reductionOp,
-                            float*                  bufferToReuse = nullptr,
-                            OutputStreamContainer*  outputStreamContainer = nullptr,
-                            bool                    doNotSaveFlag = false);
+  /** @brief Constructor links the HDF5 File, SourceMatrix, and SensorMask together.
+     * @param [in] file          - HDF5 file to write the output to
+     * @param [in] datasetName   - The name of the HDF5 group. This group contains datasets for particular cuboids
+     * @param [in] sourceMatrix  - Source matrix to be sampled
+     * @param [in] reductionOp   - Reduction operator
+     * @param [in] bufferToReuse - If there is a memory space to be reused, provide a pointer
+     */
+  WholeDomainOutputStream(Hdf5File& file,
+                          MatrixName& datasetName,
+                          const RealMatrix& sourceMatrix,
+                          const ReduceOperator reductionOp,
+                          float* bufferToReuse = nullptr,
+                          OutputStreamContainer* outputStreamContainer = nullptr,
+                          bool doNotSaveFlag = false);
 
-    /// Copy constructor not allowed.
-    WholeDomainOutputStream(const WholeDomainOutputStream&) = delete;
+  /// Copy constructor not allowed.
+  WholeDomainOutputStream(const WholeDomainOutputStream&) = delete;
 
-    /// Destructor.
-    virtual ~WholeDomainOutputStream();
+  /// Destructor.
+  virtual ~WholeDomainOutputStream();
 
-    /// operator= is not allowed.
-    WholeDomainOutputStream& operator=(const WholeDomainOutputStream&) = delete;
+  /// operator= is not allowed.
+  WholeDomainOutputStream& operator=(const WholeDomainOutputStream&) = delete;
 
-    /// Create a HDF5 stream and allocate data for it.
-    virtual void create();
+  /// Create a HDF5 stream and allocate data for it.
+  virtual void create();
 
-    /// Reopen the output stream after restart and reload data.
-    virtual void reopen();
+  /// Reopen the output stream after restart and reload data.
+  virtual void reopen();
 
-    /// Sample data into buffer and apply reduction, or flush to disk (no sensor mask here).
-    virtual void sample();
+  /// Sample data into buffer and apply reduction, or flush to disk (no sensor mask here).
+  virtual void sample();
 
-    /// Post sampling step, can work with other filled stream buffers
-    virtual void postSample();
+  /// Post sampling step, can work with other filled stream buffers
+  virtual void postSample();
 
-    /// Apply post-processing on the buffer and flush it to the file.
-    virtual void postProcess();
+  /// Apply post-processing on the buffer and flush it to the file.
+  virtual void postProcess();
 
-    ///Checkpoint the stream and close.
-    virtual void checkpoint();
+  ///Checkpoint the stream and close.
+  virtual void checkpoint();
 
-    /// Close stream (apply post-processing if necessary, flush data and close).
-    virtual void close();
+  /// Close stream (apply post-processing if necessary, flush data and close).
+  virtual void close();
 
-  protected:
-    /// Flush the buffer to the file.
-    virtual void flushBufferToFile();
+protected:
+  /// Flush the buffer to the file.
+  virtual void flushBufferToFile();
 
-    /// Handle to a HDF5 dataset.
-    hid_t  mDataset;
+  /// Handle to a HDF5 dataset.
+  hid_t mDataset;
 
-    /// Time step to store (N/A for aggregated).
-    size_t mSampledTimeStep;
-};// end of WholeDomainOutputStream
+  /// Time step to store (N/A for aggregated).
+  size_t mSampledTimeStep;
+}; // end of WholeDomainOutputStream
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* WHOLE_DOMAIN_OUTPUT_STREAM_H */
+#endif /* WHOLE_DOMAIN_OUTPUT_STREAM_H */

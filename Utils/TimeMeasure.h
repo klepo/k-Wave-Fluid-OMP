@@ -27,139 +27,122 @@
  *
  * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
- *  */
-
+ */
 
 #ifndef TIME_MEASURE_H
 #define TIME_MEASURE_H
 
 #ifdef _OPENMP
-  #include <omp.h>
+#include <omp.h>
 #else
-  #include <sys/time.h>
+#include <sys/time.h>
 #endif
-
 
 /**
  * @class   TimeMeasure
  * @brief   Class measuring elapsed time.
  * @details Class measuring elapsed time, even over multiple simulation legs.
  */
-class TimeMeasure
-{
-  public :
+class TimeMeasure {
+public:
+  /// Default constructor.
+  TimeMeasure() : mStartTime(0.0),
+                  mStopTime(0.0),
+                  mElapsedTimeOverPreviousLegs(0.0){};
 
-    /// Default constructor.
-    TimeMeasure() :
-        mStartTime(0.0),
-        mStopTime(0.0),
-        mElapsedTimeOverPreviousLegs(0.0)
-    { };
+  /// Destructor.
+  virtual ~TimeMeasure(){};
 
-    /// Destructor.
-    virtual ~TimeMeasure() {};
+  /**
+   * @brief   Copy constructor.
+   * @details Copy constructor.
+   * @param [in] src - The other class to copy from
+   */
+  TimeMeasure(const TimeMeasure& src) : mStartTime(src.mStartTime),
+                                        mStopTime(src.mStopTime),
+                                        mElapsedTimeOverPreviousLegs(src.mElapsedTimeOverPreviousLegs){};
 
-    /**
-     * @brief   Copy constructor.
-     * @details Copy constructor.
-     * @param [in] src - The other class to copy from
-     */
-    TimeMeasure(const TimeMeasure& src) :
-      mStartTime(src.mStartTime),
-      mStopTime (src.mStopTime),
-      mElapsedTimeOverPreviousLegs(src.mElapsedTimeOverPreviousLegs)
-    { };
-
-    /**
-     * @brief   operator=
-     * @details operator=
-     * @param [in] src - Source.
-     * @return
-     */
-    TimeMeasure& operator=(const TimeMeasure& src)
-    {
-      if (this != &src)
-      {
-        mStartTime = src.mStartTime;
-        mStopTime  = src.mStopTime;
-        mElapsedTimeOverPreviousLegs = src.mElapsedTimeOverPreviousLegs;
-      }
-      return *this;
-    };
-
-    ///Take start timestamp.
-    void start()
-    {
-      #ifdef _OPENMP
-        mStartTime = omp_get_wtime();
-      #else
-        timeval actTime;
-        gettimeofday(&actTime, nullptr);
-        mStartTime = actTime.tv_sec + actTime.tv_usec * 1.0e-6;
-      #endif
-    };
-
-    ///Take stop timestamp.
-    void stop()
-    {
-      #ifdef _OPENMP
-        mStopTime = omp_get_wtime();
-      #else
-        timeval actTime;
-        gettimeofday(&actTime, nullptr);
-        mStopTime = actTime.tv_sec + actTime.tv_usec * 1.0e-6;
-      #endif
-    };
-
-    /**
-     * @brief   Get elapsed time.
-     * @details Get elapsed time.
-     * @return  Elapsed time between start timestamp and stop timestamp.
-     */
-    double getElapsedTime() const
-    {
-      return mStopTime - mStartTime;
-    };
-
-    /**
-     * @brief   Get cumulated elapsed time over all simulation legs.
-     * @details Get cumulated elapsed time over all simulation legs.
-     * @return  Elapsed time all (including this one) legs.
-     */
-    double getElapsedTimeOverAllLegs() const
-    {
-      return mElapsedTimeOverPreviousLegs + (mStopTime - mStartTime);
-    };
-
-    /**
-     * @brief   Get time spent in previous legs.
-     * @details Get time spent in previous legs.
-     * @return  Elapsed time over previous legs.
-     */
-    double getElapsedTimeOverPreviousLegs() const
-    {
-      return mElapsedTimeOverPreviousLegs;
-    };
-
-    /**
-     * @brief   Set elapsed time in previous legs of the simulation.
-     * @details Set elapsed time in previous legs of the simulation.
-     * @param [in] elapsedTime - Elapsed time.
-     */
-    void SetElapsedTimeOverPreviousLegs(const double elapsedTime)
-    {
-      mElapsedTimeOverPreviousLegs = elapsedTime;
+  /**
+   * @brief   operator=
+   * @details operator=
+   * @param [in] src - Source.
+   * @return
+   */
+  TimeMeasure& operator=(const TimeMeasure& src) {
+    if (this != &src) {
+      mStartTime = src.mStartTime;
+      mStopTime = src.mStopTime;
+      mElapsedTimeOverPreviousLegs = src.mElapsedTimeOverPreviousLegs;
     }
+    return *this;
+  };
 
-  private:
-    /// Start timestamp of the interval
-    double mStartTime;
-    /// Stop timestamp of the interval
-    double mStopTime;
-    /// Elapsed time in previous simulation legs
-    double mElapsedTimeOverPreviousLegs;
-};// end of TimeMesssure
+  ///Take start timestamp.
+  void start() {
+#ifdef _OPENMP
+    mStartTime = omp_get_wtime();
+#else
+    timeval actTime;
+    gettimeofday(&actTime, nullptr);
+    mStartTime = actTime.tv_sec + actTime.tv_usec * 1.0e-6;
+#endif
+  };
+
+  ///Take stop timestamp.
+  void stop() {
+#ifdef _OPENMP
+    mStopTime = omp_get_wtime();
+#else
+    timeval actTime;
+    gettimeofday(&actTime, nullptr);
+    mStopTime = actTime.tv_sec + actTime.tv_usec * 1.0e-6;
+#endif
+  };
+
+  /**
+   * @brief   Get elapsed time.
+   * @details Get elapsed time.
+   * @return  Elapsed time between start timestamp and stop timestamp.
+   */
+  double getElapsedTime() const {
+    return mStopTime - mStartTime;
+  };
+
+  /**
+   * @brief   Get cumulated elapsed time over all simulation legs.
+   * @details Get cumulated elapsed time over all simulation legs.
+   * @return  Elapsed time all (including this one) legs.
+   */
+  double getElapsedTimeOverAllLegs() const {
+    return mElapsedTimeOverPreviousLegs + (mStopTime - mStartTime);
+  };
+
+  /**
+   * @brief   Get time spent in previous legs.
+   * @details Get time spent in previous legs.
+   * @return  Elapsed time over previous legs.
+   */
+  double getElapsedTimeOverPreviousLegs() const {
+    return mElapsedTimeOverPreviousLegs;
+  };
+
+  /**
+   * @brief   Set elapsed time in previous legs of the simulation.
+   * @details Set elapsed time in previous legs of the simulation.
+   * @param [in] elapsedTime - Elapsed time.
+   */
+  void SetElapsedTimeOverPreviousLegs(const double elapsedTime) {
+    mElapsedTimeOverPreviousLegs = elapsedTime;
+  }
+
+private:
+  /// Start timestamp of the interval
+  double mStartTime;
+  /// Stop timestamp of the interval
+  double mStopTime;
+  /// Elapsed time in previous simulation legs
+  double mElapsedTimeOverPreviousLegs;
+}; // end of TimeMeasure
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* #ifndef TIME_MEASURE_H */
-
+#endif /* TIME_MEASURE_H */

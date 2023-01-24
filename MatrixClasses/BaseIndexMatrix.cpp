@@ -29,20 +29,16 @@
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
-
 #include <string.h>
 #include <immintrin.h>
 #include <assert.h>
 
 #include <MatrixClasses/BaseIndexMatrix.h>
-
 #include <Utils/DimensionSizes.h>
-
 
 //--------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------- Constants -----------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
-
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Public methods ---------------------------------------------------//
@@ -56,25 +52,21 @@ BaseIndexMatrix::BaseIndexMatrix()
     mSize(0), mCapacity(0),
     mDimensionSizes(),
     mRowSize(0), mSlabSize(0),
-    mData(nullptr)
-{
+    mData(nullptr) {
 
-}// end of BaseIndexMatrix
+} // end of BaseIndexMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Zero all allocated elements.
  */
-void BaseIndexMatrix::zeroMatrix()
-{
-  #pragma omp parallel for simd schedule(static)
-  for (size_t i = 0; i < mCapacity; i++)
-  {
+void BaseIndexMatrix::zeroMatrix() {
+#pragma omp parallel for simd schedule(static)
+  for (size_t i = 0; i < mCapacity; i++) {
     mData[i] = size_t(0);
   }
-}// end of zeroMatrix
+} // end of zeroMatrix
 //----------------------------------------------------------------------------------------------------------------------
-
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------ Protected methods -------------------------------------------------//
@@ -83,31 +75,29 @@ void BaseIndexMatrix::zeroMatrix()
 /**
  * Memory allocation based on the capacity and aligned based on kDataAlignment.
  */
-void BaseIndexMatrix::allocateMemory()
-{
+void BaseIndexMatrix::allocateMemory() {
   /* No memory allocated before this function*/
   assert(mData == nullptr);
 
-  mData = (size_t*) _mm_malloc(mCapacity * sizeof (size_t), kDataAlignment);
+  mData = (size_t*)_mm_malloc(mCapacity * sizeof(size_t), kDataAlignment);
 
-  if (!mData)
-  {
+  if (!mData) {
     throw std::bad_alloc();
   }
 
   zeroMatrix();
-}// end of allocateMemory
+} // end of allocateMemory
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Free memory.
  */
-void BaseIndexMatrix::freeMemory()
-{
-  if (mData) _mm_free(mData);
+void BaseIndexMatrix::freeMemory() {
+  if (mData)
+    _mm_free(mData);
 
   mData = nullptr;
-}// end of freeMemory
+} // end of freeMemory
 //----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//

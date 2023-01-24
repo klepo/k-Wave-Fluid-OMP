@@ -29,7 +29,6 @@
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
-
 #ifndef MATRIX_RECORD_H
 #define MATRIX_RECORD_H
 
@@ -44,14 +43,12 @@
  * @details A structure storing details about the matrix. The matrix container stores the list of
  *          these records - metadata and pointer to the matrix.
  */
-struct MatrixRecord
-{
+struct MatrixRecord {
   /**
    * @enum  MatrixType
    * @brief All possible types of the matrix.
    */
-  enum class MatrixType
-  {
+  enum class MatrixType {
     /// Matrix for real values.
     kReal,
     /// Matrix for complex values.
@@ -62,13 +59,12 @@ struct MatrixRecord
     kFftw
   };
 
-   /// Default constructor.
+  /// Default constructor.
   MatrixRecord();
   /// Copy constructor.
   MatrixRecord(const MatrixRecord& src);
   /// operator =
   MatrixRecord& operator=(const MatrixRecord& src);
-
 
   /**
    * @brief Set all values for the record.
@@ -78,30 +74,28 @@ struct MatrixRecord
    * @param [in] checkpoint     - Checkpoint this matrix?
    * @param [in] matrixName     - HDF5 matrix name.
    */
-  void set(const MatrixType      matrixType,
-           const DimensionSizes  dimensionSizes,
-           const bool            loadData,
-           const bool            checkpoint,
-           MatrixName&           matrixName);
-
+  void set(const MatrixType matrixType,
+           const DimensionSizes dimensionSizes,
+           const bool loadData,
+           const bool checkpoint,
+           MatrixName& matrixName);
 
   // Destructor.
-  virtual ~MatrixRecord() {};
-
+  virtual ~MatrixRecord(){};
 
   /// Pointer to the matrix object.
-  BaseMatrix*    matrixPtr;
+  BaseMatrix* matrixPtr;
   /// Matrix data type.
-  MatrixType     matrixType;
+  MatrixType matrixType;
   /// Matrix dimension sizes.
   DimensionSizes dimensionSizes;
   /// Is the matrix content loaded from the HDF5 file?
-  bool           loadData;
+  bool loadData;
   /// Is the matrix necessary to be preserver when checkpoint is enabled?
-  bool           checkpoint;
+  bool checkpoint;
   /// Matrix name in the HDF5 file.
-  std::string    matrixName;
-};// end of MatrixRecord
+  std::string matrixName;
+}; // end of MatrixRecord
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* MATRIX_RECORD_H */
+#endif /* MATRIX_RECORD_H */

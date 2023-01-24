@@ -29,10 +29,8 @@
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
-
 #ifndef BASE_MATRIX_H
 #define BASE_MATRIX_H
-
 
 #include <Utils/DimensionSizes.h>
 #include <Hdf5/Hdf5File.h>
@@ -45,54 +43,53 @@
  * @details Abstract base class. The common ancestor defining the common interface and allowing derived classes to be
  *          allocated, freed and loaded from the file using the Matrix container. The I/O is done via HDF5 files.
  */
-class BaseMatrix
-{
-  public:
-    /// Default constructor.
-    BaseMatrix() {};
-    /// Copy constructor is not allowed.
-    BaseMatrix(const BaseMatrix&) = delete;
-    /// Destructor
-    virtual ~BaseMatrix() {};
+class BaseMatrix {
+public:
+  /// Default constructor.
+  BaseMatrix(){};
+  /// Copy constructor is not allowed.
+  BaseMatrix(const BaseMatrix&) = delete;
+  /// Destructor
+  virtual ~BaseMatrix(){};
 
-    /// Operator= is not allowed.
-    BaseMatrix& operator=(const BaseMatrix&) = delete;
+  /// Operator= is not allowed.
+  BaseMatrix& operator=(const BaseMatrix&) = delete;
 
-    /**
-     * @brief  Get dimension sizes of the matrix.
-     * @return Dimension sizes of the matrix.
-     */
-    virtual const DimensionSizes& getDimensionSizes() const  = 0;
-    /**
-     * @brief Size of the matrix.
-     * @return Number of elements.
-     */
-    virtual size_t size()     const = 0;
-    /**
-     * @brief  The capacity of the matrix (this may differ from size due to padding, etc.).
-     * @return Capacity of the currently allocated storage.
-     */
-    virtual size_t capacity() const  = 0;
+  /**
+   * @brief  Get dimension sizes of the matrix.
+   * @return Dimension sizes of the matrix.
+   */
+  virtual const DimensionSizes& getDimensionSizes() const = 0;
+  /**
+   * @brief Size of the matrix.
+   * @return Number of elements.
+   */
+  virtual size_t size() const = 0;
+  /**
+   * @brief  The capacity of the matrix (this may differ from size due to padding, etc.).
+   * @return Capacity of the currently allocated storage.
+   */
+  virtual size_t capacity() const = 0;
 
-    /**
-     * @brief   Read matrix from HDF5 file.
-     * @details Read matrix from HDF5 file.
-     * @param [in] file       - Handle to the HDF5 file.
-     * @param [in] matrixName - HDF5 dataset name to read from.
-     */
-    virtual void readData(Hdf5File&   file,
-                          MatrixName& matrixName) = 0;
-    /**
-     * @brief   Write data into HDF5 file.
-     * @details Write data into HDF5 file.
-     * @param [in] file             - Handle to the HDF5 file.
-     * @param [in] matrixName       - HDF5 dataset name to write to.
-     * @param [in] compressionLevel - Compression level for the HDF5 dataset.
-     */
-    virtual void writeData(Hdf5File&    file,
-                           MatrixName&  matrixName,
-                           const size_t compressionLevel) = 0;
-};// end of BaseMatrix
+  /**
+   * @brief   Read matrix from HDF5 file.
+   * @details Read matrix from HDF5 file.
+   * @param [in] file       - Handle to the HDF5 file.
+   * @param [in] matrixName - HDF5 dataset name to read from.
+   */
+  virtual void readData(Hdf5File& file,
+                        MatrixName& matrixName) = 0;
+  /**
+   * @brief   Write data into HDF5 file.
+   * @details Write data into HDF5 file.
+   * @param [in] file             - Handle to the HDF5 file.
+   * @param [in] matrixName       - HDF5 dataset name to write to.
+   * @param [in] compressionLevel - Compression level for the HDF5 dataset.
+   */
+  virtual void writeData(Hdf5File& file,
+                         MatrixName& matrixName,
+                         const size_t compressionLevel) = 0;
+}; // end of BaseMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* BASE_MATRIX_H */
+#endif /* BASE_MATRIX_H */

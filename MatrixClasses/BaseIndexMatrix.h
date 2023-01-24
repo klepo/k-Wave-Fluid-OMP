@@ -30,10 +30,8 @@
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
-
 #ifndef BASE_INDEX_MATRIX_H
 #define BASE_INDEX_MATRIX_H
-
 
 #include <MatrixClasses/BaseMatrix.h>
 #include <Utils/DimensionSizes.h>
@@ -46,79 +44,77 @@
  * @details Abstract base class for index based matrices defining basic interface. Higher
  *          dimensional matrices stored as 1D arrays, row-major order. The I/O is done via HDF5 files.
  */
-class BaseIndexMatrix : public BaseMatrix
-{
-  public:
-    /// Default constructor.
-    BaseIndexMatrix();
-    /// Copy constructor is not allowed.
-    BaseIndexMatrix(const BaseIndexMatrix&) = delete;
-    /// Destructor.
-    virtual ~BaseIndexMatrix() {};
+class BaseIndexMatrix : public BaseMatrix {
+public:
+  /// Default constructor.
+  BaseIndexMatrix();
+  /// Copy constructor is not allowed.
+  BaseIndexMatrix(const BaseIndexMatrix&) = delete;
+  /// Destructor.
+  virtual ~BaseIndexMatrix(){};
 
-    /// operator= is not allowed.
-    BaseIndexMatrix& operator=(const BaseIndexMatrix&) = delete;
+  /// operator= is not allowed.
+  BaseIndexMatrix& operator=(const BaseIndexMatrix&) = delete;
 
-    /**
-     * @brief  Get dimension sizes of the matrix.
-     * @return Dimension sizes of the matrix.
-     */
-    virtual const DimensionSizes& getDimensionSizes() const { return mDimensionSizes; };
+  /**
+   * @brief  Get dimension sizes of the matrix.
+   * @return Dimension sizes of the matrix.
+   */
+  virtual const DimensionSizes& getDimensionSizes() const { return mDimensionSizes; };
 
-    /**
-     * @brief  Size of the matrix.
-     * @return Number of elements.
-     */
-    virtual size_t size()                             const { return mSize; };
-    /**
-     * @brief  The capacity of the matrix (this may differ from size due to padding, etc.).
-     * @return Capacity of the currently allocated storage.
-     */
-    virtual size_t capacity()                         const { return mCapacity; };
+  /**
+   * @brief  Size of the matrix.
+   * @return Number of elements.
+   */
+  virtual size_t size() const { return mSize; };
+  /**
+   * @brief  The capacity of the matrix (this may differ from size due to padding, etc.).
+   * @return Capacity of the currently allocated storage.
+   */
+  virtual size_t capacity() const { return mCapacity; };
 
-    /// Zero all elements of the matrix (NUMA first touch).
-    virtual void   zeroMatrix();
+  /// Zero all elements of the matrix (NUMA first touch).
+  virtual void zeroMatrix();
 
-    /**
-     * @brief Get raw data out of the class (for direct kernel access).
-     * @return Mutable matrix data
-     */
-    virtual size_t* getData()                               { return mData; };
+  /**
+   * @brief Get raw data out of the class (for direct kernel access).
+   * @return Mutable matrix data
+   */
+  virtual size_t* getData() { return mData; };
 
-    /**
-     * @brief Get raw data out of the class (for direct kernel access), const version.
-     * @return Immutable matrix data.
-     */
-    virtual const size_t* getData()                   const { return mData; };
+  /**
+   * @brief Get raw data out of the class (for direct kernel access), const version.
+   * @return Immutable matrix data.
+   */
+  virtual const size_t* getData() const { return mData; };
 
-  protected:
-   /**
-    * @brief Aligned memory allocation (both on CPU and GPU).
-    * @throw std::bad_alloc - If there's not enough memory.
-    */
-    virtual void allocateMemory();
-    /// Memory deallocation (both on CPU and GPU)
-    virtual void freeMemory();
+protected:
+  /**
+   * @brief Aligned memory allocation (both on CPU and GPU).
+   * @throw std::bad_alloc - If there's not enough memory.
+   */
+  virtual void allocateMemory();
+  /// Memory deallocation (both on CPU and GPU)
+  virtual void freeMemory();
 
-    /// Total number of elements.
-    size_t mSize;
-    /// Total number of allocated elements (in terms of size_t).
-    size_t mCapacity;
+  /// Total number of elements.
+  size_t mSize;
+  /// Total number of allocated elements (in terms of size_t).
+  size_t mCapacity;
 
-    /// Dimension sizes.
-    DimensionSizes mDimensionSizes;
+  /// Dimension sizes.
+  DimensionSizes mDimensionSizes;
 
-    /// Size of 1D row in X dimension.
-    size_t mRowSize;
-    /// Size of a XY slab.
-    size_t mSlabSize;
+  /// Size of 1D row in X dimension.
+  size_t mRowSize;
+  /// Size of a XY slab.
+  size_t mSlabSize;
 
-    /// Raw matrix data.
-    size_t* mData;
+  /// Raw matrix data.
+  size_t* mData;
 
-  private:
-
-};// end of BaseIndexMatrix
+private:
+}; // end of BaseIndexMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* BASE_INDEX_MATRIX_H */
+#endif /* BASE_INDEX_MATRIX_H */

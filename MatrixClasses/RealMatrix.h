@@ -32,7 +32,6 @@
 #ifndef REAL_MATRIX_H
 #define REAL_MATRIX_H
 
-
 #include <MatrixClasses/BaseFloatMatrix.h>
 #include <Utils/DimensionSizes.h>
 
@@ -44,102 +43,94 @@ class ComplexMatrix;
  * @brief   The class for real matrices.
  * @details The class for real matrices (floats) on both CPU and GPU side.
  */
-class RealMatrix : public BaseFloatMatrix
-{
-  public:
+class RealMatrix : public BaseFloatMatrix {
+public:
+  /// Default constructor is not allowed.
+  RealMatrix() = delete;
+  /**
+    * @brief Constructor.
+    * @param [in] dimensionSizes - Dimension sizes of the matrix.
+    */
+  RealMatrix(const DimensionSizes& dimensionSizes);
+  /// Copy constructor not allowed.
+  RealMatrix(const RealMatrix&) = delete;
+  /// Destructor.
+  virtual ~RealMatrix();
 
-    /// Default constructor is not allowed.
-    RealMatrix() = delete;
-    /**
-     * @brief Constructor.
-     * @param [in] dimensionSizes - Dimension sizes of the matrix.
-     */
-    RealMatrix(const DimensionSizes& dimensionSizes);
-    /// Copy constructor not allowed.
-    RealMatrix(const RealMatrix&) = delete;
-    /// Destructor.
-    virtual ~RealMatrix();
+  /// Operator= is not allowed.
+  RealMatrix& operator=(const RealMatrix&);
 
-    /// Operator= is not allowed.
-    RealMatrix& operator=(const RealMatrix&);
+  /**
+    * @brief   Read matrix from HDF5 file.
+    * @details Read matrix from HDF5 file.
+    * @param [in] file       - Handle to the HDF5 file
+    * @param [in] matrixName - HDF5 dataset name to read from
+    * @throw ios::failure    - If error occurred.
+    */
+  virtual void readData(Hdf5File& file,
+                        MatrixName& matrixName);
+  /**
+    * @brief   Write data into HDF5 file.
+    * @details Write data into HDF5 file.
+    * @param [in] file             - Handle to the HDF5 file
+    * @param [in] matrixName       - HDF5 dataset name to write to
+    * @param [in] compressionLevel - Compression level for the HDF5 dataset
+    * @throw ios::failure          - If an error occurred.
+    */
+  virtual void writeData(Hdf5File& file,
+                         MatrixName& matrixName,
+                         const size_t compressionLevel);
 
-    /**
-     * @brief   Read matrix from HDF5 file.
-     * @details Read matrix from HDF5 file.
-     * @param [in] file       - Handle to the HDF5 file
-     * @param [in] matrixName - HDF5 dataset name to read from
-     * @throw ios::failure    - If error occurred.
-     */
-    virtual void readData(Hdf5File&   file,
-                          MatrixName& matrixName);
-    /**
-     * @brief   Write data into HDF5 file.
-     * @details Write data into HDF5 file.
-     * @param [in] file             - Handle to the HDF5 file
-     * @param [in] matrixName       - HDF5 dataset name to write to
-     * @param [in] compressionLevel - Compression level for the HDF5 dataset
-     * @throw ios::failure          - If an error occurred.
-     */
-    virtual void writeData(Hdf5File&    file,
-                           MatrixName&  matrixName,
-                           const size_t compressionLevel);
+  /**
+    * @brief  operator[].
+    * @param [in] index - 1D index into the matrix.
+    * @return An element of the matrix.
+    */
+  inline float& operator[](const size_t& index) { return mData[index]; };
+  /**
+    * @brief   Operator[], constant version.
+    * @param [in] index - 1D index into the matrix.
+    * @return An element of the matrix.
+    */
+  inline const float& operator[](const size_t& index) const { return mData[index]; };
 
-    /**
-     * @brief  operator[].
-     * @param [in] index - 1D index into the matrix.
-     * @return An element of the matrix.
-     */
-    inline float&       operator[](const size_t& index)       { return mData[index]; };
-    /**
-     * @brief   Operator[], constant version.
-     * @param [in] index - 1D index into the matrix.
-     * @return An element of the matrix.
-     */
-    inline const float& operator[](const size_t& index) const { return mData[index]; };
+  /**
+    * @brief   Get element from 3D matrix.
+    * @param [in] x - x dimension
+    * @param [in] y - y dimension
+    * @param [in] z - z dimension
+    * @return  an element
+    */
+  float& getElementFrom3D(const size_t x, const size_t y, const size_t z) {
+    return mData[z * mSlabSize + y * mRowSize + x];
+  };
 
-    /**
-     * @brief   Get element from 3D matrix.
-     * @param [in] x - x dimension
-     * @param [in] y - y dimension
-     * @param [in] z - z dimension
-     * @return  an element
-     */
-    float& getElementFrom3D(const size_t x, const size_t y, const size_t z)
-    {
-      return mData[z * mSlabSize + y * mRowSize +  x];
-    };
+  /**
+    * @brief   Get element from 3D matrix, const version.
+    * @param [in] x - z dimension
+    * @param [in] y - y dimension
+    * @param [in] z - z dimension
+    * @return  an element
+    */
+  const float& getElementFrom3D(const size_t x, const size_t y, const size_t z) const {
+    return mData[z * mSlabSize + y * mRowSize + x];
+  };
 
-    /**
-     * @brief   Get element from 3D matrix, const version.
-     * @param [in] x - z dimension
-     * @param [in] y - y dimension
-     * @param [in] z - z dimension
-     * @return  an element
-     */
-    const float& getElementFrom3D(const size_t x, const size_t y, const size_t z) const
-    {
-      return mData[z * mSlabSize + y * mRowSize +  x];
-    };
+  void resize(const DimensionSizes& dimensionSizes);
 
-    void resize(const DimensionSizes& dimensionSizes);
+protected:
+private:
+  /// Init dimension.
+  void initDimensions(const DimensionSizes& dimensionSizes);
 
-  protected:
+  /// Number of elements to get 4MB block of data.
+  static constexpr size_t kChunkSize1D4MB = 1048576; //(4MB)
+  /// Number of elements to get 1MB block of data.
+  static constexpr size_t kChunkSize1D1MB = 262144; //(1MB)
+  /// Number of elements to get 256KB block of data.
+  static constexpr size_t kChunkSize1D256kB = 65536; //(256KB)
 
-  private:
-    /// Init dimension.
-     void initDimensions(const DimensionSizes& dimensionSizes);
-
-     /// Number of elements to get 4MB block of data.
-     static constexpr size_t kChunkSize1D4MB   = 1048576; //(4MB)
-     /// Number of elements to get 1MB block of data.
-     static constexpr size_t kChunkSize1D1MB   =  262144; //(1MB)
-     /// Number of elements to get 256KB block of data.
-     static constexpr size_t kChunkSize1D256kB =   65536; //(256KB)
-
-};// end of RealMatrix
+}; // end of RealMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* REAL_MATRIX_DATA_H */
-
-
-
+#endif /* REAL_MATRIX_DATA_H */

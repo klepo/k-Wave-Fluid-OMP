@@ -15,18 +15,22 @@
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
- * This file is part of the C++ extension of the [k-Wave Toolbox](http://www.k-wave.org).
+ * This file is part of the C++ extension of the [k-Wave
+ * Toolbox](http://www.k-wave.org).
  *
- * This file is part of the k-Wave. k-Wave is free software: you can redistribute it and/or modify it under the terms
- * of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * This file is part of the k-Wave. k-Wave is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
  *
- * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
- * more details.
+ * k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
- * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with k-Wave. If not, see
+ * [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
 #ifndef COMPRESSHELPER_H
@@ -47,9 +51,9 @@
 #endif
 
 #include <cmath>
-#include <vector>
 #include <complex>
 #include <omp.h>
+#include <vector>
 
 /// Float complex datatype
 using FloatComplex = std::complex<float>;
@@ -63,8 +67,7 @@ const std::string kCompressSuffix = "_c";
 /**
  * @brief The CompressHelper class represents wrapper for the ultrasound signals compression
  */
-class CompressHelper
-{
+class CompressHelper {
 public:
   void init(float period, hsize_t mos, hsize_t harmonics, bool normalize = false);
   ~CompressHelper();
@@ -87,22 +90,14 @@ public:
   static const int kMaxExpP = 138;
   static const int kMaxExpU = 114;
 
-  static inline int32_t roundf(float value)
-  {
-    int32_t retval;
-    __asm fld value
-    __asm fistp retval
-    return retval;
-  }
-
 private:
   CompressHelper();
-  CompressHelper(const CompressHelper &);
-  CompressHelper &operator=(const CompressHelper &);
+  CompressHelper(const CompressHelper&);
+  CompressHelper& operator=(const CompressHelper&);
 
   static void xcorr(const float* dataSrc1, const float* dataSrc2, float* dataDst, hsize_t lengthSrc1, hsize_t lengthSrc2);
   static void conv(const float* dataSrc1, const float* dataSrc2, float* dataDst, hsize_t lengthSrc1, hsize_t lengthSrc2);
-  static void findPeaks(const float* dataSrc, float* locsDst, float* peaksDst, hsize_t length, hsize_t &lengthDst);
+  static void findPeaks(const float* dataSrc, float* locsDst, float* peaksDst, hsize_t length, hsize_t& lengthDst);
   static void diff(const float* dataSrc, float* dataDst, hsize_t length);
   static void diff(const hsize_t* dataSrc, hsize_t* dataDst, hsize_t length);
   static float mean(const float* dataSrc, hsize_t length);

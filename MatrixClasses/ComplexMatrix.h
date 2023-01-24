@@ -42,130 +42,120 @@
 /// Datatype for complex single precision numbers.
 using FloatComplex = std::complex<float>;
 
-
 /**
  * @class   ComplexMatrix
  * @brief   The class for complex matrices.
  * @details The class for complex matrices.
  */
-class ComplexMatrix : public BaseFloatMatrix
-{
-  public:
+class ComplexMatrix : public BaseFloatMatrix {
+public:
+  /// Default constructor not allowed.
+  ComplexMatrix() = delete;
+  /**
+   * @brief Constructor.
+   * @param [in] dimensionSizes - Dimension sizes of the matrix.
+   */
+  ComplexMatrix(const DimensionSizes& dimensionSizes);
+  /// Copy constructor not allowed.
+  ComplexMatrix(const ComplexMatrix&) = delete;
+  /// Destructor.
+  virtual ~ComplexMatrix();
 
-   /// Default constructor not allowed.
-    ComplexMatrix() = delete;
-    /**
-     * @brief Constructor.
-     * @param [in] dimensionSizes - Dimension sizes of the matrix.
-     */
-    ComplexMatrix(const DimensionSizes& dimensionSizes);
-    /// Copy constructor not allowed.
-    ComplexMatrix(const ComplexMatrix&) = delete;
-    /// Destructor.
-    virtual ~ComplexMatrix();
+  /// Operator= is not allowed.
+  ComplexMatrix& operator=(const ComplexMatrix&);
 
-    /// Operator= is not allowed.
-    ComplexMatrix& operator= (const ComplexMatrix&);
+  /**
+   * @brief   Read matrix from HDF5 file.
+   * @details Read matrix from HDF5 file.
+   * @param [in] file       - Handle to the HDF5 file.
+   * @param [in] matrixName - HDF5 dataset name to read from.
+   * @throw ios::failure    - If error occurred.
+   */
+  virtual void readData(Hdf5File& file,
+                        MatrixName& matrixName);
 
-    /**
-     * @brief   Read matrix from HDF5 file.
-     * @details Read matrix from HDF5 file.
-     * @param [in] file       - Handle to the HDF5 file.
-     * @param [in] matrixName - HDF5 dataset name to read from.
-     * @throw ios::failure    - If error occurred.
-     */
-    virtual void readData(Hdf5File&   file,
-                          MatrixName& matrixName);
+  /**
+   * @brief   Write data into HDF5 file.
+   * @details Write data into HDF5 file.
+   * @param [in] file             - Handle to the HDF5 file
+   * @param [in] matrixName       - HDF5 dataset name to write to.
+   * @param [in] compressionLevel - Compression level for the HDF5 dataset.
+   * @throw ios::failure          - If an error occurred.
+   */
+  virtual void writeData(Hdf5File& file,
+                         MatrixName& matrixName,
+                         const size_t compressionLevel);
 
-    /**
-     * @brief   Write data into HDF5 file.
-     * @details Write data into HDF5 file.
-     * @param [in] file             - Handle to the HDF5 file
-     * @param [in] matrixName       - HDF5 dataset name to write to.
-     * @param [in] compressionLevel - Compression level for the HDF5 dataset.
-     * @throw ios::failure          - If an error occurred.
-     */
-    virtual void writeData(Hdf5File&    file,
-                           MatrixName&  matrixName,
-                           const size_t compressionLevel);
+  /**
+   * @brief Get raw complex data out of the class (for direct kernel access).
+   * @return Mutable matrix data
+   */
+  virtual FloatComplex* getComplexData() {
+    return reinterpret_cast<FloatComplex*>(mData);
+  };
 
-    /**
-     * @brief Get raw complex data out of the class (for direct kernel access).
-     * @return Mutable matrix data
-     */
-    virtual FloatComplex* getComplexData()
-    {
-      return reinterpret_cast<FloatComplex*> (mData);
-    };
+  /**
+   * @brief  Get raw complex data out of the class (for direct kernel access).
+   * @return Imutable matrix data
+   */
+  virtual const FloatComplex* getComplexData() const {
+    return reinterpret_cast<FloatComplex*>(mData);
+  };
 
-    /**
-     * @brief  Get raw complex data out of the class (for direct kernel access).
-     * @return Imutable matrix data
-     */
-    virtual const FloatComplex* getComplexData() const
-    {
-      return reinterpret_cast<FloatComplex*> (mData);
-    };
+  /**
+   * @brief  Operator [].
+   * @param [in] index - 1D index into the matrix.
+   * @return An element of the matrix.
+   */
+  inline FloatComplex& operator[](const size_t& index) {
+    return reinterpret_cast<FloatComplex*>(mData)[index];
+  };
+  /**
+   * @brief   Operator [], constant version.
+   * @param [in] index - 1D index into the matrix.
+   * @return An element of the matrix.
+   */
+  inline const FloatComplex& operator[](const size_t& index) const {
+    return reinterpret_cast<FloatComplex*>(mData)[index];
+  };
 
-    /**
-     * @brief  Operator [].
-     * @param [in] index - 1D index into the matrix.
-     * @return An element of the matrix.
-     */
-    inline FloatComplex& operator[](const size_t& index)
-    {
-      return reinterpret_cast<FloatComplex*>(mData)[index];
-    };
-    /**
-     * @brief   Operator [], constant version.
-     * @param [in] index - 1D index into the matrix.
-     * @return An element of the matrix.
-     */
-    inline const FloatComplex& operator[](const size_t& index) const
-    {
-      return reinterpret_cast<FloatComplex*> (mData)[index];
-    };
+  /**
+   * @brief   Get element from 3D matrix.
+   * @details Get element from 3D matrix.
+   * @param [in] x - x dimension
+   * @param [in] y - y dimension
+   * @param [in] z - z dimension
+   * @return a complex element of the class
+   */
+  inline FloatComplex& GetElementFrom3D(const size_t x,
+                                        const size_t y,
+                                        const size_t z) {
+    return reinterpret_cast<FloatComplex*>(mData)[z * (mSlabSize >> 1) + y * (mRowSize >> 1) + x];
+  };
 
-    /**
-     * @brief   Get element from 3D matrix.
-     * @details Get element from 3D matrix.
-     * @param [in] x - x dimension
-     * @param [in] y - y dimension
-     * @param [in] z - z dimension
-     * @return a complex element of the class
-     */
-    inline  FloatComplex& GetElementFrom3D(const size_t x,
-                                           const size_t y,
-                                           const size_t z)
-    {
-      return reinterpret_cast<FloatComplex*> (mData)[z * (mSlabSize>>1) + y * (mRowSize>>1) + x];
-    };
+  /**
+   * @brief   Get element from 3D matrix, constant version.
+   * @details Get element from 3D matrix, constant version.
+   * @param [in] x - x dimension
+   * @param [in] y - y dimension
+   * @param [in] z - z dimension
+   * @return a complex element of the class
+   */
+  inline const FloatComplex& GetElementFrom3D(const size_t x,
+                                              const size_t y,
+                                              const size_t z) const {
+    return reinterpret_cast<FloatComplex*>(mData)[z * (mSlabSize >> 1) + y * (mRowSize >> 1) + x];
+  };
 
-    /**
-     * @brief   Get element from 3D matrix, constant version.
-     * @details Get element from 3D matrix, constant version.
-     * @param [in] x - x dimension
-     * @param [in] y - y dimension
-     * @param [in] z - z dimension
-     * @return a complex element of the class
-     */
-    inline const FloatComplex& GetElementFrom3D(const size_t x,
-                                                const size_t y,
-                                                const size_t z) const
-    {
-      return reinterpret_cast<FloatComplex*> (mData)[z * (mSlabSize >> 1) + y * (mRowSize >> 1) + x];
-    };
+protected:
+private:
+  /**
+   * @brief Initialize dimension sizes.
+   * @param [in] dimensionSizes - Dimension sizes of the matrix.
+   */
+  void initDimensions(const DimensionSizes& dimensionSizes);
 
-  protected:
-
-  private:
-   /**
-     * @brief Initialize dimension sizes.
-     * @param [in] dimensionSizes - Dimension sizes of the matrix.
-     */
-    void initDimensions(const DimensionSizes& dimensionSizes);
-
-};// end of ComplexMatrix
+}; // end of ComplexMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
-#endif	/* COMPLEX_MATRIX_H */
+#endif /* COMPLEX_MATRIX_H */

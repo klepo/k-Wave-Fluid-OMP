@@ -29,14 +29,11 @@
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
-
-
 #include <string.h>
 #include <immintrin.h>
 #include <assert.h>
 
 #include <MatrixClasses/BaseFloatMatrix.h>
-
 #include <Utils/DimensionSizes.h>
 
 using std::string;
@@ -44,7 +41,6 @@ using std::string;
 //--------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------- Constants -----------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
-
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------- Public methods ---------------------------------------------------//
@@ -58,51 +54,44 @@ BaseFloatMatrix::BaseFloatMatrix()
     mSize(0), mCapacity(0),
     mDimensionSizes(),
     mRowSize(0), mSlabSize(0),
-    mData(nullptr)
-{
+    mData(nullptr) {
 
-}// end of BaseFloatMatrix
+} // end of BaseFloatMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Copy data from another matrix with same size.
  */
-void BaseFloatMatrix::copyData(const BaseFloatMatrix& src)
-{
+void BaseFloatMatrix::copyData(const BaseFloatMatrix& src) {
   const float* srcData = src.getData();
 
-  #pragma omp parallel for simd schedule(static) firstprivate(srcData)
+#pragma omp parallel for simd schedule(static) firstprivate(srcData)
   for (size_t i = 0; i < mCapacity; i++)
     mData[i] = srcData[i];
-}// end of copyData
+} // end of copyData
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Zero all allocated elements in parallel for NUMA first touch.
  */
-void BaseFloatMatrix::zeroMatrix()
-{
-  #pragma omp parallel for simd schedule(static)
-  for (size_t i = 0; i < mCapacity; i++)
-  {
+void BaseFloatMatrix::zeroMatrix() {
+#pragma omp parallel for simd schedule(static)
+  for (size_t i = 0; i < mCapacity; i++) {
     mData[i] = 0.0f;
   }
-}// end of zeroMatrix
+} // end of zeroMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculate matrix = scalar / matrix.
  */
-void BaseFloatMatrix::scalarDividedBy(const float scalar)
-{
-  #pragma omp parallel for simd schedule(static) firstprivate(scalar)
-  for (size_t i = 0; i < mCapacity; i++)
-  {
+void BaseFloatMatrix::scalarDividedBy(const float scalar) {
+#pragma omp parallel for simd schedule(static) firstprivate(scalar)
+  for (size_t i = 0; i < mCapacity; i++) {
     mData[i] = scalar / mData[i];
   }
-}// end of scalarDividedBy
+} // end of scalarDividedBy
 //----------------------------------------------------------------------------------------------------------------------
-
 
 //--------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------ Protected methods -------------------------------------------------//
@@ -111,31 +100,29 @@ void BaseFloatMatrix::scalarDividedBy(const float scalar)
 /**
  * Memory allocation based on the capacity and aligned at kDataAlignment
  */
-void BaseFloatMatrix::allocateMemory()
-{
+void BaseFloatMatrix::allocateMemory() {
   // No memory allocated before this function
   assert(mData == nullptr);
 
-  mData = (float*) _mm_malloc(mCapacity * sizeof(float), kDataAlignment);
+  mData = (float*)_mm_malloc(mCapacity * sizeof(float), kDataAlignment);
 
-  if (!mData)
-  {
+  if (!mData) {
     throw std::bad_alloc();
   }
 
   zeroMatrix();
-}// end of allocateMemory
+} // end of allocateMemory
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Free memory.
  */
- void BaseFloatMatrix::freeMemory()
- {
-  if (mData) _mm_free(mData);
+void BaseFloatMatrix::freeMemory() {
+  if (mData)
+    _mm_free(mData);
 
   mData = nullptr;
-}// end of freeMemory
+} // end of freeMemory
 //----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//

@@ -29,7 +29,6 @@
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
 
-
 #ifndef ERROR_MESSAGES_WINDOWS_H
 #define ERROR_MESSAGES_WINDOWS_H
 
@@ -53,8 +52,4 @@ ErrorMessage kErrFmtTail =
   "|                      Execution terminated                     |\n"
   "+---------------------------------------------------------------+\n";
 
-#endif	/* ERROR_MESSAGES_WINDOWS_H */
-
-
-
-
+#endif /* ERROR_MESSAGES_WINDOWS_H */
