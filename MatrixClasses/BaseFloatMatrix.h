@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      11 July      2011, 12:13 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -43,88 +43,104 @@
  * @details Abstract base class for float based matrices defining basic interface. Higher dimensional matrices stored
  *          as 1D arrays, row-major order. The I/O is done via HDF5 files.
  */
-class BaseFloatMatrix : public BaseMatrix {
-public:
-  /// Default constructor.
-  BaseFloatMatrix();
-  /// Copy constructor is not allowed.
-  BaseFloatMatrix(const BaseFloatMatrix&) = delete;
-  /// Destructor.
-  virtual ~BaseFloatMatrix(){};
+class BaseFloatMatrix : public BaseMatrix
+{
+  public:
+    /// Default constructor.
+    BaseFloatMatrix();
+    /// Copy constructor is not allowed.
+    BaseFloatMatrix(const BaseFloatMatrix&) = delete;
+    /// Destructor.
+    virtual ~BaseFloatMatrix(){};
 
-  /// operator= is not allowed.
-  BaseFloatMatrix& operator=(const BaseFloatMatrix&) = delete;
+    /// operator= is not allowed.
+    BaseFloatMatrix& operator=(const BaseFloatMatrix&) = delete;
 
-  /**
-   * @brief  Get dimension sizes of the matrix.
-   * @return Dimension sizes of the matrix.
-   */
-  virtual const DimensionSizes& getDimensionSizes() const { return mDimensionSizes; };
-  /**
-   * @brief  Size of the matrix.
-   * @return Number of elements.
-   */
-  virtual size_t size() const { return mSize; };
-  /**
-   * @brief  The capacity of the matrix (this may differ from size due to padding, etc.).
-   * @return Capacity of the currently allocated storage.
-   */
-  virtual size_t capacity() const { return mCapacity; };
+    /**
+     * @brief  Get dimension sizes of the matrix.
+     * @return Dimension sizes of the matrix.
+     */
+    virtual const DimensionSizes& getDimensionSizes() const
+    {
+      return mDimensionSizes;
+    };
+    /**
+     * @brief  Size of the matrix.
+     * @return Number of elements.
+     */
+    virtual size_t size() const
+    {
+      return mSize;
+    };
+    /**
+     * @brief  The capacity of the matrix (this may differ from size due to padding, etc.).
+     * @return Capacity of the currently allocated storage.
+     */
+    virtual size_t capacity() const
+    {
+      return mCapacity;
+    };
 
-  /**
-   * @brief Copy data from other matrix with the same size.
-   * @param [in] src - Matrix to copy data in.
-   */
-  virtual void copyData(const BaseFloatMatrix& src);
+    /**
+     * @brief Copy data from other matrix with the same size.
+     * @param [in] src - Matrix to copy data in.
+     */
+    virtual void copyData(const BaseFloatMatrix& src);
 
-  /// Zero all elements of the matrix (NUMA first touch).
-  virtual void zeroMatrix();
+    /// Zero all elements of the matrix (NUMA first touch).
+    virtual void zeroMatrix();
 
-  /**
-   * @brief Calculate matrix = scalar / matrix.
-   * @param [in] scalar - Scalar constant
-   */
-  virtual void scalarDividedBy(const float scalar);
+    /**
+     * @brief Calculate matrix = scalar / matrix.
+     * @param [in] scalar - Scalar constant
+     */
+    virtual void scalarDividedBy(const float scalar);
 
-  /**
-   * @brief Get raw data out of the class (for direct kernel access).
-   * @return Mutable matrix data
-   */
-  virtual float* getData() { return mData; };
+    /**
+     * @brief Get raw data out of the class (for direct kernel access).
+     * @return Mutable matrix data
+     */
+    virtual float* getData()
+    {
+      return mData;
+    };
 
-  /**
-   * @brief Get raw data out of the class (for direct kernel access), const version.
-   * @return Immutable matrix data.
-   */
-  virtual const float* getData() const { return mData; };
+    /**
+     * @brief Get raw data out of the class (for direct kernel access), const version.
+     * @return Immutable matrix data.
+     */
+    virtual const float* getData() const
+    {
+      return mData;
+    };
 
-protected:
-  /**
-   * @brief Aligned memory allocation.
-   * @throw std::bad_alloc - If there's not enough memory.
-   */
-  virtual void allocateMemory();
-  /// Memory deallocation.
-  virtual void freeMemory();
+  protected:
+    /**
+     * @brief Aligned memory allocation.
+     * @throw std::bad_alloc - If there's not enough memory.
+     */
+    virtual void allocateMemory();
+    /// Memory deallocation.
+    virtual void freeMemory();
 
-  /// Total number of used elements.
-  size_t mSize;
-  /// Total number of allocated elements (in terms of floats).
-  size_t mCapacity;
+    /// Total number of used elements.
+    size_t mSize;
+    /// Total number of allocated elements (in terms of floats).
+    size_t mCapacity;
 
-  /// Dimension sizes.
-  DimensionSizes mDimensionSizes;
+    /// Dimension sizes.
+    DimensionSizes mDimensionSizes;
 
-  /// Size of a 1D row in X dimension.
-  size_t mRowSize;
-  /// Size of a XY slab.
-  size_t mSlabSize;
+    /// Size of a 1D row in X dimension.
+    size_t mRowSize;
+    /// Size of a XY slab.
+    size_t mSlabSize;
 
-  /// Raw matrix data.
-  float* mData;
+    /// Raw matrix data.
+    float* mData;
 
-private:
-}; //end of BaseFloatMatrix
+  private:
+}; // end of BaseFloatMatrix
 //----------------------------------------------------------------------------------------------------------------------
 
 #endif /* BASE_FLOAT_MATRIX_H */

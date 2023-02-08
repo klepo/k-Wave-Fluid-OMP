@@ -5,16 +5,21 @@ of propagating acoustic waves in 1D, 2D, or 3D. The toolbox has a wide range of
 functionality, but at its heart is an advanced numerical model that can account 
 for both linear or nonlinear wave propagation, an arbitrary distribution of 
 weakly heterogeneous material parameters, and power law acoustic  absorption, 
-see the http://www.k-wave.org.
+see the http://www.k-wave.org [[1]](#1).
 
 This project is a part of the k-Wave toolbox accelerating 2D/3D simulations 
 using an optimized C++ implementation to run moderate to big grid sizes (128x128
 to 10,000x10,000) or (64x64x64 to 512x512x512).
 
+This repository contains a modified C++ implementation of `kpsaceFirstOrder-OMP` 
+version 2.16 (04 September 2017) - release 1.2, which is extended by on-the-fly 
+compression and calculation of time-averaged acoustic Intensity in time-domain 
+ultrasound simulations. These approaches were published in [[2]](#2).
 
 ## Repository structure
 
     .
+    +--Compression       - Helper class for on-the-fly compression
     +--Containers        - Matrix and output stream containers
     +--Data              - Small test data
     +--GetoptWin64       - Windows version of the getopt routine
@@ -27,6 +32,7 @@ to 10,000x10,000) or (64x64x64 to 512x512x512).
     +--Parameters        - Parameters of the simulation
     +--Utils             - Utility routines
     +--nbproject         - NetBeans IDE 8.2 project
+    .clang-format        - Clang-Format config file
     Changelog.md         - Changelog
     License.md           - License file
     Makefile             - NetBeans 8.2 makefile
@@ -34,7 +40,6 @@ to 10,000x10,000) or (64x64x64 to 512x512x512).
     Doxyfile             - Doxygen generator file
     header_bg.png        - Doxygen logo
     main.cpp             - Main file of the project
-
 
 ## Compilation
 
@@ -211,3 +216,17 @@ information, please type:
 ```bash
 ./kspaceFirstOrder-OMP --help
 ```
+
+## References
+
+<a id="1">[1]</a> 
+B. E. Treeby and B. T. Cox, "k-Wave: MATLAB toolbox for the simulation and 
+reconstruction of photoacoustic wave-fields," J. Biomed. Opt., vol. 15, no. 2, 
+p. 021314, 2010.
+
+<a id="2">[2]</a> 
+P. Kleparnik, P. Zemcik, B. E. Treeby and J. Jaros, "On-the-Fly Calculation of 
+Time-Averaged Acoustic Intensity in Time-Domain Ultrasound Simulations Using 
+a k-Space Pseudospectral Method," in IEEE Transactions on Ultrasonics, 
+Ferroelectrics, and Frequency Control, vol. 69, no. 10, pp. 2917-2929, Oct. 2022, 
+[doi: 10.1109/TUFFC.2022.3199173](https://doi.org/10.1109/TUFFC.2022.3199173).

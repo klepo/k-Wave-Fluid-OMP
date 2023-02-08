@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -41,15 +41,13 @@
 using ErrorMessage = const std::string;
 
 /// Error message header
-ErrorMessage kErrFmtHead =
-  "┌───────────────────────────────────────────────────────────────┐\n"
-  "│            !!! K-Wave experienced a fatal error !!!           │\n"
-  "├───────────────────────────────────────────────────────────────┤\n";
+ErrorMessage kErrFmtHead = "┌───────────────────────────────────────────────────────────────┐\n"
+                           "│            !!! K-Wave experienced a fatal error !!!           │\n"
+                           "├───────────────────────────────────────────────────────────────┤\n";
 
 /// Error message tailer
-ErrorMessage kErrFmtTail =
-  "├───────────────────────────────────────────────────────────────┤\n"
-  "│                      Execution terminated                     │\n"
-  "└───────────────────────────────────────────────────────────────┘\n";
+ErrorMessage kErrFmtTail = "├───────────────────────────────────────────────────────────────┤\n"
+                           "│                      Execution terminated                     │\n"
+                           "└───────────────────────────────────────────────────────────────┘\n";
 
 #endif /* ERROR_MESSAGES_LINUX_H */

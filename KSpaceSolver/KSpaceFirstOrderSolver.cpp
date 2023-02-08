@@ -1,7 +1,7 @@
 /**
  * @file      KSpaceFirstOrderSolver.cpp
  *
- * @author    Jiri Jaros \n
+ * @author    Jiri Jaros, Petr Kleparnik \n
  *            Faculty of Information Technology \n
  *            Brno University of Technology \n
  *            jarosjir@fit.vutbr.cz
@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      12 July      2012, 10:27 (created) \n
- *            15 March     2019, 12:36 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -31,20 +31,20 @@
 
 // Linux build
 #ifdef __linux__
-#include <sys/resource.h>
+  #include <sys/resource.h>
 #endif
 
 // Windows build
 #ifdef _WIN64
-#define _CRT_SECURE_NO_WARNINGS
-#define _USE_MATH_DEFINES
-#include <Windows.h>
-#include <Psapi.h>
-#pragma comment(lib, "Psapi.lib")
+  #define _CRT_SECURE_NO_WARNINGS
+  #define _USE_MATH_DEFINES
+  #include <Windows.h>
+  #include <Psapi.h>
+  #pragma comment(lib, "Psapi.lib")
 #endif
 
 #ifdef _OPENMP
-#include <omp.h>
+  #include <omp.h>
 #endif
 
 #include <immintrin.h>
@@ -80,11 +80,9 @@ using SD = Parameters::SimulationDimension;
  * Constructor of the class.
  */
 KSpaceFirstOrderSolver::KSpaceFirstOrderSolver()
-    : mMatrixContainer(), mOutputStreamContainer(),
-      mParameters(Parameters::getInstance()),
-      mActPercent(0.0f),
-      mTotalTime(), mPreProcessingTime(), mDataLoadTime(), mSimulationTime(),
-      mPostProcessingTime(), mIterationTime() {
+  : mMatrixContainer(), mOutputStreamContainer(), mParameters(Parameters::getInstance()), mActPercent(0.0f),
+    mTotalTime(), mPreProcessingTime(), mDataLoadTime(), mSimulationTime(), mPostProcessingTime(), mIterationTime()
+{
   mTotalTime.start();
 
   // Switch off HDF5 error messages
@@ -96,16 +94,19 @@ KSpaceFirstOrderSolver::KSpaceFirstOrderSolver()
 /**
  * Destructor of the class.
  */
-KSpaceFirstOrderSolver::~KSpaceFirstOrderSolver() {
+KSpaceFirstOrderSolver::~KSpaceFirstOrderSolver()
+{
   freeMemory();
 } // end of KSpaceFirstOrderSolver
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * The method allocates the matrix container, creates all matrices and creates all output streams
  * (however not allocating memory).
  */
-void KSpaceFirstOrderSolver::allocateMemory() {
+void KSpaceFirstOrderSolver::allocateMemory()
+{
   Logger::log(Logger::LogLevel::kBasic, kOutFmtMemoryAllocation);
   Logger::flush(Logger::LogLevel::kBasic);
 
@@ -124,29 +125,33 @@ void KSpaceFirstOrderSolver::allocateMemory() {
 
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
 } // end of allocateMemory
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * The method frees all memory allocated by the class.
  */
-void KSpaceFirstOrderSolver::freeMemory() {
+void KSpaceFirstOrderSolver::freeMemory()
+{
   mMatrixContainer.freeMatrices();
   mOutputStreamContainer.freeStreams();
 } // end of freeMemory
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Load data from the input file provided by the Parameter class and creates the output time series streams.
  */
-void KSpaceFirstOrderSolver::loadInputData() {
+void KSpaceFirstOrderSolver::loadInputData()
+{
   Logger::log(Logger::LogLevel::kBasic, kOutFmtDataLoading);
   Logger::flush(Logger::LogLevel::kBasic);
   // Start timer
   mDataLoadTime.start();
 
   // get handles
-  Hdf5File& inputFile = mParameters.getInputFile(); // file is opened (in Parameters)
-  Hdf5File& outputFile = mParameters.getOutputFile();
+  Hdf5File& inputFile      = mParameters.getInputFile(); // file is opened (in Parameters)
+  Hdf5File& outputFile     = mParameters.getOutputFile();
   Hdf5File& checkpointFile = mParameters.getCheckpointFile();
 
   Logger::log(Logger::LogLevel::kFull, kOutFmtNoDone);
@@ -164,9 +169,11 @@ void KSpaceFirstOrderSolver::loadInputData() {
   Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
 
   // The simulation does not use checkpointing or this is the first turn
-  bool recoverFromCheckpoint = (mParameters.isCheckpointEnabled() && Hdf5File::canAccess(mParameters.getCheckpointFileName()));
+  bool recoverFromCheckpoint =
+    (mParameters.isCheckpointEnabled() && Hdf5File::canAccess(mParameters.getCheckpointFileName()));
 
-  if (recoverFromCheckpoint) {
+  if (recoverFromCheckpoint)
+  {
     //------------------------------------- Read data from the checkpoint file ---------------------------------------//
     Logger::log(Logger::LogLevel::kFull, kOutFmtReadingCheckpointFile);
     Logger::flush(Logger::LogLevel::kFull);
@@ -204,18 +211,22 @@ void KSpaceFirstOrderSolver::loadInputData() {
     mOutputStreamContainer.reopenStreams();
     Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
     checkpointFile.close();
-  } else {
+  }
+  else
+  {
     if (mParameters.getOnlyPostProcessingFlag() &&
-        (mParameters.getStoreIntensityAvgFlag() ||
-         mParameters.getStoreIntensityAvgCFlag() ||
-         mParameters.getStoreQTermFlag() ||
-         mParameters.getStoreQTermCFlag()) &&
-        Hdf5File::canAccess(mParameters.getOutputFileName())) {
+        (mParameters.getStoreIntensityAvgFlag() || mParameters.getStoreIntensityAvgCFlag() ||
+          mParameters.getStoreQTermFlag() || mParameters.getStoreQTermCFlag()) &&
+        Hdf5File::canAccess(mParameters.getOutputFileName()))
+    {
       // Open output file
       // TODO check existing datasets and their sizes (streams)
       outputFile.open(mParameters.getOutputFileName(), H5F_ACC_RDWR);
-    } else {
-      //------------------------------------ First round of multi-leg simulation ---------------------------------------//
+    }
+    else
+    {
+      //------------------------------------ First round of multi-leg simulation
+      //---------------------------------------//
       // Create the output file
       Logger::log(Logger::LogLevel::kFull, kOutFmtCreatingOutputFile);
       Logger::flush(Logger::LogLevel::kFull);
@@ -229,18 +240,22 @@ void KSpaceFirstOrderSolver::loadInputData() {
 
   // Stop timer
   mDataLoadTime.stop();
-  if (Logger::getLevel() != Logger::LogLevel::kFull) {
+  if (Logger::getLevel() != Logger::LogLevel::kFull)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
   }
 } // end of loadInputData
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * This method computes k-space First Order 2D/3D simulation.
  */
-void KSpaceFirstOrderSolver::compute() {
+void KSpaceFirstOrderSolver::compute()
+{
   // fft initialization and preprocessing
-  try {
+  try
+  {
     mPreProcessingTime.start();
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtFftPlans);
@@ -261,7 +276,9 @@ void KSpaceFirstOrderSolver::compute() {
     mPreProcessingTime.stop();
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
-  } catch (const std::exception& e) {
+  }
+  catch (const std::exception& e)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
 
@@ -275,8 +292,10 @@ void KSpaceFirstOrderSolver::compute() {
   Logger::log(Logger::LogLevel::kBasic, kOutFmtCurrentMemory, getCurrentMemoryUsage());
 
   // Main loop
-  if (!mParameters.getOnlyPostProcessingFlag()) {
-    try {
+  if (!mParameters.getOnlyPostProcessingFlag())
+  {
+    try
+    {
       mSimulationTime.start();
 
       if (mParameters.isSimulation3D())
@@ -286,13 +305,16 @@ void KSpaceFirstOrderSolver::compute() {
 
       mSamplingTime = std::accumulate(mSamplingIterationTimes.begin(), mSamplingIterationTimes.end(), float(0));
       mAverageSamplingIterationTime = mSamplingTime / mSamplingIterationTimes.size();
-      mNotSamplingTime = std::accumulate(mNotSamplingIterationTimes.begin(), mNotSamplingIterationTimes.end(), float(0));
+      mNotSamplingTime =
+        std::accumulate(mNotSamplingIterationTimes.begin(), mNotSamplingIterationTimes.end(), float(0));
       mAverageNotSamplingIterationTime = mNotSamplingTime / mNotSamplingIterationTimes.size();
 
       mSimulationTime.stop();
 
       Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulationEndSeparator);
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception& e)
+    {
       Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulatoinFinalSeparator);
       Logger::errorAndTerminate(Logger::wordWrapString(e.what(), kErrFmtPathDelimiters, 9));
     }
@@ -300,7 +322,8 @@ void KSpaceFirstOrderSolver::compute() {
     mSimulationPeakMemoryConsumption = getMemoryUsage();
     Logger::log(Logger::LogLevel::kBasic, kOutFmtPeakMemory, getMemoryUsage());
     Logger::log(Logger::LogLevel::kBasic, kOutFmtCurrentMemory, getCurrentMemoryUsage());
-    //Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime(), mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs());
+    // Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime(),
+    // mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs());
     Logger::log(Logger::LogLevel::kBasic, kOutFmtmSamplingTime, mSamplingTime);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtmAverageSamplingIterationTime, mAverageSamplingIterationTime);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtmNotSamplingTime, mNotSamplingTime);
@@ -309,42 +332,54 @@ void KSpaceFirstOrderSolver::compute() {
 
   // Post processing region
   mPostProcessingTime.start();
-  try {
-    if (!mParameters.getOnlyPostProcessingFlag() && isCheckpointInterruption()) { // Checkpoint
+  try
+  {
+    if (!mParameters.getOnlyPostProcessingFlag() && isCheckpointInterruption())
+    { // Checkpoint
       Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime());
       Logger::log(Logger::LogLevel::kBasic, kOutFmtCheckpointCompletedTimeSteps, mParameters.getTimeIndex());
       Logger::log(Logger::LogLevel::kBasic, kOutFmtCheckpointHeader);
       Logger::log(Logger::LogLevel::kBasic, kOutFmtCreatingCheckpoint);
       Logger::flush(Logger::LogLevel::kBasic);
 
-      if (Logger::getLevel() == Logger::LogLevel::kFull) {
+      if (Logger::getLevel() == Logger::LogLevel::kFull)
+      {
         Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
       }
 
       saveCheckpointData();
 
-      if (Logger::getLevel() != Logger::LogLevel::kFull) {
+      if (Logger::getLevel() != Logger::LogLevel::kFull)
+      {
         Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
       }
-    } else { // Finish
+    }
+    else
+    { // Finish
       Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mSimulationTime.getElapsedTime());
       Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
       Logger::log(Logger::LogLevel::kBasic, kOutFmtPostProcessing);
       Logger::flush(Logger::LogLevel::kBasic);
 
-      if (mParameters.isSimulation3D()) {
+      if (mParameters.isSimulation3D())
+      {
         postProcessing<SD::k3D>();
-      } else {
+      }
+      else
+      {
         postProcessing<SD::k2D>();
       }
 
       // if checkpointing is enabled and the checkpoint file was created in the past, delete it
-      if (mParameters.isCheckpointEnabled()) {
+      if (mParameters.isCheckpointEnabled())
+      {
         std::remove(mParameters.getCheckpointFileName().c_str());
       }
       Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
     }
-  } catch (const std::exception& e) {
+  }
+  catch (const std::exception& e)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
 
@@ -353,22 +388,27 @@ void KSpaceFirstOrderSolver::compute() {
   mPostProcessingTime.stop();
 
   // Final data written
-  try {
+  try
+  {
     writeOutputDataInfo();
     mParameters.getOutputFile().close();
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, mPostProcessingTime.getElapsedTime());
-  } catch (const std::exception& e) {
+  }
+  catch (const std::exception& e)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
     Logger::errorAndTerminate(Logger::wordWrapString(e.what(), kErrFmtPathDelimiters, 9));
   }
 } // end of compute()
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get peak memory usage.
  */
-size_t KSpaceFirstOrderSolver::getMemoryUsage() const {
+size_t KSpaceFirstOrderSolver::getMemoryUsage() const
+{
 // Linux build
 #ifdef __linux__
   struct rusage memUsage;
@@ -382,9 +422,7 @@ size_t KSpaceFirstOrderSolver::getMemoryUsage() const {
   HANDLE hProcess;
   PROCESS_MEMORY_COUNTERS pmc;
 
-  hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                         FALSE,
-                         GetCurrentProcessId());
+  hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId());
 
   GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc));
   CloseHandle(hProcess);
@@ -392,21 +430,28 @@ size_t KSpaceFirstOrderSolver::getMemoryUsage() const {
   return pmc.PeakWorkingSetSize >> 20;
 #endif
 } // end of getMemoryUsage
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get available memory.
  */
-size_t KSpaceFirstOrderSolver::getAvailableMemory() const {
+size_t KSpaceFirstOrderSolver::getAvailableMemory() const
+{
 #ifdef __linux__
   string token;
   std::ifstream file("/proc/meminfo");
-  while (file >> token) {
-    if (token == "MemAvailable:") {
+  while (file >> token)
+  {
+    if (token == "MemAvailable:")
+    {
       unsigned long mem;
-      if (file >> mem) {
+      if (file >> mem)
+      {
         return mem >> 10;
-      } else {
+      }
+      else
+      {
         return 0;
       }
     }
@@ -428,21 +473,25 @@ size_t KSpaceFirstOrderSolver::getAvailableMemory() const {
   return size_t(status.ullAvailPhys) >> 20;
 #endif
 } // end of getAvailableMemory
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get peak memory usage.
  */
-size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const {
+size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const
+{
 #ifdef __linux__
   // linux file contains this-process info
-  FILE* file = fopen("/proc/self/status", "r");
+  FILE* file        = fopen("/proc/self/status", "r");
   char buffer[1024] = "";
-  int peakRealMem = 0;
-  //int peakVirtMem;
-  // read the entire file
-  while (fscanf(file, " %1023s", buffer) == 1) {
-    if (strcmp(buffer, "VmHWM:") == 0) { // kilobytes
+  int peakRealMem   = 0;
+  // int peakVirtMem;
+  //  read the entire file
+  while (fscanf(file, " %1023s", buffer) == 1)
+  {
+    if (strcmp(buffer, "VmHWM:") == 0)
+    { // kilobytes
       fscanf(file, " %d", &peakRealMem);
     }
     /*if (strcmp(buffer, "VmPeak:") == 0)
@@ -452,7 +501,7 @@ size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const {
   }
   fclose(file);
   return size_t(peakRealMem) >> 10;
-  //return size_t(peakVirtMem) >> 10;
+  // return size_t(peakVirtMem) >> 10;
 #endif
 #ifdef _WIN64
   PROCESS_MEMORY_COUNTERS pmc;
@@ -460,21 +509,25 @@ size_t KSpaceFirstOrderSolver::getPeakMemoryUsage() const {
   return size_t(pmc.PeakWorkingSetSize) >> 20;
 #endif
 } // end of getPeakMemoryUsage
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get current memory usage.
  */
-size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const {
+size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const
+{
 #ifdef __linux__
   // linux file contains this-process info
-  FILE* file = fopen("/proc/self/status", "r");
+  FILE* file        = fopen("/proc/self/status", "r");
   char buffer[1024] = "";
-  int currRealMem = 0;
-  //int currVirtMem;
-  // read the entire file
-  while (fscanf(file, " %1023s", buffer) == 1) {
-    if (strcmp(buffer, "VmRSS:") == 0) { // kilobytes
+  int currRealMem   = 0;
+  // int currVirtMem;
+  //  read the entire file
+  while (fscanf(file, " %1023s", buffer) == 1)
+  {
+    if (strcmp(buffer, "VmRSS:") == 0)
+    { // kilobytes
       fscanf(file, " %d", &currRealMem);
     }
     /*if (strcmp(buffer, "VmSize:") == 0)
@@ -484,7 +537,7 @@ size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const {
   }
   fclose(file);
   return size_t(currRealMem) >> 10;
-  //return size_t(currVirtMem) >> 10;
+  // return size_t(currVirtMem) >> 10;
 #endif
 #ifdef _WIN64
   PROCESS_MEMORY_COUNTERS pmc;
@@ -492,14 +545,16 @@ size_t KSpaceFirstOrderSolver::getCurrentMemoryUsage() const {
   return size_t(pmc.WorkingSetSize) >> 20;
 #endif
 } // end of getCurrentMemoryUsage
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get total memory.
  */
-size_t KSpaceFirstOrderSolver::getTotalMemory() const {
+size_t KSpaceFirstOrderSolver::getTotalMemory() const
+{
 #ifdef __linux__
-  long pages = sysconf(_SC_PHYS_PAGES);
+  long pages     = sysconf(_SC_PHYS_PAGES);
   long page_size = sysconf(_SC_PAGE_SIZE);
   return pages * page_size >> 20;
 #endif
@@ -510,26 +565,28 @@ size_t KSpaceFirstOrderSolver::getTotalMemory() const {
   return size_t(status.ullTotalPhys) >> 20;
 #endif
 } // end of getTotalMemory
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Get release code version.
  */
-const string KSpaceFirstOrderSolver::getCodeName() const {
+const string KSpaceFirstOrderSolver::getCodeName() const
+{
   return string(kOutFmtKWaveVersion);
 } // end of getCodeName
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Print full code name and the license.
  */
-void KSpaceFirstOrderSolver::printFullCodeNameAndLicense() const {
-  Logger::log(Logger::LogLevel::kBasic,
-              kOutFmtBuildNoDataTime,
-              10, 11, __DATE__,
-              8, 8, __TIME__);
+void KSpaceFirstOrderSolver::printFullCodeNameAndLicense() const
+{
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtBuildNoDataTime, 10, 11, __DATE__, 8, 8, __TIME__);
 
-  if (mParameters.getGitHash() != "") {
+  if (mParameters.getGitHash() != "")
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtVersionGitHash, mParameters.getGitHash().c_str());
   }
   Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
@@ -544,11 +601,14 @@ void KSpaceFirstOrderSolver::printFullCodeNameAndLicense() const {
 #endif
 
 // Compiler detections
-#if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+#if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER))
   Logger::log(Logger::LogLevel::kBasic, kOutFmtGnuCompiler, __VERSION__);
 #endif
 #ifdef __INTEL_COMPILER
   Logger::log(Logger::LogLevel::kBasic, kOutFmtIntelCompiler, __INTEL_COMPILER);
+#endif
+#ifdef __INTEL_LLVM_COMPILER
+  Logger::log(Logger::LogLevel::kBasic, kOutFmtIntelCompiler, __INTEL_LLVM_COMPILER);
 #endif
 #ifdef _MSC_VER
   Logger::log(Logger::LogLevel::kBasic, kOutFmtVisualStudioCompiler, _MSC_VER);
@@ -571,29 +631,32 @@ void KSpaceFirstOrderSolver::printFullCodeNameAndLicense() const {
 
   Logger::log(Logger::LogLevel::kBasic, kOutFmtLicense);
 } // end of printFullCodeNameAndLicense
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Set processor affinity.
  */
-void KSpaceFirstOrderSolver::setProcessorAffinity() {
+void KSpaceFirstOrderSolver::setProcessorAffinity()
+{
 // Linux Build
 #ifdef __linux__
-//GNU compiler
-#if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+  // GNU compiler
+  #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
   setenv("OMP_PROC_BIND", "TRUE", 1);
-#endif
+  #endif
 
-#ifdef __INTEL_COMPILER
+  #ifdef __INTEL_COMPILER
   setenv("KMP_AFFINITY", "none", 1);
-#endif
+  #endif
 #endif
 
 // Windows build is always compiled by the Intel Compiler
 #ifdef _WIN64
   _putenv_s("KMP_AFFINITY", "none");
 #endif
-} //end of setProcessorAffinity
+} // end of setProcessorAffinity
+
 //----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -603,8 +666,8 @@ void KSpaceFirstOrderSolver::setProcessorAffinity() {
 /**
  * Initialize FFTW plans.
  */
-void KSpaceFirstOrderSolver::initializeFftwPlans() {
-
+void KSpaceFirstOrderSolver::initializeFftwPlans()
+{
 // initialization of FFTW library
 #ifdef _OPENMP
   fftwf_init_threads();
@@ -613,36 +676,43 @@ void KSpaceFirstOrderSolver::initializeFftwPlans() {
 
 #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
   // The simulation does not use checkpointing or this is the first turn
-  bool recoverFromPrevState = (mParameters.isCheckpointEnabled() && Hdf5File::canAccess(mParameters.getCheckpointFileName()));
+  bool recoverFromPrevState =
+    (mParameters.isCheckpointEnabled() && Hdf5File::canAccess(mParameters.getCheckpointFileName()));
 
   // import FFTW wisdom if it is here
-  if (recoverFromPrevState) {
-
+  if (recoverFromPrevState)
+  {
     Logger::log(Logger::LogLevel::kFull, kOutFmtLoadingFftwWisdom);
     Logger::flush(Logger::LogLevel::kFull);
     // import FFTW wisdom
-    try {
+    try
+    {
       // try to find the wisdom in the file that has the same name as the checkpoint file (different extension)
       FftwComplexMatrix::importWisdom();
       Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
-    } catch (const std::runtime_error& e) {
+    }
+    catch (const std::runtime_error& e)
+    {
       Logger::log(Logger::LogLevel::kFull, kOutFmtFailed);
     }
   }
 #endif
 
-  if (!mParameters.getOnlyPostProcessingFlag()) {
+  if (!mParameters.getOnlyPostProcessingFlag())
+  {
     // create real to complex plans
     getTempFftwX().createR2CFftPlanND(getP());
     getTempFftwY().createR2CFftPlanND(getP());
-    if (mParameters.isSimulation3D()) {
+    if (mParameters.isSimulation3D())
+    {
       getTempFftwZ().createR2CFftPlanND(getP());
     }
 
     // create real to complex plans
     getTempFftwX().createC2RFftPlanND(getP());
     getTempFftwY().createC2RFftPlanND(getP());
-    if (mParameters.isSimulation3D()) {
+    if (mParameters.isSimulation3D())
+    {
       getTempFftwZ().createC2RFftPlanND(getP());
     }
   }
@@ -650,7 +720,10 @@ void KSpaceFirstOrderSolver::initializeFftwPlans() {
   // if necessary, create 1D shift plans.
   // in this case, the matrix has a bit bigger dimensions to be able to store
   // shifted matrices.
-  if (mParameters.getStoreVelocityNonStaggeredRawFlag() || mParameters.getStoreVelocityNonStaggeredCFlag() || mParameters.getStoreIntensityAvgFlag() || mParameters.getStoreQTermFlag() || mParameters.getStoreIntensityAvgCFlag() || mParameters.getStoreQTermCFlag()) {
+  if (mParameters.getStoreVelocityNonStaggeredRawFlag() || mParameters.getStoreVelocityNonStaggeredCFlag() ||
+      mParameters.getStoreIntensityAvgFlag() || mParameters.getStoreQTermFlag() ||
+      mParameters.getStoreIntensityAvgCFlag() || mParameters.getStoreQTermCFlag())
+  {
     // X shifts
     getTempFftwShift().createR2CFftPlan1DX(getUxShifted());
     getTempFftwShift().createC2RFftPlan1DX(getUxShifted());
@@ -660,65 +733,86 @@ void KSpaceFirstOrderSolver::initializeFftwPlans() {
     getTempFftwShift().createC2RFftPlan1DY(getUyShifted());
 
     // Z shifts
-    if (mParameters.isSimulation3D()) {
+    if (mParameters.isSimulation3D())
+    {
       getTempFftwShift().createR2CFftPlan1DZ(getUzShifted());
       getTempFftwShift().createC2RFftPlan1DZ(getUzShifted());
     }
   } // end u_non_staggered
 } // end of initializeFftwPlans
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute pre-processing phase.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::preProcessing() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::preProcessing()
+{
   // get the correct sensor mask and recompute indices
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
     getSensorMaskIndex().recomputeIndicesToCPP();
   }
 
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
     getSensorMaskCorners().recomputeIndicesToCPP();
   }
 
-  if (!mParameters.getOnlyPostProcessingFlag()) {
-    if ((mParameters.getTransducerSourceFlag() != 0) || (mParameters.getVelocityXSourceFlag() != 0) || (mParameters.getVelocityYSourceFlag() != 0) || (mParameters.getVelocityZSourceFlag() != 0)) {
+  if (!mParameters.getOnlyPostProcessingFlag())
+  {
+    if ((mParameters.getTransducerSourceFlag() != 0) || (mParameters.getVelocityXSourceFlag() != 0) ||
+        (mParameters.getVelocityYSourceFlag() != 0) || (mParameters.getVelocityZSourceFlag() != 0))
+    {
       getVelocitySourceIndex().recomputeIndicesToCPP();
     }
 
-    if (mParameters.getTransducerSourceFlag() != 0) {
+    if (mParameters.getTransducerSourceFlag() != 0)
+    {
       getDelayMask().recomputeIndicesToCPP();
     }
 
-    if (mParameters.getPressureSourceFlag() != 0) {
+    if (mParameters.getPressureSourceFlag() != 0)
+    {
       getPressureSourceIndex().recomputeIndicesToCPP();
     }
 
     // compute dt / rho0_sg...
-    if (!mParameters.getRho0ScalarFlag()) { // non-uniform grid cannot be pre-calculated :-(
+    if (!mParameters.getRho0ScalarFlag())
+    { // non-uniform grid cannot be pre-calculated :-(
       // rho is matrix
-      if (mParameters.getNonUniformGridFlag()) {
+      if (mParameters.getNonUniformGridFlag())
+      {
         generateInitialDenisty<simulationDimension>();
-      } else {
+      }
+      else
+      {
         getDtRho0Sgx().scalarDividedBy(mParameters.getDt());
         getDtRho0Sgy().scalarDividedBy(mParameters.getDt());
-        if (simulationDimension == SD::k3D) {
+        if (simulationDimension == SD::k3D)
+        {
           getDtRho0Sgz().scalarDividedBy(mParameters.getDt());
         }
       }
     }
 
     // generate different matrices
-    if (mParameters.getAbsorbingFlag() != 0) {
+    if (mParameters.getAbsorbingFlag() != 0)
+    {
       generateKappaAndNablas();
       generateTauAndEta();
-    } else {
+    }
+    else
+    {
       generateKappa();
     }
 
     // Generate sourceKappa
-    if (((mParameters.getVelocitySourceMode() == Parameters::SourceMode::kAdditive) || (mParameters.getPressureSourceMode() == Parameters::SourceMode::kAdditive)) && (mParameters.getPressureSourceFlag() || mParameters.getVelocityXSourceFlag() || mParameters.getVelocityYSourceFlag() || mParameters.getVelocityZSourceFlag())) {
+    if (((mParameters.getVelocitySourceMode() == Parameters::SourceMode::kAdditive) ||
+          (mParameters.getPressureSourceMode() == Parameters::SourceMode::kAdditive)) &&
+        (mParameters.getPressureSourceFlag() || mParameters.getVelocityXSourceFlag() ||
+          mParameters.getVelocityYSourceFlag() || mParameters.getVelocityZSourceFlag()))
+    {
       generateSourceKappa();
     }
 
@@ -726,16 +820,18 @@ void KSpaceFirstOrderSolver::preProcessing() {
     computeC2();
   }
 } // end of preProcessing
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute the main time loop of KSpaceFirstOrder solver.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeMainLoop() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computeMainLoop()
+{
   mActPercent = 0.0f;
   // set ActPercent to correspond the time index after recovery
-  if (mParameters.getTimeIndex() > 0) {
+  if (mParameters.getTimeIndex() > 0)
+  {
     mActPercent = float(100.0f * mParameters.getTimeIndex()) / mParameters.getNt();
   }
 
@@ -745,7 +841,8 @@ void KSpaceFirstOrderSolver::computeMainLoop() {
   mIterationTime.start();
 
   // execute main loop
-  while ((mParameters.getTimeIndex() < mParameters.getNt()) && (!mParameters.isTimeToCheckpoint(mTotalTime))) {
+  while ((mParameters.getTimeIndex() < mParameters.getNt()) && (!mParameters.isTimeToCheckpoint(mTotalTime)))
+  {
     const size_t timeIndex = mParameters.getTimeIndex();
     // compute velocity
     computeVelocity<simulationDimension>();
@@ -753,7 +850,8 @@ void KSpaceFirstOrderSolver::computeMainLoop() {
     addVelocitySource();
 
     // add in the transducer source term (t = t1) to ux
-    if (mParameters.getTransducerSourceFlag() > timeIndex) {
+    if (mParameters.getTransducerSourceFlag() > timeIndex)
+    {
       // transducer source is added only to the x component of the particle velocity
       addTransducerSource();
     }
@@ -762,23 +860,30 @@ void KSpaceFirstOrderSolver::computeMainLoop() {
     computeVelocityGradient<simulationDimension>();
 
     // compute density
-    if (mParameters.getNonLinearFlag()) {
+    if (mParameters.getNonLinearFlag())
+    {
       computeDensityNonliner<simulationDimension>();
-    } else {
+    }
+    else
+    {
       computeDensityLinear<simulationDimension>();
     }
 
     // add in the source pressure term
     addPressureSource<simulationDimension>();
 
-    if (mParameters.getNonLinearFlag()) {
+    if (mParameters.getNonLinearFlag())
+    {
       computePressureNonlinear<simulationDimension>();
-    } else {
+    }
+    else
+    {
       computePressureLinear<simulationDimension>();
     }
 
     // calculate initial pressure
-    if ((timeIndex == 0) && (mParameters.getInitialPressureSourceFlag() == 1)) {
+    if ((timeIndex == 0) && (mParameters.getInitialPressureSourceFlag() == 1))
+    {
       addInitialPressureSource<simulationDimension>();
     }
 
@@ -787,43 +892,38 @@ void KSpaceFirstOrderSolver::computeMainLoop() {
     mParameters.incrementTimeIndex();
   } // time loop
 } // end of computeMainLoop
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Post processing the quantities, closing the output streams and storing the sensor mask.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::postProcessing() {
-  if (mParameters.getStorePressureFinalAllFlag()) {
-    getP().writeData(mParameters.getOutputFile(),
-                     kPressureFinalName,
-                     mParameters.getCompressionLevel());
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::postProcessing()
+{
+  if (mParameters.getStorePressureFinalAllFlag())
+  {
+    getP().writeData(mParameters.getOutputFile(), kPressureFinalName, mParameters.getCompressionLevel());
   } // p_final
 
-  if (mParameters.getStoreVelocityFinalAllFlag()) {
-    getUxSgx().writeData(mParameters.getOutputFile(),
-                         kUxFinalName,
-                         mParameters.getCompressionLevel());
-    getUySgy().writeData(mParameters.getOutputFile(),
-                         kUyFinalName,
-                         mParameters.getCompressionLevel());
-    if (mParameters.isSimulation3D()) {
-      getUzSgz().writeData(mParameters.getOutputFile(),
-                           kUzFinalName,
-                           mParameters.getCompressionLevel());
+  if (mParameters.getStoreVelocityFinalAllFlag())
+  {
+    getUxSgx().writeData(mParameters.getOutputFile(), kUxFinalName, mParameters.getCompressionLevel());
+    getUySgy().writeData(mParameters.getOutputFile(), kUyFinalName, mParameters.getCompressionLevel());
+    if (mParameters.isSimulation3D())
+    {
+      getUzSgz().writeData(mParameters.getOutputFile(), kUzFinalName, mParameters.getCompressionLevel());
     }
   } // u_final
 
-  if (mParameters.getStoreIntensityAvgFlag() ||
-      mParameters.getStoreIntensityAvgCFlag() ||
-      mParameters.getStoreQTermFlag() ||
-      mParameters.getStoreQTermCFlag()) {
+  if (mParameters.getStoreIntensityAvgFlag() || mParameters.getStoreIntensityAvgCFlag() ||
+      mParameters.getStoreQTermFlag() || mParameters.getStoreQTermCFlag())
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
   }
 
   // Compute average intensity from stored p and u without compression
-  if (mParameters.getStoreQTermFlag() ||
-      mParameters.getStoreIntensityAvgFlag()) {
+  if (mParameters.getStoreQTermFlag() || mParameters.getStoreIntensityAvgFlag())
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtComputingAverageIntensity);
     computeAverageIntensities<simulationDimension>();
     Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
@@ -831,8 +931,8 @@ void KSpaceFirstOrderSolver::postProcessing() {
 
   // Compute average intensity from stored p and u compression coefficients
   if (mParameters.getOnlyPostProcessingFlag() &&
-      (mParameters.getStoreQTermCFlag() ||
-       mParameters.getStoreIntensityAvgCFlag())) {
+      (mParameters.getStoreQTermCFlag() || mParameters.getStoreIntensityAvgCFlag()))
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtComputingAverageIntensityC);
     computeAverageIntensitiesC<simulationDimension>();
     Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
@@ -842,29 +942,30 @@ void KSpaceFirstOrderSolver::postProcessing() {
   mOutputStreamContainer.postProcessStreams();
 
   // Compute and store Q term (volume rate of heat deposition) from average intensity
-  if (mParameters.getStoreQTermFlag()) {
+  if (mParameters.getStoreQTermFlag())
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtComputingQTerm);
     computeQTerm<simulationDimension>(OutputStreamContainer::OutputStreamIdx::kIntensityXAvg,
-                                      OutputStreamContainer::OutputStreamIdx::kIntensityYAvg,
-                                      OutputStreamContainer::OutputStreamIdx::kIntensityZAvg,
-                                      OutputStreamContainer::OutputStreamIdx::kQTerm);
+      OutputStreamContainer::OutputStreamIdx::kIntensityYAvg,
+      OutputStreamContainer::OutputStreamIdx::kIntensityZAvg,
+      OutputStreamContainer::OutputStreamIdx::kQTerm);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
   }
 
   // Compute and store Q term (volume rate of heat deposition) from average intensity computed using compression
-  if (mParameters.getStoreQTermCFlag()) {
+  if (mParameters.getStoreQTermCFlag())
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtComputingQTermC);
     computeQTerm<simulationDimension>(OutputStreamContainer::OutputStreamIdx::kIntensityXAvgC,
-                                      OutputStreamContainer::OutputStreamIdx::kIntensityYAvgC,
-                                      OutputStreamContainer::OutputStreamIdx::kIntensityZAvgC,
-                                      OutputStreamContainer::OutputStreamIdx::kQTermC);
+      OutputStreamContainer::OutputStreamIdx::kIntensityYAvgC,
+      OutputStreamContainer::OutputStreamIdx::kIntensityZAvgC,
+      OutputStreamContainer::OutputStreamIdx::kQTermC);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtDone);
   }
 
-  if (mParameters.getStoreIntensityAvgFlag() ||
-      mParameters.getStoreIntensityAvgCFlag() ||
-      mParameters.getStoreQTermFlag() ||
-      mParameters.getStoreQTermCFlag()) {
+  if (mParameters.getStoreIntensityAvgFlag() || mParameters.getStoreIntensityAvgCFlag() ||
+      mParameters.getStoreQTermFlag() || mParameters.getStoreQTermCFlag())
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
   }
 
@@ -875,47 +976,62 @@ void KSpaceFirstOrderSolver::postProcessing() {
   mOutputStreamContainer.closeStreams();
 
   // store sensor mask if wanted
-  if (mParameters.getCopySensorMaskFlag()) {
-    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex && !mParameters.getOutputFile().datasetExists(mParameters.getOutputFile().getRootGroup(), kSensorMaskIndexName)) {
+  if (mParameters.getCopySensorMaskFlag())
+  {
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex &&
+        !mParameters.getOutputFile().datasetExists(mParameters.getOutputFile().getRootGroup(), kSensorMaskIndexName))
+    {
       getSensorMaskIndex().recomputeIndicesToMatlab();
-      getSensorMaskIndex().writeData(mParameters.getOutputFile(), kSensorMaskIndexName,
-                                     mParameters.getCompressionLevel());
+      getSensorMaskIndex().writeData(
+        mParameters.getOutputFile(), kSensorMaskIndexName, mParameters.getCompressionLevel());
     }
-    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners && !mParameters.getOutputFile().datasetExists(mParameters.getOutputFile().getRootGroup(), kSensorMaskCornersName)) {
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners &&
+        !mParameters.getOutputFile().datasetExists(mParameters.getOutputFile().getRootGroup(), kSensorMaskCornersName))
+    {
       getSensorMaskCorners().recomputeIndicesToMatlab();
-      getSensorMaskCorners().writeData(mParameters.getOutputFile(), kSensorMaskCornersName,
-                                       mParameters.getCompressionLevel());
+      getSensorMaskCorners().writeData(
+        mParameters.getOutputFile(), kSensorMaskCornersName, mParameters.getCompressionLevel());
     }
   }
 } // end of postProcessing
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Store sensor data.
  */
-void KSpaceFirstOrderSolver::storeSensorData() {
+void KSpaceFirstOrderSolver::storeSensorData()
+{
   // Unless the time for sampling has come, exit.
-  if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex()) {
-    if (mParameters.getStoreVelocityNonStaggeredRawFlag() || mParameters.getStoreVelocityNonStaggeredCFlag() || mParameters.getStoreIntensityAvgFlag() || mParameters.getStoreQTermFlag() || mParameters.getStoreIntensityAvgCFlag() || mParameters.getStoreQTermCFlag()) {
-      if (mParameters.isSimulation3D()) {
+  if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex())
+  {
+    if (mParameters.getStoreVelocityNonStaggeredRawFlag() || mParameters.getStoreVelocityNonStaggeredCFlag() ||
+        mParameters.getStoreIntensityAvgFlag() || mParameters.getStoreQTermFlag() ||
+        mParameters.getStoreIntensityAvgCFlag() || mParameters.getStoreQTermCFlag())
+    {
+      if (mParameters.isSimulation3D())
+      {
         computeShiftedVelocity<SD::k3D>();
-      } else {
+      }
+      else
+      {
         computeShiftedVelocity<SD::k2D>();
       }
     }
     mOutputStreamContainer.sampleStreams();
   }
 } // end of storeSensorData
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Write statistics and the header into the output file.
  */
-void KSpaceFirstOrderSolver::writeOutputDataInfo() {
+void KSpaceFirstOrderSolver::writeOutputDataInfo()
+{
   // write timeIndex into the output file
-  mParameters.getOutputFile().writeScalarValue(mParameters.getOutputFile().getRootGroup(),
-                                               kTimeIndexName,
-                                               mParameters.getTimeIndex());
+  mParameters.getOutputFile().writeScalarValue(
+    mParameters.getOutputFile().getRootGroup(), kTimeIndexName, mParameters.getTimeIndex());
 
   // Write scalars
   mParameters.saveScalarsToOutputFile();
@@ -934,48 +1050,70 @@ void KSpaceFirstOrderSolver::writeOutputDataInfo() {
   // Stop total timer here
   mTotalTime.stop();
   fileHeader.setExecutionTimes(getCumulatedTotalTime(),
-                               getCumulatedDataLoadTime(),
-                               getCumulatedPreProcessingTime(),
-                               getCumulatedSimulationTime(),
-                               getCumulatedPostProcessingTime());
+    getCumulatedDataLoadTime(),
+    getCumulatedPreProcessingTime(),
+    getCumulatedSimulationTime(),
+    getCumulatedPostProcessingTime());
 
   fileHeader.setNumberOfCores();
   fileHeader.writeHeaderToOutputFile(mParameters.getOutputFile());
 
   // Write some other info
   hid_t rootGroup = mParameters.getOutputFile().getRootGroup();
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mStoreQTermFlag", std::to_string(mParameters.getStoreQTermFlag()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mStoreQTermCFlag", std::to_string(mParameters.getStoreQTermCFlag()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mStoreIntensityAvgFlag", std::to_string(mParameters.getStoreIntensityAvgFlag()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mStoreIntensityAvgCFlag", std::to_string(mParameters.getStoreIntensityAvgCFlag()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mNoCompressionOverlapFlag", std::to_string(mParameters.getNoCompressionOverlapFlag()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mPeriod", std::to_string((&CompressHelper::getInstance())->getPeriod()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mMOS", std::to_string((&CompressHelper::getInstance())->getMos()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mHarmonics", std::to_string((&CompressHelper::getInstance())->getHarmonics()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mBlockSizeDefault", std::to_string(mBlockSizeDefault));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mBlockSizeDefaultC", std::to_string(mBlockSizeDefaultC));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "mSamplingStartTimeStep", std::to_string(mParameters.getSamplingStartTimeIndex()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "output_file_size", std::to_string(mParameters.getOutputFile().getFileSize()));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "simulation_peak_memory_in_use", Logger::formatMessage("%ld MB", mSimulationPeakMemoryConsumption));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "average_sampling_iteration_time", Logger::formatMessage("%8.2fs", mAverageSamplingIterationTime));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "sampling_time", Logger::formatMessage("%8.2fs", mSamplingTime));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "average_not_sampling_iteration_time", Logger::formatMessage("%8.2fs", mAverageNotSamplingIterationTime));
-  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "not_sampling_time", Logger::formatMessage("%8.2fs", mNotSamplingTime));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mStoreQTermFlag", std::to_string(mParameters.getStoreQTermFlag()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mStoreQTermCFlag", std::to_string(mParameters.getStoreQTermCFlag()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mStoreIntensityAvgFlag", std::to_string(mParameters.getStoreIntensityAvgFlag()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mStoreIntensityAvgCFlag", std::to_string(mParameters.getStoreIntensityAvgCFlag()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mNoCompressionOverlapFlag", std::to_string(mParameters.getNoCompressionOverlapFlag()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mPeriod", std::to_string((&CompressHelper::getInstance())->getPeriod()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mMOS", std::to_string((&CompressHelper::getInstance())->getMos()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mHarmonics", std::to_string((&CompressHelper::getInstance())->getHarmonics()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mBlockSizeDefault", std::to_string(mBlockSizeDefault));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mBlockSizeDefaultC", std::to_string(mBlockSizeDefaultC));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "mSamplingStartTimeStep", std::to_string(mParameters.getSamplingStartTimeIndex()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "output_file_size", std::to_string(mParameters.getOutputFile().getFileSize()));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "simulation_peak_memory_in_use", Logger::formatMessage("%ld MB", mSimulationPeakMemoryConsumption));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "average_sampling_iteration_time", Logger::formatMessage("%8.2fs", mAverageSamplingIterationTime));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "sampling_time", Logger::formatMessage("%8.2fs", mSamplingTime));
+  mParameters.getOutputFile().writeStringAttribute(rootGroup, "/", "average_non-sampling_iteration_time",
+    Logger::formatMessage("%8.2fs", mAverageNotSamplingIterationTime));
+  mParameters.getOutputFile().writeStringAttribute(
+    rootGroup, "/", "non-sampling_time", Logger::formatMessage("%8.2fs", mNotSamplingTime));
 } // end of writeOutputDataInfo
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Save checkpoint data into the checkpoint file, flush aggregated outputs into the output file.
  */
-void KSpaceFirstOrderSolver::saveCheckpointData() {
+void KSpaceFirstOrderSolver::saveCheckpointData()
+{
 #if (defined(__GNUC__) || defined(__GNUG__)) && !(defined(__clang__) || defined(__INTEL_COMPILER))
   Logger::log(Logger::LogLevel::kFull, kOutFmtStoringFftwWisdom);
   Logger::flush(Logger::LogLevel::kFull);
   // export FFTW wisdom
-  try {
+  try
+  {
     FftwComplexMatrix::exportWisdom();
     Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
-  } catch (const std::runtime_error& e) {
+  }
+  catch (const std::runtime_error& e)
+  {
     Logger::log(Logger::LogLevel::kFull, kOutFmtFailed);
   }
 #endif
@@ -1016,7 +1154,8 @@ void KSpaceFirstOrderSolver::saveCheckpointData() {
   Logger::log(Logger::LogLevel::kFull, kOutFmtDone);
 
   // checkpoint output streams only if necessary (t_index > start_index) - here we're at  step + 1
-  if (mParameters.getTimeIndex() > mParameters.getSamplingStartTimeIndex()) {
+  if (mParameters.getTimeIndex() > mParameters.getSamplingStartTimeIndex())
+  {
     Logger::log(Logger::LogLevel::kFull, kOutFmtStoringSensorData);
     Logger::flush(Logger::LogLevel::kFull);
     mOutputStreamContainer.checkpointStreams();
@@ -1026,66 +1165,80 @@ void KSpaceFirstOrderSolver::saveCheckpointData() {
   // Close the checkpoint file
   checkpointFile.close();
 } // end of saveCheckpointData
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute average intensities from stored p and u without compression.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeAverageIntensities() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computeAverageIntensities()
+{
   mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvg].zeroCurrentStoreBuffer();
-  float* intensityXAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvg].getCurrentStoreBuffer();
+  float* intensityXAvgData =
+    mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvg].getCurrentStoreBuffer();
   mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvg].zeroCurrentStoreBuffer();
-  float* intensityYAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvg].getCurrentStoreBuffer();
+  float* intensityYAvgData =
+    mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvg].getCurrentStoreBuffer();
   if (simulationDimension == SD::k3D)
     mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvg].zeroCurrentStoreBuffer();
-  float* intensityZAvgData = (simulationDimension == SD::k3D) ? mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvg].getCurrentStoreBuffer() : nullptr;
+  float* intensityZAvgData =
+    (simulationDimension == SD::k3D)
+      ? mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvg].getCurrentStoreBuffer()
+      : nullptr;
 
   size_t steps = 0;
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
     steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName).ny;
-  } else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
-    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + "/1").nt;
+  }
+  else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
+    steps = mParameters.getOutputFile()
+              .getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + "/1")
+              .nt;
   }
 
   // Compute shifts
-  const float pi2 = static_cast<float>(M_PI) * 2.0f;
+  const float pi2           = static_cast<float>(M_PI) * 2.0f;
   const size_t stepsComplex = steps / 2 + 1;
   FloatComplex* kx = reinterpret_cast<FloatComplex*>(_mm_malloc(stepsComplex * sizeof(FloatComplex), kDataAlignment));
   //#pragma omp simd - Intel exp bug
-  for (size_t i = 0; i < stepsComplex; i++) {
+  for (size_t i = 0; i < stepsComplex; i++)
+  {
     const ssize_t shift = ssize_t((i + (steps / 2)) % steps - (steps / 2));
-    kx[i] = exp(FloatComplex(0.0f, 1.0f) * (pi2 * 0.5f) * (float(shift) / float(steps)));
+    kx[i]               = exp(FloatComplex(0.0f, 1.0f) * (pi2 * 0.5f) * (float(shift) / float(steps)));
   }
 
   size_t numberOfDatasets = 1;
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
     numberOfDatasets = getSensorMaskCorners().getDimensionSizes().ny;
   }
 
-  hid_t datasetP = 0;
+  hid_t datasetP  = 0;
   hid_t datasetUx = 0;
   hid_t datasetUy = 0;
   hid_t datasetUz = 0;
 
-  size_t maxBlockSize = mParameters.getBlockSize();
+  size_t maxBlockSize     = mParameters.getBlockSize();
   DimensionSizes fullDims = mParameters.getFullDimensionSizes();
 
   // Compute max block size for dataset reading
-  if (maxBlockSize == 0) {
+  if (maxBlockSize == 0)
+  {
     size_t memory = getAvailableMemory() << 20;
-    //std::cout << std::endl;
-    //std::cout << "getMemoryUsage:        " << getMemoryUsage() << std::endl;
-    //std::cout << "getTotalMemory:        " << getTotalMemory() << std::endl;
-    //std::cout << "getCurrentMemoryUsage: " << getCurrentMemoryUsage() << std::endl;
-    //std::cout << "getPeakMemoryUsage:    " << getPeakMemoryUsage() << std::endl;
-    //std::cout << "getAvailableMemory:    " << getAvailableMemory() << std::endl;
-    // dataP, dataUx, dataUy, dataUz, fftwTimeShiftMatrix -> 5 matrices x 4 (size of float)
-    maxBlockSize = size_t(float(memory) / 20 * 0.98f);
+    // std::cout << std::endl;
+    // std::cout << "getMemoryUsage:        " << getMemoryUsage() << std::endl;
+    // std::cout << "getTotalMemory:        " << getTotalMemory() << std::endl;
+    // std::cout << "getCurrentMemoryUsage: " << getCurrentMemoryUsage() << std::endl;
+    // std::cout << "getPeakMemoryUsage:    " << getPeakMemoryUsage() << std::endl;
+    // std::cout << "getAvailableMemory:    " << getAvailableMemory() << std::endl;
+    //  dataP, dataUx, dataUy, dataUz, fftwTimeShiftMatrix -> 5 matrices x 4 (size of float)
+    maxBlockSize  = size_t(float(memory) / 20 * 0.98f);
   }
 
-  size_t sliceSize = fullDims.nx * fullDims.ny;
-  size_t fullSize = fullDims.nx * fullDims.ny * fullDims.nz;
+  size_t sliceSize  = fullDims.nx * fullDims.ny;
+  size_t fullSize   = fullDims.nx * fullDims.ny * fullDims.nz;
   mBlockSizeDefault = maxBlockSize / steps;
   // Minimal size is sliceSize
   mBlockSizeDefault = mBlockSizeDefault < sliceSize ? sliceSize : mBlockSizeDefault;
@@ -1096,55 +1249,75 @@ void KSpaceFirstOrderSolver::computeAverageIntensities() {
   // Temporary matrix for time shift
   FftwComplexMatrix* fftwTimeShiftMatrix = new FftwComplexMatrix(shiftDims);
 
-  //std::cout << "maxBlockSize:          " << maxBlockSize <<  std::endl;
-  //std::cout << "mBlockSizeDefault:     " << mBlockSizeDefault << std::endl;
-  //std::cout << std::endl;
+  // std::cout << "maxBlockSize:          " << maxBlockSize <<  std::endl;
+  // std::cout << "mBlockSizeDefault:     " << mBlockSizeDefault << std::endl;
+  // std::cout << std::endl;
 
   // For every dataset
   // TODO test with more cuboids
-  for (size_t indexOfDataset = 1; indexOfDataset <= numberOfDatasets; indexOfDataset++) {
+  for (size_t indexOfDataset = 1; indexOfDataset <= numberOfDatasets; indexOfDataset++)
+  {
     size_t datasetSize = 0;
     DimensionSizes datasetDimensionSizes;
     size_t cSliceSize = 0;
     // Block size for given dataset
-    size_t blockSize = fftwTimeShiftMatrix->getDimensionSizes().nx;
+    size_t blockSize  = fftwTimeShiftMatrix->getDimensionSizes().nx;
     DimensionSizes datasetBlockSizes;
 
     // Open datasets
-    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+    {
       datasetP = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName);
-      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName);
-      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName);
-      if (simulationDimension == SD::k3D) {
-        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName);
+      datasetUx =
+        mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName);
+      datasetUy =
+        mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName);
+      if (simulationDimension == SD::k3D)
+      {
+        datasetUz =
+          mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName);
       }
-      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName) / steps;
+      datasetSize =
+        mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName) / steps;
       // Maximum size is datasetSize
-      if (blockSize > datasetSize) {
+      if (blockSize > datasetSize)
+      {
         blockSize = datasetSize;
       }
       datasetBlockSizes = DimensionSizes(blockSize, steps, 1);
-    } else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
-      datasetP = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset));
-      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName + "/" + std::to_string(indexOfDataset));
-      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName + "/" + std::to_string(indexOfDataset));
-      if (simulationDimension == SD::k3D) {
-        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName + "/" + std::to_string(indexOfDataset));
+    }
+    else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+    {
+      datasetP = mParameters.getOutputFile().openDataset(
+        mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset));
+      datasetUx = mParameters.getOutputFile().openDataset(
+        mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName + "/" + std::to_string(indexOfDataset));
+      datasetUy = mParameters.getOutputFile().openDataset(
+        mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName + "/" + std::to_string(indexOfDataset));
+      if (simulationDimension == SD::k3D)
+      {
+        datasetUz = mParameters.getOutputFile().openDataset(
+          mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName + "/" + std::to_string(indexOfDataset));
       }
-      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset)) / steps;
-      datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset));
+      datasetSize = mParameters.getOutputFile().getDatasetSize(
+                      mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset)) /
+                    steps;
+      datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(
+        mParameters.getOutputFile().getRootGroup(), kPName + "/" + std::to_string(indexOfDataset));
       cSliceSize = datasetDimensionSizes.nx * datasetDimensionSizes.ny;
       // Maximum size is datasetSize
-      if (blockSize > datasetSize) {
+      if (blockSize > datasetSize)
+      {
         blockSize = datasetSize;
       }
-      size_t zCount = blockSize / cSliceSize;
-      blockSize = cSliceSize * zCount;
+      size_t zCount     = blockSize / cSliceSize;
+      blockSize         = cSliceSize * zCount;
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
-    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) >> 20);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing,
+      (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) >> 20);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
 
     RealMatrix dataP(DimensionSizes(blockSize, steps, 1));
@@ -1154,11 +1327,14 @@ void KSpaceFirstOrderSolver::computeAverageIntensities() {
     fftwTimeShiftMatrix->createR2CFftPlan1DY(dataP);
     fftwTimeShiftMatrix->createC2RFftPlan1DY(dataP);
 
-    for (size_t i = 0; i < datasetSize; i += blockSize) {
+    for (size_t i = 0; i < datasetSize; i += blockSize)
+    {
       // Read block by sensor mask type
-      if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
-        if (i + blockSize > datasetSize) {
-          blockSize = datasetSize - i;
+      if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+      {
+        if (i + blockSize > datasetSize)
+        {
+          blockSize         = datasetSize - i;
           datasetBlockSizes = DimensionSizes(blockSize, steps, 1);
           dataP.resize(DimensionSizes(blockSize, steps, 1));
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
@@ -1168,19 +1344,25 @@ void KSpaceFirstOrderSolver::computeAverageIntensities() {
           fftwTimeShiftMatrix->createC2RFftPlan1DY(dataP);
         }
 
-        mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(i, 0, 0), datasetBlockSizes, dataP.getData());
-        mParameters.getOutputFile().readHyperSlab(datasetUx, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUx.getData());
-        mParameters.getOutputFile().readHyperSlab(datasetUy, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUy.getData());
-        if (simulationDimension == SD::k3D) {
-          mParameters.getOutputFile().readHyperSlab(datasetUz, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUz.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetP, DimensionSizes(i, 0, 0), datasetBlockSizes, dataP.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetUx, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUx.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetUy, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUy.getData());
+        if (simulationDimension == SD::k3D)
+        {
+          mParameters.getOutputFile().readHyperSlab(
+            datasetUz, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUz.getData());
         }
-      } else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
-        if (i + blockSize > datasetSize) {
+      }
+      else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+      {
+        if (i + blockSize > datasetSize)
+        {
           blockSize = datasetSize - i;
-          datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx,
-                                             datasetDimensionSizes.ny,
-                                             blockSize / cSliceSize,
-                                             steps);
+          datasetBlockSizes =
+            DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, blockSize / cSliceSize, steps);
           dataP.resize(DimensionSizes(blockSize, steps, 1));
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
           dataUy.resize(DimensionSizes(blockSize, steps, 1));
@@ -1190,38 +1372,50 @@ void KSpaceFirstOrderSolver::computeAverageIntensities() {
         }
         size_t zOffset = i / cSliceSize;
 
-        mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataP.getData());
-        mParameters.getOutputFile().readHyperSlab(datasetUx, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUx.getData());
-        mParameters.getOutputFile().readHyperSlab(datasetUy, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUy.getData());
-        if (simulationDimension == SD::k3D) {
-          mParameters.getOutputFile().readHyperSlab(datasetUz, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUz.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetP, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataP.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetUx, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUx.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetUy, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUy.getData());
+        if (simulationDimension == SD::k3D)
+        {
+          mParameters.getOutputFile().readHyperSlab(
+            datasetUz, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUz.getData());
         }
       }
 
       // Phase shifts using FFT
-      const float divider = 1.0f / static_cast<float>(steps);
+      const float divider            = 1.0f / static_cast<float>(steps);
       FloatComplex* tempFftTimeShift = fftwTimeShiftMatrix->getComplexData();
       fftwTimeShiftMatrix->computeR2CFft1DY(dataUx);
 #pragma omp simd
-      for (size_t step = 0; step < stepsComplex; step++) {
-        for (size_t x = 0; x < blockSize; x++) {
+      for (size_t step = 0; step < stepsComplex; step++)
+      {
+        for (size_t x = 0; x < blockSize; x++)
+        {
           tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
         }
       }
       fftwTimeShiftMatrix->computeC2RFft1DY(dataUx);
       fftwTimeShiftMatrix->computeR2CFft1DY(dataUy);
 #pragma omp simd
-      for (size_t step = 0; step < stepsComplex; step++) {
-        for (size_t x = 0; x < blockSize; x++) {
+      for (size_t step = 0; step < stepsComplex; step++)
+      {
+        for (size_t x = 0; x < blockSize; x++)
+        {
           tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
         }
       }
       fftwTimeShiftMatrix->computeC2RFft1DY(dataUy);
-      if (simulationDimension == SD::k3D) {
+      if (simulationDimension == SD::k3D)
+      {
         fftwTimeShiftMatrix->computeR2CFft1DY(dataUz);
 #pragma omp simd
-        for (size_t step = 0; step < stepsComplex; step++) {
-          for (size_t x = 0; x < blockSize; x++) {
+        for (size_t step = 0; step < stepsComplex; step++)
+        {
+          for (size_t x = 0; x < blockSize; x++)
+          {
             tempFftTimeShift[step * blockSize + x] *= divider * kx[step];
           }
         }
@@ -1229,17 +1423,22 @@ void KSpaceFirstOrderSolver::computeAverageIntensities() {
       }
 
       // Compute average of intensity
-      for (size_t step = 0; step < steps; step++) {
-        for (size_t x = 0; x < blockSize; x++) {
+      for (size_t step = 0; step < steps; step++)
+      {
+        for (size_t x = 0; x < blockSize; x++)
+        {
           intensityXAvgData[i + x] += dataUx[step * blockSize + x] * dataP[step * blockSize + x];
           intensityYAvgData[i + x] += dataUy[step * blockSize + x] * dataP[step * blockSize + x];
-          if (simulationDimension == SD::k3D) {
+          if (simulationDimension == SD::k3D)
+          {
             intensityZAvgData[i + x] += dataUz[step * blockSize + x] * dataP[step * blockSize + x];
           }
-          if (step == steps - 1) {
+          if (step == steps - 1)
+          {
             intensityXAvgData[i + x] /= steps;
             intensityYAvgData[i + x] /= steps;
-            if (simulationDimension == SD::k3D) {
+            if (simulationDimension == SD::k3D)
+            {
               intensityZAvgData[i + x] /= steps;
             }
           }
@@ -1250,7 +1449,8 @@ void KSpaceFirstOrderSolver::computeAverageIntensities() {
     mParameters.getOutputFile().closeDataset(datasetP);
     mParameters.getOutputFile().closeDataset(datasetUx);
     mParameters.getOutputFile().closeDataset(datasetUy);
-    if (simulationDimension == SD::k3D) {
+    if (simulationDimension == SD::k3D)
+    {
       mParameters.getOutputFile().closeDataset(datasetUz);
     }
   }
@@ -1258,6 +1458,7 @@ void KSpaceFirstOrderSolver::computeAverageIntensities() {
   delete fftwTimeShiftMatrix;
 
 } // end of computeAverageIntensities
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -1265,40 +1466,54 @@ void KSpaceFirstOrderSolver::computeAverageIntensities() {
  *
  * NOTE does not work with 40-bit complex floats
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeAverageIntensitiesC() {
-  float* intensityXAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvgC].getCurrentStoreBuffer();
-  float* intensityYAvgData = mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvgC].getCurrentStoreBuffer();
-  float* intensityZAvgData = (simulationDimension == SD::k3D) ? mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvgC].getCurrentStoreBuffer() : nullptr;
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computeAverageIntensitiesC()
+{
+  float* intensityXAvgData =
+    mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityXAvgC].getCurrentStoreBuffer();
+  float* intensityYAvgData =
+    mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityYAvgC].getCurrentStoreBuffer();
+  float* intensityZAvgData =
+    (simulationDimension == SD::k3D)
+      ? mOutputStreamContainer[OutputStreamContainer::OutputStreamIdx::kIntensityZAvgC].getCurrentStoreBuffer()
+      : nullptr;
   size_t steps = 1;
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
-    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix).ny;
-  } else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
-    steps = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/1").nt;
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
+    steps = mParameters.getOutputFile()
+              .getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix)
+              .ny;
+  }
+  else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
+    steps = mParameters.getOutputFile()
+              .getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/1")
+              .nt;
   }
 
   size_t numberOfDatasets = 1;
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
     numberOfDatasets = getSensorMaskCorners().getDimensionSizes().ny;
   }
 
-  hid_t datasetP = 0;
+  hid_t datasetP  = 0;
   hid_t datasetUx = 0;
   hid_t datasetUy = 0;
   hid_t datasetUz = 0;
 
-  size_t maxBlockSize = mParameters.getBlockSize();
+  size_t maxBlockSize     = mParameters.getBlockSize();
   DimensionSizes fullDims = mParameters.getFullDimensionSizes();
   fullDims.nx *= CompressHelper::getInstance().getHarmonics() * 2; // TODO size of complex (40-bit complex floats)
 
   // Compute max block size for dataset reading
-  if (maxBlockSize == 0) {
+  if (maxBlockSize == 0)
+  {
     size_t memory = getAvailableMemory() << 20;
     // dataP, dataUx, dataUy, dataUz, fftwTimeShiftMatrix -> 5 matrices x 4 (size of float)
-    maxBlockSize = size_t(float(memory) / 20 * 0.98f);
+    maxBlockSize  = size_t(float(memory) / 20 * 0.98f);
   }
-  size_t sliceSize = fullDims.nx * fullDims.ny;
-  size_t fullSize = fullDims.nx * fullDims.ny * fullDims.nz;
+  size_t sliceSize   = fullDims.nx * fullDims.ny;
+  size_t fullSize    = fullDims.nx * fullDims.ny * fullDims.nz;
   mBlockSizeDefaultC = maxBlockSize / steps;
   // Minimal size is sliceSize
   mBlockSizeDefaultC = mBlockSizeDefaultC < sliceSize ? sliceSize : mBlockSizeDefaultC;
@@ -1308,49 +1523,71 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC() {
 
   // For every dataset
   // TODO test with more cuboids
-  for (size_t indexOfDataset = 1; indexOfDataset <= numberOfDatasets; indexOfDataset++) {
+  for (size_t indexOfDataset = 1; indexOfDataset <= numberOfDatasets; indexOfDataset++)
+  {
     size_t datasetSize = 0;
     DimensionSizes datasetDimensionSizes;
     size_t cSliceSize = 0;
     // Block size for given dataset
-    size_t blockSize = mBlockSizeDefaultC / steps;
+    size_t blockSize  = mBlockSizeDefaultC / steps;
     DimensionSizes datasetBlockSizes;
 
     // Open datasets
-    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
-      datasetP = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix);
-      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName + kCompressSuffix);
-      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName + kCompressSuffix);
-      if (simulationDimension == SD::k3D) {
-        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName + kCompressSuffix);
+    if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+    {
+      datasetP =
+        mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix);
+      datasetUx = mParameters.getOutputFile().openDataset(
+        mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName + kCompressSuffix);
+      datasetUy = mParameters.getOutputFile().openDataset(
+        mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName + kCompressSuffix);
+      if (simulationDimension == SD::k3D)
+      {
+        datasetUz = mParameters.getOutputFile().openDataset(
+          mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName + kCompressSuffix);
       }
-      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix) / steps;
+      datasetSize = mParameters.getOutputFile().getDatasetSize(
+                      mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix) /
+                    steps;
       // Maximum size is datasetSize
-      if (blockSize > datasetSize) {
+      if (blockSize > datasetSize)
+      {
         blockSize = datasetSize;
       }
       datasetBlockSizes = DimensionSizes(blockSize, steps, 1);
-    } else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
-      datasetP = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
-      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUxNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
-      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUyNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
-      if (simulationDimension == SD::k3D) {
-        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(), kUzNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
+    }
+    else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+    {
+      datasetP = mParameters.getOutputFile().openDataset(
+        mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
+      datasetUx = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(),
+        kUxNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
+      datasetUy = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(),
+        kUyNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
+      if (simulationDimension == SD::k3D)
+      {
+        datasetUz = mParameters.getOutputFile().openDataset(mParameters.getOutputFile().getRootGroup(),
+          kUzNonStaggeredName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
       }
-      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset)) / steps;
-      datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
+      datasetSize = mParameters.getOutputFile().getDatasetSize(mParameters.getOutputFile().getRootGroup(),
+                      kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset)) /
+                    steps;
+      datasetDimensionSizes = mParameters.getOutputFile().getDatasetDimensionSizes(
+        mParameters.getOutputFile().getRootGroup(), kPName + kCompressSuffix + "/" + std::to_string(indexOfDataset));
       cSliceSize = datasetDimensionSizes.nx * datasetDimensionSizes.ny;
       // Maximum size is datasetSize
-      if (blockSize > datasetSize) {
+      if (blockSize > datasetSize)
+      {
         blockSize = datasetSize;
       }
-      size_t zCount = blockSize / cSliceSize;
-      blockSize = cSliceSize * zCount;
+      size_t zCount     = blockSize / cSliceSize;
+      blockSize         = cSliceSize * zCount;
       datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, zCount, steps);
     }
 
     Logger::log(Logger::LogLevel::kBasic, kOutFmtNoDone);
-    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing, (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) >> 20);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtBlockSizePostProcessing,
+      (Logger::formatMessage(kOutFmt2DDomainSizeFormat, blockSize, steps)).c_str(), (blockSize * steps * 4) >> 20);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtEmpty);
 
     RealMatrix dataP(DimensionSizes(blockSize, steps, 1));
@@ -1358,13 +1595,17 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC() {
     RealMatrix dataUy(DimensionSizes(blockSize, steps, 1));
     RealMatrix dataUz(DimensionSizes(blockSize, steps, 1));
 
-    for (size_t i = 0; i < datasetSize; i += blockSize) {
-      const size_t outputIndex = i / (CompressHelper::getInstance().getHarmonics() * 2); // TODO size of complex (40-bit complex floats)
+    for (size_t i = 0; i < datasetSize; i += blockSize)
+    {
+      const size_t outputIndex =
+        i / (CompressHelper::getInstance().getHarmonics() * 2); // TODO size of complex (40-bit complex floats)
 
       // Read block by sensor mask type
-      if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
-        if (i + blockSize > datasetSize) {
-          blockSize = datasetSize - i;
+      if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+      {
+        if (i + blockSize > datasetSize)
+        {
+          blockSize         = datasetSize - i;
           datasetBlockSizes = DimensionSizes(blockSize, steps, 1);
           dataP.resize(DimensionSizes(blockSize, steps, 1));
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
@@ -1372,19 +1613,25 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC() {
           dataUz.resize(DimensionSizes(blockSize, steps, 1));
         }
 
-        mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(i, 0, 0), datasetBlockSizes, dataP.getData());
-        mParameters.getOutputFile().readHyperSlab(datasetUx, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUx.getData());
-        mParameters.getOutputFile().readHyperSlab(datasetUy, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUy.getData());
-        if (simulationDimension == SD::k3D) {
-          mParameters.getOutputFile().readHyperSlab(datasetUz, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUz.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetP, DimensionSizes(i, 0, 0), datasetBlockSizes, dataP.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetUx, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUx.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetUy, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUy.getData());
+        if (simulationDimension == SD::k3D)
+        {
+          mParameters.getOutputFile().readHyperSlab(
+            datasetUz, DimensionSizes(i, 0, 0), datasetBlockSizes, dataUz.getData());
         }
-      } else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
-        if (i + blockSize > datasetSize) {
+      }
+      else if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+      {
+        if (i + blockSize > datasetSize)
+        {
           blockSize = datasetSize - i;
-          datasetBlockSizes = DimensionSizes(datasetDimensionSizes.nx,
-                                             datasetDimensionSizes.ny,
-                                             blockSize / cSliceSize,
-                                             steps);
+          datasetBlockSizes =
+            DimensionSizes(datasetDimensionSizes.nx, datasetDimensionSizes.ny, blockSize / cSliceSize, steps);
           dataP.resize(DimensionSizes(blockSize, steps, 1));
           dataUx.resize(DimensionSizes(blockSize, steps, 1));
           dataUy.resize(DimensionSizes(blockSize, steps, 1));
@@ -1392,37 +1639,49 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC() {
         }
         size_t zOffset = i / cSliceSize;
 
-        mParameters.getOutputFile().readHyperSlab(datasetP, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataP.getData());
-        mParameters.getOutputFile().readHyperSlab(datasetUx, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUx.getData());
-        mParameters.getOutputFile().readHyperSlab(datasetUy, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUy.getData());
-        if (simulationDimension == SD::k3D) {
-          mParameters.getOutputFile().readHyperSlab(datasetUz, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUz.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetP, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataP.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetUx, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUx.getData());
+        mParameters.getOutputFile().readHyperSlab(
+          datasetUy, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUy.getData());
+        if (simulationDimension == SD::k3D)
+        {
+          mParameters.getOutputFile().readHyperSlab(
+            datasetUz, DimensionSizes(0, 0, zOffset, 0), datasetBlockSizes, dataUz.getData());
         }
       }
 
-      FloatComplex* bufferP = reinterpret_cast<FloatComplex*>(dataP.getData());
+      FloatComplex* bufferP  = reinterpret_cast<FloatComplex*>(dataP.getData());
       FloatComplex* bufferUx = reinterpret_cast<FloatComplex*>(dataUx.getData());
       FloatComplex* bufferUy = reinterpret_cast<FloatComplex*>(dataUy.getData());
       FloatComplex* bufferUz = reinterpret_cast<FloatComplex*>(dataUz.getData());
 
-      size_t outputBlockSize = blockSize / (CompressHelper::getInstance().getHarmonics() * 2); // TODO size of complex (40-bit complex floats)
+      size_t outputBlockSize =
+        blockSize / (CompressHelper::getInstance().getHarmonics() * 2); // TODO size of complex (40-bit complex floats)
       // Compute average of intensity
-      for (size_t step = 0; step < steps; step++) {
-        for (size_t x = 0; x < outputBlockSize; x++) {
+      for (size_t step = 0; step < steps; step++)
+      {
+        for (size_t x = 0; x < outputBlockSize; x++)
+        {
           size_t offset = step * (blockSize / 2) + CompressHelper::getInstance().getHarmonics() * x;
-          //For every harmonics
-          for (size_t ih = 0; ih < CompressHelper::getInstance().getHarmonics(); ih++) {
+          // For every harmonics
+          for (size_t ih = 0; ih < CompressHelper::getInstance().getHarmonics(); ih++)
+          {
             size_t pH = offset + ih;
             intensityXAvgData[outputIndex + x] += real(bufferP[pH] * conj(bufferUx[pH])) / 2.0f;
             intensityYAvgData[outputIndex + x] += real(bufferP[pH] * conj(bufferUy[pH])) / 2.0f;
-            if (simulationDimension == SD::k3D) {
+            if (simulationDimension == SD::k3D)
+            {
               intensityZAvgData[outputIndex + x] += real(bufferP[pH] * conj(bufferUz[pH])) / 2.0f;
             }
           }
-          if (step == steps - 1) {
+          if (step == steps - 1)
+          {
             intensityXAvgData[outputIndex + x] /= steps;
             intensityYAvgData[outputIndex + x] /= steps;
-            if (simulationDimension == SD::k3D) {
+            if (simulationDimension == SD::k3D)
+            {
               intensityZAvgData[outputIndex + x] /= steps;
             }
           }
@@ -1433,24 +1692,29 @@ void KSpaceFirstOrderSolver::computeAverageIntensitiesC() {
     mParameters.getOutputFile().closeDataset(datasetP);
     mParameters.getOutputFile().closeDataset(datasetUx);
     mParameters.getOutputFile().closeDataset(datasetUy);
-    if (simulationDimension == SD::k3D) {
+    if (simulationDimension == SD::k3D)
+    {
       mParameters.getOutputFile().closeDataset(datasetUz);
     }
   }
 } // end of computeAverageIntensitiesC
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute Q term (volume rate of heat deposition) from average intensities.
  */
-template <Parameters::SimulationDimension simulationDimension>
+template<Parameters::SimulationDimension simulationDimension>
 void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx intensityXAvgStreamIndex,
-                                          OutputStreamContainer::OutputStreamIdx intensityYAvgStreamIndex,
-                                          OutputStreamContainer::OutputStreamIdx intensityZAvgStreamIndex,
-                                          OutputStreamContainer::OutputStreamIdx qTermStreamIdx) {
+  OutputStreamContainer::OutputStreamIdx intensityYAvgStreamIndex,
+  OutputStreamContainer::OutputStreamIdx intensityZAvgStreamIndex,
+  OutputStreamContainer::OutputStreamIdx qTermStreamIdx)
+{
   float* intensityXAvgData = mOutputStreamContainer[intensityXAvgStreamIndex].getCurrentStoreBuffer();
   float* intensityYAvgData = mOutputStreamContainer[intensityYAvgStreamIndex].getCurrentStoreBuffer();
-  float* intensityZAvgData = (simulationDimension == SD::k3D) ? mOutputStreamContainer[intensityZAvgStreamIndex].getCurrentStoreBuffer() : nullptr;
+  float* intensityZAvgData = (simulationDimension == SD::k3D)
+                               ? mOutputStreamContainer[intensityZAvgStreamIndex].getCurrentStoreBuffer()
+                               : nullptr;
 
   // Full sized matrices for intensities
   RealMatrix intensityXAvg(mParameters.getFullDimensionSizes());
@@ -1460,46 +1724,57 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
   const DimensionSizes& fullDimensionSizes = mParameters.getFullDimensionSizes();
 
   // Copy values from store buffer to positions defined by sensor mask indices
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
     const size_t sensorMaskSize = getSensorMaskIndex().capacity();
 #pragma omp parallel for simd schedule(static)
-    for (size_t i = 0; i < sensorMaskSize; i++) {
+    for (size_t i = 0; i < sensorMaskSize; i++)
+    {
       intensityXAvg[getSensorMaskIndex()[i]] = intensityXAvgData[i];
       intensityYAvg[getSensorMaskIndex()[i]] = intensityYAvgData[i];
-      if (simulationDimension == SD::k3D) {
+      if (simulationDimension == SD::k3D)
+      {
         intensityZAvg[getSensorMaskIndex()[i]] = intensityZAvgData[i];
       }
     }
   }
 
   // Copy values from store buffer to positions defined by sensor mask corners
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
-    const size_t slabSize = fullDimensionSizes.ny * fullDimensionSizes.nx;
-    const size_t rowSize = fullDimensionSizes.nx;
-    const size_t nCuboids = getSensorMaskCorners().getDimensionSizes().ny;
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
+    const size_t slabSize      = fullDimensionSizes.ny * fullDimensionSizes.nx;
+    const size_t rowSize       = fullDimensionSizes.nx;
+    const size_t nCuboids      = getSensorMaskCorners().getDimensionSizes().ny;
     size_t cuboidInBufferStart = 0;
 
 #pragma omp parallel
-    for (size_t cuboidIdx = 0; cuboidIdx < nCuboids; cuboidIdx++) {
-      const DimensionSizes topLeftCorner = getSensorMaskCorners().getTopLeftCorner(cuboidIdx);
+    for (size_t cuboidIdx = 0; cuboidIdx < nCuboids; cuboidIdx++)
+    {
+      const DimensionSizes topLeftCorner     = getSensorMaskCorners().getTopLeftCorner(cuboidIdx);
       const DimensionSizes bottomRightCorner = getSensorMaskCorners().getBottomRightCorner(cuboidIdx);
 
-      size_t cuboidSlabSize = (bottomRightCorner.ny - topLeftCorner.ny + 1) * (bottomRightCorner.nx - topLeftCorner.nx + 1);
+      size_t cuboidSlabSize =
+        (bottomRightCorner.ny - topLeftCorner.ny + 1) * (bottomRightCorner.nx - topLeftCorner.nx + 1);
       size_t cuboidRowSize = (bottomRightCorner.nx - topLeftCorner.nx + 1);
 
       DimensionSizes cuboidSize(0, 0, 0, 0); // Size of the cuboid
-      cuboidSize = bottomRightCorner - topLeftCorner;
+      cuboidSize    = bottomRightCorner - topLeftCorner;
       cuboidSize.nt = 1;
 
 #pragma omp for collapse(3)
-      for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++) {
-        for (size_t y = topLeftCorner.ny; y <= bottomRightCorner.ny; y++) {
-          for (size_t x = topLeftCorner.nx; x <= bottomRightCorner.nx; x++) {
-            const size_t storeBufferIndex = cuboidInBufferStart + (z - topLeftCorner.nz) * cuboidSlabSize + (y - topLeftCorner.ny) * cuboidRowSize + (x - topLeftCorner.nx);
-            const size_t sourceIndex = z * slabSize + y * rowSize + x;
+      for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++)
+      {
+        for (size_t y = topLeftCorner.ny; y <= bottomRightCorner.ny; y++)
+        {
+          for (size_t x = topLeftCorner.nx; x <= bottomRightCorner.nx; x++)
+          {
+            const size_t storeBufferIndex = cuboidInBufferStart + (z - topLeftCorner.nz) * cuboidSlabSize +
+                                            (y - topLeftCorner.ny) * cuboidRowSize + (x - topLeftCorner.nx);
+            const size_t sourceIndex   = z * slabSize + y * rowSize + x;
             intensityXAvg[sourceIndex] = intensityXAvgData[storeBufferIndex];
             intensityYAvg[sourceIndex] = intensityYAvgData[storeBufferIndex];
-            if (simulationDimension == SD::k3D) {
+            if (simulationDimension == SD::k3D)
+            {
               intensityZAvg[sourceIndex] = intensityZAvgData[storeBufferIndex];
             }
           }
@@ -1523,53 +1798,63 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
   const float dividerY = 1.0f / static_cast<float>(fullDimensionSizes.ny);
   const float dividerZ = 1.0f / static_cast<float>(fullDimensionSizes.nz);
   // Helper values
-  const size_t nx = fullDimensionSizes.nx;
-  const size_t ny = fullDimensionSizes.ny;
-  const size_t nz = fullDimensionSizes.nz;
-  const float dx = mParameters.getDx();
-  const float dy = mParameters.getDy();
-  const float dz = mParameters.getDz();
+  const size_t nx      = fullDimensionSizes.nx;
+  const size_t ny      = fullDimensionSizes.ny;
+  const size_t nz      = fullDimensionSizes.nz;
+  const float dx       = mParameters.getDx();
+  const float dy       = mParameters.getDy();
+  const float dz       = mParameters.getDz();
 
   DimensionSizes xShiftDims = mParameters.getFullDimensionSizes();
-  xShiftDims.nx = xShiftDims.nx / 2 + 1;
+  xShiftDims.nx             = xShiftDims.nx / 2 + 1;
   DimensionSizes yShiftDims = mParameters.getFullDimensionSizes();
-  yShiftDims.ny = yShiftDims.ny / 2 + 1;
+  yShiftDims.ny             = yShiftDims.ny / 2 + 1;
   DimensionSizes zShiftDims = mParameters.getFullDimensionSizes();
-  zShiftDims.nz = zShiftDims.nz / 2 + 1;
+  zShiftDims.nz             = zShiftDims.nz / 2 + 1;
 
   // Helper memory for shifts
   FloatComplex* kx = reinterpret_cast<FloatComplex*>(_mm_malloc(xShiftDims.nx * sizeof(FloatComplex), kDataAlignment));
   FloatComplex* ky = reinterpret_cast<FloatComplex*>(_mm_malloc(yShiftDims.ny * sizeof(FloatComplex), kDataAlignment));
-  FloatComplex* kz = (simulationDimension == SD::k3D) ? reinterpret_cast<FloatComplex*>(_mm_malloc(zShiftDims.nz * sizeof(FloatComplex), kDataAlignment)) : nullptr;
+  FloatComplex* kz =
+    (simulationDimension == SD::k3D)
+      ? reinterpret_cast<FloatComplex*>(_mm_malloc(zShiftDims.nz * sizeof(FloatComplex), kDataAlignment))
+      : nullptr;
 
 // Compute shifts for x gradient
 #pragma omp simd
-  for (size_t i = 0; i < xShiftDims.nx; i++) {
+  for (size_t i = 0; i < xShiftDims.nx; i++)
+  {
     const ssize_t shift = ssize_t((i + (nx / 2)) % nx - (nx / 2));
-    kx[i] = FloatComplex(0.0f, 1.0f) * (pi2 / dx) * (float(shift) / float(nx));
+    kx[i]               = FloatComplex(0.0f, 1.0f) * (pi2 / dx) * (float(shift) / float(nx));
   }
 // Compute shifts for y gradient
 #pragma omp simd
-  for (size_t i = 0; i < yShiftDims.ny; i++) {
+  for (size_t i = 0; i < yShiftDims.ny; i++)
+  {
     const ssize_t shift = ssize_t((i + (ny / 2)) % ny - (ny / 2));
-    ky[i] = FloatComplex(0.0f, 1.0f) * (pi2 / dy) * (float(shift) / float(ny));
+    ky[i]               = FloatComplex(0.0f, 1.0f) * (pi2 / dy) * (float(shift) / float(ny));
   }
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
 // Compute shifts for z gradient
 #pragma omp simd
-    for (size_t i = 0; i < zShiftDims.nz; i++) {
+    for (size_t i = 0; i < zShiftDims.nz; i++)
+    {
       const ssize_t shift = ssize_t((i + (nz / 2)) % nz - (nz / 2));
-      kz[i] = FloatComplex(0.0f, 1.0f) * (pi2 / dz) * (float(shift) / float(nz));
+      kz[i]               = FloatComplex(0.0f, 1.0f) * (pi2 / dz) * (float(shift) / float(nz));
     }
   }
 
   getTempFftwShift().computeR2CFft1DX(intensityXAvg);
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < xShiftDims.nz; z++) {
+  for (size_t z = 0; z < xShiftDims.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < xShiftDims.ny; y++) {
+    for (size_t y = 0; y < xShiftDims.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < xShiftDims.nx; x++) {
+      for (size_t x = 0; x < xShiftDims.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, xShiftDims);
         tempFftShift[i] *= dividerX * kx[x];
       } // x
@@ -1579,11 +1864,14 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
 
   getTempFftwShift().computeR2CFft1DY(intensityYAvg);
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < yShiftDims.nz; z++) {
+  for (size_t z = 0; z < yShiftDims.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < yShiftDims.ny; y++) {
+    for (size_t y = 0; y < yShiftDims.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < yShiftDims.nx; x++) {
+      for (size_t x = 0; x < yShiftDims.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, yShiftDims);
         tempFftShift[i] *= dividerY * ky[y];
       } // x
@@ -1591,14 +1879,18 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
   }     // z
   getTempFftwShift().computeC2RFft1DY(intensityYAvg);
 
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
     getTempFftwShift().computeR2CFft1DZ(intensityZAvg);
 #pragma omp parallel for schedule(static)
-    for (size_t z = 0; z < zShiftDims.nz; z++) {
+    for (size_t z = 0; z < zShiftDims.nz; z++)
+    {
 #pragma omp parallel for schedule(static)
-      for (size_t y = 0; y < zShiftDims.ny; y++) {
+      for (size_t y = 0; y < zShiftDims.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < zShiftDims.nx; x++) {
+        for (size_t x = 0; x < zShiftDims.nx; x++)
+        {
           const size_t i = get1DIndex(z, y, x, zShiftDims);
           tempFftShift[i] *= dividerZ * kz[z];
         } // x
@@ -1612,10 +1904,14 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
   _mm_free(kz);
 
 #pragma omp simd
-  for (size_t i = 0; i < fullDimensionSizes.nElements(); i++) {
-    if (simulationDimension == SD::k3D) {
+  for (size_t i = 0; i < fullDimensionSizes.nElements(); i++)
+  {
+    if (simulationDimension == SD::k3D)
+    {
       intensityXAvg[i] = -(intensityXAvg[i] + intensityYAvg[i] + intensityZAvg[i]);
-    } else {
+    }
+    else
+    {
       intensityXAvg[i] = -(intensityXAvg[i] + intensityYAvg[i]);
     }
   }
@@ -1624,39 +1920,48 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
   float* qTermData = mOutputStreamContainer[qTermStreamIdx].getCurrentStoreBuffer();
 
   // Copy values from positions defined by sensor mask indices to store buffer
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex) {
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kIndex)
+  {
     const size_t sensorMaskSize = getSensorMaskIndex().capacity();
 #pragma omp parallel for simd schedule(static)
-    for (size_t i = 0; i < sensorMaskSize; i++) {
+    for (size_t i = 0; i < sensorMaskSize; i++)
+    {
       qTermData[i] = intensityXAvg[getSensorMaskIndex()[i]];
     }
   }
 
   // Copy values from positions defined by sensor mask corners to store buffer
-  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners) {
-    const size_t slabSize = fullDimensionSizes.ny * fullDimensionSizes.nx;
-    const size_t rowSize = fullDimensionSizes.nx;
-    const size_t nCuboids = getSensorMaskCorners().getDimensionSizes().ny;
+  if (mParameters.getSensorMaskType() == Parameters::SensorMaskType::kCorners)
+  {
+    const size_t slabSize      = fullDimensionSizes.ny * fullDimensionSizes.nx;
+    const size_t rowSize       = fullDimensionSizes.nx;
+    const size_t nCuboids      = getSensorMaskCorners().getDimensionSizes().ny;
     size_t cuboidInBufferStart = 0;
 
 #pragma omp parallel
-    for (size_t cuboidIdx = 0; cuboidIdx < nCuboids; cuboidIdx++) {
-      const DimensionSizes topLeftCorner = getSensorMaskCorners().getTopLeftCorner(cuboidIdx);
+    for (size_t cuboidIdx = 0; cuboidIdx < nCuboids; cuboidIdx++)
+    {
+      const DimensionSizes topLeftCorner     = getSensorMaskCorners().getTopLeftCorner(cuboidIdx);
       const DimensionSizes bottomRightCorner = getSensorMaskCorners().getBottomRightCorner(cuboidIdx);
 
-      size_t cuboidSlabSize = (bottomRightCorner.ny - topLeftCorner.ny + 1) * (bottomRightCorner.nx - topLeftCorner.nx + 1);
+      size_t cuboidSlabSize =
+        (bottomRightCorner.ny - topLeftCorner.ny + 1) * (bottomRightCorner.nx - topLeftCorner.nx + 1);
       size_t cuboidRowSize = (bottomRightCorner.nx - topLeftCorner.nx + 1);
 
       DimensionSizes cuboidSize(0, 0, 0, 0); // Size of the cuboid
-      cuboidSize = bottomRightCorner - topLeftCorner;
+      cuboidSize    = bottomRightCorner - topLeftCorner;
       cuboidSize.nt = 1;
 
 #pragma omp for collapse(3)
-      for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++) {
-        for (size_t y = topLeftCorner.ny; y <= bottomRightCorner.ny; y++) {
-          for (size_t x = topLeftCorner.nx; x <= bottomRightCorner.nx; x++) {
-            const size_t storeBufferIndex = cuboidInBufferStart + (z - topLeftCorner.nz) * cuboidSlabSize + (y - topLeftCorner.ny) * cuboidRowSize + (x - topLeftCorner.nx);
-            const size_t sourceIndex = z * slabSize + y * rowSize + x;
+      for (size_t z = topLeftCorner.nz; z <= bottomRightCorner.nz; z++)
+      {
+        for (size_t y = topLeftCorner.ny; y <= bottomRightCorner.ny; y++)
+        {
+          for (size_t x = topLeftCorner.nx; x <= bottomRightCorner.nx; x++)
+          {
+            const size_t storeBufferIndex = cuboidInBufferStart + (z - topLeftCorner.nz) * cuboidSlabSize +
+                                            (y - topLeftCorner.ny) * cuboidRowSize + (x - topLeftCorner.nx);
+            const size_t sourceIndex    = z * slabSize + y * rowSize + x;
             qTermData[storeBufferIndex] = intensityXAvg[sourceIndex];
           }
         }
@@ -1669,42 +1974,52 @@ void KSpaceFirstOrderSolver::computeQTerm(OutputStreamContainer::OutputStreamIdx
     }
   }
 } // end of computeQTerm
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute new values of acoustic velocity in all used dimensions (UxSgx, UySgy, UzSgz).
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeVelocity() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computeVelocity()
+{
   // bsxfun(@times, ddx_k_shift_pos, kappa .* fftn(p)), for all 3 dims
   computePressureGradient<simulationDimension>();
 
   getTempFftwX().computeC2RFftND(getTemp1RealND());
   getTempFftwY().computeC2RFftND(getTemp2RealND());
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
     getTempFftwZ().computeC2RFftND(getTemp3RealND());
   }
 
-  if (mParameters.getRho0ScalarFlag()) { // scalars
-    if (mParameters.getNonUniformGridFlag()) {
+  if (mParameters.getRho0ScalarFlag())
+  { // scalars
+    if (mParameters.getNonUniformGridFlag())
+    {
       computeVelocityHomogeneousNonuniform<simulationDimension>();
-    } else {
+    }
+    else
+    {
       computeVelocityHomogeneousUniform<simulationDimension>();
     }
-  } else { // matrices
+  }
+  else
+  { // matrices
     computeVelocityHeterogeneous<simulationDimension>();
   }
 } // end of computeVelocity
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute new values for duxdx, duydy, duzdz.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeVelocityGradient() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computeVelocityGradient()
+{
   getTempFftwX().computeR2CFftND(getUxSgx());
   getTempFftwY().computeR2CFftND(getUySgy());
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
     getTempFftwZ().computeR2CFftND(getUzSgz());
   }
 
@@ -1722,17 +2037,21 @@ void KSpaceFirstOrderSolver::computeVelocityGradient() {
   FloatComplex* ddzKShiftNeg = (simulationDimension == SD::k3D) ? getDdzKShiftNeg().getComplexData() : nullptr;
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < reducedDimensionSizes.nz; z++) {
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < reducedDimensionSizes.ny; y++) {
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < reducedDimensionSizes.nx; x++) {
-        const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
+      {
+        const size_t i     = get1DIndex(z, y, x, reducedDimensionSizes);
         const float eKappa = divider * kappa[i];
 
         tempFftX[i] *= ddxKShiftNeg[x] * eKappa;
         tempFftY[i] *= ddyKShiftNeg[y] * eKappa;
-        if (simulationDimension == SD::k3D) {
+        if (simulationDimension == SD::k3D)
+        {
           tempFftZ[i] *= ddzKShiftNeg[z] * eKappa;
         }
       } // x
@@ -1741,12 +2060,14 @@ void KSpaceFirstOrderSolver::computeVelocityGradient() {
 
   getTempFftwX().computeC2RFftND(getDuxdx());
   getTempFftwY().computeC2RFftND(getDuydy());
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
     getTempFftwZ().computeC2RFftND(getDuzdz());
   }
 
   //------------------------------------------------ Nonuniform grid -------------------------------------------------//
-  if (mParameters.getNonUniformGridFlag() != 0) {
+  if (mParameters.getNonUniformGridFlag() != 0)
+  {
     float* duxdx = getDuxdx().getData();
     float* duydy = getDuydy().getData();
     float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
@@ -1758,15 +2079,19 @@ void KSpaceFirstOrderSolver::computeVelocityGradient() {
     const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
           duxdx[i] *= duxdxn[x];
           duydy[i] *= duydyn[y];
-          if (simulationDimension == SD::k3D) {
+          if (simulationDimension == SD::k3D)
+          {
             duzdz[i] *= duzdzn[z];
           }
         } // x
@@ -1774,14 +2099,15 @@ void KSpaceFirstOrderSolver::computeVelocityGradient() {
     }     // z
   }       // nonlinear
 } // end of computeVelocityGradient
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculate new values of acoustic density for nonlinear case (rhoX, rhoy and rhoZ).
  *
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeDensityNonliner() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computeDensityNonliner()
+{
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
 
   const float dt = mParameters.getDt();
@@ -1799,49 +2125,58 @@ void KSpaceFirstOrderSolver::computeDensityNonliner() {
   const float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
   //----------------------------------------------- rho0 is scalar -------------------------------------------------//
-  if (mParameters.getRho0ScalarFlag()) {
+  if (mParameters.getRho0ScalarFlag())
+  {
     const float rho0 = mParameters.getRho0Scalar();
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
-          const size_t i = get1DIndex(z, y, x, dimensionSizes);
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
+          const size_t i      = get1DIndex(z, y, x, dimensionSizes);
           // 3D and 2D summation
-          const float sumRhos = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i])
-                                                                 : (rhoX[i] + rhoY[i]);
+          const float sumRhos = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
           const float sumRhosDt = (2.0f * sumRhos + rho0) * dt;
 
           rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
           rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
-          if (simulationDimension == SD::k3D) {
+          if (simulationDimension == SD::k3D)
+          {
             rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
           }
-        }  // x
-      }    // y
-    }      // z
-  } else { //---------------------------------------------- rho0 is matrix ------------------------------------------------//
+        } // x
+      }   // y
+    }     // z
+  }
+  else
+  { //---------------------------------------------- rho0 is matrix ------------------------------------------------//
     // rho0 is a matrix
     const float* rho0 = getRho0().getData();
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
-          const size_t i = get1DIndex(z, y, x, dimensionSizes);
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
+          const size_t i      = get1DIndex(z, y, x, dimensionSizes);
           // 3D and 2D summation
-          const float sumRhos = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i])
-                                                                 : (rhoX[i] + rhoY[i]);
+          const float sumRhos = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
 
           const float sumRhosDt = (2.0f * sumRhos + rho0[i]) * dt;
 
           rhoX[i] = pmlX[x] * ((pmlX[x] * rhoX[i]) - sumRhosDt * duxdx[i]);
           rhoY[i] = pmlY[y] * ((pmlY[y] * rhoY[i]) - sumRhosDt * duydy[i]);
-          if (simulationDimension == SD::k3D) {
+          if (simulationDimension == SD::k3D)
+          {
             rhoZ[i] = pmlZ[z] * ((pmlZ[z] * rhoZ[i]) - sumRhosDt * duzdz[i]);
           }
         } // x
@@ -1849,16 +2184,17 @@ void KSpaceFirstOrderSolver::computeDensityNonliner() {
     }     // z
   }       // end rho is matrix
 } // end of computeDensityNonliner
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculate new values of acoustic density for linear case (rhoX, rhoy and rhoZ).
  *
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeDensityLinear() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computeDensityLinear()
+{
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
-  const float dt = mParameters.getDt();
+  const float dt                       = mParameters.getDt();
 
   float* rhoX = getRhoX().getData();
   float* rhoY = getRhoY().getData();
@@ -1873,42 +2209,53 @@ void KSpaceFirstOrderSolver::computeDensityLinear() {
   const float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
   //----------------------------------------------- rho0 is scalar -------------------------------------------------//
-  if (mParameters.getRho0ScalarFlag()) { // rho0 is a scalar
+  if (mParameters.getRho0ScalarFlag())
+  { // rho0 is a scalar
     const float dtRho0 = mParameters.getRho0Scalar() * dt;
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
           rhoX[i] = pmlX[x] * (((pmlX[x] * rhoX[i]) - (dtRho0 * duxdx[i])));
           rhoY[i] = pmlY[y] * (((pmlY[y] * rhoY[i]) - (dtRho0 * duydy[i])));
-          if (simulationDimension == SD::k3D) {
+          if (simulationDimension == SD::k3D)
+          {
             rhoZ[i] = pmlZ[z] * (((pmlZ[z] * rhoZ[i]) - (dtRho0 * duzdz[i])));
           }
-        }  // x
-      }    // y
-    }      // z
-  } else {
+        } // x
+      }   // y
+    }     // z
+  }
+  else
+  {
     //---------------------------------------------- rho0 is matrix ------------------------------------------------//
     // rho0 is a matrix
     const float* rho0 = getRho0().getData();
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
-          const size_t i = get1DIndex(z, y, x, dimensionSizes);
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
+          const size_t i     = get1DIndex(z, y, x, dimensionSizes);
           const float dtRho0 = dt * rho0[i];
 
           rhoX[i] = pmlX[x] * (((pmlX[x] * rhoX[i]) - (dtRho0 * duxdx[i])));
           rhoY[i] = pmlY[y] * (((pmlY[y] * rhoY[i]) - (dtRho0 * duydy[i])));
-          if (simulationDimension == SD::k3D) {
+          if (simulationDimension == SD::k3D)
+          {
             rhoZ[i] = pmlZ[z] * (((pmlZ[z] * rhoZ[i]) - (dtRho0 * duzdz[i])));
           }
         } // x
@@ -1916,17 +2263,19 @@ void KSpaceFirstOrderSolver::computeDensityLinear() {
     }     // z
   }       // end rho is a matrix
 } // end of computeDensityLinear
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute acoustic pressure for non-linear case.
  *
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computePressureNonlinear() {
-  if (mParameters.getAbsorbingFlag()) { // absorbing case
-    RealMatrix& densitySum = getTemp1RealND();
-    RealMatrix& nonlinearTerm = getTemp2RealND();
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computePressureNonlinear()
+{
+  if (mParameters.getAbsorbingFlag())
+  { // absorbing case
+    RealMatrix& densitySum          = getTemp1RealND();
+    RealMatrix& nonlinearTerm       = getTemp2RealND();
     RealMatrix& velocityGradientSum = getTemp3RealND();
 
     // reusing of the temp variables
@@ -1934,17 +2283,27 @@ void KSpaceFirstOrderSolver::computePressureNonlinear() {
     RealMatrix& absorbEtaTerm = densitySum;
 
     // different templated variants of computePressureTermsNonlinear
-    if (mParameters.getBOnAScalarFlag()) {
-      if (mParameters.getRho0ScalarFlag()) {
+    if (mParameters.getBOnAScalarFlag())
+    {
+      if (mParameters.getRho0ScalarFlag())
+      {
         computePressureTermsNonlinear<simulationDimension, true, true>(densitySum, nonlinearTerm, velocityGradientSum);
-      } else {
+      }
+      else
+      {
         computePressureTermsNonlinear<simulationDimension, true, false>(densitySum, nonlinearTerm, velocityGradientSum);
       }
-    } else {
-      if (mParameters.getRho0ScalarFlag()) {
+    }
+    else
+    {
+      if (mParameters.getRho0ScalarFlag())
+      {
         computePressureTermsNonlinear<simulationDimension, false, true>(densitySum, nonlinearTerm, velocityGradientSum);
-      } else {
-        computePressureTermsNonlinear<simulationDimension, false, false>(densitySum, nonlinearTerm, velocityGradientSum);
+      }
+      else
+      {
+        computePressureTermsNonlinear<simulationDimension, false, false>(
+          densitySum, nonlinearTerm, velocityGradientSum);
       }
     }
 
@@ -1958,58 +2317,89 @@ void KSpaceFirstOrderSolver::computePressureNonlinear() {
     getTempFftwY().computeC2RFftND(absorbEtaTerm);
 
     // different templated variants of sumPressureTermsNonlinear
-    if (mParameters.getC0ScalarFlag()) {
-      if (mParameters.getAlphaCoeffScalarFlag()) {
+    if (mParameters.getC0ScalarFlag())
+    {
+      if (mParameters.getAlphaCoeffScalarFlag())
+      {
         sumPressureTermsNonlinear<true, true>(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
-      } else {
+      }
+      else
+      {
         sumPressureTermsNonlinear<true, false>(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
       }
-    } else {
+    }
+    else
+    {
       sumPressureTermsNonlinear<false, false>(absorbTauTerm, absorbEtaTerm, nonlinearTerm);
     }
-  } else { // lossless case
-    if (mParameters.getC0ScalarFlag()) {
-      if (mParameters.getBOnAScalarFlag()) {
-        if (mParameters.getRho0ScalarFlag()) {
+  }
+  else
+  { // lossless case
+    if (mParameters.getC0ScalarFlag())
+    {
+      if (mParameters.getBOnAScalarFlag())
+      {
+        if (mParameters.getRho0ScalarFlag())
+        {
           sumPressureTermsNonlinearLossless<simulationDimension, true, true, true>();
-        } else {
+        }
+        else
+        {
           sumPressureTermsNonlinearLossless<simulationDimension, true, true, false>();
         }
-      } else {
-        if (mParameters.getRho0ScalarFlag()) {
+      }
+      else
+      {
+        if (mParameters.getRho0ScalarFlag())
+        {
           sumPressureTermsNonlinearLossless<simulationDimension, true, false, true>();
-        } else {
+        }
+        else
+        {
           sumPressureTermsNonlinearLossless<simulationDimension, true, false, false>();
         }
       }
-    } else {
-      if (mParameters.getBOnAScalarFlag()) {
-        if (mParameters.getRho0ScalarFlag()) {
+    }
+    else
+    {
+      if (mParameters.getBOnAScalarFlag())
+      {
+        if (mParameters.getRho0ScalarFlag())
+        {
           sumPressureTermsNonlinearLossless<simulationDimension, false, true, true>();
-        } else {
+        }
+        else
+        {
           sumPressureTermsNonlinearLossless<simulationDimension, false, true, false>();
         }
-      } else {
-        if (mParameters.getRho0ScalarFlag()) {
+      }
+      else
+      {
+        if (mParameters.getRho0ScalarFlag())
+        {
           sumPressureTermsNonlinearLossless<simulationDimension, false, false, true>();
-        } else {
+        }
+        else
+        {
           sumPressureTermsNonlinearLossless<simulationDimension, false, false, false>();
         }
       }
     }
   }
 } // end of computePressureNonlinear
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute new p for linear case.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computePressureLinear() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computePressureLinear()
+{
   // rhox + rhoy + rhoz
-  if (mParameters.getAbsorbingFlag()) { // absorbing case
+  if (mParameters.getAbsorbingFlag())
+  { // absorbing case
 
-    RealMatrix& densitySum = getTemp1RealND();
+    RealMatrix& densitySum           = getTemp1RealND();
     RealMatrix& velocityGradientTerm = getTemp2RealND();
 
     RealMatrix& absorbTauTerm = getTemp2RealND();
@@ -2026,101 +2416,234 @@ void KSpaceFirstOrderSolver::computePressureLinear() {
     getTempFftwX().computeC2RFftND(absorbTauTerm);
     getTempFftwY().computeC2RFftND(absorbEtaTerm);
 
-    if (mParameters.getC0ScalarFlag()) {
-      if (mParameters.getAlphaCoeffScalarFlag()) {
+    if (mParameters.getC0ScalarFlag())
+    {
+      if (mParameters.getAlphaCoeffScalarFlag())
+      {
         sumPressureTermsLinear<true, true>(absorbTauTerm, absorbEtaTerm, densitySum);
-      } else {
+      }
+      else
+      {
         sumPressureTermsLinear<true, false>(absorbTauTerm, absorbEtaTerm, densitySum);
       }
-    } else {
+    }
+    else
+    {
       sumPressureTermsLinear<false, false>(absorbTauTerm, absorbEtaTerm, densitySum);
     }
-  } else {
+  }
+  else
+  {
     // lossless case
     sumPressureTermsLinearLossless<simulationDimension>();
   }
 } // end of computePressureLinear
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Add u source to the particle velocity.
  */
-void KSpaceFirstOrderSolver::addVelocitySource() {
+void KSpaceFirstOrderSolver::addVelocitySource()
+{
   const size_t timeIndex = mParameters.getTimeIndex();
 
-  if (mParameters.getVelocityXSourceFlag() > timeIndex) {
+  if (mParameters.getVelocityXSourceFlag() > timeIndex)
+  {
     computeVelocitySourceTerm(getUxSgx(), getVelocityXSourceInput(), getVelocitySourceIndex());
   }
 
-  if (mParameters.getVelocityYSourceFlag() > timeIndex) {
+  if (mParameters.getVelocityYSourceFlag() > timeIndex)
+  {
     computeVelocitySourceTerm(getUySgy(), getVelocityYSourceInput(), getVelocitySourceIndex());
   }
 
-  if (mParameters.isSimulation3D()) {
-    if (mParameters.getVelocityZSourceFlag() > timeIndex) {
+  if (mParameters.isSimulation3D())
+  {
+    if (mParameters.getVelocityZSourceFlag() > timeIndex)
+    {
       computeVelocitySourceTerm(getUzSgz(), getVelocityZSourceInput(), getVelocitySourceIndex());
     }
   }
 } // end of addVelocitySource
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Add in velocity source terms.
  */
-void KSpaceFirstOrderSolver::computeVelocitySourceTerm(RealMatrix& velocityMatrix,
-                                                       const RealMatrix& velocitySourceInput,
-                                                       const IndexMatrix& velocitySourceIndex) {
+void KSpaceFirstOrderSolver::computeVelocitySourceTerm(
+  RealMatrix& velocityMatrix, const RealMatrix& velocitySourceInput, const IndexMatrix& velocitySourceIndex)
+{
   // time is solved one level up.
   float* pVelocityMatrix = velocityMatrix.getData();
 
-  const float* sourceInput = velocitySourceInput.getData();
+  const float* sourceInput  = velocitySourceInput.getData();
   const size_t* sourceIndex = velocitySourceIndex.getData();
 
   const size_t timeIndex = mParameters.getTimeIndex();
 
-  const bool isManyFlag = (mParameters.getVelocitySourceMany() != 0);
+  const bool isManyFlag   = (mParameters.getVelocitySourceMany() != 0);
   const size_t sourceSize = velocitySourceIndex.size();
-  const size_t index2D = (isManyFlag) ? timeIndex * sourceSize : timeIndex;
+  const size_t index2D    = (isManyFlag) ? timeIndex * sourceSize : timeIndex;
 
-  switch (mParameters.getVelocitySourceMode()) {
-    case Parameters::SourceMode::kDirichlet: {
+  switch (mParameters.getVelocitySourceMode())
+  {
+  case Parameters::SourceMode::kDirichlet:
+  {
 #pragma omp parallel for if (sourceSize > 16384)
-      for (size_t i = 0; i < sourceSize; i++) {
+    for (size_t i = 0; i < sourceSize; i++)
+    {
+      const size_t signalIndex        = (isManyFlag) ? index2D + i : index2D;
+      pVelocityMatrix[sourceIndex[i]] = sourceInput[signalIndex];
+    }
+    break;
+  }
+
+  case Parameters::SourceMode::kAdditiveNoCorrection:
+  {
+#pragma omp parallel for if (sourceSize > 16384)
+    for (size_t i = 0; i < sourceSize; i++)
+    {
+      const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+      pVelocityMatrix[sourceIndex[i]] += sourceInput[signalIndex];
+    }
+    break;
+  }
+
+  case Parameters::SourceMode::kAdditive:
+  {
+    // temp matrix for additive source
+    RealMatrix& scaledSource     = getTemp1RealND();
+    FftwComplexMatrix& fftMatrix = getTempFftwX();
+
+    float* pScaledSource     = getTemp1RealND().getData();
+    float* pSourceKappa      = getSourceKappa().getData();
+    FloatComplex* pFftMatrix = getTempFftwX().getComplexData();
+
+    const size_t nElementsFull    = mParameters.getFullDimensionSizes().nElements();
+    const size_t nElementsReduced = mParameters.getReducedDimensionSizes().nElements();
+    const float divider           = 1.0f / static_cast<float>(nElementsFull);
+
+    // clear scaledSource the matrix
+    scaledSource.zeroMatrix();
+
+// source_mat(u_source_pos_index) = source.u(u_source_sig_index, t_index);
+#pragma omp parallel for simd
+    for (size_t i = 0; i < sourceSize; i++)
+    {
+      const size_t signalIndex      = (isManyFlag) ? index2D + i : index2D;
+      pScaledSource[sourceIndex[i]] = sourceInput[signalIndex];
+    }
+
+    // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
+    fftMatrix.computeR2CFftND(scaledSource);
+
+#pragma omp parallel for simd
+    for (size_t i = 0; i < nElementsReduced; i++)
+    {
+      pFftMatrix[i] *= divider * pSourceKappa[i];
+    }
+
+    // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
+    fftMatrix.computeC2RFftND(scaledSource);
+
+// add the source values to the existing field values
+#pragma omp parallel for simd
+    for (size_t i = 0; i < nElementsFull; i++)
+    {
+      pVelocityMatrix[i] += pScaledSource[i];
+    }
+
+    break;
+  }
+  default:
+  {
+    break;
+  }
+  } // end of switch
+} // end of computeVelocitySourceTerm
+
+//----------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Add in pressure source.
+ */
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::addPressureSource()
+{
+  const size_t timeIndex = mParameters.getTimeIndex();
+
+  if (mParameters.getPressureSourceFlag() > timeIndex)
+  {
+    float* rhox = getRhoX().getData();
+    float* rhoy = getRhoY().getData();
+    float* rhoz = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
+
+    const float* sourceInput  = getPressureSourceInput().getData();
+    const size_t* sourceIndex = getPressureSourceIndex().getData();
+
+    const bool isManyFlag   = (mParameters.getPressureSourceMany() != 0);
+    const size_t sourceSize = getPressureSourceIndex().size();
+    const size_t index2D    = (isManyFlag) ? timeIndex * sourceSize : timeIndex;
+
+    // different pressure sources
+    switch (mParameters.getPressureSourceMode())
+    {
+    case Parameters::SourceMode::kDirichlet:
+    {
+#pragma omp parallel for if (sourceSize > 16384)
+      for (size_t i = 0; i < sourceSize; i++)
+      {
         const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
-        pVelocityMatrix[sourceIndex[i]] = sourceInput[signalIndex];
+
+        rhox[sourceIndex[i]] = sourceInput[signalIndex];
+        rhoy[sourceIndex[i]] = sourceInput[signalIndex];
+        if (simulationDimension == SD::k3D)
+        {
+          rhoz[sourceIndex[i]] = sourceInput[signalIndex];
+        }
       }
       break;
     }
 
-    case Parameters::SourceMode::kAdditiveNoCorrection: {
+    case Parameters::SourceMode::kAdditiveNoCorrection:
+    {
 #pragma omp parallel for if (sourceSize > 16384)
-      for (size_t i = 0; i < sourceSize; i++) {
+      for (size_t i = 0; i < sourceSize; i++)
+      {
         const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
-        pVelocityMatrix[sourceIndex[i]] += sourceInput[signalIndex];
+
+        rhox[sourceIndex[i]] += sourceInput[signalIndex];
+        rhoy[sourceIndex[i]] += sourceInput[signalIndex];
+        if (simulationDimension == SD::k3D)
+        {
+          rhoz[sourceIndex[i]] += sourceInput[signalIndex];
+        }
       }
       break;
     }
 
-    case Parameters::SourceMode::kAdditive: {
-      // temp matrix for additive source
-      RealMatrix& scaledSource = getTemp1RealND();
+    case Parameters::SourceMode::kAdditive:
+    { // temp matrix for additive source
+      RealMatrix& scaledSource     = getTemp1RealND();
       FftwComplexMatrix& fftMatrix = getTempFftwX();
 
-      float* pScaledSource = getTemp1RealND().getData();
-      float* pSourceKappa = getSourceKappa().getData();
+      float* pScaledSource     = getTemp1RealND().getData();
+      float* pSourceKappa      = getSourceKappa().getData();
       FloatComplex* pFftMatrix = getTempFftwX().getComplexData();
 
-      const size_t nElementsFull = mParameters.getFullDimensionSizes().nElements();
+      const size_t nElementsFull    = mParameters.getFullDimensionSizes().nElements();
       const size_t nElementsReduced = mParameters.getReducedDimensionSizes().nElements();
-      const float divider = 1.0f / static_cast<float>(nElementsFull);
+      const float divider           = 1.0f / static_cast<float>(nElementsFull);
 
       // clear scaledSource the matrix
       scaledSource.zeroMatrix();
 
-// source_mat(u_source_pos_index) = source.u(u_source_sig_index, t_index);
+// source_mat(p_source_pos_index) = source.p(p_source_sig_index, t_index);
 #pragma omp parallel for simd
-      for (size_t i = 0; i < sourceSize; i++) {
-        const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
+      for (size_t i = 0; i < sourceSize; i++)
+      {
+        const size_t signalIndex      = (isManyFlag) ? index2D + i : index2D;
         pScaledSource[sourceIndex[i]] = sourceInput[signalIndex];
       }
 
@@ -2128,7 +2651,8 @@ void KSpaceFirstOrderSolver::computeVelocitySourceTerm(RealMatrix& velocityMatri
       fftMatrix.computeR2CFftND(scaledSource);
 
 #pragma omp parallel for simd
-      for (size_t i = 0; i < nElementsReduced; i++) {
+      for (size_t i = 0; i < nElementsReduced; i++)
+      {
         pFftMatrix[i] *= divider * pSourceKappa[i];
       }
 
@@ -2137,147 +2661,56 @@ void KSpaceFirstOrderSolver::computeVelocitySourceTerm(RealMatrix& velocityMatri
 
 // add the source values to the existing field values
 #pragma omp parallel for simd
-      for (size_t i = 0; i < nElementsFull; i++) {
-        pVelocityMatrix[i] += pScaledSource[i];
+      for (size_t i = 0; i < nElementsFull; i++)
+      {
+        rhox[i] += pScaledSource[i];
+        rhoy[i] += pScaledSource[i];
+        if (simulationDimension == SD::k3D)
+        {
+          rhoz[i] += pScaledSource[i];
+        }
       }
-
       break;
     }
-    default: {
+    default:
+    {
       break;
     }
-  } // end of switch
-} // end of computeVelocitySourceTerm
-//----------------------------------------------------------------------------------------------------------------------
-
-/**
-  * Add in pressure source.
-  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::addPressureSource() {
-  const size_t timeIndex = mParameters.getTimeIndex();
-
-  if (mParameters.getPressureSourceFlag() > timeIndex) {
-    float* rhox = getRhoX().getData();
-    float* rhoy = getRhoY().getData();
-    float* rhoz = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
-
-    const float* sourceInput = getPressureSourceInput().getData();
-    const size_t* sourceIndex = getPressureSourceIndex().getData();
-
-    const bool isManyFlag = (mParameters.getPressureSourceMany() != 0);
-    const size_t sourceSize = getPressureSourceIndex().size();
-    const size_t index2D = (isManyFlag) ? timeIndex * sourceSize : timeIndex;
-
-    // different pressure sources
-    switch (mParameters.getPressureSourceMode()) {
-      case Parameters::SourceMode::kDirichlet: {
-#pragma omp parallel for if (sourceSize > 16384)
-        for (size_t i = 0; i < sourceSize; i++) {
-          const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
-
-          rhox[sourceIndex[i]] = sourceInput[signalIndex];
-          rhoy[sourceIndex[i]] = sourceInput[signalIndex];
-          if (simulationDimension == SD::k3D) {
-            rhoz[sourceIndex[i]] = sourceInput[signalIndex];
-          }
-        }
-        break;
-      }
-
-      case Parameters::SourceMode::kAdditiveNoCorrection: {
-#pragma omp parallel for if (sourceSize > 16384)
-        for (size_t i = 0; i < sourceSize; i++) {
-          const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
-
-          rhox[sourceIndex[i]] += sourceInput[signalIndex];
-          rhoy[sourceIndex[i]] += sourceInput[signalIndex];
-          if (simulationDimension == SD::k3D) {
-            rhoz[sourceIndex[i]] += sourceInput[signalIndex];
-          }
-        }
-        break;
-      }
-
-      case Parameters::SourceMode::kAdditive: { // temp matrix for additive source
-        RealMatrix& scaledSource = getTemp1RealND();
-        FftwComplexMatrix& fftMatrix = getTempFftwX();
-
-        float* pScaledSource = getTemp1RealND().getData();
-        float* pSourceKappa = getSourceKappa().getData();
-        FloatComplex* pFftMatrix = getTempFftwX().getComplexData();
-
-        const size_t nElementsFull = mParameters.getFullDimensionSizes().nElements();
-        const size_t nElementsReduced = mParameters.getReducedDimensionSizes().nElements();
-        const float divider = 1.0f / static_cast<float>(nElementsFull);
-
-        // clear scaledSource the matrix
-        scaledSource.zeroMatrix();
-
-// source_mat(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-#pragma omp parallel for simd
-        for (size_t i = 0; i < sourceSize; i++) {
-          const size_t signalIndex = (isManyFlag) ? index2D + i : index2D;
-          pScaledSource[sourceIndex[i]] = sourceInput[signalIndex];
-        }
-
-        // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
-        fftMatrix.computeR2CFftND(scaledSource);
-
-#pragma omp parallel for simd
-        for (size_t i = 0; i < nElementsReduced; i++) {
-          pFftMatrix[i] *= divider * pSourceKappa[i];
-        }
-
-        // source_mat = real(ifftn(source_kappa .* fftn(source_mat)));
-        fftMatrix.computeC2RFftND(scaledSource);
-
-// add the source values to the existing field values
-#pragma omp parallel for simd
-        for (size_t i = 0; i < nElementsFull; i++) {
-          rhox[i] += pScaledSource[i];
-          rhoy[i] += pScaledSource[i];
-          if (simulationDimension == SD::k3D) {
-            rhoz[i] += pScaledSource[i];
-          }
-        }
-        break;
-      }
-      default: {
-        break;
-      }
     } // switch
   }   // if do at all
 } // end of addPressureSource
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculate p0 source when necessary.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::addInitialPressureSource() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::addInitialPressureSource()
+{
   getP().copyData(getInitialPressureSourceInput());
 
   const float* sourceInput = getInitialPressureSourceInput().getData();
 
   const bool c0ScalarFlag = mParameters.getC0ScalarFlag();
-  const float c2Scalar = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
-  const float* c2Matrix = (c0ScalarFlag) ? nullptr : getC2().getData();
+  const float c2Scalar    = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+  const float* c2Matrix   = (c0ScalarFlag) ? nullptr : getC2().getData();
 
   float* rhoX = getRhoX().getData();
   float* rhoY = getRhoY().getData();
   float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
-  const size_t nElements = mParameters.getFullDimensionSizes().nElements();
+  const size_t nElements       = mParameters.getFullDimensionSizes().nElements();
   const float dimScalingFactor = (simulationDimension == SD::k3D) ? 3.0f : 2.0f;
 
 #pragma omp parallel for simd schedule(static)
-  for (size_t i = 0; i < nElements; i++) {
+  for (size_t i = 0; i < nElements; i++)
+  {
     const float tmp = sourceInput[i] / (dimScalingFactor * ((c0ScalarFlag) ? c2Scalar : c2Matrix[i]));
 
     rhoX[i] = tmp;
     rhoY[i] = tmp;
-    if (simulationDimension == SD::k3D) {
+    if (simulationDimension == SD::k3D)
+    {
       rhoZ[i] = tmp;
     }
   }
@@ -2288,44 +2721,55 @@ void KSpaceFirstOrderSolver::addInitialPressureSource() {
   //------------------------------------------------------------------------//
   computePressureGradient<simulationDimension>();
 
-  if (mParameters.getRho0ScalarFlag()) {
-    if (mParameters.getNonUniformGridFlag()) { // non uniform grid, homogeneous case
+  if (mParameters.getRho0ScalarFlag())
+  {
+    if (mParameters.getNonUniformGridFlag())
+    { // non uniform grid, homogeneous case
       computeInitialVelocityHomogeneousNonuniform<simulationDimension>();
-    } else { //uniform grid, homogeneous
+    }
+    else
+    { // uniform grid, homogeneous
       computeInitialVelocityHomogeneousUniform<simulationDimension>();
     }
-  } else { // heterogeneous, unifrom grid
+  }
+  else
+  { // heterogeneous, unifrom grid
     // divide the matrix by 2 and multiply with st./rho0_sg
     computeInitialVelocityHeterogeneous<simulationDimension>();
   }
 } // end of addInitialPressureSource
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Add transducer data source to velocity x component.
  */
-void KSpaceFirstOrderSolver::addTransducerSource() {
+void KSpaceFirstOrderSolver::addTransducerSource()
+{
   float* uxSgx = getUxSgx().getData();
 
-  const size_t* velocitySourceIndex = getVelocitySourceIndex().getData();
+  const size_t* velocitySourceIndex  = getVelocitySourceIndex().getData();
   const float* transducerSourceInput = getTransducerSourceInput().getData();
-  const size_t* delayMask = getDelayMask().getData();
+  const size_t* delayMask            = getDelayMask().getData();
 
-  const size_t timeIndex = mParameters.getTimeIndex();
+  const size_t timeIndex  = mParameters.getTimeIndex();
   const size_t sourceSize = getVelocitySourceIndex().size();
 
 #pragma omp parallel for schedule(static) if (sourceSize > 16384)
-  for (size_t i = 0; i < sourceSize; i++) {
+  for (size_t i = 0; i < sourceSize; i++)
+  {
     uxSgx[velocitySourceIndex[i]] += transducerSourceInput[delayMask[i] + timeIndex];
   }
 } // end of addTransducerSource
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Generate kappa matrix for lossless medium.
  * For 2D simulation, the zPart == 0.
  */
-void KSpaceFirstOrderSolver::generateKappa() {
+void KSpaceFirstOrderSolver::generateKappa()
+{
   const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
   // For 2D simulation set dz to 0
@@ -2343,22 +2787,25 @@ void KSpaceFirstOrderSolver::generateKappa() {
   float* kappa = getKappa().getData();
 
 #pragma omp parallel for schedule(static) if (mParameters.isSimulation3D())
-  for (size_t z = 0; z < reducedDimensionSizes.nz; z++) {
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
+  {
     const float zf = static_cast<float>(z);
-    float zPart = 0.5f - fabs(0.5f - zf * nzRec);
-    zPart = (zPart * zPart) * dz2Rec;
+    float zPart    = 0.5f - fabs(0.5f - zf * nzRec);
+    zPart          = (zPart * zPart) * dz2Rec;
 
 #pragma omp parallel for schedule(static) if (mParameters.isSimulation2D())
-    for (size_t y = 0; y < reducedDimensionSizes.ny; y++) {
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
+    {
       const float yf = static_cast<float>(y);
-      float yPart = 0.5f - fabs(0.5f - yf * nyRec);
-      yPart = (yPart * yPart) * dy2Rec;
+      float yPart    = 0.5f - fabs(0.5f - yf * nyRec);
+      yPart          = (yPart * yPart) * dy2Rec;
 
       const float yzPart = zPart + yPart;
-      for (size_t x = 0; x < reducedDimensionSizes.nx; x++) {
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
+      {
         const float xf = static_cast<float>(x);
-        float xPart = 0.5f - fabs(0.5f - xf * nxRec);
-        xPart = (xPart * xPart) * dx2Rec;
+        float xPart    = 0.5f - fabs(0.5f - xf * nxRec);
+        xPart          = (xPart * xPart) * dx2Rec;
 
         float k = cRefDtPi * sqrt(xPart + yzPart);
 
@@ -2370,13 +2817,15 @@ void KSpaceFirstOrderSolver::generateKappa() {
     }   // y
   }     // z
 } // end of generateKappa
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Generate sourceKappa matrix for additive sources.
  * For 2D simulation, the zPart == 0.
  */
-void KSpaceFirstOrderSolver::generateSourceKappa() {
+void KSpaceFirstOrderSolver::generateSourceKappa()
+{
   const float dx2Rec = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dy2Rec = 1.0f / (mParameters.getDy() * mParameters.getDy());
   const float dz2Rec = (mParameters.isSimulation3D()) ? 1.0f / (mParameters.getDz() * mParameters.getDz()) : 0.0f;
@@ -2392,22 +2841,25 @@ void KSpaceFirstOrderSolver::generateSourceKappa() {
   float* sourceKappa = getSourceKappa().getData();
 
 #pragma omp parallel for schedule(static) if (mParameters.isSimulation3D())
-  for (size_t z = 0; z < reducedDimensionSizes.nz; z++) {
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
+  {
     const float zf = static_cast<float>(z);
-    float zPart = 0.5f - fabs(0.5f - zf * nzRec);
-    zPart = (zPart * zPart) * dz2Rec;
+    float zPart    = 0.5f - fabs(0.5f - zf * nzRec);
+    zPart          = (zPart * zPart) * dz2Rec;
 
 #pragma omp parallel for schedule(static) if (mParameters.isSimulation2D())
-    for (size_t y = 0; y < reducedDimensionSizes.ny; y++) {
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
+    {
       const float yf = static_cast<float>(y);
-      float yPart = 0.5f - fabs(0.5f - yf * nyRec);
-      yPart = (yPart * yPart) * dy2Rec;
+      float yPart    = 0.5f - fabs(0.5f - yf * nyRec);
+      yPart          = (yPart * yPart) * dy2Rec;
 
       const float yzPart = zPart + yPart;
-      for (size_t x = 0; x < reducedDimensionSizes.nx; x++) {
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
+      {
         const float xf = static_cast<float>(x);
-        float xPart = 0.5f - fabs(0.5f - xf * nxRec);
-        xPart = (xPart * xPart) * dx2Rec;
+        float xPart    = 0.5f - fabs(0.5f - xf * nxRec);
+        xPart          = (xPart * xPart) * dx2Rec;
 
         float k = cRefDtPi * sqrt(xPart + yzPart);
 
@@ -2419,19 +2871,21 @@ void KSpaceFirstOrderSolver::generateSourceKappa() {
     }   // y
   }     // z
 } // end of generateSourceKappa
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Generate kappa matrix, absorbNabla1, absorbNabla2 for absorbing medium.
  * For the 2D simulation the zPart == 0
  */
-void KSpaceFirstOrderSolver::generateKappaAndNablas() {
+void KSpaceFirstOrderSolver::generateKappaAndNablas()
+{
   const float dxSqRec = 1.0f / (mParameters.getDx() * mParameters.getDx());
   const float dySqRec = 1.0f / (mParameters.getDy() * mParameters.getDy());
   const float dzSqRec = (mParameters.isSimulation3D()) ? 1.0f / (mParameters.getDz() * mParameters.getDz()) : 0.0f;
 
   const float cRefDt2 = mParameters.getCRef() * mParameters.getDt() * 0.5f;
-  const float pi2 = static_cast<float>(M_PI) * 2.0f;
+  const float pi2     = static_cast<float>(M_PI) * 2.0f;
 
   const size_t nx = mParameters.getFullDimensionSizes().nx;
   const size_t ny = mParameters.getFullDimensionSizes().ny;
@@ -2443,31 +2897,34 @@ void KSpaceFirstOrderSolver::generateKappaAndNablas() {
 
   const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
 
-  float* kappa = getKappa().getData();
-  float* absorbNabla1 = getAbsorbNabla1().getData();
-  float* absorbNabla2 = getAbsorbNabla2().getData();
+  float* kappa           = getKappa().getData();
+  float* absorbNabla1    = getAbsorbNabla1().getData();
+  float* absorbNabla2    = getAbsorbNabla2().getData();
   const float alphaPower = mParameters.getAlphaPower();
 
 #pragma omp parallel for schedule(static) if (mParameters.isSimulation3D())
-  for (size_t z = 0; z < reducedDimensionSizes.nz; z++) {
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
+  {
     const float zf = static_cast<float>(z);
-    float zPart = 0.5f - fabs(0.5f - zf * nzRec);
-    zPart = (zPart * zPart) * dzSqRec;
+    float zPart    = 0.5f - fabs(0.5f - zf * nzRec);
+    zPart          = (zPart * zPart) * dzSqRec;
 
 #pragma omp parallel for schedule(static) if (mParameters.isSimulation2D())
-    for (size_t y = 0; y < reducedDimensionSizes.ny; y++) {
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
+    {
       const float yf = static_cast<float>(y);
-      float yPart = 0.5f - fabs(0.5f - yf * nyRec);
-      yPart = (yPart * yPart) * dySqRec;
+      float yPart    = 0.5f - fabs(0.5f - yf * nyRec);
+      yPart          = (yPart * yPart) * dySqRec;
 
       const float yzPart = zPart + yPart;
 
-      for (size_t x = 0; x < reducedDimensionSizes.nx; x++) {
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
+      {
         const float xf = static_cast<float>(x);
-        float xPart = 0.5f - fabs(0.5f - xf * nxRec);
-        xPart = (xPart * xPart) * dxSqRec;
+        float xPart    = 0.5f - fabs(0.5f - xf * nxRec);
+        xPart          = (xPart * xPart) * dxSqRec;
 
-        float k = pi2 * sqrt(xPart + yzPart);
+        float k     = pi2 * sqrt(xPart + yzPart);
         float cRefK = cRefDt2 * k;
 
         const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
@@ -2486,22 +2943,28 @@ void KSpaceFirstOrderSolver::generateKappaAndNablas() {
   }     // z
 
 } // end of generateKappaAndNablas
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Generate absorbTau and absorbEta in for heterogenous medium.
  */
-void KSpaceFirstOrderSolver::generateTauAndEta() {
-  if ((mParameters.getAlphaCoeffScalarFlag()) && (mParameters.getC0ScalarFlag())) { // scalar values
-    const float alphaPower = mParameters.getAlphaPower();
+void KSpaceFirstOrderSolver::generateTauAndEta()
+{
+  if ((mParameters.getAlphaCoeffScalarFlag()) && (mParameters.getC0ScalarFlag()))
+  { // scalar values
+    const float alphaPower       = mParameters.getAlphaPower();
     const float tanPi2AlphaPower = tan(static_cast<float>(M_PI_2) * alphaPower);
-    const float alphaNeperCoeff = (100.0f * pow(1.0e-6f / (2.0f * static_cast<float>(M_PI)), alphaPower)) / (20.0f * static_cast<float>(M_LOG10E));
+    const float alphaNeperCoeff =
+      (100.0f * pow(1.0e-6f / (2.0f * static_cast<float>(M_PI)), alphaPower)) / (20.0f * static_cast<float>(M_LOG10E));
 
     const float alphaCoeff2 = 2.0f * mParameters.getAlphaCoeffScalar() * alphaNeperCoeff;
 
     mParameters.setAbsorbTauScalar((-alphaCoeff2) * pow(mParameters.getC0Scalar(), alphaPower - 1));
     mParameters.setAbsorbEtaScalar(alphaCoeff2 * pow(mParameters.getC0Scalar(), alphaPower) * tanPi2AlphaPower);
-  } else { // matrix
+  }
+  else
+  { // matrix
 
     const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
 
@@ -2509,30 +2972,34 @@ void KSpaceFirstOrderSolver::generateTauAndEta() {
     float* absorbEta = getAbsorbEta().getData();
 
     const bool alphaCoeffScalarFlag = mParameters.getAlphaCoeffScalarFlag();
-    const float alphaCoeffScalar = (alphaCoeffScalarFlag) ? mParameters.getAlphaCoeffScalar() : 0;
-    const float* alphaCoeffMatrix = (alphaCoeffScalarFlag) ? nullptr
-                                                           : getTemp1RealND().getData();
+    const float alphaCoeffScalar    = (alphaCoeffScalarFlag) ? mParameters.getAlphaCoeffScalar() : 0;
+    const float* alphaCoeffMatrix   = (alphaCoeffScalarFlag) ? nullptr : getTemp1RealND().getData();
 
     const bool c0ScalarFlag = mParameters.getC0ScalarFlag();
-    const float c0Scalar = (c0ScalarFlag) ? mParameters.getC0Scalar() : 0;
+    const float c0Scalar    = (c0ScalarFlag) ? mParameters.getC0Scalar() : 0;
     // here c2 still holds just c0!
-    const float* cOMatrix = (c0ScalarFlag) ? nullptr : getC2().getData();
+    const float* cOMatrix   = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-    const float alphaPower = mParameters.getAlphaPower();
+    const float alphaPower       = mParameters.getAlphaPower();
     const float tanPi2AlphaPower = tan(static_cast<float>(M_PI_2) * alphaPower);
 
-    //alpha = 100*alpha.*(1e-6/(2*pi)).^y./
-    //                  (20*log10(exp(1)));
-    const float alphaNeperCoeff = (100.0f * pow(1.0e-6f / (2.0f * static_cast<float>(M_PI)), alphaPower)) / (20.0f * static_cast<float>(M_LOG10E));
+    // alpha = 100*alpha.*(1e-6/(2*pi)).^y./
+    //                   (20*log10(exp(1)));
+    const float alphaNeperCoeff =
+      (100.0f * pow(1.0e-6f / (2.0f * static_cast<float>(M_PI)), alphaPower)) / (20.0f * static_cast<float>(M_LOG10E));
 
 #pragma omp parallel for schedule(static) if (mParameters.isSimulation3D())
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
 #pragma omp parallel for schedule(static) if (mParameters.isSimulation2D())
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
-          const float alphaCoeff2 = 2.0f * alphaNeperCoeff * ((alphaCoeffScalarFlag) ? alphaCoeffScalar : alphaCoeffMatrix[i]);
+          const float alphaCoeff2 =
+            2.0f * alphaNeperCoeff * ((alphaCoeffScalarFlag) ? alphaCoeffScalar : alphaCoeffMatrix[i]);
 
           absorbTau[i] = (-alphaCoeff2) * pow(((c0ScalarFlag) ? c0Scalar : cOMatrix[i]), alphaPower - 1);
           absorbEta[i] = alphaCoeff2 * pow(((c0ScalarFlag) ? c0Scalar : cOMatrix[i]), alphaPower) * tanPi2AlphaPower;
@@ -2542,13 +3009,14 @@ void KSpaceFirstOrderSolver::generateTauAndEta() {
     }     // z
   }       // matrix
 } // end of generateTauAndEta
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Prepare dt./ rho0  for non-uniform grid.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::generateInitialDenisty() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::generateInitialDenisty()
+{
   float* dtRho0Sgx = getDtRho0Sgx().getData();
   float* dtRho0Sgy = getDtRho0Sgy().getData();
   float* dtRho0Sgz = (simulationDimension == SD::k3D) ? getDtRho0Sgz().getData() : nullptr;
@@ -2562,16 +3030,20 @@ void KSpaceFirstOrderSolver::generateInitialDenisty() {
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < dimensionSizes.nz; z++) {
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
         dtRho0Sgx[i] = (dt * duxdxnSgx[x]) / dtRho0Sgx[i];
         dtRho0Sgy[i] = (dt * duydynSgy[y]) / dtRho0Sgy[i];
-        if (simulationDimension == SD::k3D) {
+        if (simulationDimension == SD::k3D)
+        {
           dtRho0Sgz[i] = (dt * duzdznSgz[z]) / dtRho0Sgz[i];
         }
       } // x
@@ -2579,37 +3051,44 @@ void KSpaceFirstOrderSolver::generateInitialDenisty() {
   }     // z
 
 } // end of generateInitialDenisty
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute c^2.
  */
-void KSpaceFirstOrderSolver::computeC2() {
-  if (!mParameters.getC0ScalarFlag()) {
-    float* c2 = getC2().getData();
+void KSpaceFirstOrderSolver::computeC2()
+{
+  if (!mParameters.getC0ScalarFlag())
+  {
+    float* c2         = getC2().getData();
     const size_t size = getC2().size();
 
 #pragma omp parallel for simd schedule(static) aligned(c2)
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++)
+    {
       c2[i] = c2[i] * c2[i];
     }
   } // matrix
 } // computeC2
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute acoustic velocity for initial pressure problem.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeInitialVelocityHeterogeneous() {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computeInitialVelocityHeterogeneous()
+{
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
     getTempFftwZ().computeC2RFftND(getUzSgz());
   }
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
-  const float divider = 1.0f / (2.0f * static_cast<float>(nElements));
+  const float divider    = 1.0f / (2.0f * static_cast<float>(nElements));
 
   float* uxSgx = getUxSgx().getData();
   float* uySgy = getUySgy().getData();
@@ -2619,33 +3098,37 @@ void KSpaceFirstOrderSolver::computeInitialVelocityHeterogeneous() {
   const float* dtRho0Sgy = getDtRho0Sgy().getData();
   const float* dtRho0Sgz = (simulationDimension == SD::k3D) ? getDtRho0Sgz().getData() : nullptr;
 
-#pragma omp parallel for simd schedule(static) \
-    aligned(uxSgx, uySgy, uzSgz, dtRho0Sgx, dtRho0Sgy, dtRho0Sgz)
-  for (size_t i = 0; i < nElements; i++) {
+#pragma omp parallel for simd schedule(static) aligned(uxSgx, uySgy, uzSgz, dtRho0Sgx, dtRho0Sgy, dtRho0Sgz)
+  for (size_t i = 0; i < nElements; i++)
+  {
     uxSgx[i] *= dtRho0Sgx[i] * divider;
     uySgy[i] *= dtRho0Sgy[i] * divider;
-    if (simulationDimension == SD::k3D) {
+    if (simulationDimension == SD::k3D)
+    {
       uzSgz[i] *= dtRho0Sgz[i] * divider;
     }
   }
 } // end of computeInitialVelocityHeterogeneous
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute velocity for the initial pressure problem, homogeneous medium, uniform grid.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousUniform() {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousUniform()
+{
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
     getTempFftwZ().computeC2RFftND(getUzSgz());
   }
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
-  const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
-  const float dividerY = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
-  const float dividerZ = ((simulationDimension == SD::k3D))
+  const float dividerX   = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
+  const float dividerY   = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
+  const float dividerZ   = ((simulationDimension == SD::k3D))
                              ? 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar()
                              : 1.0f;
 
@@ -2654,35 +3137,40 @@ void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousUniform() {
   float* uzSgz = (simulationDimension == SD::k3D) ? getUzSgz().getData() : nullptr;
 
 #pragma omp parallel for simd schedule(static) aligned(uxSgx, uySgy, uzSgz)
-  for (size_t i = 0; i < nElements; i++) {
+  for (size_t i = 0; i < nElements; i++)
+  {
     uxSgx[i] *= dividerX;
     uySgy[i] *= dividerY;
-    if (simulationDimension == SD::k3D) {
+    if (simulationDimension == SD::k3D)
+    {
       uzSgz[i] *= dividerZ;
     }
   }
 } // end of computeInitialVelocityHomogeneousUniform
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute acoustic velocity for initial pressure problem, homogenous medium, nonuniform grid.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousNonuniform() {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousNonuniform()
+{
   getTempFftwX().computeC2RFftND(getUxSgx());
   getTempFftwY().computeC2RFftND(getUySgy());
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
     getTempFftwZ().computeC2RFftND(getUzSgz());
   }
 
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
-  const size_t nElements = dimensionSizes.nElements();
+  const size_t nElements               = dimensionSizes.nElements();
 
   const float dividerX = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgxScalar();
   const float dividerY = 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgyScalar();
   const float dividerZ = (simulationDimension == SD::k3D)
-                             ? 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar()
-                             : 1.0f;
+                           ? 1.0f / (2.0f * static_cast<float>(nElements)) * mParameters.getDtRho0SgzScalar()
+                           : 1.0f;
 
   const float* dxudxnSgx = getDxudxnSgx().getData();
   const float* dyudynSgy = getDyudynSgy().getData();
@@ -2693,31 +3181,37 @@ void KSpaceFirstOrderSolver::computeInitialVelocityHomogeneousNonuniform() {
   float* uzSgz = (simulationDimension == SD::k3D) ? getUzSgz().getData() : nullptr;
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < dimensionSizes.nz; z++) {
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
         uxSgx[i] *= dividerX * dxudxnSgx[x];
         uySgy[i] *= dividerY * dyudynSgy[y];
-        if ((simulationDimension == SD::k3D)) {
+        if ((simulationDimension == SD::k3D))
+        {
           uzSgz[i] *= dividerZ * dzudznSgz[z];
         }
       } // x
     }   // y
   }     // z
 } // end of computeInitialVelocityHomogeneousNonuniform
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute acoustic velocity for heterogeneous medium and a uniform grid, x direction.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeVelocityHeterogeneous() {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computeVelocityHeterogeneous()
+{
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
-  const size_t nElements = dimensionSizes.nElements();
-  const float divider = 1.0f / static_cast<float>(nElements);
+  const size_t nElements               = dimensionSizes.nElements();
+  const float divider                  = 1.0f / static_cast<float>(nElements);
 
   const float* ifftX = getTemp1RealND().getData();
   const float* ifftY = getTemp2RealND().getData();
@@ -2737,11 +3231,14 @@ void KSpaceFirstOrderSolver::computeVelocityHeterogeneous() {
 
 // long loops are replicated for every dimension to save SIMD registers
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < dimensionSizes.nz; z++) {
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
         uxSgx[i] = (uxSgx[i] * pmlX[x] - divider * ifftX[i] * dtRho0Sgx[i]) * pmlX[x];
@@ -2750,12 +3247,15 @@ void KSpaceFirstOrderSolver::computeVelocityHeterogeneous() {
   }     // z
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < dimensionSizes.nz; z++) {
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
       const float ePmlY = pmlY[y];
 #pragma omp simd
-      for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
         uySgy[i] = (uySgy[i] * ePmlY - divider * ifftY[i] * dtRho0Sgy[i]) * ePmlY;
@@ -2763,13 +3263,17 @@ void KSpaceFirstOrderSolver::computeVelocityHeterogeneous() {
     }   // y
   }     // z
 
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
 #pragma omp parallel for schedule(static)
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
       const float ePmlZ = pmlZ[z];
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
           uzSgz[i] = (uzSgz[i] * ePmlZ - divider * ifftZ[i] * dtRho0Sgz[i]) * ePmlZ;
@@ -2778,21 +3282,22 @@ void KSpaceFirstOrderSolver::computeVelocityHeterogeneous() {
     }     // z
   }       // k3D
 } // end of computeVelocityHeterogeneous
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute acoustic velocity for homogeneous medium and a uniform grid.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeVelocityHomogeneousUniform() {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computeVelocityHomogeneousUniform()
+{
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
-  const size_t nElements = dimensionSizes.nElements();
+  const size_t nElements               = dimensionSizes.nElements();
 
   const float dividerX = mParameters.getDtRho0SgxScalar() / static_cast<float>(nElements);
   const float dividerY = mParameters.getDtRho0SgyScalar() / static_cast<float>(nElements);
-  const float dividerZ = (simulationDimension == SD::k3D)
-                             ? mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements)
-                             : 1.0f;
+  const float dividerZ =
+    (simulationDimension == SD::k3D) ? mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements) : 1.0f;
 
   const float* ifftX = getTemp1RealND().getData();
   const float* ifftY = getTemp2RealND().getData();
@@ -2808,11 +3313,14 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousUniform() {
 
 // long loops are replicated for every dimension to save SIMD registers
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < dimensionSizes.nz; z++) {
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
         uxSgx[i] = (uxSgx[i] * pmlX[x] - dividerX * ifftX[i]) * pmlX[x];
@@ -2821,11 +3329,14 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousUniform() {
   }     // z
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < dimensionSizes.nz; z++) {
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
         uySgy[i] = (uySgy[i] * pmlY[y] - dividerY * ifftY[i]) * pmlY[y];
@@ -2833,12 +3344,16 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousUniform() {
     }   // y
   }     // z
 
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
 #pragma omp parallel for schedule(static)
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
           uzSgz[i] = (uzSgz[i] * pmlZ[z] - dividerZ * ifftZ[i]) * pmlZ[z];
@@ -2847,21 +3362,22 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousUniform() {
     }     // z
   }       // k3D
 } // end of computeVelocityXHomogeneousUniform
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute acoustic velocity for homogenous medium and nonuniform grid, x direction.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform() {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform()
+{
   const DimensionSizes& dimensionSizes = mParameters.getFullDimensionSizes();
-  const size_t nElements = dimensionSizes.nElements();
+  const size_t nElements               = dimensionSizes.nElements();
 
   const float dividerX = mParameters.getDtRho0SgxScalar() / static_cast<float>(nElements);
   const float dividerY = mParameters.getDtRho0SgyScalar() / static_cast<float>(nElements);
-  const float dividerZ = (simulationDimension == SD::k3D)
-                             ? mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements)
-                             : 1.0f;
+  const float dividerZ =
+    (simulationDimension == SD::k3D) ? mParameters.getDtRho0SgzScalar() / static_cast<float>(nElements) : 1.0f;
 
   const float* ifftX = getTemp1RealND().getData();
   const float* ifftY = getTemp2RealND().getData();
@@ -2881,11 +3397,14 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform() {
 
 // long loops are replicated for every dimension to save SIMD registers
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < dimensionSizes.nz; z++) {
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
         uxSgx[i] = (uxSgx[i] * pmlX[x] - (dividerX * dxudxnSgx[x] * ifftX[i])) * pmlX[x];
@@ -2894,11 +3413,14 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform() {
   }     // z
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < dimensionSizes.nz; z++) {
+  for (size_t z = 0; z < dimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t y = 0; y < dimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < dimensionSizes.nx; x++) {
+      for (size_t x = 0; x < dimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
         uySgy[i] = (uySgy[i] * pmlY[y] - (dividerY * dyudynSgy[y] * ifftY[i])) * pmlY[y];
@@ -2906,12 +3428,16 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform() {
     }   // y
   }     // z
 
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
 #pragma omp parallel for schedule(static)
-    for (size_t z = 0; z < dimensionSizes.nz; z++) {
-      for (size_t y = 0; y < dimensionSizes.ny; y++) {
+    for (size_t z = 0; z < dimensionSizes.nz; z++)
+    {
+      for (size_t y = 0; y < dimensionSizes.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < dimensionSizes.nx; x++) {
+        for (size_t x = 0; x < dimensionSizes.nx; x++)
+        {
           const size_t i = get1DIndex(z, y, x, dimensionSizes);
 
           uzSgz[i] = (uzSgz[i] * pmlZ[z] - (dividerZ * dzudznSgz[z] * ifftZ[i])) * pmlZ[z];
@@ -2920,13 +3446,14 @@ void KSpaceFirstOrderSolver::computeVelocityHomogeneousNonuniform() {
     }     // z
   }       // k3D
 } // end of computeVelocityHomogeneousNonuniform
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  *  Compute part of the new velocity term - gradient of pressure.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computePressureGradient() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computePressureGradient()
+{
   // Compute FFT of pressure
   getTempFftwX().computeR2CFftND(getP());
 
@@ -2943,35 +3470,38 @@ void KSpaceFirstOrderSolver::computePressureGradient() {
   const DimensionSizes& reducedDimensionSizes = mParameters.getReducedDimensionSizes();
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < reducedDimensionSizes.nz; z++) {
+  for (size_t z = 0; z < reducedDimensionSizes.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < reducedDimensionSizes.ny; y++) {
+    for (size_t y = 0; y < reducedDimensionSizes.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < reducedDimensionSizes.nx; x++) {
+      for (size_t x = 0; x < reducedDimensionSizes.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, reducedDimensionSizes);
 
         const FloatComplex eKappa = ifftX[i] * kappa[i];
 
         ifftX[i] = eKappa * ddxKShiftPos[x];
         ifftY[i] = eKappa * ddyKShiftPos[y];
-        if (simulationDimension == SD::k3D) {
+        if (simulationDimension == SD::k3D)
+        {
           ifftZ[i] = eKappa * ddzKShiftPos[z];
         }
       } // x
     }   // y
   }     // z
 } // end of computePressureGradient
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculate three temporary sums in the new pressure formula non-linear absorbing case.
  */
-template <Parameters::SimulationDimension simulationDimension,
-          bool bOnAScalarFlag,
-          bool rho0ScalarFlag>
-void KSpaceFirstOrderSolver::computePressureTermsNonlinear(RealMatrix& densitySum,
-                                                           RealMatrix& nonlinearTerm,
-                                                           RealMatrix& velocityGradientSum) {
+template<Parameters::SimulationDimension simulationDimension, bool bOnAScalarFlag, bool rho0ScalarFlag>
+void KSpaceFirstOrderSolver::computePressureTermsNonlinear(
+  RealMatrix& densitySum, RealMatrix& nonlinearTerm, RealMatrix& velocityGradientSum)
+{
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
   const float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
@@ -2980,41 +3510,42 @@ void KSpaceFirstOrderSolver::computePressureTermsNonlinear(RealMatrix& densitySu
   const float* duydy = getDuydy().getData();
   const float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
-  const float bOnAScalar = (bOnAScalarFlag) ? mParameters.getBOnAScalar() : 0;
+  const float bOnAScalar  = (bOnAScalarFlag) ? mParameters.getBOnAScalar() : 0;
   const float* bOnAMatrix = (bOnAScalarFlag) ? nullptr : getBOnA().getData();
 
-  const float rho0Scalar = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
+  const float rho0Scalar  = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
   const float* rho0Matrix = (rho0ScalarFlag) ? nullptr : getRho0().getData();
 
-  float* eDensitySum = densitySum.getData();
-  float* eNonlinearTerm = nonlinearTerm.getData();
+  float* eDensitySum          = densitySum.getData();
+  float* eNonlinearTerm       = nonlinearTerm.getData();
   float* eVelocityGradientSum = velocityGradientSum.getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
 
-#pragma omp parallel for simd schedule(static)                 \
-    aligned(eDensitySum, eNonlinearTerm, eVelocityGradientSum, \
-            rhoX, rhoY, rhoZ, bOnAMatrix, rho0Matrix, duxdx, duydy, duzdz)
-  for (size_t i = 0; i < nElements; i++) {
+#pragma omp parallel for simd schedule(static) aligned( \
+  eDensitySum, eNonlinearTerm, eVelocityGradientSum, rhoX, rhoY, rhoZ, bOnAMatrix, rho0Matrix, duxdx, duydy, duzdz)
+  for (size_t i = 0; i < nElements; i++)
+  {
     const float rhoSum = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
-    const float duSum = (simulationDimension == SD::k3D) ? (duxdx[i] + duydy[i] + duzdz[i]) : (duxdx[i] + duydy[i]);
+    const float duSum  = (simulationDimension == SD::k3D) ? (duxdx[i] + duydy[i] + duzdz[i]) : (duxdx[i] + duydy[i]);
 
     const float bOnA = (bOnAScalarFlag) ? bOnAScalar : bOnAMatrix[i];
     const float rho0 = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
 
-    eDensitySum[i] = rhoSum;
-    eNonlinearTerm[i] = (bOnA * rhoSum * rhoSum) / (2.0f * rho0) + rhoSum;
+    eDensitySum[i]          = rhoSum;
+    eNonlinearTerm[i]       = (bOnA * rhoSum * rhoSum) / (2.0f * rho0) + rhoSum;
     eVelocityGradientSum[i] = rho0 * duSum;
   }
 } // end of computePressureTermsNonlinear
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculate two temporary sums in the new pressure formula, linear absorbing case.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
-                                                        RealMatrix& velocityGradientSum) {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum, RealMatrix& velocityGradientSum)
+{
   const size_t size = mParameters.getFullDimensionSizes().nElements();
 
   const float* rhoX = getRhoX().getData();
@@ -3025,37 +3556,44 @@ void KSpaceFirstOrderSolver::computePressureTermsLinear(RealMatrix& densitySum,
   const float* duydy = getDuydy().getData();
   const float* duzdz = (simulationDimension == SD::k3D) ? getDuzdz().getData() : nullptr;
 
-  float* pDensitySum = densitySum.getData();
+  float* pDensitySum          = densitySum.getData();
   float* pVelocityGradientSum = velocityGradientSum.getData();
 
 #pragma omp parallel for simd schedule(static) aligned(pDensitySum, rhoX, rhoY, rhoZ)
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < size; i++)
+  {
     pDensitySum[i] = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
   }
 
-  if (mParameters.getRho0ScalarFlag()) { // scalar
+  if (mParameters.getRho0ScalarFlag())
+  { // scalar
     const float eRho0 = mParameters.getRho0Scalar();
 #pragma omp parallel for simd schedule(static) aligned(pDensitySum, duxdx, duydy, duzdz)
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++)
+    {
       const float duSum = (simulationDimension == SD::k3D) ? (duxdx[i] + duydy[i] + duzdz[i]) : (duxdx[i] + duydy[i]);
       pVelocityGradientSum[i] = eRho0 * duSum;
     }
-  } else { // matrix
+  }
+  else
+  { // matrix
     const float* rho0 = getRho0().getData();
 #pragma omp parallel for simd schedule(static) aligned(pDensitySum, rho0, duxdx, duydy, duzdz)
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++)
+    {
       const float duSum = (simulationDimension == SD::k3D) ? (duxdx[i] + duydy[i] + duzdz[i]) : (duxdx[i] + duydy[i]);
       pVelocityGradientSum[i] = rho0[i] * duSum;
     }
   }
 } // end of computePressureTermsLinear
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Compute absorbing term with abosrbNabla1 and absorbNabla2.
  */
-void KSpaceFirstOrderSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
-                                                   FftwComplexMatrix& fftPart2) {
+void KSpaceFirstOrderSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1, FftwComplexMatrix& fftPart2)
+{
   const size_t nElements = mParameters.getReducedDimensionSizes().nElements();
 
   FloatComplex* pFftPart1 = fftPart1.getComplexData();
@@ -3065,97 +3603,102 @@ void KSpaceFirstOrderSolver::computeAbsorbtionTerm(FftwComplexMatrix& fftPart1,
   const float* absorbNabla2 = getAbsorbNabla2().getData();
 
 #pragma omp parallel for simd schedule(static) aligned(pFftPart1, pFftPart2, absorbNabla1, absorbNabla2)
-  for (size_t i = 0; i < nElements; i++) {
+  for (size_t i = 0; i < nElements; i++)
+  {
     pFftPart1[i] *= absorbNabla1[i];
     pFftPart2[i] *= absorbNabla2[i];
   }
 } // end of computeAbsorbtionTerm
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Sum sub-terms to calculate new pressure, after FFTs, non-linear case.
  */
-template <bool c0ScalarFlag, bool areTauAndEtaScalars>
-void KSpaceFirstOrderSolver::sumPressureTermsNonlinear(const RealMatrix& absorbTauTerm,
-                                                       const RealMatrix& absorbEtaTerm,
-                                                       const RealMatrix& nonlinearTerm) {
+template<bool c0ScalarFlag, bool areTauAndEtaScalars>
+void KSpaceFirstOrderSolver::sumPressureTermsNonlinear(
+  const RealMatrix& absorbTauTerm, const RealMatrix& absorbEtaTerm, const RealMatrix& nonlinearTerm)
+{
   const float* pAbsorbTauTerm = absorbTauTerm.getData();
   const float* pAbsorbEtaTerm = absorbEtaTerm.getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
-  const float divider = 1.0f / static_cast<float>(nElements);
+  const float divider    = 1.0f / static_cast<float>(nElements);
 
-  const float c2Scalar = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+  const float c2Scalar  = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
   const float* c2Matrix = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  const float absorbTauScalar = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
+  const float absorbTauScalar  = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
   const float* absorbTauMatrix = (areTauAndEtaScalars) ? nullptr : getAbsorbTau().getData();
 
-  const float absorbEtaScalar = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
+  const float absorbEtaScalar  = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
   const float* absorbEtaMatrix = (areTauAndEtaScalars) ? nullptr : getAbsorbEta().getData();
   ;
 
   const float* bOnA = nonlinearTerm.getData();
-  float* p = getP().getData();
+  float* p          = getP().getData();
 
 #pragma omp parallel for simd schedule(static) \
-    aligned(p, c2Matrix, pAbsorbTauTerm, absorbTauMatrix, pAbsorbEtaTerm, absorbEtaMatrix)
-  for (size_t i = 0; i < nElements; i++) {
-    const float c2 = (c0ScalarFlag) ? c2Scalar : c2Matrix[i];
+  aligned(p, c2Matrix, pAbsorbTauTerm, absorbTauMatrix, pAbsorbEtaTerm, absorbEtaMatrix)
+  for (size_t i = 0; i < nElements; i++)
+  {
+    const float c2        = (c0ScalarFlag) ? c2Scalar : c2Matrix[i];
     const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
     const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
 
     p[i] = c2 * (bOnA[i] + (divider * ((pAbsorbTauTerm[i] * absorbTau) - (pAbsorbEtaTerm[i] * absorbEta))));
   }
 } // end of sumPressureTermsNonlinear
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Sum sub-terms to calculate new pressure, after FFTs, linear case.
  */
-template <bool c0ScalarFlag, bool areTauAndEtaScalars>
-void KSpaceFirstOrderSolver::sumPressureTermsLinear(const RealMatrix& absorbTauTerm,
-                                                    const RealMatrix& absorbEtaTerm,
-                                                    const RealMatrix& densitySum) {
+template<bool c0ScalarFlag, bool areTauAndEtaScalars>
+void KSpaceFirstOrderSolver::sumPressureTermsLinear(
+  const RealMatrix& absorbTauTerm, const RealMatrix& absorbEtaTerm, const RealMatrix& densitySum)
+{
   const float* pAbsorbTauTerm = absorbTauTerm.getData();
   const float* pAbsorbEtaTerm = absorbEtaTerm.getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
-  const float divider = 1.0f / static_cast<float>(nElements);
+  const float divider    = 1.0f / static_cast<float>(nElements);
 
-  const float c2Scalar = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+  const float c2Scalar  = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
   const float* c2Matrix = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  const float absorbTauScalar = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
+  const float absorbTauScalar  = (areTauAndEtaScalars) ? mParameters.getAbsorbTauScalar() : 0;
   const float* absorbTauMatrix = (areTauAndEtaScalars) ? nullptr : getAbsorbTau().getData();
 
-  const float absorbEtaScalar = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
+  const float absorbEtaScalar  = (areTauAndEtaScalars) ? mParameters.getAbsorbEtaScalar() : 0;
   const float* absorbEtaMatrix = (areTauAndEtaScalars) ? nullptr : getAbsorbEta().getData();
   ;
 
   const float* pDenistySum = densitySum.getData();
-  float* p = getP().getData();
+  float* p                 = getP().getData();
 
 #pragma omp parallel for simd schedule(static) \
-    aligned(p, pDenistySum, c2Matrix, absorbTauMatrix, absorbEtaMatrix, pAbsorbTauTerm, pAbsorbEtaTerm)
-  for (size_t i = 0; i < nElements; i++) {
-    const float c2 = (c0ScalarFlag) ? c2Scalar : c2Matrix[i];
+  aligned(p, pDenistySum, c2Matrix, absorbTauMatrix, absorbEtaMatrix, pAbsorbTauTerm, pAbsorbEtaTerm)
+  for (size_t i = 0; i < nElements; i++)
+  {
+    const float c2        = (c0ScalarFlag) ? c2Scalar : c2Matrix[i];
     const float absorbTau = (areTauAndEtaScalars) ? absorbTauScalar : absorbTauMatrix[i];
     const float absorbEta = (areTauAndEtaScalars) ? absorbEtaScalar : absorbEtaMatrix[i];
 
     p[i] = c2 * (pDenistySum[i] + (divider * ((pAbsorbTauTerm[i] * absorbTau) - (pAbsorbEtaTerm[i] * absorbEta))));
   }
 } // end of sumPressureTermsLinear
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Sum sub-terms for new p, nonlinear lossless case.
  */
-template <Parameters::SimulationDimension simulationDimension,
-          bool c0ScalarFlag,
-          bool nonlinearFlag,
-          bool rho0ScalarFlag>
-void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless() {
+template<Parameters::SimulationDimension simulationDimension, bool c0ScalarFlag, bool nonlinearFlag,
+  bool rho0ScalarFlag>
+void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless()
+{
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
 
   float* p = getP().getData();
@@ -3164,18 +3707,19 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless() {
   const float* rhoY = getRhoY().getData();
   const float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
 
-  const float c2Scalar = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
+  const float c2Scalar  = (c0ScalarFlag) ? mParameters.getC2Scalar() : 0;
   const float* c2Matrix = (c0ScalarFlag) ? nullptr : getC2().getData();
 
-  const float bOnAScalar = (nonlinearFlag) ? mParameters.getBOnAScalar() : 0;
+  const float bOnAScalar  = (nonlinearFlag) ? mParameters.getBOnAScalar() : 0;
   const float* bOnAMatrix = (nonlinearFlag) ? nullptr : getBOnA().getData();
 
-  const float rho0Scalar = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
+  const float rho0Scalar  = (rho0ScalarFlag) ? mParameters.getRho0Scalar() : 0;
   const float* rho0Matrix = (rho0ScalarFlag) ? nullptr : getRho0().getData();
 
 #pragma omp parallel for simd schedule(static)
-  for (size_t i = 0; i < nElements; i++) {
-    const float c2 = (c0ScalarFlag) ? c2Scalar : c2Matrix[i];
+  for (size_t i = 0; i < nElements; i++)
+  {
+    const float c2   = (c0ScalarFlag) ? c2Scalar : c2Matrix[i];
     const float bOnA = (nonlinearFlag) ? bOnAScalar : bOnAMatrix[i];
     const float rho0 = (rho0ScalarFlag) ? rho0Scalar : rho0Matrix[i];
 
@@ -3184,45 +3728,53 @@ void KSpaceFirstOrderSolver::sumPressureTermsNonlinearLossless() {
     p[i] = c2 * (sumDensity + (bOnA * (sumDensity * sumDensity) / (2.0f * rho0)));
   }
 } // end of sumPressureTermsNonlinearLossless
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Sum sub-terms for new pressure, linear lossless case.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::sumPressureTermsLinearLossless() {
+template<Parameters::SimulationDimension simulationDimension>
+void KSpaceFirstOrderSolver::sumPressureTermsLinearLossless()
+{
   const float* rhoX = getRhoX().getData();
   const float* rhoY = getRhoY().getData();
   const float* rhoZ = (simulationDimension == SD::k3D) ? getRhoZ().getData() : nullptr;
-  float* p = getP().getData();
+  float* p          = getP().getData();
 
   const size_t nElements = mParameters.getFullDimensionSizes().nElements();
 
-  if (mParameters.getC0ScalarFlag()) {
+  if (mParameters.getC0ScalarFlag())
+  {
     const float c2 = mParameters.getC2Scalar();
 
 #pragma omp parallel for simd schedule(static) aligned(p, rhoX, rhoY, rhoZ)
-    for (size_t i = 0; i < nElements; i++) {
+    for (size_t i = 0; i < nElements; i++)
+    {
       const float sumRhos = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
-      p[i] = c2 * sumRhos;
+      p[i]                = c2 * sumRhos;
     }
-  } else {
+  }
+  else
+  {
     const float* c2 = getC2().getData();
 
 #pragma omp parallel for simd schedule(static) aligned(p, c2, rhoX, rhoY, rhoZ)
-    for (size_t i = 0; i < nElements; i++) {
+    for (size_t i = 0; i < nElements; i++)
+    {
       const float sumRhos = (simulationDimension == SD::k3D) ? (rhoX[i] + rhoY[i] + rhoZ[i]) : (rhoX[i] + rhoY[i]);
-      p[i] = c2[i] * sumRhos;
+      p[i]                = c2[i] * sumRhos;
     }
   }
 } // end of sumPressureTermsLinearLossless()
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Calculated shifted velocities.
  */
-template <Parameters::SimulationDimension simulationDimension>
-void KSpaceFirstOrderSolver::computeShiftedVelocity() {
+template<Parameters::SimulationDimension simulationDimension> void KSpaceFirstOrderSolver::computeShiftedVelocity()
+{
   const FloatComplex* xShiftNegR = getXShiftNegR().getComplexData();
   const FloatComplex* yShiftNegR = getYShiftNegR().getComplexData();
   const FloatComplex* zShiftNegR = (simulationDimension == SD::k3D) ? getZShiftNegR().getComplexData() : nullptr;
@@ -3231,14 +3783,14 @@ void KSpaceFirstOrderSolver::computeShiftedVelocity() {
 
   // sizes of frequency spaces
   DimensionSizes xShiftDims = mParameters.getFullDimensionSizes();
-  xShiftDims.nx = xShiftDims.nx / 2 + 1;
+  xShiftDims.nx             = xShiftDims.nx / 2 + 1;
 
   DimensionSizes yShiftDims = mParameters.getFullDimensionSizes();
-  yShiftDims.ny = yShiftDims.ny / 2 + 1;
+  yShiftDims.ny             = yShiftDims.ny / 2 + 1;
 
   // This remains 1 for 2D simulation
   DimensionSizes zShiftDims = mParameters.getFullDimensionSizes();
-  zShiftDims.nz = zShiftDims.nz / 2 + 1;
+  zShiftDims.nz             = zShiftDims.nz / 2 + 1;
 
   // normalization constants for FFTs
   const float dividerX = 1.0f / static_cast<float>(mParameters.getFullDimensionSizes().nx);
@@ -3250,75 +3802,93 @@ void KSpaceFirstOrderSolver::computeShiftedVelocity() {
   getTempFftwShift().computeR2CFft1DX(getUxSgx());
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < xShiftDims.nz; z++) {
+  for (size_t z = 0; z < xShiftDims.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < xShiftDims.ny; y++) {
+    for (size_t y = 0; y < xShiftDims.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < xShiftDims.nx; x++) {
+      for (size_t x = 0; x < xShiftDims.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, xShiftDims);
 
         tempFftShift[i] = tempFftShift[i] * xShiftNegR[x] * dividerX;
       } // x
     }   // y
-  }     //z*/
+  }     // z*/
   getTempFftwShift().computeC2RFft1DX(getUxShifted());
 
   //-------------------------------------------------- uy shifted ----------------------------------------------------//
   getTempFftwShift().computeR2CFft1DY(getUySgy());
 
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k3D)
-  for (size_t z = 0; z < yShiftDims.nz; z++) {
+  for (size_t z = 0; z < yShiftDims.nz; z++)
+  {
 #pragma omp parallel for schedule(static) if (simulationDimension == SD::k2D)
-    for (size_t y = 0; y < yShiftDims.ny; y++) {
+    for (size_t y = 0; y < yShiftDims.ny; y++)
+    {
 #pragma omp simd
-      for (size_t x = 0; x < yShiftDims.nx; x++) {
+      for (size_t x = 0; x < yShiftDims.nx; x++)
+      {
         const size_t i = get1DIndex(z, y, x, yShiftDims);
 
         tempFftShift[i] = (tempFftShift[i] * yShiftNegR[y]) * dividerY;
       } // x
     }   // y
-  }     //z
+  }     // z
   getTempFftwShift().computeC2RFft1DY(getUyShifted());
 
   //-------------------------------------------------- uz_shifted ----------------------------------------------------//
-  if (simulationDimension == SD::k3D) {
+  if (simulationDimension == SD::k3D)
+  {
     getTempFftwShift().computeR2CFft1DZ(getUzSgz());
 #pragma omp parallel for schedule(static)
-    for (size_t z = 0; z < zShiftDims.nz; z++) {
-      for (size_t y = 0; y < zShiftDims.ny; y++) {
+    for (size_t z = 0; z < zShiftDims.nz; z++)
+    {
+      for (size_t y = 0; y < zShiftDims.ny; y++)
+      {
 #pragma omp simd
-        for (size_t x = 0; x < zShiftDims.nx; x++) {
+        for (size_t x = 0; x < zShiftDims.nx; x++)
+        {
           const size_t i = get1DIndex(z, y, x, zShiftDims);
 
           tempFftShift[i] = (tempFftShift[i] * zShiftNegR[z]) * dividerZ;
         } // x
       }   // y
-    }     //z
+    }     // z
     getTempFftwShift().computeC2RFft1DZ(getUzShifted());
   }
 } // end of computeShiftedVelocity
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Print progress statistics.
  */
-void KSpaceFirstOrderSolver::printStatistics() {
-  const float nt = float(mParameters.getNt());
+void KSpaceFirstOrderSolver::printStatistics()
+{
+  const float nt        = float(mParameters.getNt());
   const float timeIndex = float(mParameters.getTimeIndex());
 
-  if (timeIndex + 1 > (mActPercent * nt * 0.01f)) {
+  if (timeIndex + 1 > (mActPercent * nt * 0.01f))
+  {
     mActPercent += mParameters.getProgressPrintInterval();
     mIterationTime.stop();
 
-    if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex()) {
-      mSamplingIterationTimes.push_back(mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs());
-    } else {
-      mNotSamplingIterationTimes.push_back(mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs());
+    if (mParameters.getTimeIndex() >= mParameters.getSamplingStartTimeIndex())
+    {
+      mSamplingIterationTimes.push_back(
+        mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs());
+    }
+    else
+    {
+      mNotSamplingIterationTimes.push_back(
+        mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs());
     }
 
-    const double elTime = mIterationTime.getElapsedTime();
+    const double elTime         = mIterationTime.getElapsedTime();
     const double elTimeWithLegs = mIterationTime.getElapsedTime() + mSimulationTime.getElapsedTimeOverPreviousLegs();
-    const double toGo = ((elTimeWithLegs / static_cast<double>((timeIndex + 1)) * nt)) - elTimeWithLegs;
+    const double toGo           = ((elTimeWithLegs / static_cast<double>((timeIndex + 1)) * nt)) - elTimeWithLegs;
 
     struct tm* current;
     time_t now;
@@ -3326,55 +3896,54 @@ void KSpaceFirstOrderSolver::printStatistics() {
     now += toGo;
     current = localtime(&now);
 
-    Logger::log(Logger::LogLevel::kBasic,
-                kOutFmtSimulationProgress,
-                (timeIndex + 1) / (nt * 0.01f), '%',
-                elTime, toGo,
-                current->tm_mday, current->tm_mon + 1, current->tm_year - 100,
-                current->tm_hour, current->tm_min, current->tm_sec,
-                mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs(),
-                size_t(timeIndex) + 1);
+    Logger::log(Logger::LogLevel::kBasic, kOutFmtSimulationProgress, (timeIndex + 1) / (nt * 0.01f), '%', elTime, toGo,
+      current->tm_mday, current->tm_mon + 1, current->tm_year - 100, current->tm_hour, current->tm_min, current->tm_sec,
+      mIterationTime.getElapsedTime() - mIterationTime.getElapsedTimeOverPreviousLegs(), size_t(timeIndex) + 1);
     Logger::flush(Logger::LogLevel::kBasic);
 
     mIterationTime.SetElapsedTimeOverPreviousLegs(mIterationTime.getElapsedTime());
   }
 } // end of printStatistics
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Was the loop interrupted to checkpoint?
  */
-bool KSpaceFirstOrderSolver::isCheckpointInterruption() const {
+bool KSpaceFirstOrderSolver::isCheckpointInterruption() const
+{
   return (mParameters.getTimeIndex() != mParameters.getNt());
 } // end of isCheckpointInterruption
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Check the output file has the correct format and version.
  */
-void KSpaceFirstOrderSolver::checkOutputFile() {
+void KSpaceFirstOrderSolver::checkOutputFile()
+{
   // The header has already been read
   Hdf5FileHeader& fileHeader = mParameters.getFileHeader();
-  Hdf5File& outputFile = mParameters.getOutputFile();
+  Hdf5File& outputFile       = mParameters.getOutputFile();
 
   // test file type
-  if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kOutput) {
-    throw ios::failure(Logger::formatMessage(kErrFmtBadOutputFileFormat,
-                                             mParameters.getOutputFileName().c_str()));
+  if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kOutput)
+  {
+    throw ios::failure(Logger::formatMessage(kErrFmtBadOutputFileFormat, mParameters.getOutputFileName().c_str()));
   }
 
   // test file major version
-  if (!fileHeader.checkMajorFileVersion()) {
-    throw ios::failure(Logger::formatMessage(kErrFmtBadMajorFileVersion,
-                                             mParameters.getOutputFileName().c_str(),
-                                             fileHeader.getFileMajorVersion().c_str()));
+  if (!fileHeader.checkMajorFileVersion())
+  {
+    throw ios::failure(Logger::formatMessage(
+      kErrFmtBadMajorFileVersion, mParameters.getOutputFileName().c_str(), fileHeader.getFileMajorVersion().c_str()));
   }
 
   // test file minor version
-  if (!fileHeader.checkMinorFileVersion()) {
-    throw ios::failure(Logger::formatMessage(kErrFmtBadMinorFileVersion,
-                                             mParameters.getOutputFileName().c_str(),
-                                             fileHeader.getFileMinorVersion().c_str()));
+  if (!fileHeader.checkMinorFileVersion())
+  {
+    throw ios::failure(Logger::formatMessage(
+      kErrFmtBadMinorFileVersion, mParameters.getOutputFileName().c_str(), fileHeader.getFileMinorVersion().c_str()));
   }
 
   // Check dimension sizes
@@ -3383,22 +3952,25 @@ void KSpaceFirstOrderSolver::checkOutputFile() {
   outputFile.readScalarValue(outputFile.getRootGroup(), kNyName, outputDimSizes.ny);
   outputFile.readScalarValue(outputFile.getRootGroup(), kNzName, outputDimSizes.nz);
 
-  if (mParameters.getFullDimensionSizes() != outputDimSizes) {
+  if (mParameters.getFullDimensionSizes() != outputDimSizes)
+  {
     throw ios::failure(Logger::formatMessage(kErrFmtOutputDimensionsMismatch,
-                                             outputDimSizes.nx,
-                                             outputDimSizes.ny,
-                                             outputDimSizes.nz,
-                                             mParameters.getFullDimensionSizes().nx,
-                                             mParameters.getFullDimensionSizes().ny,
-                                             mParameters.getFullDimensionSizes().nz));
+      outputDimSizes.nx,
+      outputDimSizes.ny,
+      outputDimSizes.nz,
+      mParameters.getFullDimensionSizes().nx,
+      mParameters.getFullDimensionSizes().ny,
+      mParameters.getFullDimensionSizes().nz));
   }
 } // end of checkOutputFile
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Check the file type and the version of the checkpoint file.
  */
-void KSpaceFirstOrderSolver::checkCheckpointFile() {
+void KSpaceFirstOrderSolver::checkCheckpointFile()
+{
   // read the header and check the file version
   Hdf5FileHeader fileHeader;
   Hdf5File& checkpointFile = mParameters.getCheckpointFile();
@@ -3406,23 +3978,24 @@ void KSpaceFirstOrderSolver::checkCheckpointFile() {
   fileHeader.readHeaderFromCheckpointFile(checkpointFile);
 
   // test file type
-  if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kCheckpoint) {
-    throw ios::failure(Logger::formatMessage(kErrFmtBadCheckpointFileFormat,
-                                             mParameters.getCheckpointFileName().c_str()));
+  if (fileHeader.getFileType() != Hdf5FileHeader::FileType::kCheckpoint)
+  {
+    throw ios::failure(
+      Logger::formatMessage(kErrFmtBadCheckpointFileFormat, mParameters.getCheckpointFileName().c_str()));
   }
 
   // test file major version
-  if (!fileHeader.checkMajorFileVersion()) {
-    throw ios::failure(Logger::formatMessage(kErrFmtBadMajorFileVersion,
-                                             mParameters.getCheckpointFileName().c_str(),
-                                             fileHeader.getFileMajorVersion().c_str()));
+  if (!fileHeader.checkMajorFileVersion())
+  {
+    throw ios::failure(Logger::formatMessage(kErrFmtBadMajorFileVersion, mParameters.getCheckpointFileName().c_str(),
+      fileHeader.getFileMajorVersion().c_str()));
   }
 
   // test file minor version
-  if (!fileHeader.checkMinorFileVersion()) {
-    throw ios::failure(Logger::formatMessage(kErrFmtBadMinorFileVersion,
-                                             mParameters.getCheckpointFileName().c_str(),
-                                             fileHeader.getFileMinorVersion().c_str()));
+  if (!fileHeader.checkMinorFileVersion())
+  {
+    throw ios::failure(Logger::formatMessage(kErrFmtBadMinorFileVersion, mParameters.getCheckpointFileName().c_str(),
+      fileHeader.getFileMinorVersion().c_str()));
   }
 
   // Check dimension sizes
@@ -3431,30 +4004,30 @@ void KSpaceFirstOrderSolver::checkCheckpointFile() {
   checkpointFile.readScalarValue(checkpointFile.getRootGroup(), kNyName, checkpointDimSizes.ny);
   checkpointFile.readScalarValue(checkpointFile.getRootGroup(), kNzName, checkpointDimSizes.nz);
 
-  if (mParameters.getFullDimensionSizes() != checkpointDimSizes) {
+  if (mParameters.getFullDimensionSizes() != checkpointDimSizes)
+  {
     throw ios::failure(Logger::formatMessage(kErrFmtCheckpointDimensionsMismatch,
-                                             checkpointDimSizes.nx,
-                                             checkpointDimSizes.ny,
-                                             checkpointDimSizes.nz,
-                                             mParameters.getFullDimensionSizes().nx,
-                                             mParameters.getFullDimensionSizes().ny,
-                                             mParameters.getFullDimensionSizes().nz));
+      checkpointDimSizes.nx,
+      checkpointDimSizes.ny,
+      checkpointDimSizes.nz,
+      mParameters.getFullDimensionSizes().nx,
+      mParameters.getFullDimensionSizes().ny,
+      mParameters.getFullDimensionSizes().nz));
   }
 } // end of checkCheckpointFile
+
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Restore cumulated elapsed time from the output file.
  */
-void KSpaceFirstOrderSolver::loadElapsedTimeFromOutputFile() {
+void KSpaceFirstOrderSolver::loadElapsedTimeFromOutputFile()
+{
   double totalTime, dataLoadTime, preProcessingTime, simulationTime, postProcessingTime;
 
   // Get execution times stored in the output file header
-  mParameters.getFileHeader().getExecutionTimes(totalTime,
-                                                dataLoadTime,
-                                                preProcessingTime,
-                                                simulationTime,
-                                                postProcessingTime);
+  mParameters.getFileHeader().getExecutionTimes(
+    totalTime, dataLoadTime, preProcessingTime, simulationTime, postProcessingTime);
 
   mTotalTime.SetElapsedTimeOverPreviousLegs(totalTime);
   mDataLoadTime.SetElapsedTimeOverPreviousLegs(dataLoadTime);
@@ -3463,14 +4036,15 @@ void KSpaceFirstOrderSolver::loadElapsedTimeFromOutputFile() {
   mPostProcessingTime.SetElapsedTimeOverPreviousLegs(postProcessingTime);
 
 } // end of loadElapsedTimeFromOutputFile
+
 //----------------------------------------------------------------------------------------------------------------------
 
-inline size_t KSpaceFirstOrderSolver::get1DIndex(const size_t z,
-                                                 const size_t y,
-                                                 const size_t x,
-                                                 const DimensionSizes& dimensionSizes) {
+inline size_t KSpaceFirstOrderSolver::get1DIndex(
+  const size_t z, const size_t y, const size_t x, const DimensionSizes& dimensionSizes)
+{
   return (z * dimensionSizes.ny + y) * dimensionSizes.nx + x;
 } // end of get1DIndex
+
 //----------------------------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------------------------//

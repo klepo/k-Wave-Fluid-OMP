@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      30 August    2017, 11:39 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -33,12 +33,12 @@
 #define OUTPUT_MESSAGES_H
 
 #ifdef __linux__
-#include <Logger/OutputMessagesLinux.h>
+  #include <Logger/OutputMessagesLinux.h>
 #endif
 
 // Windows build
 #ifdef _WIN64
-#include <Logger/OutputMessagesWindows.h>
+  #include <Logger/OutputMessagesWindows.h>
 #endif
 
 #endif /* OUTPUT_MESSAGES_H */

@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      26 July      2011, 14:17 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -48,11 +48,8 @@
  * Default constructor
  */
 BaseIndexMatrix::BaseIndexMatrix()
-  : BaseMatrix(),
-    mSize(0), mCapacity(0),
-    mDimensionSizes(),
-    mRowSize(0), mSlabSize(0),
-    mData(nullptr) {
+  : BaseMatrix(), mSize(0), mCapacity(0), mDimensionSizes(), mRowSize(0), mSlabSize(0), mData(nullptr)
+{
 
 } // end of BaseIndexMatrix
 //----------------------------------------------------------------------------------------------------------------------
@@ -60,9 +57,11 @@ BaseIndexMatrix::BaseIndexMatrix()
 /**
  * Zero all allocated elements.
  */
-void BaseIndexMatrix::zeroMatrix() {
+void BaseIndexMatrix::zeroMatrix()
+{
 #pragma omp parallel for simd schedule(static)
-  for (size_t i = 0; i < mCapacity; i++) {
+  for (size_t i = 0; i < mCapacity; i++)
+  {
     mData[i] = size_t(0);
   }
 } // end of zeroMatrix
@@ -75,13 +74,15 @@ void BaseIndexMatrix::zeroMatrix() {
 /**
  * Memory allocation based on the capacity and aligned based on kDataAlignment.
  */
-void BaseIndexMatrix::allocateMemory() {
+void BaseIndexMatrix::allocateMemory()
+{
   /* No memory allocated before this function*/
   assert(mData == nullptr);
 
   mData = (size_t*)_mm_malloc(mCapacity * sizeof(size_t), kDataAlignment);
 
-  if (!mData) {
+  if (!mData)
+  {
     throw std::bad_alloc();
   }
 
@@ -92,7 +93,8 @@ void BaseIndexMatrix::allocateMemory() {
 /**
  * Free memory.
  */
-void BaseIndexMatrix::freeMemory() {
+void BaseIndexMatrix::freeMemory()
+{
   if (mData)
     _mm_free(mData);
 

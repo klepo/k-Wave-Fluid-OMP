@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      11 July      2011, 12:13 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -28,7 +28,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with k-Wave.
  * If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
  */
-
+ 
 #include <string.h>
 #include <immintrin.h>
 #include <assert.h>
@@ -50,11 +50,8 @@ using std::string;
  * Default constructor.
  */
 BaseFloatMatrix::BaseFloatMatrix()
-  : BaseMatrix(),
-    mSize(0), mCapacity(0),
-    mDimensionSizes(),
-    mRowSize(0), mSlabSize(0),
-    mData(nullptr) {
+  : BaseMatrix(), mSize(0), mCapacity(0), mDimensionSizes(), mRowSize(0), mSlabSize(0), mData(nullptr)
+{
 
 } // end of BaseFloatMatrix
 //----------------------------------------------------------------------------------------------------------------------
@@ -62,7 +59,8 @@ BaseFloatMatrix::BaseFloatMatrix()
 /**
  * Copy data from another matrix with same size.
  */
-void BaseFloatMatrix::copyData(const BaseFloatMatrix& src) {
+void BaseFloatMatrix::copyData(const BaseFloatMatrix& src)
+{
   const float* srcData = src.getData();
 
 #pragma omp parallel for simd schedule(static) firstprivate(srcData)
@@ -74,9 +72,11 @@ void BaseFloatMatrix::copyData(const BaseFloatMatrix& src) {
 /**
  * Zero all allocated elements in parallel for NUMA first touch.
  */
-void BaseFloatMatrix::zeroMatrix() {
+void BaseFloatMatrix::zeroMatrix()
+{
 #pragma omp parallel for simd schedule(static)
-  for (size_t i = 0; i < mCapacity; i++) {
+  for (size_t i = 0; i < mCapacity; i++)
+  {
     mData[i] = 0.0f;
   }
 } // end of zeroMatrix
@@ -85,9 +85,11 @@ void BaseFloatMatrix::zeroMatrix() {
 /**
  * Calculate matrix = scalar / matrix.
  */
-void BaseFloatMatrix::scalarDividedBy(const float scalar) {
+void BaseFloatMatrix::scalarDividedBy(const float scalar)
+{
 #pragma omp parallel for simd schedule(static) firstprivate(scalar)
-  for (size_t i = 0; i < mCapacity; i++) {
+  for (size_t i = 0; i < mCapacity; i++)
+  {
     mData[i] = scalar / mData[i];
   }
 } // end of scalarDividedBy
@@ -100,13 +102,15 @@ void BaseFloatMatrix::scalarDividedBy(const float scalar) {
 /**
  * Memory allocation based on the capacity and aligned at kDataAlignment
  */
-void BaseFloatMatrix::allocateMemory() {
+void BaseFloatMatrix::allocateMemory()
+{
   // No memory allocated before this function
   assert(mData == nullptr);
 
   mData = (float*)_mm_malloc(mCapacity * sizeof(float), kDataAlignment);
 
-  if (!mData) {
+  if (!mData)
+  {
     throw std::bad_alloc();
   }
 
@@ -117,7 +121,8 @@ void BaseFloatMatrix::allocateMemory() {
 /**
  * Free memory.
  */
-void BaseFloatMatrix::freeMemory() {
+void BaseFloatMatrix::freeMemory()
+{
   if (mData)
     _mm_free(mData);
 

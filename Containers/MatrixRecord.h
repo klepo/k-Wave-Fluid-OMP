@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      27 August    2017, 08:54 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -43,59 +43,62 @@
  * @details A structure storing details about the matrix. The matrix container stores the list of
  *          these records - metadata and pointer to the matrix.
  */
-struct MatrixRecord {
-  /**
-   * @enum  MatrixType
-   * @brief All possible types of the matrix.
-   */
-  enum class MatrixType {
-    /// Matrix for real values.
-    kReal,
-    /// Matrix for complex values.
-    kComplex,
-    /// Matrix for index values.
-    kIndex,
-    /// Matrix for FFTW.
-    kFftw
-  };
+struct MatrixRecord
+{
+    /**
+     * @enum  MatrixType
+     * @brief All possible types of the matrix.
+     */
+    enum class MatrixType
+    {
+      /// Matrix for real values.
+      kReal,
+      /// Matrix for complex values.
+      kComplex,
+      /// Matrix for index values.
+      kIndex,
+      /// Matrix for FFTW.
+      kFftw
+    };
 
-  /// Default constructor.
-  MatrixRecord();
-  /// Copy constructor.
-  MatrixRecord(const MatrixRecord& src);
-  /// operator =
-  MatrixRecord& operator=(const MatrixRecord& src);
+    /// Default constructor.
+    MatrixRecord();
+    /// Copy constructor.
+    MatrixRecord(const MatrixRecord& src);
+    /// operator =
+    MatrixRecord& operator=(const MatrixRecord& src);
 
-  /**
-   * @brief Set all values for the record.
-   * @param [in] matrixType     - Matrix data type.
-   * @param [in] dimensionSizes - Dimension sizes.
-   * @param [in] loadData       - Load data from file?
-   * @param [in] checkpoint     - Checkpoint this matrix?
-   * @param [in] matrixName     - HDF5 matrix name.
-   */
-  void set(const MatrixType matrixType,
-           const DimensionSizes dimensionSizes,
-           const bool loadData,
-           const bool checkpoint,
-           MatrixName& matrixName);
+    /**
+     * @brief Set all values for the record.
+     * @param [in] matrixType     - Matrix data type.
+     * @param [in] dimensionSizes - Dimension sizes.
+     * @param [in] loadData       - Load data from file?
+     * @param [in] checkpoint     - Checkpoint this matrix?
+     * @param [in] matrixName     - HDF5 matrix name.
+     */
+    void set(const MatrixType matrixType,
+      const DimensionSizes dimensionSizes,
+      const bool loadData,
+      const bool checkpoint,
+      MatrixName& matrixName);
 
-  // Destructor.
-  virtual ~MatrixRecord(){};
+    // Destructor.
+    virtual ~MatrixRecord(){};
 
-  /// Pointer to the matrix object.
-  BaseMatrix* matrixPtr;
-  /// Matrix data type.
-  MatrixType matrixType;
-  /// Matrix dimension sizes.
-  DimensionSizes dimensionSizes;
-  /// Is the matrix content loaded from the HDF5 file?
-  bool loadData;
-  /// Is the matrix necessary to be preserver when checkpoint is enabled?
-  bool checkpoint;
-  /// Matrix name in the HDF5 file.
-  std::string matrixName;
+    /// Pointer to the matrix object.
+    BaseMatrix* matrixPtr;
+    /// Matrix data type.
+    MatrixType matrixType;
+    /// Matrix dimension sizes.
+    DimensionSizes dimensionSizes;
+    /// Is the matrix content loaded from the HDF5 file?
+    bool loadData;
+    /// Is the matrix necessary to be preserver when checkpoint is enabled?
+    bool checkpoint;
+    /// Matrix name in the HDF5 file.
+    std::string matrixName;
 }; // end of MatrixRecord
+
 //----------------------------------------------------------------------------------------------------------------------
 
 #endif /* MATRIX_RECORD_H */

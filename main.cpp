@@ -1,17 +1,17 @@
 /**
- * @file     main.cpp
+ * @file      main.cpp
  *
- * @author   Jiri Jaros \n
- *           Faculty of Information Technology \n
- *           Brno University of Technology \n
- *           jarosjir@fit.vutbr.cz
+ * @author    Jiri Jaros, Petr Kleparnik \n
+ *            Faculty of Information Technology \n
+ *            Brno University of Technology \n
+ *            jarosjir@fit.vutbr.cz
  *
- * @brief    The main file of kspaceFirstOrder3D-OMP.
+ * @brief     The main file of kspaceFirstOrder3D-OMP.
  *
- * @version  kspaceFirstOrder 2.17
+ * @version   kspaceFirstOrder 2.17
  *
- * @date     11 July      2012, 10:57 (created) \n
- *           14 March     2019, 16:40 (revised)
+ * @date      11 July      2012, 10:57 (created) \n
+ *            08 February  2023, 12:00 (revised)
  *
  * @mainpage kspaceFirstOrder-OMP
  *
@@ -371,10 +371,10 @@
 │                               │   compression                 │
 │                               │   (default = computed from    │
 │                               │   p_source_input dataset)     │
-│ --mos <mos>                   │ Multiple of overlap size  for │
+│ --mos <mos>                   │ Multiple of overlap size for  │
 │                               │   compression                 │
 │                               │   (default = 1)               │
-│ --harmonics <harmonics>       │ Number of hamornics for       │
+│ --harmonics <harmonics>       │ Number of harmonics for       │
 │                               │   compression (default = 1)   │
 ├───────────────────────────────┼───────────────────────────────┤
 │ -s <time_step>                │ When data collection begins   │
@@ -459,6 +459,26 @@
 | total_execution_time                    Total execution time                                                         |
 | peak_core_memory_in_use                 Peak memory required per core during the simulation                          |
 | total_memory_in_use Total               Peak memory in use                                                           |
++----------------------------------------------------------------------------------------------------------------------+
+| mStoreQTermFlag                         Store Q term flag                                                            |
+| mStoreQTermCFlag                        Store Q term compressed flag                                                 |
+| mStoreIntensityAvgFlag                  Store average intensity flag                                                 |
+| mStoreIntensityAvgCFlag                 Store average intensity compressed flag                                      |
+| mNoCompressionOverlapFlag               No compression overlap flag                                                  |
+| mPeriod                                 Compression period                                                           |
+| mMOS                                    Multiple of overlap size for compression                                     |
+| mHarmonics                              Number of harmonics for compression                                          |
+| mBlockSizeDefault                       Maximum block size for dataset reading - computing average intensity without |
+|                                         compression)                                                                 |
+| mBlockSizeDefaultC                      Maximum block size for dataset reading - computing average intensity with    |
+|                                         compression)                                                                 |
+| mSamplingStartTimeStep                  When data collection begins                                                  |
+| output_file_size                        Output file size                                                             |
+| simulation_peak_memory_in_use           Simulation peak memory in use                                                |
+| average_sampling_iteration_time         Average sampling iteration time                                              |
+| sampling_time                           Sampling time                                                                |
+| average_non-sampling_iteration_time     Average non-sampling iteration time                                          |
+| non-sampling_time                       Non-sampling time                                                            |
 +----------------------------------------------------------------------------------------------------------------------+
 \endverbatim
  *
@@ -880,7 +900,7 @@
 #include <iostream>
 
 #ifdef _OPENMP
-#include <omp.h>
+  #include <omp.h>
 #endif
 
 #include <KSpaceSolver/KSpaceFirstOrderSolver.h>
@@ -897,7 +917,8 @@ using std::string;
  * @return EXIT_SUCCESS - If the simulation completed correctly.
  *
  */
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   // Create K-Space solver
   KSpaceFirstOrderSolver kSpaceSolver;
 
@@ -910,15 +931,19 @@ int main(int argc, char** argv) {
   Parameters& parameters = Parameters::getInstance();
 
   //------------------------------------- Init simulation ---------------------------------------//
-  try {
+  try
+  {
     // Initialise Parameters by parsing the command line and reading input file scalars
     parameters.init(argc, argv);
 
-    if (parameters.isPrintVersionOnly()) {
+    if (parameters.isPrintVersionOnly())
+    {
       kSpaceSolver.printFullCodeNameAndLicense();
       return EXIT_SUCCESS;
     }
-  } catch (const std::exception& e) {
+  }
+  catch (const std::exception& e)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
     Logger::errorAndTerminate(Logger::wordWrapString(e.what(), kErrFmtPathDelimiters, 9));
@@ -928,7 +953,7 @@ int main(int argc, char** argv) {
 #ifdef _OPENMP
   // Affinity was disabled as it may interfere with batch schedulers on some clusters. The user is responsible to
   // set it properly
-  //kSpaceSolver.setProcessorAffinity();
+  // kSpaceSolver.setProcessorAffinity();
   omp_set_num_threads(parameters.getNumberOfThreads());
 #endif
 
@@ -938,14 +963,19 @@ int main(int argc, char** argv) {
   Logger::log(Logger::LogLevel::kBasic, kOutFmtInitializationHeader);
 
   //-------------------------------------- Allocate memory --------------------------------------//
-  try {
+  try
+  {
     kSpaceSolver.allocateMemory();
-  } catch (const std::bad_alloc&) {
+  }
+  catch (const std::bad_alloc&)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
     // 9 = Indentation of Error:
     Logger::errorAndTerminate(Logger::wordWrapString(kErrFmtOutOfMemory, " ", 9));
-  } catch (const std::exception& e) {
+  }
+  catch (const std::exception& e)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
     const string errorMessage = string(kErrFmtUnknownError) + e.what();
@@ -953,14 +983,19 @@ int main(int argc, char** argv) {
   }
 
   //-------------------------------------- Load input data --------------------------------------//
-  try {
+  try
+  {
     kSpaceSolver.loadInputData();
-  } catch (const std::ios::failure& e) {
+  }
+  catch (const std::ios::failure& e)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
     // 9 = Indentation of Error:
     Logger::errorAndTerminate(Logger::wordWrapString(e.what(), kErrFmtPathDelimiters, 9));
-  } catch (const std::exception& e) {
+  }
+  catch (const std::exception& e)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtFailed);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLastSeparator);
 
@@ -971,7 +1006,8 @@ int main(int argc, char** argv) {
   Logger::log(Logger::LogLevel::kBasic, kOutFmtElapsedTime, kSpaceSolver.getDataLoadTime());
 
   // did we recover from checkpoint?
-  if (parameters.getTimeIndex() > 0) {
+  if (parameters.getTimeIndex() > 0)
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
     Logger::log(Logger::LogLevel::kBasic, kOutFmtRecoveredFrom, parameters.getTimeIndex());
   }
@@ -988,7 +1024,8 @@ int main(int argc, char** argv) {
   Logger::log(Logger::LogLevel::kBasic, kOutFmtSeparator);
 
   // Elapsed time
-  if (kSpaceSolver.getCumulatedTotalTime() != kSpaceSolver.getTotalTime()) {
+  if (kSpaceSolver.getCumulatedTotalTime() != kSpaceSolver.getTotalTime())
+  {
     Logger::log(Logger::LogLevel::kBasic, kOutFmtLegExecutionTime, kSpaceSolver.getTotalTime());
   }
   Logger::log(Logger::LogLevel::kBasic, kOutFmtTotalExecutionTime, kSpaceSolver.getCumulatedTotalTime());

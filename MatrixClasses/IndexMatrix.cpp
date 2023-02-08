@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      26 July      2011, 15:16 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -44,8 +44,8 @@ using std::ios;
 /**
  * Constructor allocating memory.
  */
-IndexMatrix::IndexMatrix(const DimensionSizes& dimensionSizes)
-  : BaseIndexMatrix() {
+IndexMatrix::IndexMatrix(const DimensionSizes& dimensionSizes) : BaseIndexMatrix()
+{
   initDimensions(dimensionSizes);
   allocateMemory();
 } // end of IndexMatrix
@@ -54,7 +54,8 @@ IndexMatrix::IndexMatrix(const DimensionSizes& dimensionSizes)
 /**
  * Destructor.
  */
-IndexMatrix::~IndexMatrix() {
+IndexMatrix::~IndexMatrix()
+{
   freeMemory();
 } // end of ~IndexMatrix
 //----------------------------------------------------------------------------------------------------------------------
@@ -62,15 +63,17 @@ IndexMatrix::~IndexMatrix() {
 /**
  * Read data from HDF5 file (only from the root group).
  */
-void IndexMatrix::readData(Hdf5File& file,
-                           MatrixName& matrixName) {
+void IndexMatrix::readData(Hdf5File& file, MatrixName& matrixName)
+{
   // check the datatype
-  if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kLong) {
+  if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kLong)
+  {
     throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotIndex, matrixName.c_str()));
   }
 
   // check the domain type
-  if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kReal) {
+  if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kReal)
+  {
     throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotReal, matrixName.c_str()));
   }
 
@@ -83,32 +86,33 @@ void IndexMatrix::readData(Hdf5File& file,
 /**
  * Write data to HDF5 file.
  */
-void IndexMatrix::writeData(Hdf5File& file,
-                            MatrixName& matrixName,
-                            const size_t compressionLevel) {
+void IndexMatrix::writeData(Hdf5File& file, MatrixName& matrixName, const size_t compressionLevel)
+{
   // set chunks - may be necessary for long index based sensor masks
   DimensionSizes chunks = mDimensionSizes;
-  chunks.nz = 1;
+  chunks.nz             = 1;
 
-  //1D matrices
-  if ((mDimensionSizes.ny == 1) && (mDimensionSizes.nz == 1)) {
+  // 1D matrices
+  if ((mDimensionSizes.ny == 1) && (mDimensionSizes.nz == 1))
+  {
     // Chunk = 4MB
-    if (mDimensionSizes.nx > 4 * kChunkSize1D4MB) {
+    if (mDimensionSizes.nx > 4 * kChunkSize1D4MB)
+    {
       chunks.nx = kChunkSize1D4MB;
-    } else if (mDimensionSizes.nx > 4 * kChunkSize1D1MB) {
+    }
+    else if (mDimensionSizes.nx > 4 * kChunkSize1D1MB)
+    {
       chunks.nx = kChunkSize1D1MB;
-    } else if (mDimensionSizes.nx > 4 * kChunkSize1D256kB) {
+    }
+    else if (mDimensionSizes.nx > 4 * kChunkSize1D256kB)
+    {
       chunks.nx = kChunkSize1D256kB;
     }
   }
 
   // create dataset and write a slab
-  hid_t dataset = file.createDataset(file.getRootGroup(),
-                                     matrixName,
-                                     mDimensionSizes,
-                                     chunks,
-                                     Hdf5File::MatrixDataType::kLong,
-                                     compressionLevel);
+  hid_t dataset = file.createDataset(
+    file.getRootGroup(), matrixName, mDimensionSizes, chunks, Hdf5File::MatrixDataType::kLong, compressionLevel);
 
   file.writeHyperSlab(dataset, DimensionSizes(0, 0, 0), mDimensionSizes, mData);
 
@@ -124,7 +128,8 @@ void IndexMatrix::writeData(Hdf5File& file,
  * Get the top left corner of the index-th cuboid. Cuboids are stored as 6-tuples (two 3D
  * coordinates). This gives the first three coordinates.
  */
-DimensionSizes IndexMatrix::getTopLeftCorner(const size_t& index) const {
+DimensionSizes IndexMatrix::getTopLeftCorner(const size_t& index) const
+{
   size_t x = mData[6 * index];
   size_t y = mData[6 * index + 1];
   size_t z = mData[6 * index + 2];
@@ -136,8 +141,9 @@ DimensionSizes IndexMatrix::getTopLeftCorner(const size_t& index) const {
 /**
  * Get the top bottom right of the index-th cuboid. Cuboids are stored as 6-tuples (two 3D
  * coordinates). This gives the first three coordinates. This routine works only on the CPU side.
-*/
-DimensionSizes IndexMatrix::getBottomRightCorner(const size_t& index) const {
+ */
+DimensionSizes IndexMatrix::getBottomRightCorner(const size_t& index) const
+{
   size_t x = mData[6 * index + 3];
   size_t y = mData[6 * index + 4];
   size_t z = mData[6 * index + 5];
@@ -149,9 +155,11 @@ DimensionSizes IndexMatrix::getBottomRightCorner(const size_t& index) const {
 /**
  * Recompute indeces, MATLAB -> C++.
  */
-void IndexMatrix::recomputeIndicesToCPP() {
+void IndexMatrix::recomputeIndicesToCPP()
+{
 #pragma omp parallel for simd
-  for (size_t i = 0; i < mSize; i++) {
+  for (size_t i = 0; i < mSize; i++)
+  {
     mData[i]--;
   }
 } // end of recomputeIndices
@@ -160,9 +168,11 @@ void IndexMatrix::recomputeIndicesToCPP() {
 /**
  * Recompute indeces, C++ -> MATLAB.
  */
-void IndexMatrix::recomputeIndicesToMatlab() {
+void IndexMatrix::recomputeIndicesToMatlab()
+{
 #pragma omp parallel for simd
-  for (size_t i = 0; i < mSize; i++) {
+  for (size_t i = 0; i < mSize; i++)
+  {
     mData[i]++;
   }
 } // end of recomputeIndicesToMatlab
@@ -171,9 +181,11 @@ void IndexMatrix::recomputeIndicesToMatlab() {
 /**
  * Get total number of elements in all cuboids to be able to allocate output file.
  */
-size_t IndexMatrix::getSizeOfAllCuboids(float sizeMultiplier) const {
+size_t IndexMatrix::getSizeOfAllCuboids(float sizeMultiplier) const
+{
   size_t elementSum = 0;
-  for (size_t cuboidIdx = 0; cuboidIdx < mDimensionSizes.ny; cuboidIdx++) {
+  for (size_t cuboidIdx = 0; cuboidIdx < mDimensionSizes.ny; cuboidIdx++)
+  {
     elementSum += getSizeOfCuboid(cuboidIdx, sizeMultiplier);
   }
   return elementSum;
@@ -183,10 +195,14 @@ size_t IndexMatrix::getSizeOfAllCuboids(float sizeMultiplier) const {
 /**
  * Get total number of elements in cuboid with given index.
  */
-size_t IndexMatrix::getSizeOfCuboid(size_t cuboidIdx, float sizeMultiplier) const {
-  if (sizeMultiplier != 1.0f) {
+size_t IndexMatrix::getSizeOfCuboid(size_t cuboidIdx, float sizeMultiplier) const
+{
+  if (sizeMultiplier != 1.0f)
+  {
     return getDimensionSizesOfCuboid(cuboidIdx, sizeMultiplier).nElements();
-  } else {
+  }
+  else
+  {
     return getDimensionSizesOfCuboid(cuboidIdx).nElements();
   }
 } // end of getSizeOfCuboid
@@ -195,12 +211,16 @@ size_t IndexMatrix::getSizeOfCuboid(size_t cuboidIdx, float sizeMultiplier) cons
 /**
  * Get dimension sizes of cuboid with given index.
  */
-DimensionSizes IndexMatrix::getDimensionSizesOfCuboid(size_t cuboidIdx, float sizeMultiplier) const {
-  if (sizeMultiplier != 1.0f) {
+DimensionSizes IndexMatrix::getDimensionSizesOfCuboid(size_t cuboidIdx, float sizeMultiplier) const
+{
+  if (sizeMultiplier != 1.0f)
+  {
     DimensionSizes dims = getBottomRightCorner(cuboidIdx) - getTopLeftCorner(cuboidIdx);
-    dims.nx = hsize_t(ceilf(dims.nx * sizeMultiplier));
+    dims.nx             = hsize_t(ceilf(dims.nx * sizeMultiplier));
     return dims;
-  } else {
+  }
+  else
+  {
     return getBottomRightCorner(cuboidIdx) - getTopLeftCorner(cuboidIdx);
   }
 } // end of getDimensionSizesOfCuboid
@@ -217,14 +237,15 @@ DimensionSizes IndexMatrix::getDimensionSizesOfCuboid(size_t cuboidIdx, float si
 /**
  * Set necessary dimensions and auxiliary variables.
  */
-void IndexMatrix::initDimensions(const DimensionSizes& dimensionSizes) {
+void IndexMatrix::initDimensions(const DimensionSizes& dimensionSizes)
+{
   mDimensionSizes = dimensionSizes;
 
   mSize = dimensionSizes.nx * dimensionSizes.ny * dimensionSizes.nz;
 
   mCapacity = mSize;
 
-  mRowSize = dimensionSizes.nx;
+  mRowSize  = dimensionSizes.nx;
   mSlabSize = dimensionSizes.nx * dimensionSizes.ny;
 } // end of initDimensions
 //----------------------------------------------------------------------------------------------------------------------

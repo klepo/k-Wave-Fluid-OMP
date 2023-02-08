@@ -11,7 +11,7 @@
  * @version   kspaceFirstOrder 2.17
  *
  * @date      11 July      2011, 14:02 (created) \n
- *            20 February  2019, 14:45 (revised)
+ *            08 February  2023, 12:00 (revised)
  *
  * @copyright Copyright (C) 2019 Jiri Jaros and Bradley Treeby.
  *
@@ -44,8 +44,8 @@ using std::ios;
 /**
  * Constructor.
  */
-ComplexMatrix::ComplexMatrix(const DimensionSizes& dimensionSizes)
-  : BaseFloatMatrix() {
+ComplexMatrix::ComplexMatrix(const DimensionSizes& dimensionSizes) : BaseFloatMatrix()
+{
   initDimensions(dimensionSizes);
   allocateMemory();
 } // end of ComplexMatrixData
@@ -54,7 +54,8 @@ ComplexMatrix::ComplexMatrix(const DimensionSizes& dimensionSizes)
 /**
  * Destructor.
  */
-ComplexMatrix::~ComplexMatrix() {
+ComplexMatrix::~ComplexMatrix()
+{
   freeMemory();
 } // end of ComplexMatrix
 //----------------------------------------------------------------------------------------------------------------------
@@ -62,21 +63,23 @@ ComplexMatrix::~ComplexMatrix() {
 /**
  * Read data from HDF5 file (do some basic checks). Only from the root group.
  */
-void ComplexMatrix::readData(Hdf5File& file,
-                             MatrixName& matrixName) {
+void ComplexMatrix::readData(Hdf5File& file, MatrixName& matrixName)
+{
   // check data type
-  if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kFloat) {
+  if (file.readMatrixDataType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDataType::kFloat)
+  {
     throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotFloat, matrixName.c_str()));
   }
 
   // check domain type
-  if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kComplex) {
+  if (file.readMatrixDomainType(file.getRootGroup(), matrixName) != Hdf5File::MatrixDomainType::kComplex)
+  {
     throw std::ios::failure(Logger::formatMessage(kErrFmtMatrixNotComplex, matrixName.c_str()));
   }
 
   // Initialize dimensions
   DimensionSizes complexDims = mDimensionSizes;
-  complexDims.nx = 2 * complexDims.nx;
+  complexDims.nx             = 2 * complexDims.nx;
 
   // Read data from the file
   file.readCompleteDataset(file.getRootGroup(), matrixName, complexDims, mData);
@@ -86,23 +89,18 @@ void ComplexMatrix::readData(Hdf5File& file,
 /**
  * Write data to HDF5 file (only from the root group).
  */
-void ComplexMatrix::writeData(Hdf5File& file,
-                              MatrixName& matrixName,
-                              const size_t compressionLevel) {
+void ComplexMatrix::writeData(Hdf5File& file, MatrixName& matrixName, const size_t compressionLevel)
+{
   // set dimensions and chunks
   DimensionSizes complexDims = mDimensionSizes;
-  complexDims.nx = 2 * complexDims.nx;
+  complexDims.nx             = 2 * complexDims.nx;
 
   DimensionSizes chunks = complexDims;
-  complexDims.nz = 1;
+  complexDims.nz        = 1;
 
   // create a dataset
-  hid_t dataset = file.createDataset(file.getRootGroup(),
-                                     matrixName,
-                                     complexDims,
-                                     chunks,
-                                     Hdf5File::MatrixDataType::kFloat,
-                                     compressionLevel);
+  hid_t dataset = file.createDataset(
+    file.getRootGroup(), matrixName, complexDims, chunks, Hdf5File::MatrixDataType::kFloat, compressionLevel);
   // Write write the matrix at once.
   file.writeHyperSlab(dataset, DimensionSizes(0, 0, 0), mDimensionSizes, mData);
   file.closeDataset(dataset);
@@ -124,12 +122,13 @@ void ComplexMatrix::writeData(Hdf5File& file,
 /**
  * Initialize matrix dimension sizes.
  */
-void ComplexMatrix::initDimensions(const DimensionSizes& dimensionSizes) {
+void ComplexMatrix::initDimensions(const DimensionSizes& dimensionSizes)
+{
   mDimensionSizes = dimensionSizes;
 
   mSize = dimensionSizes.nx * dimensionSizes.ny * dimensionSizes.nz;
 
-  mRowSize = 2 * dimensionSizes.nx;
+  mRowSize  = 2 * dimensionSizes.nx;
   mSlabSize = 2 * dimensionSizes.nx * dimensionSizes.ny;
   // compute actual necessary memory sizes
   mCapacity = 2 * mSize;
