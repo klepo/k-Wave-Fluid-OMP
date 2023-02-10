@@ -11,10 +11,10 @@ This project is a part of the k-Wave toolbox accelerating 2D/3D simulations
 using an optimized C++ implementation to run moderate to big grid sizes (128x128
 to 10,000x10,000) or (64x64x64 to 512x512x512).
 
-This repository contains a modified C++ implementation of `kpsaceFirstOrder-OMP` 
+**This repository contains a modified C++ implementation of `kpsaceFirstOrder-OMP` 
 version 2.16 (04 September 2017) - release 1.2, which is extended by on-the-fly 
 compression and calculation of time-averaged acoustic Intensity in time-domain 
-ultrasound simulations. These approaches were published in [[2]](#2).
+ultrasound simulations. These approaches were published in [[2]](#2).**
 
 ## Repository structure
 
