@@ -13,7 +13,7 @@ to 10,000x10,000) or (64x64x64 to 512x512x512).
 
 **This repository contains a modified C++ implementation of `kpsaceFirstOrder-OMP` 
 version 2.16 (04 September 2017) - release 1.2, which is extended by on-the-fly 
-compression and calculation of time-averaged acoustic Intensity in time-domain 
+compression and calculation of time-averaged acoustic intensity in time-domain 
 ultrasound simulations. These approaches were published in [[2]](#2).**
 
 ## Repository structure
