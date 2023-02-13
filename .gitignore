@@ -2,3 +2,4 @@
 /dist/
 *.o
 /visualstudioproject/.vs
+/k-wave-fluid-omp.pro.user

@@ -56,14 +56,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>H5_BUILT_AS_DYNAMIC_LIB;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);__KWAVE_GIT_HASH__="ed04f750aafcf36aa2b3937799d0d18e81adc4ee";</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>c:/Program Files/HDF_Group/HDF5/1.8.20/include;../</AdditionalIncludeDirectories>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>H5_BUILT_AS_DYNAMIC_LIB;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>c:/Program Files/HDF_Group/HDF5/1.8.20/include;../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OpenMP>GenerateParallelCode</OpenMP>
       <OpenMPSupport>true</OpenMPSupport>
       <UseIntelOptimizedHeaders>true</UseIntelOptimizedHeaders>
       <RecognizeRestrictKeyword>true</RecognizeRestrictKeyword>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
@@ -86,9 +85,8 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>H5_BUILT_AS_DYNAMIC_LIB;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>c:/Program Files/HDF_Group/HDF5/1.8.20/include;../</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:/Program Files/HDF_Group/HDF5/1.8.20/include;../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OpenMP>GenerateParallelCode</OpenMP>
       <OpenMPSupport>true</OpenMPSupport>
       <UseIntelOptimizedHeaders>true</UseIntelOptimizedHeaders>
