@@ -16,30 +16,36 @@ version 2.16 (04 September 2017) - release 1.2, which is extended by on-the-fly
 compression and calculation of time-averaged acoustic intensity in time-domain 
 ultrasound simulations. These approaches were published in [[2]](#2).**
 
+See also a modified CUDA/C++ implementation of `kpsaceFirstOrder-CUDA` 
+https://github.com/klepo/k-Wave-Fluid-CUDA or 
+https://github.com/klepo/Visualisation-of-the-outputs-of-k-Wave-ultrasound-simulations
+
 ## Repository structure
 
     .
-    +--Compression       - Helper class for on-the-fly compression
-    +--Containers        - Matrix and output stream containers
-    +--Data              - Small test data
-    +--GetoptWin64       - Windows version of the getopt routine
-    +--Hdf5              - HDF5 classes (file access)
-    +--KSpaceSolver      - Solver classes with all the kernels
-    +--Logger            - Logger class to report progress and errors
-    +--MatrixClasses     - Matrix classes to hold data
-    +--Makefiles         - GNU makefiles for different systems
-    +--OutputHDF5Streams - Output streams to sample data
-    +--Parameters        - Parameters of the simulation
-    +--Utils             - Utility routines
-    +--nbproject         - NetBeans IDE 8.2 project
-    .clang-format        - Clang-Format config file
-    Changelog.md         - Changelog
-    License.md           - License file
-    Makefile             - NetBeans 8.2 makefile
-    Readme.md            - Readme
-    Doxyfile             - Doxygen generator file
-    header_bg.png        - Doxygen logo
-    main.cpp             - Main file of the project
+    +--Compression         - Helper class for the on-the-fly compression
+    +--Containers          - Matrix and output stream containers
+    +--Data                - Small test data
+    +--GetoptWin64         - Windows version of the getopt routine
+    +--Hdf5                - HDF5 classes (file access)
+    +--KSpaceSolver        - Solver classes with all the kernels
+    +--Logger              - Logger class to report progress and errors
+    +--MatrixClasses       - Matrix classes to hold data
+    +--Makefiles           - GNU makefiles for different systems
+    +--OutputHDF5Streams   - Output streams to sample data
+    +--Parameters          - Parameters of the simulation
+    +--Utils               - Utility routines
+    +--nbproject           - NetBeans IDE 8.2 project
+    +--qtproject           - QtCreator IDE project
+    +--visualstudioproject - Visual Studio IDE project
+    .clang-format          - Clang-Format config file
+    Changelog.md           - Changelog
+    License.md             - License file
+    Makefile               - NetBeans 8.2 makefile
+    Readme.md              - Readme
+    Doxyfile               - Doxygen generator file
+    header_bg.png          - Doxygen logo
+    main.cpp               - Main file of the project
 
 ## Compilation
 
